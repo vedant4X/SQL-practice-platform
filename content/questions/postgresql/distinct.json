@@ -1,0 +1,2058 @@
+[
+  {
+    "id": "q-dist-01",
+    "slug": "unique-job-titles",
+    "title": "Discover Unique Corporate Job Titles",
+    "description_markdown": "Find all unique `job_title` values across the organization. Eliminate any duplicate titles.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Return distinct job titles\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT job_title FROM employees;",
+    "solution_explanation": "The DISTINCT keyword deduplicates identical titles in the returned projection.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Put DISTINCT immediately after SELECT.",
+      "Target the `job_title` column.",
+      "Query: SELECT DISTINCT job_title FROM employees;"
+    ],
+    "tags": [
+      "distinct",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-02",
+    "slug": "distinct-customer-geographies",
+    "title": "Unique Customer Country and City Combinations",
+    "description_markdown": "Find every unique combination of `country` and `city` where our e-commerce customers reside.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Unique country and city pairs\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT country, city FROM customers;",
+    "solution_explanation": "DISTINCT applied to multiple columns evaluates uniqueness across the entire composite tuple.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "DISTINCT applies to all listed columns following it.",
+      "List country and city separated by a comma.",
+      "Query: SELECT DISTINCT country, city FROM customers;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-03",
+    "slug": "distinct-project-assignment-roles",
+    "title": "Distinct Operational Assignment Roles Across Projects",
+    "description_markdown": "Retrieve all distinct `role` values assigned to team members in the `assignments` table.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "role",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Return unique roles from assignments\nSELECT ...",
+    "solution_query": "SELECT DISTINCT role FROM assignments;",
+    "solution_explanation": "Eliminates duplicate role descriptions assigned across different project records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Select from the `assignments` table.",
+      "Use DISTINCT with the `role` column.",
+      "Query: SELECT DISTINCT role FROM assignments;"
+    ],
+    "tags": [
+      "distinct"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-04",
+    "slug": "distinct-departments-professors",
+    "title": "Survey Academic Faculty Departments",
+    "description_markdown": "Query the `professors` table to find all unique `department` names where faculty members are appointed.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select distinct faculty departments\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT department FROM professors;",
+    "solution_explanation": "DISTINCT filters out duplicate department entries across all professors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting DISTINCT keyword causing duplicate department listings."
+    ],
+    "hints": [
+      "Use SELECT DISTINCT on the department column.",
+      "Query from the professors table.",
+      "Query: SELECT DISTINCT department FROM professors;"
+    ],
+    "tags": [
+      "distinct",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-05",
+    "slug": "distinct-airline-origins",
+    "title": "Identify Airline Departure Hubs",
+    "description_markdown": "Find all distinct origin airport codes from the `flights` schedule table to see where flights depart from.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select distinct origin airports\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT origin FROM flights;",
+    "solution_explanation": "Deduplicates flight origin codes to produce a clean list of departure points.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting flight_id or destination instead of origin."
+    ],
+    "hints": [
+      "Project DISTINCT origin.",
+      "From the flights table.",
+      "Query: SELECT DISTINCT origin FROM flights;"
+    ],
+    "tags": [
+      "distinct",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-06",
+    "slug": "distinct-bank-account-types",
+    "title": "List Unique Bank Account Products",
+    "description_markdown": "Retrieve every distinct `account_type` offered in the bank's active `accounts` records.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_type",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select distinct account types\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT account_type FROM accounts;",
+    "solution_explanation": "DISTINCT reduces all accounts to their unique product classifications.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting balance or customer_id alongside account_type."
+    ],
+    "hints": [
+      "Use DISTINCT account_type.",
+      "Source from accounts.",
+      "Query: SELECT DISTINCT account_type FROM accounts;"
+    ],
+    "tags": [
+      "distinct",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-07",
+    "slug": "distinct-stock-sectors",
+    "title": "Catalogue Unique Stock Sectors",
+    "description_markdown": "Extract all distinct industry sectors represented in the `stocks` market list.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct sectors from stocks\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT sector FROM stocks;",
+    "solution_explanation": "Projects unique market sectors from the stocks table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including symbol or company_name."
+    ],
+    "hints": [
+      "Use DISTINCT on sector.",
+      "Target stocks table.",
+      "Query: SELECT DISTINCT sector FROM stocks;"
+    ],
+    "tags": [
+      "distinct",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-08",
+    "slug": "distinct-restaurant-cuisines",
+    "title": "Survey Distinct Restaurant Cuisines",
+    "description_markdown": "Find every unique culinary category (`cuisine`) available across all registered partner restaurants in `restaurants`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct restaurant cuisines\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT cuisine FROM restaurants;",
+    "solution_explanation": "Eliminates duplicate cuisine styles among partner restaurants.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling cuisine column name."
+    ],
+    "hints": [
+      "Select DISTINCT cuisine.",
+      "From restaurants table.",
+      "Query: SELECT DISTINCT cuisine FROM restaurants;"
+    ],
+    "tags": [
+      "distinct",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-09",
+    "slug": "distinct-doctor-specializations",
+    "title": "Clinical Doctor Specializations",
+    "description_markdown": "Retrieve a list of all distinct medical `specialization` areas among hospital doctors.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "specialization",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct medical specializations\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT specialization FROM doctors;",
+    "solution_explanation": "Deduplicates medical areas of practice from doctors records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting doctor name or department instead."
+    ],
+    "hints": [
+      "Query DISTINCT specialization.",
+      "From doctors table.",
+      "Query: SELECT DISTINCT specialization FROM doctors;"
+    ],
+    "tags": [
+      "distinct",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-10",
+    "slug": "distinct-hotel-cities",
+    "title": "Cities with Partner Hotel Locations",
+    "description_markdown": "Find all distinct cities where hotel properties are located in the `hotels` database.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct hotel cities\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT city FROM hotels;",
+    "solution_explanation": "Lists unique cities hosting hotel establishments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting DISTINCT, leading to city duplication."
+    ],
+    "hints": [
+      "Select DISTINCT city.",
+      "Source from hotels table.",
+      "Query: SELECT DISTINCT city FROM hotels;"
+    ],
+    "tags": [
+      "distinct",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-11",
+    "slug": "distinct-applicant-companies",
+    "title": "Recruiting Candidate Prior Employers",
+    "description_markdown": "List every unique company where job candidates currently work from the `applicants` table (`current_company`).",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "current_company",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct applicant companies\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT current_company FROM applicants;",
+    "solution_explanation": "Retrieves distinct employer names from applicant profiles.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting applicant name along with current_company."
+    ],
+    "hints": [
+      "Project DISTINCT current_company.",
+      "From applicants.",
+      "Query: SELECT DISTINCT current_company FROM applicants;"
+    ],
+    "tags": [
+      "distinct",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-12",
+    "slug": "distinct-warehouse-locations",
+    "title": "Warehouse Distribution Hub Regions",
+    "description_markdown": "Retrieve all unique `location` values from the `warehouses` inventory registry.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses"
+    ],
+    "expected_columns": [
+      {
+        "name": "location",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct warehouse locations\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT location FROM warehouses;",
+    "solution_explanation": "Deduplicates physical storage distribution hub regions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting capacity or warehouse_id."
+    ],
+    "hints": [
+      "Use DISTINCT location.",
+      "From warehouses.",
+      "Query: SELECT DISTINCT location FROM warehouses;"
+    ],
+    "tags": [
+      "distinct",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-13",
+    "slug": "distinct-book-categories",
+    "title": "Library Circulation Categories",
+    "description_markdown": "Find every unique book `category` cataloged in the library's `books` collection.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct book categories\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT category FROM books;",
+    "solution_explanation": "Retrieves distinct literary classifications from the books table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling category."
+    ],
+    "hints": [
+      "Use DISTINCT category.",
+      "From books table.",
+      "Query: SELECT DISTINCT category FROM books;"
+    ],
+    "tags": [
+      "distinct",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-14",
+    "slug": "distinct-movie-genres",
+    "title": "Cataloged Movie Genres",
+    "description_markdown": "Query the `movies` catalog to find all distinct cinematic genres (`genre`).",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "genre",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct movie genres\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT genre FROM movies;",
+    "solution_explanation": "Extracts unique film genres across the platform's media library.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting release_year or title alongside genre."
+    ],
+    "hints": [
+      "Select DISTINCT genre.",
+      "From movies.",
+      "Query: SELECT DISTINCT genre FROM movies;"
+    ],
+    "tags": [
+      "distinct",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-15",
+    "slug": "distinct-lead-industries",
+    "title": "Sales Prospects Target Industries",
+    "description_markdown": "Retrieve all distinct `industry` values from the CRM `leads` table.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "industry",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct lead industries\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT industry FROM leads;",
+    "solution_explanation": "Compiles a deduplicated list of target market sectors from sales leads.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including lead_id or company_name."
+    ],
+    "hints": [
+      "Query DISTINCT industry.",
+      "From leads table.",
+      "Query: SELECT DISTINCT industry FROM leads;"
+    ],
+    "tags": [
+      "distinct",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-16",
+    "slug": "distinct-course-credits",
+    "title": "Academic Course Credit Allocations",
+    "description_markdown": "Find all distinct `credits` weight values assigned to curriculum offerings in `courses`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct credit counts\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT credits FROM courses;",
+    "solution_explanation": "Returns unique credit values offered across course catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting course_id or course_name."
+    ],
+    "hints": [
+      "Use DISTINCT credits.",
+      "From courses table.",
+      "Query: SELECT DISTINCT credits FROM courses;"
+    ],
+    "tags": [
+      "distinct",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-17",
+    "slug": "distinct-flight-destinations",
+    "title": "Unique Route Destination Airports",
+    "description_markdown": "Query the `flights` table to retrieve all unique `destination` airport codes.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "destination",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct flight destinations\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT destination FROM flights;",
+    "solution_explanation": "Deduplicates destination airport codes across airline schedules.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting origin instead of destination."
+    ],
+    "hints": [
+      "Project DISTINCT destination.",
+      "From flights.",
+      "Query: SELECT DISTINCT destination FROM flights;"
+    ],
+    "tags": [
+      "distinct",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-18",
+    "slug": "distinct-patient-blood-groups",
+    "title": "Patient Blood Group Distribution",
+    "description_markdown": "Retrieve all unique `blood_group` classifications recorded in the hospital `patients` registry.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct blood groups\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT blood_group FROM patients;",
+    "solution_explanation": "Eliminates duplicate blood group types among patient clinical records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting patient name or dob."
+    ],
+    "hints": [
+      "Query DISTINCT blood_group.",
+      "From patients table.",
+      "Query: SELECT DISTINCT blood_group FROM patients;"
+    ],
+    "tags": [
+      "distinct",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-19",
+    "slug": "distinct-room-types",
+    "title": "Hotel Room Accommodation Tiers",
+    "description_markdown": "Find every unique `room_type` available in the property inventory (`rooms` table).",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_type",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct room types\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT room_type FROM rooms;",
+    "solution_explanation": "Extracts distinct room styles across all properties.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting room_number which forces every row to be unique."
+    ],
+    "hints": [
+      "Select DISTINCT room_type.",
+      "From rooms.",
+      "Query: SELECT DISTINCT room_type FROM rooms;"
+    ],
+    "tags": [
+      "distinct",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-20",
+    "slug": "distinct-delivery-vehicle-types",
+    "title": "Courier Fleet Transportation Modes",
+    "description_markdown": "Query the `delivery_drivers` table to list every distinct `vehicle_type` operated by couriers.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct vehicle types\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT vehicle_type FROM delivery_drivers;",
+    "solution_explanation": "Returns unique transportation options utilized across courier fleets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting driver name or rating."
+    ],
+    "hints": [
+      "Use DISTINCT vehicle_type.",
+      "From delivery_drivers.",
+      "Query: SELECT DISTINCT vehicle_type FROM delivery_drivers;"
+    ],
+    "tags": [
+      "distinct",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-21",
+    "slug": "distinct-supplier-countries",
+    "title": "Supply Chain International Sourcing Countries",
+    "description_markdown": "Find all distinct `country` entries where vendor partners are based in `suppliers`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct supplier countries\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT country FROM suppliers;",
+    "solution_explanation": "Lists unique sovereign nations hosting approved parts suppliers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting supplier name alongside country."
+    ],
+    "hints": [
+      "Query DISTINCT country.",
+      "From suppliers table.",
+      "Query: SELECT DISTINCT country FROM suppliers;"
+    ],
+    "tags": [
+      "distinct",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-22",
+    "slug": "distinct-streaming-plans",
+    "title": "Active Subscription Pricing Tiers",
+    "description_markdown": "Extract all unique `plan_name` options subscribers hold from the `subscriptions` table.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "subscriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "plan_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct subscription plans\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT plan_name FROM subscriptions;",
+    "solution_explanation": "Deduplicates membership tiers registered by streaming users.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting user_id or monthly_price."
+    ],
+    "hints": [
+      "Select DISTINCT plan_name.",
+      "From subscriptions.",
+      "Query: SELECT DISTINCT plan_name FROM subscriptions;"
+    ],
+    "tags": [
+      "distinct",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-23",
+    "slug": "distinct-author-nationalities",
+    "title": "Global Literature Author Nationalities",
+    "description_markdown": "Retrieve all unique `nationality` values of writers recorded in the `authors` directory.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors"
+    ],
+    "expected_columns": [
+      {
+        "name": "nationality",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct author nationalities\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT nationality FROM authors;",
+    "solution_explanation": "Extracts deduplicated nationalities from literary biographies.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting author name."
+    ],
+    "hints": [
+      "Query DISTINCT nationality.",
+      "From authors.",
+      "Query: SELECT DISTINCT nationality FROM authors;"
+    ],
+    "tags": [
+      "distinct",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-24",
+    "slug": "distinct-opportunity-stages",
+    "title": "Sales Pipeline Milestone Stages",
+    "description_markdown": "Query the `opportunities` pipeline table to identify all distinct deal `stage` values.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct pipeline stages\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT stage FROM opportunities;",
+    "solution_explanation": "Lists unique progress phases active in deal pipelines.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting deal_size or lead_id."
+    ],
+    "hints": [
+      "Use DISTINCT stage.",
+      "From opportunities table.",
+      "Query: SELECT DISTINCT stage FROM opportunities;"
+    ],
+    "tags": [
+      "distinct",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-25",
+    "slug": "distinct-airport-city-country",
+    "title": "Unique Airport Geography Combinations",
+    "description_markdown": "Retrieve all unique combinations of `city` and `country` from the `airports` table.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports"
+    ],
+    "expected_columns": [
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct city and country combinations\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT city, country FROM airports;",
+    "solution_explanation": "Multi-column DISTINCT evaluates uniqueness across both city and country together.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Applying DISTINCT to only one column; in SQL, DISTINCT applies to the whole row tuple."
+    ],
+    "hints": [
+      "Select DISTINCT city, country.",
+      "From airports.",
+      "Query: SELECT DISTINCT city, country FROM airports;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-26",
+    "slug": "distinct-branch-cities",
+    "title": "Commercial Bank City and Branch Pairings",
+    "description_markdown": "Find every distinct pairing of `city` and `branch_name` in the `branches` registry.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct city and branch_name\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT city, branch_name FROM branches;",
+    "solution_explanation": "Returns unique combinations of metropolitan area and branch name.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting city or branch_name."
+    ],
+    "hints": [
+      "Select DISTINCT city, branch_name.",
+      "From branches.",
+      "Query: SELECT DISTINCT city, branch_name FROM branches;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-27",
+    "slug": "distinct-trade-portfolio-symbol",
+    "title": "Unique Asset Allocations Across Portfolios",
+    "description_markdown": "Query `trades` to return each distinct combination of `portfolio_id` and ticker `symbol` that has been traded.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct portfolio and ticker pairs\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT portfolio_id, symbol FROM trades;",
+    "solution_explanation": "Deduplicates securities held within specific investor portfolios.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting trade_id which prevents deduplication."
+    ],
+    "hints": [
+      "Project DISTINCT portfolio_id, symbol.",
+      "From trades.",
+      "Query: SELECT DISTINCT portfolio_id, symbol FROM trades;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-28",
+    "slug": "distinct-hotel-city-rating",
+    "title": "Regional Hospitality Star Classifications",
+    "description_markdown": "Find all distinct combinations of `city` and `star_rating` represented across all establishments in `hotels`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct city and star_rating\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT city, star_rating FROM hotels;",
+    "solution_explanation": "Determines distinct rating tiers present in each travel destination city.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including hotel_name."
+    ],
+    "hints": [
+      "Select DISTINCT city, star_rating.",
+      "From hotels.",
+      "Query: SELECT DISTINCT city, star_rating FROM hotels;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-29",
+    "slug": "distinct-book-author-category",
+    "title": "Author Genre Crossover Portfolio",
+    "description_markdown": "Query the `books` table to find all unique combinations of `author_id` and literary `category`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_id",
+        "type": "integer"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct author_id and category\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT author_id, category FROM books;",
+    "solution_explanation": "Multi-column DISTINCT reveals distinct genres explored by each author.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including book title or book_id."
+    ],
+    "hints": [
+      "Select DISTINCT author_id, category.",
+      "From books.",
+      "Query: SELECT DISTINCT author_id, category FROM books;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-30",
+    "slug": "distinct-doctor-dept-specialization",
+    "title": "Department and Clinical Specialty Pairs",
+    "description_markdown": "Find every distinct combination of `department` and `specialization` recorded in the `doctors` table.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct department and specialization\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT department, specialization FROM doctors;",
+    "solution_explanation": "Identifies unique department-specialization alignments across hospital staff.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including doctor_id or experience_years."
+    ],
+    "hints": [
+      "Select DISTINCT department, specialization.",
+      "From doctors table.",
+      "Query: SELECT DISTINCT department, specialization FROM doctors;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-31",
+    "slug": "distinct-sales-rep-territories",
+    "title": "Regional Quota and Commission Structures",
+    "description_markdown": "Determine each unique pairing of `territory` and `commission_rate` assigned to sales professionals in `sales_reps`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "commission_rate",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct territory and commission_rate\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT territory, commission_rate FROM sales_reps;",
+    "solution_explanation": "Finds unique compensation structures operating across geographical sales territories.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including sales rep name which breaks uniqueness aggregation."
+    ],
+    "hints": [
+      "Select DISTINCT territory, commission_rate.",
+      "From sales_reps.",
+      "Query: SELECT DISTINCT territory, commission_rate FROM sales_reps;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dist-32",
+    "slug": "distinct-inventory-warehouse-supplier",
+    "title": "Warehouse Inbound Supplier Linkages",
+    "description_markdown": "Retrieve all unique pairs of `warehouse_id` and `supplier_id` actively managing stock in `stock_items`.",
+    "topic_id": "distinct",
+    "subtopic_id": "distinct-multi",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Distinct warehouse_id and supplier_id\nSELECT DISTINCT ...",
+    "solution_query": "SELECT DISTINCT warehouse_id, supplier_id FROM stock_items;",
+    "solution_explanation": "Maps unique supplier-to-warehouse logistics relationships in inventory records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including item_id or sku."
+    ],
+    "hints": [
+      "Select DISTINCT warehouse_id, supplier_id.",
+      "From stock_items.",
+      "Query: SELECT DISTINCT warehouse_id, supplier_id FROM stock_items;"
+    ],
+    "tags": [
+      "distinct",
+      "multi-column",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dist-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dist-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dist-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

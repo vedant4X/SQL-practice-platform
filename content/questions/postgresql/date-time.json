@@ -1,0 +1,2407 @@
+[
+  {
+    "id": "q-dat-01",
+    "slug": "extract-hire-years",
+    "title": "Extract Employee Hire Years",
+    "description_markdown": "Extract the hire year from `hire_date` as `hire_year` using EXTRACT. Return `first_name`, `last_name`, and `hire_year`. Order by `hire_date` ascending, then `emp_id`.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_year",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use EXTRACT(YEAR FROM hire_date)\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, EXTRACT(YEAR FROM hire_date) AS hire_year FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "EXTRACT(YEAR FROM date_field) extracts the 4-digit calendar year from a DATE or TIMESTAMP.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `EXTRACT(YEAR FROM hire_date) AS hire_year`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, EXTRACT(YEAR FROM hire_date) AS hire_year FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-02",
+    "slug": "truncate-orders-to-month",
+    "title": "Cohort Order Dates by Month with DATE_TRUNC",
+    "description_markdown": "Truncate `order_date` to the first day of the month using `DATE_TRUNC('month', order_date)` as `order_month`. Return `order_id` and `order_month`. Order by `order_id`.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-current",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_month",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Truncate dates using DATE_TRUNC\nSELECT ...",
+    "solution_query": "SELECT order_id, DATE_TRUNC('month', order_date) AS order_month FROM orders ORDER BY order_id ASC;",
+    "solution_explanation": "DATE_TRUNC rounds timestamps down to the specified interval granularity.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DATE_TRUNC('month', order_date) AS order_month`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_id, DATE_TRUNC('month', order_date) AS order_month FROM orders ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "date_trunc"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-03",
+    "slug": "project-duration-in-days",
+    "title": "Calculate Project Calendar Durations",
+    "description_markdown": "For projects in `projects` that have ended (`end_date IS NOT NULL`), calculate the total duration in days (`end_date - start_date`) as `duration_days`. Return `project_name` and `duration_days`. Order by `duration_days` descending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subtract dates\nSELECT ...",
+    "solution_query": "SELECT project_name, (end_date - start_date) AS duration_days FROM projects WHERE end_date IS NOT NULL ORDER BY duration_days DESC, project_id ASC;",
+    "solution_explanation": "In PostgreSQL, subtracting two DATE types directly yields the integer number of elapsed calendar days.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Subtracting dates directly gives days: `(end_date - start_date) AS duration_days`.",
+      "Filter with `WHERE end_date IS NOT NULL`.",
+      "Query: SELECT project_name, (end_date - start_date) AS duration_days FROM projects WHERE end_date IS NOT NULL ORDER BY duration_days DESC, project_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "date-arithmetic"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-04",
+    "slug": "employeedb-employees-hire-month-and-day",
+    "title": "Extract Employee Hire Month and Calendar Day",
+    "description_markdown": "From `employees`, extract the month and day of the month from `hire_date` using `EXTRACT(MONTH FROM hire_date)` as `hire_month` and `EXTRACT(DAY FROM hire_date)` as `hire_day`. Return `emp_id`, `hire_month`, and `hire_day`, ordered by `emp_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "hire_month",
+        "type": "numeric"
+      },
+      {
+        "name": "hire_day",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract hire month and day\nSELECT emp_id, EXTRACT(MONTH FROM hire_date) AS hire_month, EXTRACT(DAY FROM hire_date) AS hire_day\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT emp_id, EXTRACT(MONTH FROM hire_date) AS hire_month, EXTRACT(DAY FROM hire_date) AS hire_day FROM employees ORDER BY emp_id ASC;",
+    "solution_explanation": "EXTRACT isolates specific temporal date components (MONTH, DAY) from a DATE column.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping month and day or missing column aliases."
+    ],
+    "hints": [
+      "Use EXTRACT(MONTH FROM hire_date) AS hire_month.",
+      "Use EXTRACT(DAY FROM hire_date) AS hire_day.",
+      "Query: SELECT emp_id, EXTRACT(MONTH FROM hire_date) AS hire_month, EXTRACT(DAY FROM hire_date) AS hire_day FROM employees ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-05",
+    "slug": "ecommercedb-orders-order-year-and-month",
+    "title": "Extract Order Calendar Year and Month Cohorts",
+    "description_markdown": "From `orders`, retrieve `order_id`, the year of the order (`EXTRACT(YEAR FROM order_date)` as `order_year`), and the month of the order (`EXTRACT(MONTH FROM order_date)` as `order_month`). Order by `order_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_year",
+        "type": "numeric"
+      },
+      {
+        "name": "order_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract order year and month\nSELECT order_id, EXTRACT(YEAR FROM order_date) AS order_year, EXTRACT(MONTH FROM order_date) AS order_month\nFROM orders\nORDER BY ...",
+    "solution_query": "SELECT order_id, EXTRACT(YEAR FROM order_date) AS order_year, EXTRACT(MONTH FROM order_date) AS order_month FROM orders ORDER BY order_id ASC;",
+    "solution_explanation": "Extracts 4-digit calendar year and integer month for cohort analysis.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting aliases order_year or order_month."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM order_date) AS order_year.",
+      "Use EXTRACT(MONTH FROM order_date) AS order_month.",
+      "Query: SELECT order_id, EXTRACT(YEAR FROM order_date) AS order_year, EXTRACT(MONTH FROM order_date) AS order_month FROM orders ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-06",
+    "slug": "collegedb-students-years-since-enrollment",
+    "title": "Calculate Student Academic Tenure from Enrollment Year",
+    "description_markdown": "Assuming reference year 2024, calculate the elapsed years since college entry (`(2024 - enrollment_year)` as `years_since_enrollment`). Return `student_id`, `first_name`, and `years_since_enrollment`, ordered by `student_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_since_enrollment",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Academic tenure calculation\nSELECT student_id, first_name, (2024 - enrollment_year) AS years_since_enrollment\nFROM students\nORDER BY ...",
+    "solution_query": "SELECT student_id, first_name, (2024 - enrollment_year) AS years_since_enrollment FROM students ORDER BY student_id ASC;",
+    "solution_explanation": "Computes elapsed years using arithmetic on the year integer attribute.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting from wrong reference year."
+    ],
+    "hints": [
+      "Use (2024 - enrollment_year) AS years_since_enrollment.",
+      "Query: SELECT student_id, first_name, (2024 - enrollment_year) AS years_since_enrollment FROM students ORDER BY student_id ASC;",
+      "The expected query is: SELECT student_id, first_name, (2024 - enrollment_year) AS years_since_enrollment FROM students ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-07",
+    "slug": "banking-customers-joined-year-and-month",
+    "title": "Extract Bank Customer Relationship Inception Year and Month",
+    "description_markdown": "From `bank_customers`, retrieve `customer_id`, `name`, join year (`EXTRACT(YEAR FROM joined_date)` as `join_year`), and join month (`EXTRACT(MONTH FROM joined_date)` as `join_month`). Order by `customer_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "join_year",
+        "type": "numeric"
+      },
+      {
+        "name": "join_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer onboarding year and month\nSELECT customer_id, name, EXTRACT(YEAR FROM joined_date) AS join_year, EXTRACT(MONTH FROM joined_date) AS join_month\nFROM bank_customers\nORDER BY ...",
+    "solution_query": "SELECT customer_id, name, EXTRACT(YEAR FROM joined_date) AS join_year, EXTRACT(MONTH FROM joined_date) AS join_month FROM bank_customers ORDER BY customer_id ASC;",
+    "solution_explanation": "Extracts customer registration year and month.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using joined_date without EXTRACT."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM joined_date) AS join_year.",
+      "Use EXTRACT(MONTH FROM joined_date) AS join_month.",
+      "Query: SELECT customer_id, name, EXTRACT(YEAR FROM joined_date) AS join_year, EXTRACT(MONTH FROM joined_date) AS join_month FROM bank_customers ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-08",
+    "slug": "hospital-patients-birth-year-and-month",
+    "title": "Extract Patient Date of Birth Year and Month",
+    "description_markdown": "From `patients`, extract the patient's birth year (`EXTRACT(YEAR FROM dob)` as `birth_year`) and birth month (`EXTRACT(MONTH FROM dob)` as `birth_month`). Return `patient_id`, `name`, `birth_year`, and `birth_month`, ordered by `patient_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "birth_year",
+        "type": "numeric"
+      },
+      {
+        "name": "birth_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract patient birth year and month\nSELECT patient_id, name, EXTRACT(YEAR FROM dob) AS birth_year, EXTRACT(MONTH FROM dob) AS birth_month\nFROM patients\nORDER BY ...",
+    "solution_query": "SELECT patient_id, name, EXTRACT(YEAR FROM dob) AS birth_year, EXTRACT(MONTH FROM dob) AS birth_month FROM patients ORDER BY patient_id ASC;",
+    "solution_explanation": "Isolates year and month components from date of birth (dob).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using date_of_birth instead of dob."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM dob) AS birth_year.",
+      "Use EXTRACT(MONTH FROM dob) AS birth_month.",
+      "Query: SELECT patient_id, name, EXTRACT(YEAR FROM dob) AS birth_year, EXTRACT(MONTH FROM dob) AS birth_month FROM patients ORDER BY patient_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-09",
+    "slug": "hotel-reservations-stay-duration-days",
+    "title": "Calculate Hotel Reservation Stay Length in Days",
+    "description_markdown": "Calculate the total number of nights/days for each hotel booking as `stay_duration_days` from `check_in` and `check_out`. Return `reservation_id` and `stay_duration_days`, ordered by `reservation_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "stay_duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stay duration in days (Postgres)\nSELECT reservation_id, (check_out - check_in) AS stay_duration_days\nFROM reservations\nORDER BY ...",
+    "solution_query": "SELECT reservation_id, (check_out - check_in) AS stay_duration_days FROM reservations ORDER BY reservation_id ASC;",
+    "solution_explanation": "Computes elapsed calendar days between checkout and checkin.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inverting date order resulting in negative days."
+    ],
+    "dialect_notes": "In PostgreSQL, subtracting two DATE values produces the integer difference in days. In MySQL, the DATEDIFF(end_date, start_date) function is used.",
+    "hints": [
+      "In PostgreSQL use (check_out - check_in) AS stay_duration_days.",
+      "In MySQL use DATEDIFF(check_out, check_in) AS stay_duration_days.",
+      "Order by reservation_id ASC."
+    ],
+    "tags": [
+      "date-time",
+      "datediff",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-10",
+    "slug": "library-book-loans-allowed-duration-days",
+    "title": "Calculate Maximum Permitted Loan Period in Days",
+    "description_markdown": "From `book_loans`, compute the scheduled loan duration in days between `loan_date` and `due_date` aliased as `allowed_loan_days`. Return `loan_id`, `book_id`, and `allowed_loan_days`, ordered by `loan_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "allowed_loan_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Allowed loan period in days (Postgres)\nSELECT loan_id, book_id, (due_date - loan_date) AS allowed_loan_days\nFROM book_loans\nORDER BY ...",
+    "solution_query": "SELECT loan_id, book_id, (due_date - loan_date) AS allowed_loan_days FROM book_loans ORDER BY loan_id ASC;",
+    "solution_explanation": "Measures allowable checkout window length.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting loan_date from returned_date instead of due_date."
+    ],
+    "dialect_notes": "PostgreSQL directly subtracts dates ((due_date - loan_date)), while MySQL uses DATEDIFF(due_date, loan_date).",
+    "hints": [
+      "In PostgreSQL use (due_date - loan_date) AS allowed_loan_days.",
+      "In MySQL use DATEDIFF(due_date, loan_date) AS allowed_loan_days.",
+      "Order by loan_id ASC."
+    ],
+    "tags": [
+      "date-time",
+      "datediff",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-11",
+    "slug": "movie-streaming-users-member-since-year",
+    "title": "Extract Streaming Subscriber Account Creation Year",
+    "description_markdown": "From `streaming_users`, retrieve `user_id`, `username`, and the year the account joined (`EXTRACT(YEAR FROM joined_date)` as `join_year`). Order by `user_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "streaming_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "username",
+        "type": "varchar"
+      },
+      {
+        "name": "join_year",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract join year from joined_date\nSELECT user_id, username, EXTRACT(YEAR FROM joined_date) AS join_year\nFROM streaming_users\nORDER BY ...",
+    "solution_query": "SELECT user_id, username, EXTRACT(YEAR FROM joined_date) AS join_year FROM streaming_users ORDER BY user_id ASC;",
+    "solution_explanation": "Extracts calendar year from joined_date.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting alias join_year."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM joined_date) AS join_year.",
+      "Query: SELECT user_id, username, EXTRACT(YEAR FROM joined_date) AS join_year FROM streaming_users ORDER BY user_id ASC;",
+      "The expected query is: SELECT user_id, username, EXTRACT(YEAR FROM joined_date) AS join_year FROM streaming_users ORDER BY user_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-12",
+    "slug": "sales-contracts-sign-year-and-month",
+    "title": "Extract Contract Execution Year and Month",
+    "description_markdown": "From `contracts`, extract the signed year (`EXTRACT(YEAR FROM signed_date)` as `sign_year`) and signed month (`EXTRACT(MONTH FROM signed_date)` as `sign_month`). Return `contract_id`, `sign_year`, and `sign_month`, ordered by `contract_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "sign_year",
+        "type": "numeric"
+      },
+      {
+        "name": "sign_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Contract sign year and month\nSELECT contract_id, EXTRACT(YEAR FROM signed_date) AS sign_year, EXTRACT(MONTH FROM signed_date) AS sign_month\nFROM contracts\nORDER BY ...",
+    "solution_query": "SELECT contract_id, EXTRACT(YEAR FROM signed_date) AS sign_year, EXTRACT(MONTH FROM signed_date) AS sign_month FROM contracts ORDER BY contract_id ASC;",
+    "solution_explanation": "Isolates year and month of signed enterprise deals.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using close_date instead of signed_date."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM signed_date) AS sign_year.",
+      "Use EXTRACT(MONTH FROM signed_date) AS sign_month.",
+      "Query: SELECT contract_id, EXTRACT(YEAR FROM signed_date) AS sign_year, EXTRACT(MONTH FROM signed_date) AS sign_month FROM contracts ORDER BY contract_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-13",
+    "slug": "airline-flights-departure-hour-extraction",
+    "title": "Extract Scheduled Flight Departure Hour",
+    "description_markdown": "From `flights`, extract the scheduled departure hour (`EXTRACT(HOUR FROM departure_time)` as `dep_hour`). Return `flight_id`, `flight_number`, and `dep_hour`, ordered by `flight_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "dep_hour",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract departure hour from timestamp\nSELECT flight_id, flight_number, EXTRACT(HOUR FROM departure_time) AS dep_hour\nFROM flights\nORDER BY ...",
+    "solution_query": "SELECT flight_id, flight_number, EXTRACT(HOUR FROM departure_time) AS dep_hour FROM flights ORDER BY flight_id ASC;",
+    "solution_explanation": "Extracts time of day hour (0-23) from a flight departure timestamp.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Extracting minute instead of hour."
+    ],
+    "hints": [
+      "Use EXTRACT(HOUR FROM departure_time) AS dep_hour.",
+      "Query: SELECT flight_id, flight_number, EXTRACT(HOUR FROM departure_time) AS dep_hour FROM flights ORDER BY flight_id ASC;",
+      "The expected query is: SELECT flight_id, flight_number, EXTRACT(HOUR FROM departure_time) AS dep_hour FROM flights ORDER BY flight_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-14",
+    "slug": "finance-dividends-payout-year-and-month",
+    "title": "Extract Dividend Distribution Year and Month",
+    "description_markdown": "From `dividends`, retrieve `dividend_id`, `symbol`, payout year (`EXTRACT(YEAR FROM payout_date)` as `payout_year`), and payout month (`EXTRACT(MONTH FROM payout_date)` as `payout_month`). Order by `dividend_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "dividend_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "payout_year",
+        "type": "numeric"
+      },
+      {
+        "name": "payout_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Dividend payout year and month\nSELECT dividend_id, symbol, EXTRACT(YEAR FROM payout_date) AS payout_year, EXTRACT(MONTH FROM payout_date) AS payout_month\nFROM dividends\nORDER BY ...",
+    "solution_query": "SELECT dividend_id, symbol, EXTRACT(YEAR FROM payout_date) AS payout_year, EXTRACT(MONTH FROM payout_date) AS payout_month FROM dividends ORDER BY dividend_id ASC;",
+    "solution_explanation": "Isolates calendar year and month of financial corporate distributions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting aliases payout_year or payout_month."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM payout_date) AS payout_year.",
+      "Use EXTRACT(MONTH FROM payout_date) AS payout_month.",
+      "Query: SELECT dividend_id, symbol, EXTRACT(YEAR FROM payout_date) AS payout_year, EXTRACT(MONTH FROM payout_date) AS payout_month FROM dividends ORDER BY dividend_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-15",
+    "slug": "hr-job-postings-posted-year-and-month",
+    "title": "Extract Job Requisition Publication Year and Month",
+    "description_markdown": "From `job_postings`, extract the posting year (`EXTRACT(YEAR FROM posted_date)` as `posting_year`) and posting month (`EXTRACT(MONTH FROM posted_date)` as `posting_month`). Return `posting_id`, `title`, `posting_year`, and `posting_month`, ordered by `posting_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "posting_year",
+        "type": "numeric"
+      },
+      {
+        "name": "posting_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Job publication year and month\nSELECT posting_id, title, EXTRACT(YEAR FROM posted_date) AS posting_year, EXTRACT(MONTH FROM posted_date) AS posting_month\nFROM job_postings\nORDER BY ...",
+    "solution_query": "SELECT posting_id, title, EXTRACT(YEAR FROM posted_date) AS posting_year, EXTRACT(MONTH FROM posted_date) AS posting_month FROM job_postings ORDER BY posting_id ASC;",
+    "solution_explanation": "Extracts posting date components for hiring timeline reports.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using post_date instead of posted_date."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM posted_date) AS posting_year.",
+      "Use EXTRACT(MONTH FROM posted_date) AS posting_month.",
+      "Query: SELECT posting_id, title, EXTRACT(YEAR FROM posted_date) AS posting_year, EXTRACT(MONTH FROM posted_date) AS posting_month FROM job_postings ORDER BY posting_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-16",
+    "slug": "inventory-stock-transactions-day-and-month",
+    "title": "Extract Inventory Movement Calendar Day and Month",
+    "description_markdown": "From `stock_transactions`, extract transaction day (`EXTRACT(DAY FROM tx_date)` as `tx_day`) and month (`EXTRACT(MONTH FROM tx_date)` as `tx_month`). Return `tx_id`, `item_id`, `tx_day`, and `tx_month`, ordered by `tx_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "tx_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "tx_day",
+        "type": "numeric"
+      },
+      {
+        "name": "tx_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Transaction day and month\nSELECT tx_id, item_id, EXTRACT(DAY FROM tx_date) AS tx_day, EXTRACT(MONTH FROM tx_date) AS tx_month\nFROM stock_transactions\nORDER BY ...",
+    "solution_query": "SELECT tx_id, item_id, EXTRACT(DAY FROM tx_date) AS tx_day, EXTRACT(MONTH FROM tx_date) AS tx_month FROM stock_transactions ORDER BY tx_id ASC;",
+    "solution_explanation": "Extracts day and month from inventory ledger movement timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping day and month."
+    ],
+    "hints": [
+      "Use EXTRACT(DAY FROM tx_date) AS tx_day.",
+      "Use EXTRACT(MONTH FROM tx_date) AS tx_month.",
+      "Query: SELECT tx_id, item_id, EXTRACT(DAY FROM tx_date) AS tx_day, EXTRACT(MONTH FROM tx_date) AS tx_month FROM stock_transactions ORDER BY tx_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-17",
+    "slug": "food-delivery-orders-order-hour-of-day",
+    "title": "Extract Food Delivery Order Time Hour of Day",
+    "description_markdown": "From `delivery_orders`, extract the hour of the order from `order_timestamp` (`EXTRACT(HOUR FROM order_timestamp)` as `order_hour`). Return `order_id` and `order_hour`, ordered by `order_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_hour",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract order hour from timestamp\nSELECT order_id, EXTRACT(HOUR FROM order_timestamp) AS order_hour\nFROM delivery_orders\nORDER BY ...",
+    "solution_query": "SELECT order_id, EXTRACT(HOUR FROM order_timestamp) AS order_hour FROM delivery_orders ORDER BY order_id ASC;",
+    "solution_explanation": "Isolates peak ordering meal hour from timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using order_time instead of order_timestamp."
+    ],
+    "hints": [
+      "Use EXTRACT(HOUR FROM order_timestamp) AS order_hour.",
+      "Query: SELECT order_id, EXTRACT(HOUR FROM order_timestamp) AS order_hour FROM delivery_orders ORDER BY order_id ASC;",
+      "The expected query is: SELECT order_id, EXTRACT(HOUR FROM order_timestamp) AS order_hour FROM delivery_orders ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-18",
+    "slug": "social-media-posts-creation-year-and-month",
+    "title": "Extract Post Publication Year and Month",
+    "description_markdown": "From `posts`, extract the post publication year (`EXTRACT(YEAR FROM created_at)` as `post_year`) and publication month (`EXTRACT(MONTH FROM created_at)` as `post_month`). Return `post_id`, `post_year`, and `post_month`, ordered by `post_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "post_year",
+        "type": "numeric"
+      },
+      {
+        "name": "post_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Post publication year and month\nSELECT post_id, EXTRACT(YEAR FROM created_at) AS post_year, EXTRACT(MONTH FROM created_at) AS post_month\nFROM posts\nORDER BY ...",
+    "solution_query": "SELECT post_id, EXTRACT(YEAR FROM created_at) AS post_year, EXTRACT(MONTH FROM created_at) AS post_month FROM posts ORDER BY post_id ASC;",
+    "solution_explanation": "Extracts publication year and month from social post timestamp.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting post_year or post_month alias."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM created_at) AS post_year.",
+      "Use EXTRACT(MONTH FROM created_at) AS post_month.",
+      "Query: SELECT post_id, EXTRACT(YEAR FROM created_at) AS post_year, EXTRACT(MONTH FROM created_at) AS post_month FROM posts ORDER BY post_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-19",
+    "slug": "employeedb-projects-start-year-and-month",
+    "title": "Extract Strategic Project Kickoff Year and Month",
+    "description_markdown": "From `projects`, extract project start year (`EXTRACT(YEAR FROM start_date)` as `start_year`) and month (`EXTRACT(MONTH FROM start_date)` as `start_month`). Return `project_id`, `project_name`, `start_year`, and `start_month`, ordered by `project_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "start_year",
+        "type": "numeric"
+      },
+      {
+        "name": "start_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Project start year and month\nSELECT project_id, project_name, EXTRACT(YEAR FROM start_date) AS start_year, EXTRACT(MONTH FROM start_date) AS start_month\nFROM projects\nORDER BY ...",
+    "solution_query": "SELECT project_id, project_name, EXTRACT(YEAR FROM start_date) AS start_year, EXTRACT(MONTH FROM start_date) AS start_month FROM projects ORDER BY project_id ASC;",
+    "solution_explanation": "Isolates project initiation milestones.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using end_date instead of start_date."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM start_date) AS start_year.",
+      "Use EXTRACT(MONTH FROM start_date) AS start_month.",
+      "Query: SELECT project_id, project_name, EXTRACT(YEAR FROM start_date) AS start_year, EXTRACT(MONTH FROM start_date) AS start_month FROM projects ORDER BY project_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-20",
+    "slug": "ecommercedb-customers-account-created-year",
+    "title": "Extract Customer Account Registration Year",
+    "description_markdown": "From `customers`, retrieve `customer_id`, `first_name`, and the customer signup year using `EXTRACT(YEAR FROM created_at)` as `signup_year`. Order by `customer_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "signup_year",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer signup year extraction\nSELECT customer_id, first_name, EXTRACT(YEAR FROM created_at) AS signup_year\nFROM customers\nORDER BY ...",
+    "solution_query": "SELECT customer_id, first_name, EXTRACT(YEAR FROM created_at) AS signup_year FROM customers ORDER BY customer_id ASC;",
+    "solution_explanation": "Extracts customer acquisition year from registration timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting signup_year alias."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM created_at) AS signup_year.",
+      "Query: SELECT customer_id, first_name, EXTRACT(YEAR FROM created_at) AS signup_year FROM customers ORDER BY customer_id ASC;",
+      "The expected query is: SELECT customer_id, first_name, EXTRACT(YEAR FROM created_at) AS signup_year FROM customers ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-21",
+    "slug": "collegedb-students-enrolled-since-2022",
+    "title": "Filter Undergraduates Enrolled in Recent Cohorts",
+    "description_markdown": "From `students`, select `student_id`, `first_name`, and `enrollment_year` for students who enrolled in 2022 or later (`enrollment_year >= 2022`). Order by `student_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Students enrolled 2022 or later\nSELECT student_id, first_name, enrollment_year\nFROM students\nWHERE enrollment_year >= 2022\nORDER BY ...",
+    "solution_query": "SELECT student_id, first_name, enrollment_year FROM students WHERE enrollment_year >= 2022 ORDER BY student_id ASC;",
+    "solution_explanation": "Filters student roster by enrollment cohort cut-off year.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > 2022 instead of >= 2022."
+    ],
+    "hints": [
+      "Filter with WHERE enrollment_year >= 2022.",
+      "Query: SELECT student_id, first_name, enrollment_year FROM students WHERE enrollment_year >= 2022 ORDER BY student_id ASC;",
+      "The expected query is: SELECT student_id, first_name, enrollment_year FROM students WHERE enrollment_year >= 2022 ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-22",
+    "slug": "banking-transactions-timestamp-hour",
+    "title": "Extract Financial Transaction Execution Hour",
+    "description_markdown": "From `transactions`, extract the hour of the transaction from `tx_time` (`EXTRACT(HOUR FROM tx_time)` as `tx_hour`). Return `transaction_id` and `tx_hour`, ordered by `transaction_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "tx_hour",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract transaction hour\nSELECT transaction_id, EXTRACT(HOUR FROM tx_time) AS tx_hour\nFROM transactions\nORDER BY ...",
+    "solution_query": "SELECT transaction_id, EXTRACT(HOUR FROM tx_time) AS tx_hour FROM transactions ORDER BY transaction_id ASC;",
+    "solution_explanation": "Extracts hour of day to audit transaction timing patterns.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using tx_date instead of tx_time."
+    ],
+    "hints": [
+      "Use EXTRACT(HOUR FROM tx_time) AS tx_hour.",
+      "Query: SELECT transaction_id, EXTRACT(HOUR FROM tx_time) AS tx_hour FROM transactions ORDER BY transaction_id ASC;",
+      "The expected query is: SELECT transaction_id, EXTRACT(HOUR FROM tx_time) AS tx_hour FROM transactions ORDER BY transaction_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-23",
+    "slug": "hospital-appointments-consultation-year-month",
+    "title": "Extract Patient Consultation Appointment Year and Month",
+    "description_markdown": "From `appointments`, retrieve `appointment_id`, `patient_id`, appointment year (`EXTRACT(YEAR FROM appointment_date)` as `appt_year`), and month (`EXTRACT(MONTH FROM appointment_date)` as `appt_month`). Order by `appointment_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "appt_year",
+        "type": "numeric"
+      },
+      {
+        "name": "appt_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Appointment year and month\nSELECT appointment_id, patient_id, EXTRACT(YEAR FROM appointment_date) AS appt_year, EXTRACT(MONTH FROM appointment_date) AS appt_month\nFROM appointments\nORDER BY ...",
+    "solution_query": "SELECT appointment_id, patient_id, EXTRACT(YEAR FROM appointment_date) AS appt_year, EXTRACT(MONTH FROM appointment_date) AS appt_month FROM appointments ORDER BY appointment_id ASC;",
+    "solution_explanation": "Extracts appointment scheduling year and month for clinic reporting.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting aliases appt_year or appt_month."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM appointment_date) AS appt_year.",
+      "Use EXTRACT(MONTH FROM appointment_date) AS appt_month.",
+      "Query: SELECT appointment_id, patient_id, EXTRACT(YEAR FROM appointment_date) AS appt_year, EXTRACT(MONTH FROM appointment_date) AS appt_month FROM appointments ORDER BY appointment_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-24",
+    "slug": "hotel-reservations-checkin-calendar-month",
+    "title": "Extract Guest Check-In Calendar Month",
+    "description_markdown": "From `reservations`, retrieve `reservation_id`, `check_in`, and the arrival month (`EXTRACT(MONTH FROM check_in)` as `checkin_month`). Order by `reservation_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "check_in",
+        "type": "date"
+      },
+      {
+        "name": "checkin_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Arrival month extraction\nSELECT reservation_id, check_in, EXTRACT(MONTH FROM check_in) AS checkin_month\nFROM reservations\nORDER BY ...",
+    "solution_query": "SELECT reservation_id, check_in, EXTRACT(MONTH FROM check_in) AS checkin_month FROM reservations ORDER BY reservation_id ASC;",
+    "solution_explanation": "Isolates check-in arrival month for seasonal hospitality analysis.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using check_out instead of check_in."
+    ],
+    "hints": [
+      "Use EXTRACT(MONTH FROM check_in) AS checkin_month.",
+      "Query: SELECT reservation_id, check_in, EXTRACT(MONTH FROM check_in) AS checkin_month FROM reservations ORDER BY reservation_id ASC;",
+      "The expected query is: SELECT reservation_id, check_in, EXTRACT(MONTH FROM check_in) AS checkin_month FROM reservations ORDER BY reservation_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-25",
+    "slug": "library-books-vintage-age-calculation",
+    "title": "Calculate Book Vintage Age Relative to 2024",
+    "description_markdown": "Assuming reference year 2024, compute the elapsed age of each volume in years (`(2024 - publication_year)` as `book_age_years`). Return `book_id`, `title`, and `book_age_years`, ordered by `book_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "book_age_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Book age from publication year\nSELECT book_id, title, (2024 - publication_year) AS book_age_years\nFROM books\nORDER BY ...",
+    "solution_query": "SELECT book_id, title, (2024 - publication_year) AS book_age_years FROM books ORDER BY book_id ASC;",
+    "solution_explanation": "Calculates book vintage age using integer year arithmetic.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting 2024 from publication_year."
+    ],
+    "hints": [
+      "Use (2024 - publication_year) AS book_age_years.",
+      "Query: SELECT book_id, title, (2024 - publication_year) AS book_age_years FROM books ORDER BY book_id ASC;",
+      "The expected query is: SELECT book_id, title, (2024 - publication_year) AS book_age_years FROM books ORDER BY book_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-26",
+    "slug": "sales-opportunities-close-year-and-month",
+    "title": "Extract Opportunity Close Year and Month",
+    "description_markdown": "From `opportunities`, extract `close_year` (`EXTRACT(YEAR FROM close_date)`) and `close_month` (`EXTRACT(MONTH FROM close_date)`). Return `opportunity_id`, `deal_size`, `close_year`, and `close_month`, ordered by `opportunity_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "numeric"
+      },
+      {
+        "name": "close_year",
+        "type": "numeric"
+      },
+      {
+        "name": "close_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Close year and month for sales opportunities\nSELECT opportunity_id, deal_size, EXTRACT(YEAR FROM close_date) AS close_year, EXTRACT(MONTH FROM close_date) AS close_month\nFROM opportunities\nORDER BY ...",
+    "solution_query": "SELECT opportunity_id, deal_size, EXTRACT(YEAR FROM close_date) AS close_year, EXTRACT(MONTH FROM close_date) AS close_month FROM opportunities ORDER BY opportunity_id ASC;",
+    "solution_explanation": "Extracts deal closing year and month for quarterly sales quota tracking.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting aliases close_year or close_month."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM close_date) AS close_year.",
+      "Use EXTRACT(MONTH FROM close_date) AS close_month.",
+      "Query: SELECT opportunity_id, deal_size, EXTRACT(YEAR FROM close_date) AS close_year, EXTRACT(MONTH FROM close_date) AS close_month FROM opportunities ORDER BY opportunity_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-27",
+    "slug": "airline-bookings-booking-year-and-month",
+    "title": "Extract Passenger Reservation Booking Year and Month",
+    "description_markdown": "From `bookings`, extract the booking year (`EXTRACT(YEAR FROM booking_date)` as `booking_year`) and booking month (`EXTRACT(MONTH FROM booking_date)` as `booking_month`). Return `booking_id`, `booking_year`, and `booking_month`, ordered by `booking_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "booking_id",
+        "type": "integer"
+      },
+      {
+        "name": "booking_year",
+        "type": "numeric"
+      },
+      {
+        "name": "booking_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Booking creation year and month\nSELECT booking_id, EXTRACT(YEAR FROM booking_date) AS booking_year, EXTRACT(MONTH FROM booking_date) AS booking_month\nFROM bookings\nORDER BY ...",
+    "solution_query": "SELECT booking_id, EXTRACT(YEAR FROM booking_date) AS booking_year, EXTRACT(MONTH FROM booking_date) AS booking_month FROM bookings ORDER BY booking_id ASC;",
+    "solution_explanation": "Extracts reservation creation temporal attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using flight date instead of booking_date."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM booking_date) AS booking_year.",
+      "Use EXTRACT(MONTH FROM booking_date) AS booking_month.",
+      "Query: SELECT booking_id, EXTRACT(YEAR FROM booking_date) AS booking_year, EXTRACT(MONTH FROM booking_date) AS booking_month FROM bookings ORDER BY booking_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-28",
+    "slug": "food-delivery-orders-order-calendar-day",
+    "title": "Extract Food Delivery Order Calendar Day",
+    "description_markdown": "From `delivery_orders`, extract the day of the month from `order_timestamp` (`EXTRACT(DAY FROM order_timestamp)` as `order_day`). Return `order_id` and `order_day`, ordered by `order_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_day",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract order calendar day\nSELECT order_id, EXTRACT(DAY FROM order_timestamp) AS order_day\nFROM delivery_orders\nORDER BY ...",
+    "solution_query": "SELECT order_id, EXTRACT(DAY FROM order_timestamp) AS order_day FROM delivery_orders ORDER BY order_id ASC;",
+    "solution_explanation": "Extracts day-of-month component from delivery order timestamp.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using order_date instead of order_timestamp."
+    ],
+    "hints": [
+      "Use EXTRACT(DAY FROM order_timestamp) AS order_day.",
+      "Query: SELECT order_id, EXTRACT(DAY FROM order_timestamp) AS order_day FROM delivery_orders ORDER BY order_id ASC;",
+      "The expected query is: SELECT order_id, EXTRACT(DAY FROM order_timestamp) AS order_day FROM delivery_orders ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-29",
+    "slug": "finance-portfolios-creation-inception-year",
+    "title": "Extract Investment Portfolio Creation Inception Year",
+    "description_markdown": "From `portfolios`, retrieve `portfolio_id`, `owner_name`, and the inception year (`EXTRACT(YEAR FROM created_at)` as `portfolio_year`). Order by `portfolio_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "portfolio_year",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Portfolio inception year\nSELECT portfolio_id, owner_name, EXTRACT(YEAR FROM created_at) AS portfolio_year\nFROM portfolios\nORDER BY ...",
+    "solution_query": "SELECT portfolio_id, owner_name, EXTRACT(YEAR FROM created_at) AS portfolio_year FROM portfolios ORDER BY portfolio_id ASC;",
+    "solution_explanation": "Extracts account vintage year from portfolio creation date.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting alias portfolio_year."
+    ],
+    "hints": [
+      "Use EXTRACT(YEAR FROM created_at) AS portfolio_year.",
+      "Query: SELECT portfolio_id, owner_name, EXTRACT(YEAR FROM created_at) AS portfolio_year FROM portfolios ORDER BY portfolio_id ASC;",
+      "The expected query is: SELECT portfolio_id, owner_name, EXTRACT(YEAR FROM created_at) AS portfolio_year FROM portfolios ORDER BY portfolio_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-30",
+    "slug": "hr-interviews-completed-month",
+    "title": "Extract Completed Interview Stage Calendar Month",
+    "description_markdown": "From `interview_stages`, retrieve `stage_id`, `stage_name`, and completion month (`EXTRACT(MONTH FROM completed_at)` as `interview_month`). Order by `stage_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_id",
+        "type": "integer"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "interview_month",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Interview stage completion month\nSELECT stage_id, stage_name, EXTRACT(MONTH FROM completed_at) AS interview_month\nFROM interview_stages\nORDER BY ...",
+    "solution_query": "SELECT stage_id, stage_name, EXTRACT(MONTH FROM completed_at) AS interview_month FROM interview_stages ORDER BY stage_id ASC;",
+    "solution_explanation": "Extracts calendar month of completed candidate evaluation rounds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using stage_date instead of completed_at."
+    ],
+    "hints": [
+      "Use EXTRACT(MONTH FROM completed_at) AS interview_month.",
+      "Query: SELECT stage_id, stage_name, EXTRACT(MONTH FROM completed_at) AS interview_month FROM interview_stages ORDER BY stage_id ASC;",
+      "The expected query is: SELECT stage_id, stage_name, EXTRACT(MONTH FROM completed_at) AS interview_month FROM interview_stages ORDER BY stage_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-31",
+    "slug": "ecommercedb-payments-processing-hour-extraction",
+    "title": "Extract Payment Gateway Transaction Hour",
+    "description_markdown": "From `payments`, extract the hour of transaction processing (`EXTRACT(HOUR FROM processed_at)` as `processed_hour`). Return `payment_id`, `amount`, and `processed_hour`, ordered by `payment_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "payment_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "numeric"
+      },
+      {
+        "name": "processed_hour",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Payment processing hour\nSELECT payment_id, amount, EXTRACT(HOUR FROM processed_at) AS processed_hour\nFROM payments\nORDER BY ...",
+    "solution_query": "SELECT payment_id, amount, EXTRACT(HOUR FROM processed_at) AS processed_hour FROM payments ORDER BY payment_id ASC;",
+    "solution_explanation": "Extracts hour of payment gateway execution.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using payment_time instead of processed_at."
+    ],
+    "hints": [
+      "Use EXTRACT(HOUR FROM processed_at) AS processed_hour.",
+      "Query: SELECT payment_id, amount, EXTRACT(HOUR FROM processed_at) AS processed_hour FROM payments ORDER BY payment_id ASC;",
+      "The expected query is: SELECT payment_id, amount, EXTRACT(HOUR FROM processed_at) AS processed_hour FROM payments ORDER BY payment_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-dat-32",
+    "slug": "social-media-likes-month-and-day",
+    "title": "Extract Social Like Activity Calendar Month and Day",
+    "description_markdown": "From `likes`, extract the month (`EXTRACT(MONTH FROM liked_at)` as `like_month`) and day (`EXTRACT(DAY FROM liked_at)` as `like_day`). Return `like_id`, `post_id`, `like_month`, and `like_day`, ordered by `like_id` ascending.",
+    "topic_id": "date-time",
+    "subtopic_id": "dt-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "like_id",
+        "type": "integer"
+      },
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "like_month",
+        "type": "numeric"
+      },
+      {
+        "name": "like_day",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Like reaction month and day\nSELECT like_id, post_id, EXTRACT(MONTH FROM liked_at) AS like_month, EXTRACT(DAY FROM liked_at) AS like_day\nFROM likes\nORDER BY ...",
+    "solution_query": "SELECT like_id, post_id, EXTRACT(MONTH FROM liked_at) AS like_month, EXTRACT(DAY FROM liked_at) AS like_day FROM likes ORDER BY like_id ASC;",
+    "solution_explanation": "Extracts engagement activity timestamp components.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping month and day."
+    ],
+    "hints": [
+      "Use EXTRACT(MONTH FROM liked_at) AS like_month.",
+      "Use EXTRACT(DAY FROM liked_at) AS like_day.",
+      "Query: SELECT like_id, post_id, EXTRACT(MONTH FROM liked_at) AS like_month, EXTRACT(DAY FROM liked_at) AS like_day FROM likes ORDER BY like_id ASC;"
+    ],
+    "tags": [
+      "date-time",
+      "extract",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-dat-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-dat-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-dat-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

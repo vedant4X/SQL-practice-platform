@@ -1,0 +1,2360 @@
+[
+  {
+    "id": "q-my-lik-01",
+    "slug": "find-engineers-by-title",
+    "title": "Locate All Engineering Roles via Pattern Matching",
+    "description_markdown": "Find all employees whose `job_title` contains the word 'Engineer'. Return `first_name`, `last_name`, and `job_title`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Pattern matching with LIKE\nSELECT first_name, last_name, job_title\nFROM employees\nWHERE job_title LIKE ...",
+    "solution_query": "SELECT first_name, last_name, job_title FROM employees WHERE job_title LIKE '%Engineer%';",
+    "solution_explanation": "The `%` wildcard matches any zero or more characters preceding or succeeding the term 'Engineer'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Wrap the target word in percent wildcards: '%Engineer%'",
+      "LIKE is case-sensitive in MySQL.",
+      "Query: SELECT first_name, last_name, job_title FROM employees WHERE job_title LIKE '%Engineer%';"
+    ],
+    "tags": [
+      "like",
+      "wildcards"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-02",
+    "slug": "filter-products-by-prefix",
+    "title": "Find Hardware Starting with Prefix",
+    "description_markdown": "Find all products in `products` where `product_name` starts with 'Pro'. Return `product_id`, `product_name`, and `price`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Find products starting with 'Pro'\nSELECT ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE product_name LIKE 'Pro%';",
+    "solution_explanation": "'Pro%' matches any string starting with 'Pro' followed by any characters.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "To check starting characters, place % only at the end: 'Pro%'",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE product_name LIKE 'Pro%';"
+    ],
+    "tags": [
+      "like",
+      "prefix"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-03",
+    "slug": "find-courses-with-pattern",
+    "title": "Locate Exact Level 100 Foundation Courses",
+    "description_markdown": "Find all courses from `courses` where `course_code` matches the pattern of ending in '101' (e.g. 'CS101', 'MATH101'). Return `course_id`, `course_code`, and `course_name`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter courses ending in '101'\nSELECT ...",
+    "solution_query": "SELECT course_id, course_code, course_name FROM courses WHERE course_code LIKE '%101';",
+    "solution_explanation": "Pattern '%101' matches any code ending with the 3 digits 101.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use LIKE '%101' to check the suffix.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT course_id, course_code, course_name FROM courses WHERE course_code LIKE '%101';"
+    ],
+    "tags": [
+      "like",
+      "pattern-suffix"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-04",
+    "slug": "customer-email-domain",
+    "title": "Filter Customers by Standard Email Domain",
+    "description_markdown": "Find customers in `customers` whose `email` ends with '@example.com'. Return `customer_id`, `first_name`, and `email`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Emails ending in @example.com\nSELECT customer_id, first_name, email\nFROM customers\nWHERE email LIKE ...",
+    "solution_query": "SELECT customer_id, first_name, email FROM customers WHERE email LIKE '%@example.com';",
+    "solution_explanation": "The % wildcard at the beginning matches any prefix preceding the specific domain name.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the % wildcard before @example.com."
+    ],
+    "hints": [
+      "Use '%@example.com' with LIKE.",
+      "Select customer_id, first_name, email.",
+      "Query: SELECT customer_id, first_name, email FROM customers WHERE email LIKE '%@example.com';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-05",
+    "slug": "flight-number-carrier",
+    "title": "American Airlines Route Flight Numbers",
+    "description_markdown": "Query `flights` to locate all routes where `flight_number` starts with 'AA'. Project `flight_id`, `flight_number`, `origin`, and `destination`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flights starting with 'AA'\nSELECT flight_id, flight_number, origin, destination\nFROM flights\nWHERE flight_number LIKE ...",
+    "solution_query": "SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE 'AA%';",
+    "solution_explanation": "Prefix pattern 'AA%' matches any flight number beginning with 'AA'.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing % before AA instead of after."
+    ],
+    "hints": [
+      "Use 'AA%' to match the beginning of strings.",
+      "Query: SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE 'AA%';",
+      "The expected query is: SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE 'AA%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-06",
+    "slug": "bank-customer-surname-prefix",
+    "title": "Client Directory Name Initial Filter",
+    "description_markdown": "Find bank customers whose `name` starts with the letter 'M'. Return `customer_id`, `name`, and `email`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Customers whose name starts with 'M'\nSELECT customer_id, name, email\nFROM bank_customers\nWHERE name LIKE ...",
+    "solution_query": "SELECT customer_id, name, email FROM bank_customers WHERE name LIKE 'M%';",
+    "solution_explanation": "Pattern 'M%' matches names starting with uppercase M.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing '%M%' which matches M anywhere in the name."
+    ],
+    "hints": [
+      "Use 'M%' in the LIKE clause.",
+      "Query: SELECT customer_id, name, email FROM bank_customers WHERE name LIKE 'M%';",
+      "The expected query is: SELECT customer_id, name, email FROM bank_customers WHERE name LIKE 'M%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-07",
+    "slug": "stock-symbol-prefix",
+    "title": "Securities Tickers Starting with A",
+    "description_markdown": "Query `stocks` for securities whose ticker `symbol` begins with 'A'. Return `symbol`, `company_name`, and `current_price`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stocks starting with 'A'\nSELECT symbol, company_name, current_price\nFROM stocks\nWHERE symbol LIKE ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks WHERE symbol LIKE 'A%';",
+    "solution_explanation": "Filters equity tickers prefixed with letter A.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering company_name instead of symbol."
+    ],
+    "hints": [
+      "Use: WHERE symbol LIKE 'A%'.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks WHERE symbol LIKE 'A%';",
+      "The expected query is: SELECT symbol, company_name, current_price FROM stocks WHERE symbol LIKE 'A%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-08",
+    "slug": "restaurant-city-prefix",
+    "title": "Regional Restaurant Hubs Starting with San",
+    "description_markdown": "Find partner restaurants in `restaurants` where `city` starts with 'San'. Return `restaurant_id`, `name`, `city`, and `cuisine`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Cities starting with 'San'\nSELECT restaurant_id, name, city, cuisine\nFROM restaurants\nWHERE city LIKE ...",
+    "solution_query": "SELECT restaurant_id, name, city, cuisine FROM restaurants WHERE city LIKE 'San%';",
+    "solution_explanation": "Matches metropolitan regions such as San Francisco, San Diego, or San Jose.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting space or casing in 'San%'."
+    ],
+    "hints": [
+      "Filter with WHERE city LIKE 'San%'.",
+      "Query: SELECT restaurant_id, name, city, cuisine FROM restaurants WHERE city LIKE 'San%';",
+      "The expected query is: SELECT restaurant_id, name, city, cuisine FROM restaurants WHERE city LIKE 'San%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-09",
+    "slug": "doctor-title-prefix",
+    "title": "Physician Staff Records with Formal Title",
+    "description_markdown": "Query `doctors` for clinical practitioners whose `name` begins with 'Dr.'. Return `doctor_id`, `name`, and `specialization`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Doctors named starting with 'Dr.'\nSELECT doctor_id, name, specialization\nFROM doctors\nWHERE name LIKE ...",
+    "solution_query": "SELECT doctor_id, name, specialization FROM doctors WHERE name LIKE 'Dr.%';",
+    "solution_explanation": "Matches clinical staff prefixed with honorary title Dr.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Treating the dot as regex instead of literal character."
+    ],
+    "hints": [
+      "In LIKE, a dot is a literal character: 'Dr.%'.",
+      "Query: SELECT doctor_id, name, specialization FROM doctors WHERE name LIKE 'Dr.%';",
+      "The expected query is: SELECT doctor_id, name, specialization FROM doctors WHERE name LIKE 'Dr.%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-10",
+    "slug": "hotel-name-contains",
+    "title": "Hospitality Properties Containing Grand",
+    "description_markdown": "Find all establishments in `hotels` whose `name` contains the word 'Grand'. Return `hotel_id`, `name`, `city`, and `star_rating`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Hotels containing 'Grand'\nSELECT hotel_id, name, city, star_rating\nFROM hotels\nWHERE name LIKE ...",
+    "solution_query": "SELECT hotel_id, name, city, star_rating FROM hotels WHERE name LIKE '%Grand%';",
+    "solution_explanation": "Surrounding 'Grand' with percent symbols matches the substring anywhere in the name.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing % only at one side."
+    ],
+    "hints": [
+      "Use '%Grand%' to match anywhere in the string.",
+      "Query: SELECT hotel_id, name, city, star_rating FROM hotels WHERE name LIKE '%Grand%';",
+      "The expected query is: SELECT hotel_id, name, city, star_rating FROM hotels WHERE name LIKE '%Grand%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-11",
+    "slug": "applicant-email-ending",
+    "title": "Job Candidates Using Public Mail Provider",
+    "description_markdown": "Filter `applicants` for candidates whose `email` ends with '@gmail.com'. Return `applicant_id`, `first_name`, `last_name`, and `email`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Applicants with @gmail.com\nSELECT applicant_id, first_name, last_name, email\nFROM applicants\nWHERE email LIKE ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, email FROM applicants WHERE email LIKE '%@gmail.com';",
+    "solution_explanation": "Screens applicant profiles using consumer webmail domains.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling '@gmail.com'."
+    ],
+    "hints": [
+      "Condition: WHERE email LIKE '%@gmail.com'.",
+      "Query: SELECT applicant_id, first_name, last_name, email FROM applicants WHERE email LIKE '%@gmail.com';",
+      "The expected query is: SELECT applicant_id, first_name, last_name, email FROM applicants WHERE email LIKE '%@gmail.com';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-12",
+    "slug": "inventory-sku-prefix",
+    "title": "Class-A Inventory Component SKUs",
+    "description_markdown": "Query `stock_items` for items whose `sku` begins with 'SKU-A'. Return `item_id`, `sku`, `name`, and `quantity_on_hand`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- SKUs starting with 'SKU-A'\nSELECT item_id, sku, name, quantity_on_hand\nFROM stock_items\nWHERE sku LIKE ...",
+    "solution_query": "SELECT item_id, sku, name, quantity_on_hand FROM stock_items WHERE sku LIKE 'SKU-A%';",
+    "solution_explanation": "Filters inventory by stock-keeping unit family prefix.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting hyphen from SKU-A."
+    ],
+    "hints": [
+      "Use: WHERE sku LIKE 'SKU-A%'.",
+      "Query: SELECT item_id, sku, name, quantity_on_hand FROM stock_items WHERE sku LIKE 'SKU-A%';",
+      "The expected query is: SELECT item_id, sku, name, quantity_on_hand FROM stock_items WHERE sku LIKE 'SKU-A%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-13",
+    "slug": "book-title-starts-with-the",
+    "title": "Catalog Titles Starting with Definite Article",
+    "description_markdown": "Find books in `books` whose `title` begins with 'The '. Return `book_id`, `title`, and `category`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Titles starting with 'The '\nSELECT book_id, title, category\nFROM books\nWHERE title LIKE ...",
+    "solution_query": "SELECT book_id, title, category FROM books WHERE title LIKE 'The %';",
+    "solution_explanation": "Matches books whose titles open with the definite article.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting space after 'The', matching words like 'Theory'."
+    ],
+    "hints": [
+      "Include space: 'The %'.",
+      "Query: SELECT book_id, title, category FROM books WHERE title LIKE 'The %';",
+      "The expected query is: SELECT book_id, title, category FROM books WHERE title LIKE 'The %';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-14",
+    "slug": "movie-title-contains-man",
+    "title": "Hero Franchise Films Containing Man",
+    "description_markdown": "Query `movies` for films whose `title` contains 'Man'. Return `movie_id`, `title`, `release_year`, and `imdb_rating`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "release_year",
+        "type": "integer"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Movies containing 'Man'\nSELECT movie_id, title, release_year, imdb_rating\nFROM movies\nWHERE title LIKE ...",
+    "solution_query": "SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE title LIKE '%Man%';",
+    "solution_explanation": "Screens cinema catalog for titles containing the substring 'Man'.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering genre instead of title."
+    ],
+    "hints": [
+      "Use '%Man%' in the LIKE clause.",
+      "Query: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE title LIKE '%Man%';",
+      "The expected query is: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE title LIKE '%Man%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-15",
+    "slug": "sales-company-suffix-inc",
+    "title": "Corporate Prospects Formed as Incorporated",
+    "description_markdown": "Find leads in `leads` where `company_name` contains 'Inc'. Return `lead_id`, `company_name`, and `industry`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Companies containing 'Inc'\nSELECT lead_id, company_name, industry\nFROM leads\nWHERE company_name LIKE ...",
+    "solution_query": "SELECT lead_id, company_name, industry FROM leads WHERE company_name LIKE '%Inc%';",
+    "solution_explanation": "Identifies incorporated business prospects by legal designation substring.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing wildcard delimiters."
+    ],
+    "hints": [
+      "Use: WHERE company_name LIKE '%Inc%'.",
+      "Query: SELECT lead_id, company_name, industry FROM leads WHERE company_name LIKE '%Inc%';",
+      "The expected query is: SELECT lead_id, company_name, industry FROM leads WHERE company_name LIKE '%Inc%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-16",
+    "slug": "student-major-engineering",
+    "title": "Undergraduates Enrolled in Engineering Majors",
+    "description_markdown": "Query `students` to find all students whose `major` contains 'Engineering'. Return `student_id`, `first_name`, `last_name`, and `major`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Majors containing 'Engineering'\nSELECT student_id, first_name, last_name, major\nFROM students\nWHERE major LIKE ...",
+    "solution_query": "SELECT student_id, first_name, last_name, major FROM students WHERE major LIKE '%Engineering%';",
+    "solution_explanation": "Captures Electrical Engineering, Mechanical Engineering, and Software Engineering majors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking major = 'Engineering' which misses compound degree names."
+    ],
+    "hints": [
+      "Use '%Engineering%' to match all engineering specializations.",
+      "Query: SELECT student_id, first_name, last_name, major FROM students WHERE major LIKE '%Engineering%';",
+      "The expected query is: SELECT student_id, first_name, last_name, major FROM students WHERE major LIKE '%Engineering%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-17",
+    "slug": "employee-email-suffix",
+    "title": "Corporate Employees with Commercial TLD",
+    "description_markdown": "Find employees in `employees` whose corporate `email` ends with '.com'. Return `emp_id`, `first_name`, `last_name`, and `email`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Emails ending with '.com'\nSELECT emp_id, first_name, last_name, email\nFROM employees\nWHERE email LIKE ...",
+    "solution_query": "SELECT emp_id, first_name, last_name, email FROM employees WHERE email LIKE '%.com';",
+    "solution_explanation": "Filters email addresses ending with standard commercial top-level domain.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the dot before com."
+    ],
+    "hints": [
+      "Use LIKE '%.com'.",
+      "Query: SELECT emp_id, first_name, last_name, email FROM employees WHERE email LIKE '%.com';",
+      "The expected query is: SELECT emp_id, first_name, last_name, email FROM employees WHERE email LIKE '%.com';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-18",
+    "slug": "airport-code-three-char-pattern",
+    "title": "Airports with Code Starting with J",
+    "description_markdown": "Query `airports` for codes starting with 'J' and followed by exactly two characters (`J__`). Return `airport_code`, `name`, `city`, and `country`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports"
+    ],
+    "expected_columns": [
+      {
+        "name": "airport_code",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Airport codes matching J__\nSELECT airport_code, name, city, country\nFROM airports\nWHERE airport_code LIKE ...",
+    "solution_query": "SELECT airport_code, name, city, country FROM airports WHERE airport_code LIKE 'J__';",
+    "solution_explanation": "The underscore `_` matches exactly one character, so two underscores match exactly two trailing characters.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using % which matches any number of characters instead of exactly 2."
+    ],
+    "hints": [
+      "Use two underscores: 'J__'.",
+      "Query: SELECT airport_code, name, city, country FROM airports WHERE airport_code LIKE 'J__';",
+      "The expected query is: SELECT airport_code, name, city, country FROM airports WHERE airport_code LIKE 'J__';"
+    ],
+    "tags": [
+      "like",
+      "underscore",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-19",
+    "slug": "branch-name-suffix",
+    "title": "Regional Financial Locations Ending with Branch",
+    "description_markdown": "Find branches in `branches` where `branch_name` ends with 'Branch'. Return `branch_id`, `branch_name`, and `city`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_id",
+        "type": "integer"
+      },
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Branch names ending with 'Branch'\nSELECT branch_id, branch_name, city\nFROM branches\nWHERE branch_name LIKE ...",
+    "solution_query": "SELECT branch_id, branch_name, city FROM branches WHERE branch_name LIKE '%Branch';",
+    "solution_explanation": "Matches banking sites named with the formal 'Branch' suffix.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing '%Branch%' which matches even if 'Branch' is in the middle."
+    ],
+    "hints": [
+      "Use '%Branch' to enforce ending position.",
+      "Query: SELECT branch_id, branch_name, city FROM branches WHERE branch_name LIKE '%Branch';",
+      "The expected query is: SELECT branch_id, branch_name, city FROM branches WHERE branch_name LIKE '%Branch';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-20",
+    "slug": "patient-emergency-contact-area-code",
+    "title": "Patients with Standard Telephony Area Code",
+    "description_markdown": "Query `patients` for patients whose `emergency_contact` telephone begins with '555-'. Return `patient_id`, `name`, and `emergency_contact`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "emergency_contact",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Contacts starting with '555-'\nSELECT patient_id, name, emergency_contact\nFROM patients\nWHERE emergency_contact LIKE ...",
+    "solution_query": "SELECT patient_id, name, emergency_contact FROM patients WHERE emergency_contact LIKE '555-%';",
+    "solution_explanation": "Filters patient emergency contacts by telephone exchange prefix.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the hyphen."
+    ],
+    "hints": [
+      "Use '555-%' in LIKE.",
+      "Query: SELECT patient_id, name, emergency_contact FROM patients WHERE emergency_contact LIKE '555-%';",
+      "The expected query is: SELECT patient_id, name, emergency_contact FROM patients WHERE emergency_contact LIKE '555-%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-21",
+    "slug": "hotel-phone-prefix",
+    "title": "Hospitality Guests with North American Phone Prefix",
+    "description_markdown": "Find guests in `hotel_guests` whose `phone` starts with '+1-'. Return `guest_id`, `first_name`, `last_name`, and `phone`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Phone numbers starting with '+1-'\nSELECT guest_id, first_name, last_name, phone\nFROM hotel_guests\nWHERE phone LIKE ...",
+    "solution_query": "SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone LIKE '+1-%';",
+    "solution_explanation": "Isolates guest profiles registered with international dialing code +1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Escaping plus symbol (in SQL LIKE, + is a regular character)."
+    ],
+    "hints": [
+      "Filter with WHERE phone LIKE '+1-%'.",
+      "Query: SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone LIKE '+1-%';",
+      "The expected query is: SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone LIKE '+1-%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-22",
+    "slug": "library-member-email-edu",
+    "title": "Academic Community Library Patrons",
+    "description_markdown": "Query `members` for library users whose `email` ends with '.edu'. Return `member_id`, `name`, and `email`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Emails ending in '.edu'\nSELECT member_id, name, email\nFROM members\nWHERE email LIKE ...",
+    "solution_query": "SELECT member_id, name, email FROM members WHERE email LIKE '%.edu';",
+    "solution_explanation": "Screens library patrons associated with educational institutions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting dot before edu."
+    ],
+    "hints": [
+      "Use: WHERE email LIKE '%.edu'.",
+      "Query: SELECT member_id, name, email FROM members WHERE email LIKE '%.edu';",
+      "The expected query is: SELECT member_id, name, email FROM members WHERE email LIKE '%.edu';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-23",
+    "slug": "menu-item-contains-burger",
+    "title": "Culinary Offerings in Burger Category",
+    "description_markdown": "Find menu items in `menu_items` whose `item_name` contains 'Burger'. Return `item_id`, `item_name`, and `price`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Dishes containing 'Burger'\nSELECT item_id, item_name, price\nFROM menu_items\nWHERE item_name LIKE ...",
+    "solution_query": "SELECT item_id, item_name, price FROM menu_items WHERE item_name LIKE '%Burger%';",
+    "solution_explanation": "Selects specialty sandwiches containing the keyword 'Burger'.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing wildcards."
+    ],
+    "hints": [
+      "Use '%Burger%' in LIKE.",
+      "Query: SELECT item_id, item_name, price FROM menu_items WHERE item_name LIKE '%Burger%';",
+      "The expected query is: SELECT item_id, item_name, price FROM menu_items WHERE item_name LIKE '%Burger%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-24",
+    "slug": "social-user-handle-prefix",
+    "title": "Social Handles Starting with @a",
+    "description_markdown": "Query `social_users` for user profiles whose `handle` begins with '@a'. Return `user_id`, `handle`, and `full_name`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Handles starting with '@a'\nSELECT user_id, handle, full_name\nFROM social_users\nWHERE handle LIKE ...",
+    "solution_query": "SELECT user_id, handle, full_name FROM social_users WHERE handle LIKE '@a%';",
+    "solution_explanation": "Retrieves user handles starting with the specific handle prefix.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting @ sign."
+    ],
+    "hints": [
+      "Condition: WHERE handle LIKE '@a%'.",
+      "Query: SELECT user_id, handle, full_name FROM social_users WHERE handle LIKE '@a%';",
+      "The expected query is: SELECT user_id, handle, full_name FROM social_users WHERE handle LIKE '@a%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-25",
+    "slug": "stock-company-name-corp",
+    "title": "Public Corporations with Corporate Entity Suffix",
+    "description_markdown": "Find listed stocks in `stocks` where `company_name` contains 'Corp'. Return `symbol`, `company_name`, and `sector`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Companies containing 'Corp'\nSELECT symbol, company_name, sector\nFROM stocks\nWHERE company_name LIKE ...",
+    "solution_query": "SELECT symbol, company_name, sector FROM stocks WHERE company_name LIKE '%Corp%';",
+    "solution_explanation": "Screens equity market names containing the corporate entity descriptor.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering symbol instead of company_name."
+    ],
+    "hints": [
+      "Use: WHERE company_name LIKE '%Corp%'.",
+      "Query: SELECT symbol, company_name, sector FROM stocks WHERE company_name LIKE '%Corp%';",
+      "The expected query is: SELECT symbol, company_name, sector FROM stocks WHERE company_name LIKE '%Corp%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-26",
+    "slug": "job-posting-engineer-department",
+    "title": "Engineering Role Opportunities in Postings",
+    "description_markdown": "Query `job_postings` for career openings whose `title` contains 'Engineer'. Return `posting_id`, `title`, `department`, and `base_salary_max`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Postings containing 'Engineer'\nSELECT posting_id, title, department, base_salary_max\nFROM job_postings\nWHERE title LIKE ...",
+    "solution_query": "SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE title LIKE '%Engineer%';",
+    "solution_explanation": "Filters hiring requisition listings for all technical engineering positions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Searching department instead of title."
+    ],
+    "hints": [
+      "Use '%Engineer%' on title column.",
+      "Query: SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE title LIKE '%Engineer%';",
+      "The expected query is: SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE title LIKE '%Engineer%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-27",
+    "slug": "product-model-pattern-underscore",
+    "title": "Four Character Short Code Products",
+    "description_markdown": "Find all products in `products` whose `product_name` consists of exactly 4 characters (`____`). Return `product_id`, `product_name`, and `price`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Products with exactly 4 characters\nSELECT product_id, product_name, price\nFROM products\nWHERE product_name LIKE ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE product_name LIKE '____';",
+    "solution_explanation": "Four consecutive underscore characters enforce a string length of exactly four characters.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using % instead of 4 underscores."
+    ],
+    "hints": [
+      "Specify exactly 4 underscores: '____'.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE product_name LIKE '____';",
+      "The expected query is: SELECT product_id, product_name, price FROM products WHERE product_name LIKE '____';"
+    ],
+    "tags": [
+      "like",
+      "underscore",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-28",
+    "slug": "course-code-three-letter-subject",
+    "title": "Computer Science Course Level Pattern",
+    "description_markdown": "Query `courses` for courses where `course_code` starts with 'CS' followed by exactly 3 characters (`CS___`). Return `course_id`, `course_code`, and `course_name`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Courses matching CS___\nSELECT course_id, course_code, course_name\nFROM courses\nWHERE course_code LIKE ...",
+    "solution_query": "SELECT course_id, course_code, course_name FROM courses WHERE course_code LIKE 'CS___';",
+    "solution_explanation": "Enforces academic numbering format with 'CS' prefix and exactly three digits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using only 2 underscores or using %."
+    ],
+    "hints": [
+      "Use 'CS___' (CS followed by 3 underscores).",
+      "Query: SELECT course_id, course_code, course_name FROM courses WHERE course_code LIKE 'CS___';",
+      "The expected query is: SELECT course_id, course_code, course_name FROM courses WHERE course_code LIKE 'CS___';"
+    ],
+    "tags": [
+      "like",
+      "underscore",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-29",
+    "slug": "flight-number-fixed-digits",
+    "title": "Aviation Flights with Standard Carrier Hyphen Code",
+    "description_markdown": "Query `flights` for flights where `flight_number` matches two characters, a hyphen, and three characters (`__-___`). Return `flight_id`, `flight_number`, `origin`, and `destination`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flights matching __-___\nSELECT flight_id, flight_number, origin, destination\nFROM flights\nWHERE flight_number LIKE ...",
+    "solution_query": "SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE '__-___';",
+    "solution_explanation": "Matches flight identifiers adhering to 2-char airline code, hyphen, 3-digit flight number.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Wrong count of underscores."
+    ],
+    "hints": [
+      "Use '__-___' (2 underscores, hyphen, 3 underscores).",
+      "Query: SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE '__-___';",
+      "The expected query is: SELECT flight_id, flight_number, origin, destination FROM flights WHERE flight_number LIKE '__-___';"
+    ],
+    "tags": [
+      "like",
+      "underscore",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-30",
+    "slug": "supplier-contact-info-domain",
+    "title": "Component Vendors on Designated Supply Network",
+    "description_markdown": "Find vendors in `suppliers` whose `contact_email` ends with '@supply.com'. Return `supplier_id`, `name`, `contact_email`, and `country`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "contact_email",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Suppliers with @supply.com email\nSELECT supplier_id, name, contact_email, country\nFROM suppliers\nWHERE contact_email LIKE ...",
+    "solution_query": "SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email LIKE '%@supply.com';",
+    "solution_explanation": "Filters supply chain partners using unified vendor domain.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting address or phone."
+    ],
+    "hints": [
+      "Condition: WHERE contact_email LIKE '%@supply.com'.",
+      "Query: SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email LIKE '%@supply.com';",
+      "The expected query is: SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email LIKE '%@supply.com';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-31",
+    "slug": "sales-opportunity-description-pattern",
+    "title": "Prospect Accounts in Technology Niche",
+    "description_markdown": "Query `leads` for prospect accounts whose `company_name` starts with 'Tech'. Return `lead_id`, `company_name`, `industry`, and `status`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-percent",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Leads starting with 'Tech'\nSELECT lead_id, company_name, industry, status\nFROM leads\nWHERE company_name LIKE ...",
+    "solution_query": "SELECT lead_id, company_name, industry, status FROM leads WHERE company_name LIKE 'Tech%';",
+    "solution_explanation": "Filters accounts prefixed with technology moniker.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Searching industry instead of company_name."
+    ],
+    "hints": [
+      "Use: WHERE company_name LIKE 'Tech%'.",
+      "Query: SELECT lead_id, company_name, industry, status FROM leads WHERE company_name LIKE 'Tech%';",
+      "The expected query is: SELECT lead_id, company_name, industry, status FROM leads WHERE company_name LIKE 'Tech%';"
+    ],
+    "tags": [
+      "like",
+      "percent",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-lik-32",
+    "slug": "streaming-user-username-pattern",
+    "title": "Platform Default Account Names Pattern",
+    "description_markdown": "Find subscribers in `streaming_users` whose `username` starts with 'user_'. Return `user_id`, `username`, `email`, and `country`.",
+    "topic_id": "like-wildcards",
+    "subtopic_id": "like-underscore",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "streaming_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "username",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Usernames starting with 'user_'\nSELECT user_id, username, email, country\nFROM streaming_users\nWHERE username LIKE ...",
+    "solution_query": "SELECT user_id, username, email, country FROM streaming_users WHERE username LIKE 'user\\_%';",
+    "solution_explanation": "Escapes the literal underscore with backslash `\\_` so it matches a genuine underscore character rather than any single character.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Not escaping the underscore, which turns it into a single-character wildcard."
+    ],
+    "hints": [
+      "Escape the underscore with a backslash: 'user\\_%'.",
+      "Query: SELECT user_id, username, email, country FROM streaming_users WHERE username LIKE 'user\\_%';",
+      "The expected query is: SELECT user_id, username, email, country FROM streaming_users WHERE username LIKE 'user\\_%';"
+    ],
+    "tags": [
+      "like",
+      "escape",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-lik-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-lik-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-lik-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2505 @@
+[
+  {
+    "id": "q-my-sc-fin-01",
+    "slug": "finance-tech-sector-stock-holdings",
+    "title": "Filter Technology Sector Stocks and Quotes",
+    "description_markdown": "Asset management request: Retrieve all stocks from `stocks` in the 'Technology' sector. Return `symbol`, `company_name`, and `current_price`. Order by `current_price` DESC, `symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Technology stocks\nSELECT symbol, company_name, current_price FROM stocks WHERE sector = 'Technology' ORDER BY ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks WHERE sector = 'Technology' ORDER BY current_price DESC, symbol ASC;",
+    "solution_explanation": "Filters equity universe for target sector.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE sector = 'Technology'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks WHERE sector = 'Technology' ORDER BY current_price DESC, symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "equities"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-fin-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-fin-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-fin-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-02",
+    "slug": "finance-portfolio-trade-investments",
+    "title": "Calculate Total Capital Deployed per Portfolio",
+    "description_markdown": "Trading desk request: For BUY trades (`trade_type = 'BUY'`) in `trades`, calculate total invested capital (`SUM(shares * price_per_share)` as `total_invested`). Join with `portfolios`. Return `p.owner_name`, `p.risk_tolerance`, and `total_invested`. Order by `total_invested` DESC, `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "risk_tolerance",
+        "type": "varchar"
+      },
+      {
+        "name": "total_invested",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Capital deployed\nSELECT ...",
+    "solution_query": "SELECT p.owner_name, p.risk_tolerance, SUM(t.shares * t.price_per_share) AS total_invested FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name, p.risk_tolerance ORDER BY total_invested DESC, p.portfolio_id ASC;",
+    "solution_explanation": "Calculates cost basis for all accumulated position acquisitions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Multiply `t.shares * t.price_per_share` inside SUM.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.owner_name, p.risk_tolerance, SUM(t.shares * t.price_per_share) AS total_invested FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name, p.risk_tolerance ORDER BY total_invested DESC, p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "portfolio"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-fin-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-fin-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-fin-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-03",
+    "slug": "finance-dividend-yield-ratio",
+    "title": "Calculate Annualized Dividend Yields",
+    "description_markdown": "Dividend growth strategy: Calculate the dividend yield percentage for each dividend-paying stock: `ROUND((d.amount_per_share / s.current_price) * 100.0, 2)` as `yield_pct`. Return `s.symbol`, `s.company_name`, `s.current_price`, and `yield_pct`. Order by `yield_pct` DESC, `s.symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks",
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      },
+      {
+        "name": "yield_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Dividend yield formula\nSELECT ...",
+    "solution_query": "SELECT s.symbol, s.company_name, s.current_price, ROUND((d.amount_per_share / s.current_price) * 100.0, 2) AS yield_pct FROM stocks s JOIN dividends d ON s.symbol = d.symbol ORDER BY yield_pct DESC, s.symbol ASC;",
+    "solution_explanation": "Calculates investment payout return ratios on market quotes.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Formula: `ROUND((d.amount_per_share / s.current_price) * 100.0, 2) AS yield_pct`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT s.symbol, s.company_name, s.current_price, ROUND((d.amount_per_share / s.current_price) * 100.0, 2) AS yield_pct FROM stocks s JOIN dividends d ON s.symbol = d.symbol ORDER BY yield_pct DESC, s.symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "dividends"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-fin-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-fin-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-fin-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-04",
+    "slug": "fin-high-value-stocks",
+    "title": "Filter High-Value Equities by Price Threshold",
+    "description_markdown": "Identify premium equities in `stocks` whose market quote is at least $200.00 (`current_price >= 200.00`). Return `symbol`, `company_name`, `sector`, and `current_price`. Order by `current_price` DESC, `symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT symbol, company_name, sector, current_price FROM stocks WHERE current_price >= 200.00 ORDER BY current_price DESC, symbol ASC;",
+    "solution_explanation": "Filters stocks matching the price threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE current_price >= 200.00`.",
+      "Order by `current_price` DESC, `symbol` ASC.",
+      "Query: SELECT symbol, company_name, sector, current_price FROM stocks WHERE current_price >= 200.00 ORDER BY current_price DESC, symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-05",
+    "slug": "fin-portfolios-by-risk-profile",
+    "title": "List Portfolios with High Risk Tolerance Profiles",
+    "description_markdown": "Retrieve all client funds in `portfolios` classified with `'high'` risk appetite. Return `portfolio_id`, `owner_name`, `risk_tolerance`, and `created_at`. Order by `created_at` ASC, `portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "risk_tolerance",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT portfolio_id, owner_name, risk_tolerance, created_at FROM portfolios WHERE risk_tolerance = 'high' ORDER BY created_at ASC, portfolio_id ASC;",
+    "solution_explanation": "Filters investment accounts by mandate risk profile.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE risk_tolerance = 'high'`.",
+      "Order by `created_at` ASC, `portfolio_id` ASC.",
+      "Query: SELECT portfolio_id, owner_name, risk_tolerance, created_at FROM portfolios WHERE risk_tolerance = 'high' ORDER BY created_at ASC, portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-06",
+    "slug": "fin-total-dividend-payout-rates",
+    "title": "Compute Aggregate Dividend Yield Metrics",
+    "description_markdown": "Calculate total dividend payouts per share (`SUM(amount_per_share)` as `total_div_amount`) and average payout (`ROUND(AVG(amount_per_share), 2)` as `avg_div_amount`) across all records in `dividends`.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_div_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_div_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT SUM(amount_per_share) AS total_div_amount, ROUND(AVG(amount_per_share), 2) AS avg_div_amount FROM dividends;",
+    "solution_explanation": "Aggregates corporate dividend distribution parameters.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(amount_per_share)` and `ROUND(AVG(amount_per_share), 2)`.",
+      "No GROUP BY clause is needed for global aggregation.",
+      "Query: SELECT SUM(amount_per_share) AS total_div_amount, ROUND(AVG(amount_per_share), 2) AS avg_div_amount FROM dividends;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-07",
+    "slug": "fin-stocks-by-sector-count",
+    "title": "Count Equity Listings per Economic Sector",
+    "description_markdown": "Sector composition audit: For each sector in `stocks`, count the number of tracked equity tickers (`COUNT(symbol)` as `stock_count`). Return `sector` and `stock_count`. Order by `stock_count` DESC, `sector` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sector, COUNT(symbol) AS stock_count FROM stocks GROUP BY sector ORDER BY stock_count DESC, sector ASC;",
+    "solution_explanation": "Groups stocks by industrial sector classification.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `sector`.",
+      "Order by `stock_count` DESC, `sector` ASC.",
+      "Query: SELECT sector, COUNT(symbol) AS stock_count FROM stocks GROUP BY sector ORDER BY stock_count DESC, sector ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-08",
+    "slug": "fin-trade-execution-types",
+    "title": "Aggregate Order Execution Volume by Trade Direction",
+    "description_markdown": "Trading desk summary: Group executed orders in `trades` by `trade_type` ('BUY' or 'SELL'). Return `trade_type`, `COUNT(trade_id)` as `trade_count`, and `SUM(shares)` as `total_shares`. Order by `trade_count` DESC, `trade_type` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_shares",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_type, COUNT(trade_id) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY trade_type ORDER BY trade_count DESC, trade_type ASC;",
+    "solution_explanation": "Summarizes trade activity by buy and sell transactions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `trade_type`.",
+      "Use `COUNT(trade_id)` and `SUM(shares)`.",
+      "Query: SELECT trade_type, COUNT(trade_id) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY trade_type ORDER BY trade_count DESC, trade_type ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-09",
+    "slug": "fin-trades-with-stock-names",
+    "title": "Enrich Trade Executions with Company Names",
+    "description_markdown": "Produce an execution blotter by joining `trades` with `stocks`. Return `t.trade_id`, `t.symbol`, `s.company_name`, `t.trade_type`, `t.shares`, and `t.price_per_share`. Order by `t.trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "shares",
+        "type": "integer"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.trade_id, t.symbol, s.company_name, t.trade_type, t.shares, t.price_per_share FROM trades t JOIN stocks s ON t.symbol = s.symbol ORDER BY t.trade_id ASC;",
+    "solution_explanation": "Inner joins trades with stock tickers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `trades t` and `stocks s` on `t.symbol = s.symbol`.",
+      "Order by `t.trade_id` ASC.",
+      "Query: SELECT t.trade_id, t.symbol, s.company_name, t.trade_type, t.shares, t.price_per_share FROM trades t JOIN stocks s ON t.symbol = s.symbol ORDER BY t.trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-10",
+    "slug": "fin-stocks-paying-above-threshold-dividend",
+    "title": "Identify Dividend Aristocrats Paying Above $0.50 per Share",
+    "description_markdown": "Income strategy: Find stocks paying a quarterly dividend of at least 50 cents (`d.amount_per_share >= 0.50`). Return `s.symbol`, `s.company_name`, `d.amount_per_share`, and `d.payout_date`. Order by `d.amount_per_share` DESC, `s.symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks",
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "amount_per_share",
+        "type": "decimal"
+      },
+      {
+        "name": "payout_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.symbol, s.company_name, d.amount_per_share, d.payout_date FROM stocks s JOIN dividends d ON s.symbol = d.symbol WHERE d.amount_per_share >= 0.50 ORDER BY d.amount_per_share DESC, s.symbol ASC;",
+    "solution_explanation": "Filters dividend distributions matching payout minimums.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `stocks s` and `dividends d` on `s.symbol = d.symbol`.",
+      "Filter with `WHERE d.amount_per_share >= 0.50`.",
+      "Query: SELECT s.symbol, s.company_name, d.amount_per_share, d.payout_date FROM stocks s JOIN dividends d ON s.symbol = d.symbol WHERE d.amount_per_share >= 0.50 ORDER BY d.amount_per_share DESC, s.symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-11",
+    "slug": "fin-trade-cashflow-direction",
+    "title": "Classify Trade Capital Inflows and Outflows",
+    "description_markdown": "Treasury management: For all records in `trades`, compute the principal amount (`shares * price_per_share` as `trade_value`) and classify the cashflow direction using `CASE` as `cash_flow_type`:\n- If `trade_type = 'BUY'`, return `'Capital Outflow'`\n- Otherwise, return `'Capital Inflow'`\n\nReturn `trade_id`, `symbol`, `trade_type`, `trade_value`, and `cash_flow_type`. Order by `trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_value",
+        "type": "decimal"
+      },
+      {
+        "name": "cash_flow_type",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_id, symbol, trade_type, (shares * price_per_share) AS trade_value, CASE WHEN trade_type = 'BUY' THEN 'Capital Outflow' ELSE 'Capital Inflow' END AS cash_flow_type FROM trades ORDER BY trade_id ASC;",
+    "solution_explanation": "Evaluates cashflow direction using CASE expression.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN trade_type = 'BUY' THEN 'Capital Outflow' ELSE 'Capital Inflow' END`.",
+      "Multiply `shares * price_per_share` as `trade_value`.",
+      "Query: SELECT trade_id, symbol, trade_type, (shares * price_per_share) AS trade_value, CASE WHEN trade_type = 'BUY' THEN 'Capital Outflow' ELSE 'Capital Inflow' END AS cash_flow_type FROM trades ORDER BY trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-12",
+    "slug": "fin-oldest-portfolios",
+    "title": "Filter Incepted Accounts Established Prior to 2022",
+    "description_markdown": "Compliance audit: Find all client investment accounts in `portfolios` opened before January 1, 2022 (`created_at < '2022-01-01'`). Return `portfolio_id`, `owner_name`, `risk_tolerance`, and `created_at`. Order by `created_at` ASC, `portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "risk_tolerance",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT portfolio_id, owner_name, risk_tolerance, created_at FROM portfolios WHERE created_at < '2022-01-01' ORDER BY created_at ASC, portfolio_id ASC;",
+    "solution_explanation": "Filters portfolio accounts by account creation date.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE created_at < '2022-01-01'`.",
+      "Order by `created_at` ASC, `portfolio_id` ASC.",
+      "Query: SELECT portfolio_id, owner_name, risk_tolerance, created_at FROM portfolios WHERE created_at < '2022-01-01' ORDER BY created_at ASC, portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-13",
+    "slug": "fin-unrealized-gain-on-buys",
+    "title": "Compute Unrealized Capital Gains on Open Long Positions",
+    "description_markdown": "Mark-to-market accounting: For all BUY orders in `trades`, calculate total unrealized paper profit or loss: `((s.current_price - t.price_per_share) * t.shares)` as `total_unrealized_gain`. Return `t.trade_id`, `t.symbol`, `s.company_name`, `t.price_per_share`, `s.current_price`, and `total_unrealized_gain`. Order by `total_unrealized_gain` DESC, `t.trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      },
+      {
+        "name": "total_unrealized_gain",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.trade_id, t.symbol, s.company_name, t.price_per_share, s.current_price, ((s.current_price - t.price_per_share) * t.shares) AS total_unrealized_gain FROM trades t JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' ORDER BY total_unrealized_gain DESC, t.trade_id ASC;",
+    "solution_explanation": "Multiplies price appreciation delta by position shares.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `trades t` and `stocks s` with `WHERE t.trade_type = 'BUY'`.",
+      "Compute `(s.current_price - t.price_per_share) * t.shares`.",
+      "Query: SELECT t.trade_id, t.symbol, s.company_name, t.price_per_share, s.current_price, ((s.current_price - t.price_per_share) * t.shares) AS total_unrealized_gain FROM trades t JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' ORDER BY total_unrealized_gain DESC, t.trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-14",
+    "slug": "fin-stocks-without-dividends",
+    "title": "Identify Non-Dividend Paying Growth Stocks",
+    "description_markdown": "Growth equity screen: Find all stocks in `stocks` that do not have any dividend distribution records in `dividends`. Return `s.symbol`, `s.company_name`, `s.sector`, and `s.current_price`. Order by `s.symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks",
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.symbol, s.company_name, s.sector, s.current_price FROM stocks s LEFT JOIN dividends d ON s.symbol = d.symbol WHERE d.dividend_id IS NULL ORDER BY s.symbol ASC;",
+    "solution_explanation": "Anti-join identifying equities without dividend records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN dividends d ON s.symbol = d.symbol`.",
+      "Filter with `WHERE d.dividend_id IS NULL`.",
+      "Query: SELECT s.symbol, s.company_name, s.sector, s.current_price FROM stocks s LEFT JOIN dividends d ON s.symbol = d.symbol WHERE d.dividend_id IS NULL ORDER BY s.symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-15",
+    "slug": "fin-portfolio-holdings-breakdown",
+    "title": "Summarize Portfolio Trading Breadth and Diversification",
+    "description_markdown": "Diversification metrics: For each portfolio with trading activity, count distinct symbols traded (`COUNT(DISTINCT t.symbol)` as `unique_assets`) and total trades executed (`COUNT(t.trade_id)` as `total_trades`). Return `p.portfolio_id`, `p.owner_name`, `unique_assets`, and `total_trades`. Order by `total_trades` DESC, `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "unique_assets",
+        "type": "bigint"
+      },
+      {
+        "name": "total_trades",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.portfolio_id, p.owner_name, COUNT(DISTINCT t.symbol) AS unique_assets, COUNT(t.trade_id) AS total_trades FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id GROUP BY p.portfolio_id, p.owner_name ORDER BY total_trades DESC, p.portfolio_id ASC;",
+    "solution_explanation": "Counts distinct assets and trade executions per investment account.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `portfolios p` and `trades t` on `p.portfolio_id = t.portfolio_id`.",
+      "Group by `p.portfolio_id, p.owner_name`.",
+      "Query: SELECT p.portfolio_id, p.owner_name, COUNT(DISTINCT t.symbol) AS unique_assets, COUNT(t.trade_id) AS total_trades FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id GROUP BY p.portfolio_id, p.owner_name ORDER BY total_trades DESC, p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-16",
+    "slug": "fin-sector-average-stock-price",
+    "title": "Calculate Average and Maximum Valuation by Sector",
+    "description_markdown": "Industry sector valuation: For each sector in `stocks`, calculate the average share price (`ROUND(AVG(current_price), 2)` as `avg_price`) and the single highest stock quote (`MAX(current_price)` as `max_price`). Return `sector`, `avg_price`, and `max_price`. Order by `avg_price` DESC, `sector` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_price",
+        "type": "decimal"
+      },
+      {
+        "name": "max_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sector, ROUND(AVG(current_price), 2) AS avg_price, MAX(current_price) AS max_price FROM stocks GROUP BY sector ORDER BY avg_price DESC, sector ASC;",
+    "solution_explanation": "Aggregates pricing distribution benchmarks by economic sector.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `sector`.",
+      "Use `ROUND(AVG(current_price), 2)` and `MAX(current_price)`.",
+      "Query: SELECT sector, ROUND(AVG(current_price), 2) AS avg_price, MAX(current_price) AS max_price FROM stocks GROUP BY sector ORDER BY avg_price DESC, sector ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-17",
+    "slug": "fin-portfolios-trading-tech-stocks",
+    "title": "Filter Portfolios Actively Allocating to Tech Equities",
+    "description_markdown": "Find all distinct portfolios that have placed orders for stocks classified under the `'Technology'` sector. Return `p.portfolio_id`, `p.owner_name`, and `p.risk_tolerance`. Order by `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "risk_tolerance",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT p.portfolio_id, p.owner_name, p.risk_tolerance FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE s.sector = 'Technology' ORDER BY p.portfolio_id ASC;",
+    "solution_explanation": "Three-table join filtered by tech sector.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `portfolios p`, `trades t`, and `stocks s`.",
+      "Use `WHERE s.sector = 'Technology'` and `DISTINCT`.",
+      "Query: SELECT DISTINCT p.portfolio_id, p.owner_name, p.risk_tolerance FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE s.sector = 'Technology' ORDER BY p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-18",
+    "slug": "fin-largest-single-trade",
+    "title": "Audit Highest Principal Value Transaction Executions",
+    "description_markdown": "Large block trade surveillance: For all records in `trades`, compute the full transaction value (`t.shares * t.price_per_share` as `total_value`). Join with `portfolios` and `stocks`. Return `t.trade_id`, `p.owner_name`, `s.company_name`, `t.trade_type`, and `total_value`. Order by `total_value` DESC, `t.trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks",
+      "portfolios"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "total_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.trade_id, p.owner_name, s.company_name, t.trade_type, (t.shares * t.price_per_share) AS total_value FROM trades t JOIN portfolios p ON t.portfolio_id = p.portfolio_id JOIN stocks s ON t.symbol = s.symbol ORDER BY total_value DESC, t.trade_id ASC;",
+    "solution_explanation": "Computes order consideration across joined client funds and equities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `trades t`, `portfolios p`, and `stocks s`.",
+      "Compute `(t.shares * t.price_per_share)` as `total_value`.",
+      "Query: SELECT t.trade_id, p.owner_name, s.company_name, t.trade_type, (t.shares * t.price_per_share) AS total_value FROM trades t JOIN portfolios p ON t.portfolio_id = p.portfolio_id JOIN stocks s ON t.symbol = s.symbol ORDER BY total_value DESC, t.trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-19",
+    "slug": "fin-rank-stocks-by-price-within-sector",
+    "title": "Dense Rank Stock Quotes Partitioned by Sector",
+    "description_markdown": "Using `DENSE_RANK()`, rank equities within their respective sectors ordered by `current_price` descending: `DENSE_RANK() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC)` as `sector_rank`. Return `symbol`, `company_name`, `sector`, `current_price`, and `sector_rank`. Order by `sector` ASC, `sector_rank` ASC, `symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      },
+      {
+        "name": "sector_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT symbol, company_name, sector, current_price, DENSE_RANK() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC) AS sector_rank FROM stocks ORDER BY sector ASC, sector_rank ASC, symbol ASC;",
+    "solution_explanation": "Applies partitioned window ranking by price within sector groups.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC)`.",
+      "Order by `sector` ASC, `sector_rank` ASC, `symbol` ASC.",
+      "Query: SELECT symbol, company_name, sector, current_price, DENSE_RANK() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC) AS sector_rank FROM stocks ORDER BY sector ASC, sector_rank ASC, symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-20",
+    "slug": "fin-net-shares-held-per-stock",
+    "title": "Calculate Net Inventory Share Balance per Portfolio",
+    "description_markdown": "Custodian ledger audit: For each portfolio and stock holding, calculate the net position shares: add bought shares (`+shares`), subtract sold shares (`-shares`). Return `p.portfolio_id`, `p.owner_name`, `t.symbol`, and `net_shares`. Order by `p.portfolio_id` ASC, `t.symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "net_shares",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.portfolio_id, p.owner_name, t.symbol, SUM(CASE WHEN t.trade_type = 'BUY' THEN t.shares WHEN t.trade_type = 'SELL' THEN -t.shares ELSE 0 END) AS net_shares FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id GROUP BY p.portfolio_id, p.owner_name, t.symbol ORDER BY p.portfolio_id ASC, t.symbol ASC;",
+    "solution_explanation": "Uses conditional aggregation to net buy and sell quantities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(CASE WHEN t.trade_type = 'BUY' THEN t.shares WHEN t.trade_type = 'SELL' THEN -t.shares ELSE 0 END)`.",
+      "Group by `p.portfolio_id, p.owner_name, t.symbol`.",
+      "Query: SELECT p.portfolio_id, p.owner_name, t.symbol, SUM(CASE WHEN t.trade_type = 'BUY' THEN t.shares WHEN t.trade_type = 'SELL' THEN -t.shares ELSE 0 END) AS net_shares FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id GROUP BY p.portfolio_id, p.owner_name, t.symbol ORDER BY p.portfolio_id ASC, t.symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-21",
+    "slug": "fin-portfolio-total-dividend-potential",
+    "title": "Calculate Expected Dividend Income on Acquired Shares",
+    "description_markdown": "Passive cashflow projection: For each portfolio's BUY trades, calculate total potential dividend yield income across its purchased shares: `SUM(t.shares * COALESCE(d.amount_per_share, 0.00))` as `total_div_income`. Return `p.portfolio_id`, `p.owner_name`, and `total_div_income`. Order by `total_div_income` DESC, `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades",
+      "dividends"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_div_income",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.portfolio_id, p.owner_name, SUM(t.shares * COALESCE(d.amount_per_share, 0.00)) AS total_div_income FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id LEFT JOIN dividends d ON t.symbol = d.symbol WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name ORDER BY total_div_income DESC, p.portfolio_id ASC;",
+    "solution_explanation": "Multiplies long shares by dividend payouts per share.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `portfolios p` with `trades t` (`WHERE t.trade_type = 'BUY'`) and `LEFT JOIN dividends d`.",
+      "Group by `p.portfolio_id, p.owner_name`.",
+      "Query: SELECT p.portfolio_id, p.owner_name, SUM(t.shares * COALESCE(d.amount_per_share, 0.00)) AS total_div_income FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id LEFT JOIN dividends d ON t.symbol = d.symbol WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name ORDER BY total_div_income DESC, p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-22",
+    "slug": "fin-trades-above-stock-average-execution",
+    "title": "Filter Executions Priced Above Market Cross-Sectional Mean",
+    "description_markdown": "Execution analysis: Find all trades in `trades` where the fill price `price_per_share` is strictly higher than the average current market quote across all stocks in `stocks`. Return `trade_id`, `symbol`, `trade_type`, and `price_per_share`. Order by `price_per_share` DESC, `trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_id, symbol, trade_type, price_per_share FROM trades WHERE price_per_share > (SELECT AVG(current_price) FROM stocks) ORDER BY price_per_share DESC, trade_id ASC;",
+    "solution_explanation": "Filters trade fills using a scalar subquery on the stock catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE price_per_share > (SELECT AVG(current_price) FROM stocks)`.",
+      "Order by `price_per_share` DESC, `trade_id` ASC.",
+      "Query: SELECT trade_id, symbol, trade_type, price_per_share FROM trades WHERE price_per_share > (SELECT AVG(current_price) FROM stocks) ORDER BY price_per_share DESC, trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-23",
+    "slug": "fin-cumulative-trade-volume-by-portfolio",
+    "title": "Track Cumulative Share Turnover per Investment Fund",
+    "description_markdown": "Activity velocity: Compute the running cumulative sum of shares traded for each portfolio over time: `SUM(shares) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)` as `cumulative_shares`. Return `trade_id`, `portfolio_id`, `symbol`, `shares`, `trade_date`, and `cumulative_shares`. Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "shares",
+        "type": "integer"
+      },
+      {
+        "name": "trade_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "cumulative_shares",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_id, portfolio_id, symbol, shares, trade_date, SUM(shares) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS cumulative_shares FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;",
+    "solution_explanation": "Calculates chronological running share turnover per fund.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(shares) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)`.",
+      "Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+      "Query: SELECT trade_id, portfolio_id, symbol, shares, trade_date, SUM(shares) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS cumulative_shares FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-24",
+    "slug": "fin-trade-price-vs-current-price-ratio",
+    "title": "Calculate Execution Fill Price to Current Quote Percentage",
+    "description_markdown": "Best execution audit: For each order in `trades`, calculate what percentage of the current market price the historical fill represented: `ROUND((t.price_per_share * 100.0) / s.current_price, 2)` as `fill_to_market_pct`. Return `t.trade_id`, `t.symbol`, `t.price_per_share`, `s.current_price`, and `fill_to_market_pct`. Order by `fill_to_market_pct` DESC, `t.trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      },
+      {
+        "name": "fill_to_market_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.trade_id, t.symbol, t.price_per_share, s.current_price, ROUND((t.price_per_share * 100.0) / s.current_price, 2) AS fill_to_market_pct FROM trades t JOIN stocks s ON t.symbol = s.symbol ORDER BY fill_to_market_pct DESC, t.trade_id ASC;",
+    "solution_explanation": "Compares executed transaction cost basis to current market value.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Compute `ROUND((t.price_per_share * 100.0) / s.current_price, 2)`.",
+      "Join on `t.symbol = s.symbol`.",
+      "Query: SELECT t.trade_id, t.symbol, t.price_per_share, s.current_price, ROUND((t.price_per_share * 100.0) / s.current_price, 2) AS fill_to_market_pct FROM trades t JOIN stocks s ON t.symbol = s.symbol ORDER BY fill_to_market_pct DESC, t.trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-25",
+    "slug": "fin-lag-portfolio-trade-timing",
+    "title": "Audit Trade Execution Intervals Using Window LAG",
+    "description_markdown": "Order cadence tracking: For each record in `trades`, retrieve the previous trade timestamp for the same portfolio using `LAG(trade_date) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)` as `prev_trade_date`. Return `trade_id`, `portfolio_id`, `symbol`, `trade_type`, `trade_date`, and `prev_trade_date`. Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_trade_date",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_id, portfolio_id, symbol, trade_type, trade_date, LAG(trade_date) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS prev_trade_date FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;",
+    "solution_explanation": "Uses LAG to retrieve the preceding chronological order timestamp.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(trade_date) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)`.",
+      "Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+      "Query: SELECT trade_id, portfolio_id, symbol, trade_type, trade_date, LAG(trade_date) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS prev_trade_date FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-26",
+    "slug": "fin-portfolio-risk-capital-allocation",
+    "title": "Aggregate Capital Outlays Grouped by Risk Tolerance Tier",
+    "description_markdown": "Risk management report: For all BUY trades in `trades`, calculate total executed buy orders (`COUNT(t.trade_id)` as `buy_orders`) and aggregate deployed capital (`SUM(t.shares * t.price_per_share)` as `total_capital`) grouped by client `p.risk_tolerance`. Return `p.risk_tolerance`, `buy_orders`, and `total_capital`. Order by `total_capital` DESC, `p.risk_tolerance` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "risk_tolerance",
+        "type": "varchar"
+      },
+      {
+        "name": "buy_orders",
+        "type": "bigint"
+      },
+      {
+        "name": "total_capital",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.risk_tolerance, COUNT(t.trade_id) AS buy_orders, SUM(t.shares * t.price_per_share) AS total_capital FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id WHERE t.trade_type = 'BUY' GROUP BY p.risk_tolerance ORDER BY total_capital DESC, p.risk_tolerance ASC;",
+    "solution_explanation": "Aggregates equity asset purchasing by risk classification tier.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `portfolios p` and `trades t` with `WHERE t.trade_type = 'BUY'`.",
+      "Group by `p.risk_tolerance`.",
+      "Query: SELECT p.risk_tolerance, COUNT(t.trade_id) AS buy_orders, SUM(t.shares * t.price_per_share) AS total_capital FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id WHERE t.trade_type = 'BUY' GROUP BY p.risk_tolerance ORDER BY total_capital DESC, p.risk_tolerance ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-27",
+    "slug": "fin-portfolio-market-value-vs-cost",
+    "title": "Calculate Portfolio Level Return on Investment Percentage",
+    "description_markdown": "Fund performance audit: For BUY positions, compute the portfolio's total historical acquisition cost basis (`SUM(t.shares * t.price_per_share)` as `total_cost`), current market valuation (`SUM(t.shares * s.current_price)` as `market_value`), and overall return on investment percentage: `ROUND(((market_value - total_cost) * 100.0) / total_cost, 2)` as `roi_pct`. Return `p.portfolio_id`, `p.owner_name`, `total_cost`, `market_value`, and `roi_pct`. Order by `roi_pct` DESC, `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_cost",
+        "type": "decimal"
+      },
+      {
+        "name": "market_value",
+        "type": "decimal"
+      },
+      {
+        "name": "roi_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.portfolio_id, p.owner_name, SUM(t.shares * t.price_per_share) AS total_cost, SUM(t.shares * s.current_price) AS market_value, ROUND(((SUM(t.shares * s.current_price) - SUM(t.shares * t.price_per_share)) * 100.0) / SUM(t.shares * t.price_per_share), 2) AS roi_pct FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name ORDER BY roi_pct DESC, p.portfolio_id ASC;",
+    "solution_explanation": "Evaluates aggregate portfolio returns against initial invested cost.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `portfolios`, `trades` (trade_type = 'BUY'), and `stocks`.",
+      "Group by `p.portfolio_id, p.owner_name`.",
+      "Query: SELECT p.portfolio_id, p.owner_name, SUM(t.shares * t.price_per_share) AS total_cost, SUM(t.shares * s.current_price) AS market_value, ROUND(((SUM(t.shares * s.current_price) - SUM(t.shares * t.price_per_share)) * 100.0) / SUM(t.shares * t.price_per_share), 2) AS roi_pct FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' GROUP BY p.portfolio_id, p.owner_name ORDER BY roi_pct DESC, p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-28",
+    "slug": "fin-realized-gains-from-sells",
+    "title": "Audit Realized Liquidation Value on Executed Sell Orders",
+    "description_markdown": "Sell order liquidation audit: For all SELL orders in `trades`, calculate gross proceeds (`t.shares * t.price_per_share` as `sell_revenue`), current equivalent value (`t.shares * s.current_price` as `current_value`), and execution timing spread (`sell_revenue - current_value` as `execution_spread`). Return `t.trade_id`, `t.portfolio_id`, `t.symbol`, `sell_revenue`, `current_value`, and `execution_spread`. Order by `execution_spread` DESC, `t.trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "sell_revenue",
+        "type": "decimal"
+      },
+      {
+        "name": "current_value",
+        "type": "decimal"
+      },
+      {
+        "name": "execution_spread",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.trade_id, t.portfolio_id, t.symbol, (t.shares * t.price_per_share) AS sell_revenue, (t.shares * s.current_price) AS current_value, ((t.shares * t.price_per_share) - (t.shares * s.current_price)) AS execution_spread FROM trades t JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'SELL' ORDER BY execution_spread DESC, t.trade_id ASC;",
+    "solution_explanation": "Evaluates sell liquidation revenue against prevailing quotes.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE t.trade_type = 'SELL'`.",
+      "Compute `(t.shares * t.price_per_share) - (t.shares * s.current_price)` as `execution_spread`.",
+      "Query: SELECT t.trade_id, t.portfolio_id, t.symbol, (t.shares * t.price_per_share) AS sell_revenue, (t.shares * s.current_price) AS current_value, ((t.shares * t.price_per_share) - (t.shares * s.current_price)) AS execution_spread FROM trades t JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'SELL' ORDER BY execution_spread DESC, t.trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-29",
+    "slug": "fin-portfolio-asset-allocation-pct",
+    "title": "Calculate Trade Capital Share of Total Invested Portfolio",
+    "description_markdown": "Portfolio allocation weighting: For each BUY trade, calculate what percentage of the portfolio's total BUY outlay it represents: `ROUND(((shares * price_per_share) * 100.0) / SUM(shares * price_per_share) OVER (PARTITION BY portfolio_id), 2)` as `allocation_pct`. Return `portfolio_id`, `symbol`, `(shares * price_per_share)` as `trade_capital`, and `allocation_pct`. Order by `portfolio_id` ASC, `allocation_pct` DESC, `symbol` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_capital",
+        "type": "decimal"
+      },
+      {
+        "name": "allocation_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT portfolio_id, symbol, (shares * price_per_share) AS trade_capital, ROUND(((shares * price_per_share) * 100.0) / SUM(shares * price_per_share) OVER (PARTITION BY portfolio_id), 2) AS allocation_pct FROM trades WHERE trade_type = 'BUY' ORDER BY portfolio_id ASC, allocation_pct DESC, symbol ASC;",
+    "solution_explanation": "Applies a partitioned window aggregate to calculate asset weighting percentages.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(shares * price_per_share) OVER (PARTITION BY portfolio_id)` as the denominator.",
+      "Filter with `WHERE trade_type = 'BUY'`.",
+      "Query: SELECT portfolio_id, symbol, (shares * price_per_share) AS trade_capital, ROUND(((shares * price_per_share) * 100.0) / SUM(shares * price_per_share) OVER (PARTITION BY portfolio_id), 2) AS allocation_pct FROM trades WHERE trade_type = 'BUY' ORDER BY portfolio_id ASC, allocation_pct DESC, symbol ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-30",
+    "slug": "fin-lead-trade-price-change",
+    "title": "Forecast Execution Trajectory with Window LEAD",
+    "description_markdown": "Order sequence analysis: For each trade within an investment account, peek at the subsequent trade's execution price using `LEAD(price_per_share) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)` as `next_price`. Return `trade_id`, `portfolio_id`, `symbol`, `price_per_share`, and `next_price`. Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      },
+      {
+        "name": "next_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT trade_id, portfolio_id, symbol, price_per_share, LEAD(price_per_share) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS next_price FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;",
+    "solution_explanation": "Uses the LEAD window function to inspect following trade execution levels.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(price_per_share) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC)`.",
+      "Order by `portfolio_id` ASC, `trade_date` ASC, `trade_id` ASC.",
+      "Query: SELECT trade_id, portfolio_id, symbol, price_per_share, LEAD(price_per_share) OVER (PARTITION BY portfolio_id ORDER BY trade_date ASC, trade_id ASC) AS next_price FROM trades ORDER BY portfolio_id ASC, trade_date ASC, trade_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-31",
+    "slug": "fin-high-concentration-sector-portfolios",
+    "title": "Detect Portfolios with Heavy Technology Sector Exposure",
+    "description_markdown": "Risk compliance: Find all portfolios whose total deployed BUY capital in the `'Technology'` sector is at least $50,000 (`sector_invested >= 50000.00`). Return `p.portfolio_id`, `p.owner_name`, `s.sector`, and `SUM(t.shares * t.price_per_share)` as `sector_invested`. Order by `sector_invested` DESC, `p.portfolio_id` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "portfolios",
+      "trades",
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "owner_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "sector_invested",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.portfolio_id, p.owner_name, s.sector, SUM(t.shares * t.price_per_share) AS sector_invested FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' AND s.sector = 'Technology' GROUP BY p.portfolio_id, p.owner_name, s.sector HAVING SUM(t.shares * t.price_per_share) >= 50000.00 ORDER BY sector_invested DESC, p.portfolio_id ASC;",
+    "solution_explanation": "Aggregates tech sector capital investment and applies minimum exposure filter.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE t.trade_type = 'BUY' AND s.sector = 'Technology'`.",
+      "Filter grouped sums with `HAVING SUM(t.shares * t.price_per_share) >= 50000.00`.",
+      "Query: SELECT p.portfolio_id, p.owner_name, s.sector, SUM(t.shares * t.price_per_share) AS sector_invested FROM portfolios p JOIN trades t ON p.portfolio_id = t.portfolio_id JOIN stocks s ON t.symbol = s.symbol WHERE t.trade_type = 'BUY' AND s.sector = 'Technology' GROUP BY p.portfolio_id, p.owner_name, s.sector HAVING SUM(t.shares * t.price_per_share) >= 50000.00 ORDER BY sector_invested DESC, p.portfolio_id ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-fin-32",
+    "slug": "fin-top-performing-stock-by-quote",
+    "title": "Identify Highest-Priced Equity Leader per Industrial Sector",
+    "description_markdown": "Using a CTE and `ROW_NUMBER()`, retrieve the single stock with the highest market quote (`current_price`) in each sector. Return `sector`, `symbol`, `company_name`, and `current_price`. Order by `sector` ASC.",
+    "topic_id": "scenario-finance",
+    "subtopic_id": "sc-fin",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH SectorLeaders AS (SELECT sector, symbol, company_name, current_price, ROW_NUMBER() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC) AS rn FROM stocks) SELECT sector, symbol, company_name, current_price FROM SectorLeaders WHERE rn = 1 ORDER BY sector ASC;",
+    "solution_explanation": "Applies ROW_NUMBER partitioned by sector and filtered to rank 1 in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC)` in a CTE.",
+      "Filter with `WHERE rn = 1` in the outer query.",
+      "Query: WITH SectorLeaders AS (SELECT sector, symbol, company_name, current_price, ROW_NUMBER() OVER (PARTITION BY sector ORDER BY current_price DESC, symbol ASC) AS rn FROM stocks) SELECT sector, symbol, company_name, current_price FROM SectorLeaders WHERE rn = 1 ORDER BY sector ASC;"
+    ],
+    "tags": [
+      "finance",
+      "sc-fin"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-fin-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-fin-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-fin-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2454 @@
+[
+  {
+    "id": "q-adh-01",
+    "slug": "hierarchical-subordinate-headcount",
+    "title": "Calculate Direct Report Counts per Manager",
+    "description_markdown": "For each manager who manages at least one employee in `employees`, count their total direct reports as `reports_count`. Return `manager_id`, `COUNT(*) AS reports_count`. Order by `reports_count` DESC, `manager_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_id",
+        "type": "integer"
+      },
+      {
+        "name": "reports_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count direct reports per manager\nSELECT manager_id, COUNT(*) AS reports_count\nFROM employees\nWHERE manager_id IS NOT NULL\nGROUP BY ...",
+    "solution_query": "SELECT manager_id, COUNT(*) AS reports_count FROM employees WHERE manager_id IS NOT NULL GROUP BY manager_id ORDER BY reports_count DESC, manager_id ASC;",
+    "solution_explanation": "Aggregates the subordinate distribution across managers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `manager_id` and count rows.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT manager_id, COUNT(*) AS reports_count FROM employees WHERE manager_id IS NOT NULL GROUP BY manager_id ORDER BY reports_count DESC, manager_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-02",
+    "slug": "recursive-total-subtree-compensation",
+    "title": "Traverse Corporate Leadership Rollup",
+    "description_markdown": "Using a recursive CTE starting at the CEO (`emp_id = 1`), find all employees in the CEO's management tree. Return their `emp_id`, `first_name`, `salary`, and their distance from the CEO as `depth`. Order by `depth` ASC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Recursive subtree query\nWITH RECURSIVE ceo_tree AS (\n  ...\n)\nSELECT ...",
+    "solution_query": "WITH RECURSIVE ceo_tree AS (SELECT emp_id, first_name, salary, 0 AS depth FROM employees WHERE emp_id = 1 UNION ALL SELECT e.emp_id, e.first_name, e.salary, ct.depth + 1 FROM employees e JOIN ceo_tree ct ON e.manager_id = ct.emp_id) SELECT emp_id, first_name, salary, depth FROM ceo_tree ORDER BY depth ASC, emp_id ASC;",
+    "solution_explanation": "Recursively unwinds the entire subordinate tree starting from the top executive anchor node.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Anchor: `SELECT emp_id, first_name, salary, 0 AS depth FROM employees WHERE emp_id = 1`.",
+      "Recursive join: `JOIN ceo_tree ct ON e.manager_id = ct.emp_id`.",
+      "Query: WITH RECURSIVE ceo_tree AS (SELECT emp_id, first_name, salary, 0 AS depth FROM employees WHERE emp_id = 1 UNION ALL SELECT e.emp_id, e.first_name, e.salary, ct.depth + 1 FROM employees e JOIN ceo_tree ct ON e.manager_id = ct.emp_id) SELECT emp_id, first_name, salary, depth FROM ceo_tree ORDER BY depth ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "tree-rollup"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-03",
+    "slug": "hierarchical-full-management-chain-path",
+    "title": "Build Breadcrumb Line of Management String",
+    "description_markdown": "Use a recursive CTE to build a breadcrumb reporting string `management_path` for every employee starting with their own name and prepending managers up to the CEO (e.g. 'Eleanor Vance > Marcus Brody > Sophia Chen'). Return `emp_id`, `first_name`, and `management_path`. Order by `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "management_path",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive path concatenation\nWITH RECURSIVE path_tree AS (\n  ...\n)\nSELECT ...",
+    "solution_query": "WITH RECURSIVE path_tree AS (SELECT emp_id, first_name, first_name::text AS management_path FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, e.first_name, (pt.management_path || ' > ' || e.first_name)::text FROM employees e JOIN path_tree pt ON e.manager_id = pt.emp_id) SELECT emp_id, first_name, management_path FROM path_tree ORDER BY emp_id ASC;",
+    "solution_explanation": "Constructs an organizational pedigree breadcrumb path using recursive text concatenation.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Anchor on root nodes (`manager_id IS NULL`).",
+      "Concatenate: `(pt.management_path || ' > ' || e.first_name)::text`.",
+      "Query: WITH RECURSIVE path_tree AS (SELECT emp_id, first_name, first_name::text AS management_path FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, e.first_name, (pt.management_path || ' > ' || e.first_name)::text FROM employees e JOIN path_tree pt ON e.manager_id = pt.emp_id) SELECT emp_id, first_name, management_path FROM path_tree ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "breadcrumbs"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-04",
+    "slug": "adh-find-root-organization-executive",
+    "title": "Identify Top-Level Organization Executive with No Manager",
+    "description_markdown": "Find the root executive in `employees` who has no manager (`manager_id IS NULL`) and belongs to an assigned department (`dept_id IS NOT NULL`). Return `emp_id`, `first_name`, `last_name`, and `job_title`. Order by `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Find root organization executive\nSELECT emp_id, first_name, last_name, job_title\nFROM employees\nWHERE manager_id IS NULL AND dept_id IS NOT NULL\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, last_name, job_title FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL ORDER BY emp_id ASC;",
+    "solution_explanation": "Root nodes in an adjacency list hierarchy are identified by NULL parent foreign keys.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to check dept_id IS NOT NULL to exclude external contractors."
+    ],
+    "interview_tip": "Root nodes anchor recursive queries and top-down org chart rollups.",
+    "hints": [
+      "Filter with `WHERE manager_id IS NULL AND dept_id IS NOT NULL`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, last_name, job_title FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "root-node",
+      "adjacency-list",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-05",
+    "slug": "adh-find-top-level-catalog-categories",
+    "title": "Identify Top-Level Parent Categories in Product Catalog",
+    "description_markdown": "From `categories`, find all top-level root categories that have no parent (`parent_category_id IS NULL`). Return `category_id` and `category_name`. Order by `category_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Root catalog categories\nSELECT category_id, category_name\nFROM categories\nWHERE parent_category_id IS NULL\nORDER BY category_id ASC;",
+    "solution_query": "SELECT category_id, category_name FROM categories WHERE parent_category_id IS NULL ORDER BY category_id ASC;",
+    "solution_explanation": "Categories with NULL parent_category_id constitute the highest tier of the catalog taxonomy.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for parent_category_id = 0 instead of IS NULL."
+    ],
+    "interview_tip": "Top-level taxonomy nodes serve as root categories for breadcrumb navigations.",
+    "hints": [
+      "Use `WHERE parent_category_id IS NULL`.",
+      "Sort output by `category_id ASC`.",
+      "Query: SELECT category_id, category_name FROM categories WHERE parent_category_id IS NULL ORDER BY category_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "root-categories",
+      "taxonomy",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-06",
+    "slug": "adh-count-subcategories-per-parent",
+    "title": "Count Direct Child Subcategories per Parent Category",
+    "description_markdown": "From `categories`, count the number of direct child subcategories for each parent category where `parent_category_id IS NOT NULL`. Group by `parent_category_id` and alias count as `subcategory_count`. Return `parent_category_id` and `subcategory_count`. Order by `parent_category_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "parent_category_id",
+        "type": "integer"
+      },
+      {
+        "name": "subcategory_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Direct child subcategory counts\nSELECT parent_category_id, COUNT(*) AS subcategory_count\nFROM categories\nWHERE parent_category_id IS NOT NULL\nGROUP BY parent_category_id\nORDER BY parent_category_id ASC;",
+    "solution_query": "SELECT parent_category_id, COUNT(*) AS subcategory_count FROM categories WHERE parent_category_id IS NOT NULL GROUP BY parent_category_id ORDER BY parent_category_id ASC;",
+    "solution_explanation": "Grouping child categories by parent_category_id determines the branching factor of each taxonomy branch.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including rows where parent_category_id IS NULL."
+    ],
+    "interview_tip": "Branching factor analysis is important for UI menu rendering and tree search indexing.",
+    "hints": [
+      "Filter `WHERE parent_category_id IS NOT NULL`.",
+      "Group by `parent_category_id` and sort `parent_category_id ASC`.",
+      "Query: SELECT parent_category_id, COUNT(*) AS subcategory_count FROM categories WHERE parent_category_id IS NOT NULL GROUP BY parent_category_id ORDER BY parent_category_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "aggregation",
+      "grouping",
+      "categories"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-07",
+    "slug": "adh-direct-reports-with-manager-names",
+    "title": "Calculate Direct Report Headcount with Manager Names",
+    "description_markdown": "Self-join `employees` as manager (`m`) and report (`e`) on `e.manager_id = m.emp_id`. Calculate each manager's direct report count as `direct_reports`. Return `m.emp_id AS manager_id`, `m.first_name AS manager_name`, and `direct_reports`. Order by `direct_reports` DESC, `m.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_id",
+        "type": "integer"
+      },
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "direct_reports",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Direct report headcount per manager with names\nSELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports\nFROM employees m\nJOIN employees e ON e.manager_id = m.emp_id\nGROUP BY m.emp_id, m.first_name\nORDER BY direct_reports DESC, m.emp_id ASC;",
+    "solution_query": "SELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports FROM employees m JOIN employees e ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY direct_reports DESC, m.emp_id ASC;",
+    "solution_explanation": "Self-joining parent and child records attaches manager attributes to aggregated report counts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping the join condition and counting managers per employee."
+    ],
+    "interview_tip": "Manager span-of-control is a classic organizational engineering metric.",
+    "hints": [
+      "Join `employees m` with `employees e ON e.manager_id = m.emp_id`.",
+      "Group by `m.emp_id, m.first_name`.",
+      "Query: SELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports FROM employees m JOIN employees e ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY direct_reports DESC, m.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "aggregation",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-08",
+    "slug": "adh-identify-leaf-employees-individual-contributors",
+    "title": "Identify Leaf Individual Contributors with No Direct Reports",
+    "description_markdown": "From `employees`, identify all leaf-level staff (individual contributors) who do not manage any employees (`emp_id NOT IN (SELECT manager_id FROM employees WHERE manager_id IS NOT NULL)`). Return `emp_id`, `first_name`, `last_name`, and `job_title`. Order by `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Leaf employees with no direct reports\nSELECT emp_id, first_name, last_name, job_title\nFROM employees\nWHERE emp_id NOT IN (SELECT manager_id FROM employees WHERE manager_id IS NOT NULL)\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, last_name, job_title FROM employees WHERE emp_id NOT IN (SELECT manager_id FROM employees WHERE manager_id IS NOT NULL) ORDER BY emp_id ASC;",
+    "solution_explanation": "Leaf nodes in a hierarchy are keys that never appear as parents in the relationship table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE manager_id IS NOT NULL in the NOT IN subquery, which would cause NOT IN to evaluate to UNKNOWN."
+    ],
+    "interview_tip": "Always filter out NULLs when using NOT IN subqueries to avoid three-valued logic pitfalls.",
+    "hints": [
+      "Use `WHERE emp_id NOT IN (SELECT manager_id FROM employees WHERE manager_id IS NOT NULL)`.",
+      "Sort output by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, last_name, job_title FROM employees WHERE emp_id NOT IN (SELECT manager_id FROM employees WHERE manager_id IS NOT NULL) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "leaf-nodes",
+      "not-in",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-09",
+    "slug": "adh-identify-leaf-categories-in-catalog",
+    "title": "Identify Leaf Product Categories with No Subcategories",
+    "description_markdown": "From `categories`, find all leaf categories that do not have any child subcategories (`category_id NOT IN (SELECT parent_category_id FROM categories WHERE parent_category_id IS NOT NULL)`). Return `category_id` and `category_name`. Order by `category_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Leaf catalog categories\nSELECT category_id, category_name\nFROM categories\nWHERE category_id NOT IN (SELECT parent_category_id FROM categories WHERE parent_category_id IS NOT NULL)\nORDER BY category_id ASC;",
+    "solution_query": "SELECT category_id, category_name FROM categories WHERE category_id NOT IN (SELECT parent_category_id FROM categories WHERE parent_category_id IS NOT NULL) ORDER BY category_id ASC;",
+    "solution_explanation": "Leaf categories represent the terminal nodes of the product taxonomy tree.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the NOT NULL filter in the subquery."
+    ],
+    "interview_tip": "In e-commerce catalogs, products are typically mapped only to leaf categories.",
+    "hints": [
+      "Filter with `WHERE category_id NOT IN (SELECT parent_category_id FROM categories WHERE parent_category_id IS NOT NULL)`.",
+      "Order by `category_id ASC`.",
+      "Query: SELECT category_id, category_name FROM categories WHERE category_id NOT IN (SELECT parent_category_id FROM categories WHERE parent_category_id IS NOT NULL) ORDER BY category_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "leaf-categories",
+      "taxonomy",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-10",
+    "slug": "adh-recursive-engineering-subtree",
+    "title": "Traverse Engineering Management Subtree with Relative Depth",
+    "description_markdown": "Using a recursive CTE rooted at the VP of Engineering (`emp_id = 2`), traverse the entire engineering organizational subtree. Start with `level = 0` for Marcus, and increment `level + 1` for each subsequent management tier. Return `emp_id`, `first_name`, `job_title`, and `level`. Order by `level` ASC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive engineering subtree traversal\nWITH RECURSIVE eng_tree AS (\n  SELECT emp_id, first_name, job_title, 0 AS level\n  FROM employees\n  WHERE emp_id = 2\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.job_title, et.level + 1\n  FROM employees e\n  JOIN eng_tree et ON e.manager_id = et.emp_id\n)\nSELECT emp_id, first_name, job_title, level\nFROM eng_tree\nORDER BY level ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE eng_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, et.level + 1 FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT emp_id, first_name, job_title, level FROM eng_tree ORDER BY level ASC, emp_id ASC;",
+    "solution_explanation": "Recursive CTE anchors on Marcus Brody and cascades down through direct and indirect reports.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on e.emp_id = et.manager_id instead of e.manager_id = et.emp_id."
+    ],
+    "interview_tip": "Downward recursive traversal tracks departmental reach and chain-of-command depth.",
+    "hints": [
+      "Anchor on `emp_id = 2` with `0 AS level`.",
+      "Recursive join: `JOIN eng_tree et ON e.manager_id = et.emp_id`.",
+      "Query: WITH RECURSIVE eng_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, et.level + 1 FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT emp_id, first_name, job_title, level FROM eng_tree ORDER BY level ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "subtree",
+      "engineering",
+      "levels"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-11",
+    "slug": "adh-recursive-sales-subtree",
+    "title": "Traverse Sales Team Hierarchy from VP to Account Representatives",
+    "description_markdown": "Using a recursive CTE starting at the VP of Sales (`emp_id = 11`), traverse all team members in the sales hierarchy. Anchor at `level = 0`. Return `emp_id`, `first_name`, `job_title`, and `level`. Order by `level` ASC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive sales subtree traversal\nWITH RECURSIVE sales_tree AS (\n  SELECT emp_id, first_name, job_title, 0 AS level\n  FROM employees\n  WHERE emp_id = 11\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.job_title, st.level + 1\n  FROM employees e\n  JOIN sales_tree st ON e.manager_id = st.emp_id\n)\nSELECT emp_id, first_name, job_title, level\nFROM sales_tree\nORDER BY level ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE sales_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 11 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, st.level + 1 FROM employees e JOIN sales_tree st ON e.manager_id = st.emp_id) SELECT emp_id, first_name, job_title, level FROM sales_tree ORDER BY level ASC, emp_id ASC;",
+    "solution_explanation": "Traverses downstream sales organization from David Kim down through Enterprise and regional reps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting UNION ALL in the recursive CTE definition."
+    ],
+    "interview_tip": "Subtree traversal answers questions like 'Who are all the reports under Director X?'.",
+    "hints": [
+      "Anchor on `emp_id = 11`.",
+      "Recurse with `JOIN sales_tree st ON e.manager_id = st.emp_id`.",
+      "Query: WITH RECURSIVE sales_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 11 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, st.level + 1 FROM employees e JOIN sales_tree st ON e.manager_id = st.emp_id) SELECT emp_id, first_name, job_title, level FROM sales_tree ORDER BY level ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sales",
+      "subtree",
+      "org-chart"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-12",
+    "slug": "adh-recursive-product-subtree",
+    "title": "Traverse Product Management Hierarchy Downstream from VP",
+    "description_markdown": "Using a recursive CTE anchored at the VP of Product (`emp_id = 8`), traverse all reports in the product org. Start at `level = 0`. Return `emp_id`, `first_name`, `job_title`, and `level`. Order by `level` ASC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive product subtree traversal\nWITH RECURSIVE prod_tree AS (\n  SELECT emp_id, first_name, job_title, 0 AS level\n  FROM employees\n  WHERE emp_id = 8\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.job_title, pt.level + 1\n  FROM employees e\n  JOIN prod_tree pt ON e.manager_id = pt.emp_id\n)\nSELECT emp_id, first_name, job_title, level\nFROM prod_tree\nORDER BY level ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE prod_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 8 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, pt.level + 1 FROM employees e JOIN prod_tree pt ON e.manager_id = pt.emp_id) SELECT emp_id, first_name, job_title, level FROM prod_tree ORDER BY level ASC, emp_id ASC;",
+    "solution_explanation": "Recursively unwinds the product management division hierarchy from Rachel Green.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Specifying an incorrect anchor employee ID."
+    ],
+    "interview_tip": "Hierarchical subtrees provide scoped subsets of larger enterprise graphs.",
+    "hints": [
+      "Anchor on `emp_id = 8`.",
+      "Join recursive member on `e.manager_id = pt.emp_id`.",
+      "Query: WITH RECURSIVE prod_tree AS (SELECT emp_id, first_name, job_title, 0 AS level FROM employees WHERE emp_id = 8 UNION ALL SELECT e.emp_id, e.first_name, e.job_title, pt.level + 1 FROM employees e JOIN prod_tree pt ON e.manager_id = pt.emp_id) SELECT emp_id, first_name, job_title, level FROM prod_tree ORDER BY level ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "product",
+      "subtree",
+      "levels"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-13",
+    "slug": "adh-recursive-category-depth-tree",
+    "title": "Traverse Full Catalog Category Taxonomy Hierarchy with Depth",
+    "description_markdown": "Using a recursive CTE starting at all root categories (`parent_category_id IS NULL` at `depth = 0`), traverse all subcategories and compute each category's depth level in the taxonomy. Return `category_id`, `category_name`, and `depth`. Order by `depth` ASC, `category_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive catalog taxonomy depth\nWITH RECURSIVE cat_tree AS (\n  SELECT category_id, category_name, parent_category_id, 0 AS depth\n  FROM categories\n  WHERE parent_category_id IS NULL\n  UNION ALL\n  SELECT c.category_id, c.category_name, c.parent_category_id, ct.depth + 1\n  FROM categories c\n  JOIN cat_tree ct ON c.parent_category_id = ct.category_id\n)\nSELECT category_id, category_name, depth\nFROM cat_tree\nORDER BY depth ASC, category_id ASC;",
+    "solution_query": "WITH RECURSIVE cat_tree AS (SELECT category_id, category_name, parent_category_id, 0 AS depth FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, ct.depth + 1 FROM categories c JOIN cat_tree ct ON c.parent_category_id = ct.category_id) SELECT category_id, category_name, depth FROM cat_tree ORDER BY depth ASC, category_id ASC;",
+    "solution_explanation": "Multiple root nodes can anchor a recursive CTE concurrently, producing depth tiers across all catalog branches.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Restricting the anchor to only one root category instead of all categories with parent_category_id IS NULL."
+    ],
+    "interview_tip": "Multi-root recursive queries elegantly handle forests (collections of disjoint trees).",
+    "hints": [
+      "Anchor on all rows `WHERE parent_category_id IS NULL`.",
+      "Recurse by joining `c.parent_category_id = ct.category_id`.",
+      "Query: WITH RECURSIVE cat_tree AS (SELECT category_id, category_name, parent_category_id, 0 AS depth FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, ct.depth + 1 FROM categories c JOIN cat_tree ct ON c.parent_category_id = ct.category_id) SELECT category_id, category_name, depth FROM cat_tree ORDER BY depth ASC, category_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "taxonomy",
+      "categories",
+      "depth"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-14",
+    "slug": "adh-recursive-upward-chain-software-engineer",
+    "title": "Traverse Upward Reporting Chain from Software Engineer to CEO",
+    "description_markdown": "Using a recursive CTE starting at Carlos Mendoza (`emp_id = 6` at `steps_up = 0`), climb the management ladder upward until reaching the root CEO. Return `emp_id`, `first_name`, and `steps_up`. Order by `steps_up` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "steps_up",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Upward management ladder climb\nWITH RECURSIVE chain AS (\n  SELECT emp_id, first_name, manager_id, 0 AS steps_up\n  FROM employees\n  WHERE emp_id = 6\n  UNION ALL\n  SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1\n  FROM employees m\n  JOIN chain c ON m.emp_id = c.manager_id\n)\nSELECT emp_id, first_name, steps_up\nFROM chain\nORDER BY steps_up ASC;",
+    "solution_query": "WITH RECURSIVE chain AS (SELECT emp_id, first_name, manager_id, 0 AS steps_up FROM employees WHERE emp_id = 6 UNION ALL SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1 FROM employees m JOIN chain c ON m.emp_id = c.manager_id) SELECT emp_id, first_name, steps_up FROM chain ORDER BY steps_up ASC;",
+    "solution_explanation": "Upward traversal joins the manager table on m.emp_id = c.manager_id, ascending the lineage to the CEO.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on m.manager_id = c.emp_id which would traverse downwards instead of upwards."
+    ],
+    "interview_tip": "Upward ancestry traversal is essential for permission inheritance and approval workflows.",
+    "hints": [
+      "Anchor on `emp_id = 6` with `0 AS steps_up`.",
+      "Recursive join: `JOIN chain c ON m.emp_id = c.manager_id`.",
+      "Query: WITH RECURSIVE chain AS (SELECT emp_id, first_name, manager_id, 0 AS steps_up FROM employees WHERE emp_id = 6 UNION ALL SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1 FROM employees m JOIN chain c ON m.emp_id = c.manager_id) SELECT emp_id, first_name, steps_up FROM chain ORDER BY steps_up ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "upward-chain",
+      "ancestry",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-15",
+    "slug": "adh-recursive-upward-chain-junior-engineer",
+    "title": "Traverse Upward Reporting Chain from Junior Engineer to CEO",
+    "description_markdown": "Using a recursive CTE starting at Devon Miles (`emp_id = 7` at `steps_up = 0`), climb the management hierarchy to list all ancestors up to the CEO. Return `emp_id`, `first_name`, and `steps_up`. Order by `steps_up` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "steps_up",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Ancestor chain for junior engineer\nWITH RECURSIVE chain AS (\n  SELECT emp_id, first_name, manager_id, 0 AS steps_up\n  FROM employees\n  WHERE emp_id = 7\n  UNION ALL\n  SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1\n  FROM employees m\n  JOIN chain c ON m.emp_id = c.manager_id\n)\nSELECT emp_id, first_name, steps_up\nFROM chain\nORDER BY steps_up ASC;",
+    "solution_query": "WITH RECURSIVE chain AS (SELECT emp_id, first_name, manager_id, 0 AS steps_up FROM employees WHERE emp_id = 7 UNION ALL SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1 FROM employees m JOIN chain c ON m.emp_id = c.manager_id) SELECT emp_id, first_name, steps_up FROM chain ORDER BY steps_up ASC;",
+    "solution_explanation": "Climbs the supervisory hierarchy step by step until a record with NULL manager_id halts recursion.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the parent and child keys in the join condition."
+    ],
+    "interview_tip": "Recursive ancestry queries model organizational escalation paths.",
+    "hints": [
+      "Anchor on `emp_id = 7`.",
+      "Recurse by joining on `m.emp_id = c.manager_id`.",
+      "Query: WITH RECURSIVE chain AS (SELECT emp_id, first_name, manager_id, 0 AS steps_up FROM employees WHERE emp_id = 7 UNION ALL SELECT m.emp_id, m.first_name, m.manager_id, c.steps_up + 1 FROM employees m JOIN chain c ON m.emp_id = c.manager_id) SELECT emp_id, first_name, steps_up FROM chain ORDER BY steps_up ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "ancestry",
+      "lineage",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-16",
+    "slug": "adh-engineering-subtree-headcount-and-payroll",
+    "title": "Aggregate Subtree Headcount and Total Payroll Under VP of Engineering",
+    "description_markdown": "Using a recursive CTE starting at the VP of Engineering (`emp_id = 2`), gather all staff in Marcus's subtree. Aggregate the results to compute `COUNT(*) AS subtree_headcount` and `SUM(salary) AS subtree_total_payroll`. Return `subtree_headcount` and `subtree_total_payroll`.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "subtree_headcount",
+        "type": "bigint"
+      },
+      {
+        "name": "subtree_total_payroll",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subtree headcount and payroll summary\nWITH RECURSIVE eng_tree AS (\n  SELECT emp_id, salary\n  FROM employees\n  WHERE emp_id = 2\n  UNION ALL\n  SELECT e.emp_id, e.salary\n  FROM employees e\n  JOIN eng_tree et ON e.manager_id = et.emp_id\n)\nSELECT COUNT(*) AS subtree_headcount, SUM(salary) AS subtree_total_payroll\nFROM eng_tree;",
+    "solution_query": "WITH RECURSIVE eng_tree AS (SELECT emp_id, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT COUNT(*) AS subtree_headcount, SUM(salary) AS subtree_total_payroll FROM eng_tree;",
+    "solution_explanation": "Aggregating over a recursive CTE calculates rolled-up cost and personnel across an entire branch.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Excluding the root manager from the aggregate when the entire subtree is requested."
+    ],
+    "interview_tip": "Subtree rollups model departmental operating expense (OpEx) attribution.",
+    "hints": [
+      "Select `emp_id, salary` in the anchor and recursive query.",
+      "In the outer query, calculate `COUNT(*)` and `SUM(salary)`.",
+      "Query: WITH RECURSIVE eng_tree AS (SELECT emp_id, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT COUNT(*) AS subtree_headcount, SUM(salary) AS subtree_total_payroll FROM eng_tree;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "aggregation",
+      "payroll",
+      "headcount"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-17",
+    "slug": "adh-managers-with-minimum-two-reports",
+    "title": "Filter Managers with at Least Two Direct Reports",
+    "description_markdown": "Self-join `employees` as `m` (manager) and `e` (report). Find all managers who have at least 2 direct reports (`COUNT(e.emp_id) >= 2`). Return `m.emp_id AS manager_id`, `m.first_name AS manager_name`, and `COUNT(e.emp_id) AS direct_reports`. Order by `direct_reports` DESC, `m.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_id",
+        "type": "integer"
+      },
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "direct_reports",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Managers with >= 2 direct reports\nSELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports\nFROM employees m\nJOIN employees e ON e.manager_id = m.emp_id\nGROUP BY m.emp_id, m.first_name\nHAVING COUNT(e.emp_id) >= 2\nORDER BY direct_reports DESC, m.emp_id ASC;",
+    "solution_query": "SELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports FROM employees m JOIN employees e ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name HAVING COUNT(e.emp_id) >= 2 ORDER BY direct_reports DESC, m.emp_id ASC;",
+    "solution_explanation": "HAVING filters managers by minimum supervisory load.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE COUNT(...) instead of HAVING."
+    ],
+    "interview_tip": "Organizations monitor minimum team sizes to avoid overly thin managerial ratios.",
+    "hints": [
+      "Use `HAVING COUNT(e.emp_id) >= 2`.",
+      "Sort by `direct_reports DESC, m.emp_id ASC`.",
+      "Query: SELECT m.emp_id AS manager_id, m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports FROM employees m JOIN employees e ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name HAVING COUNT(e.emp_id) >= 2 ORDER BY direct_reports DESC, m.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "having",
+      "management",
+      "reports"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-18",
+    "slug": "adh-employee-with-immediate-manager-name",
+    "title": "Display Every Subordinate Alongside Their Immediate Manager Name",
+    "description_markdown": "From `employees`, join every employee `e` with their immediate supervisor `m` on `e.manager_id = m.emp_id`. Return `e.emp_id`, `e.first_name`, `e.last_name`, and `m.first_name AS manager_first_name`. Order by `e.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "manager_first_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employee with immediate manager name\nSELECT e.emp_id, e.first_name, e.last_name, m.first_name AS manager_first_name\nFROM employees e\nJOIN employees m ON e.manager_id = m.emp_id\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.last_name, m.first_name AS manager_first_name FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Self-joining child to parent exposes the direct manager's personal identity.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the manager table alias."
+    ],
+    "interview_tip": "Classic self-join pattern tested in nearly every SQL technical interview.",
+    "hints": [
+      "Join `employees e` with `employees m ON e.manager_id = m.emp_id`.",
+      "Sort output by `e.emp_id ASC`.",
+      "Query: SELECT e.emp_id, e.first_name, e.last_name, m.first_name AS manager_first_name FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "reporting",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-19",
+    "slug": "adh-headcount-distribution-across-hierarchy-depth",
+    "title": "Calculate Employee Headcount Distribution Across Hierarchy Depth Levels",
+    "description_markdown": "Using a recursive CTE starting at the root CEO (`manager_id IS NULL AND dept_id IS NOT NULL` at `depth = 0`), calculate the hierarchy depth of every employee. In the outer query, group by `depth` and count employees at each depth level as `employee_count`. Return `depth` and `employee_count`. Order by `depth` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "depth",
+        "type": "integer"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Headcount distribution across hierarchy depth\nWITH RECURSIVE org AS (\n  SELECT emp_id, 0 AS depth\n  FROM employees\n  WHERE manager_id IS NULL AND dept_id IS NOT NULL\n  UNION ALL\n  SELECT e.emp_id, o.depth + 1\n  FROM employees e\n  JOIN org o ON e.manager_id = o.emp_id\n)\nSELECT depth, COUNT(*) AS employee_count\nFROM org\nGROUP BY depth\nORDER BY depth ASC;",
+    "solution_query": "WITH RECURSIVE org AS (SELECT emp_id, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT depth, COUNT(*) AS employee_count FROM org GROUP BY depth ORDER BY depth ASC;",
+    "solution_explanation": "Grouping recursive CTE output by depth provides the organization's shape profile (flat vs tall pyramid).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting GROUP BY depth."
+    ],
+    "interview_tip": "Organizational shape metrics help HR leaders assess organizational flattening initiatives.",
+    "hints": [
+      "Compute `depth` in the recursive CTE.",
+      "Group outer query by `depth` and calculate `COUNT(*)`.",
+      "Query: WITH RECURSIVE org AS (SELECT emp_id, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT depth, COUNT(*) AS employee_count FROM org GROUP BY depth ORDER BY depth ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "org-shape",
+      "depth",
+      "headcount"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-20",
+    "slug": "adh-identify-deepest-leaf-employees",
+    "title": "Identify Staff Members at the Maximum Hierarchy Depth Level",
+    "description_markdown": "Using a recursive CTE starting at the CEO (`manager_id IS NULL AND dept_id IS NOT NULL` at `depth = 0`), find all employees situated at the maximum depth level in the entire company (`depth = (SELECT MAX(depth) FROM org)`). Return `emp_id`, `first_name`, and `depth`. Order by `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employees at maximum hierarchy depth\nWITH RECURSIVE org AS (\n  SELECT emp_id, first_name, 0 AS depth\n  FROM employees\n  WHERE manager_id IS NULL AND dept_id IS NOT NULL\n  UNION ALL\n  SELECT e.emp_id, e.first_name, o.depth + 1\n  FROM employees e\n  JOIN org o ON e.manager_id = o.emp_id\n)\nSELECT emp_id, first_name, depth\nFROM org\nWHERE depth = (SELECT MAX(depth) FROM org)\nORDER BY emp_id ASC;",
+    "solution_query": "WITH RECURSIVE org AS (SELECT emp_id, first_name, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.first_name, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT emp_id, first_name, depth FROM org WHERE depth = (SELECT MAX(depth) FROM org) ORDER BY emp_id ASC;",
+    "solution_explanation": "Subquery against the recursive CTE filters for terminal records furthest removed from the root node.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Hardcoding the maximum depth integer instead of using (SELECT MAX(depth) FROM org)."
+    ],
+    "interview_tip": "Dynamic filtering on max depth ensures query correctness as the company reorganizes.",
+    "hints": [
+      "Use `WHERE depth = (SELECT MAX(depth) FROM org)` in the outer query.",
+      "Sort output by `emp_id ASC`.",
+      "Query: WITH RECURSIVE org AS (SELECT emp_id, first_name, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.first_name, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT emp_id, first_name, depth FROM org WHERE depth = (SELECT MAX(depth) FROM org) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "max-depth",
+      "filtering",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-21",
+    "slug": "adh-subcategories-with-parent-names",
+    "title": "Display Every Subcategory with Its Immediate Parent Category Name",
+    "description_markdown": "Self-join `categories` child `c` with parent `p` on `c.parent_category_id = p.category_id`. Return `c.category_id`, `c.category_name`, and `p.category_name AS parent_name`. Order by `c.category_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "parent_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Categories with immediate parent names\nSELECT c.category_id, c.category_name, p.category_name AS parent_name\nFROM categories c\nJOIN categories p ON c.parent_category_id = p.category_id\nORDER BY c.category_id ASC;",
+    "solution_query": "SELECT c.category_id, c.category_name, p.category_name AS parent_name FROM categories c JOIN categories p ON c.parent_category_id = p.category_id ORDER BY c.category_id ASC;",
+    "solution_explanation": "Self-joining categories resolves the human-readable title of each category's parent taxonomy tier.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN when only subcategories with active parents are requested."
+    ],
+    "interview_tip": "Adjacency list parent joins form the basis for breadcrumb and dropdown navigation components.",
+    "hints": [
+      "Join `categories c` with `categories p ON c.parent_category_id = p.category_id`.",
+      "Sort by `c.category_id ASC`.",
+      "Query: SELECT c.category_id, c.category_name, p.category_name AS parent_name FROM categories c JOIN categories p ON c.parent_category_id = p.category_id ORDER BY c.category_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "categories",
+      "parent-names"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-22",
+    "slug": "adh-direct-reports-to-ceo",
+    "title": "List Executive Leadership Team Directly Reporting to CEO",
+    "description_markdown": "From `employees`, select all Vice Presidents and senior executives who report directly to the CEO (`manager_id = 1`). Return `emp_id`, `first_name`, and `salary`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Direct reports to the CEO\nSELECT emp_id, first_name, salary\nFROM employees\nWHERE manager_id = 1\nORDER BY salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary FROM employees WHERE manager_id = 1 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Direct level-1 subordinates are filtered by matching parent foreign keys directly to the root manager ID.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including the CEO in the result set."
+    ],
+    "interview_tip": "Direct reports represent distance 1 in graph and tree structures.",
+    "hints": [
+      "Filter `WHERE manager_id = 1`.",
+      "Sort output by `salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary FROM employees WHERE manager_id = 1 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "direct-reports",
+      "executive",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-23",
+    "slug": "adh-salary-difference-between-report-and-manager",
+    "title": "Calculate Compensation Spread Between Employee and Direct Manager",
+    "description_markdown": "Self-join `employees e` with manager `m` on `e.manager_id = m.emp_id`. Calculate each employee's salary difference relative to their manager using `ROUND(e.salary - m.salary, 2)` as `salary_diff`. Return `e.emp_id`, `e.first_name`, `e.salary`, `m.salary AS manager_salary`, and `salary_diff`. Order by `e.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "manager_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "salary_diff",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary difference to direct manager\nSELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary,\n  ROUND(e.salary - m.salary, 2) AS salary_diff\nFROM employees e\nJOIN employees m ON e.manager_id = m.emp_id\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary, ROUND(e.salary - m.salary, 2) AS salary_diff FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Self-joins allow direct horizontal comparison between related tree nodes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting manager salary in the wrong order."
+    ],
+    "interview_tip": "Manager-to-report pay ratios ensure compensation bands maintain expected grade-level spreads.",
+    "hints": [
+      "Join `employees e` with `employees m ON e.manager_id = m.emp_id`.",
+      "Calculate `ROUND(e.salary - m.salary, 2) AS salary_diff`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary, ROUND(e.salary - m.salary, 2) AS salary_diff FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "salary-comparison",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-24",
+    "slug": "adh-employees-earning-more-than-manager",
+    "title": "Identify Subordinates Who Out-Earn Their Direct Manager",
+    "description_markdown": "Self-join `employees e` with direct manager `m` on `e.manager_id = m.emp_id`. Find all employees where the employee's salary exceeds their direct supervisor's salary (`e.salary > m.salary`). Return `e.emp_id`, `e.first_name`, `e.salary`, and `m.salary AS manager_salary`. Order by `e.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "manager_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employees earning more than their manager\nSELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary\nFROM employees e\nJOIN employees m ON e.manager_id = m.emp_id\nWHERE e.salary > m.salary\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Classic LeetCode SQL problem checking pay inversion between managers and staff.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inverting the inequality condition."
+    ],
+    "interview_tip": "This is one of the top 5 most frequently asked SQL interview questions worldwide.",
+    "hints": [
+      "Self-join on `e.manager_id = m.emp_id`.",
+      "Filter with `WHERE e.salary > m.salary`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary, m.salary AS manager_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "pay-inversion",
+      "interview-classic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-25",
+    "slug": "adh-count-products-in-electronics-subtree",
+    "title": "Count All Products in Electronics Category Subtree",
+    "description_markdown": "Using a recursive CTE starting at the 'Electronics' root category (`category_id = 1`), gather all descendant category IDs in its subtree. Count total products assigned to any category in this subtree as `product_count`. Return `product_count`.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total products in category subtree\nWITH RECURSIVE cat_tree AS (\n  SELECT category_id\n  FROM categories\n  WHERE category_id = 1\n  UNION ALL\n  SELECT c.category_id\n  FROM categories c\n  JOIN cat_tree ct ON c.parent_category_id = ct.category_id\n)\nSELECT COUNT(*) AS product_count\nFROM products\nWHERE category_id IN (SELECT category_id FROM cat_tree);",
+    "solution_query": "WITH RECURSIVE cat_tree AS (SELECT category_id FROM categories WHERE category_id = 1 UNION ALL SELECT c.category_id FROM categories c JOIN cat_tree ct ON c.parent_category_id = ct.category_id) SELECT COUNT(*) AS product_count FROM products WHERE category_id IN (SELECT category_id FROM cat_tree);",
+    "solution_explanation": "Recursive CTE resolves transitive category membership so product inventory can be rolled up to top-level departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Counting products only in category 1 rather than its full descendant subtree."
+    ],
+    "interview_tip": "Subtree product rollups power category landing page metrics and faceted search counts.",
+    "hints": [
+      "Anchor on `category_id = 1` and recurse down with `c.parent_category_id = ct.category_id`.",
+      "Filter `products` with `WHERE category_id IN (SELECT category_id FROM cat_tree)`.",
+      "Query: WITH RECURSIVE cat_tree AS (SELECT category_id FROM categories WHERE category_id = 1 UNION ALL SELECT c.category_id FROM categories c JOIN cat_tree ct ON c.parent_category_id = ct.category_id) SELECT COUNT(*) AS product_count FROM products WHERE category_id IN (SELECT category_id FROM cat_tree);"
+    ],
+    "tags": [
+      "recursive-cte",
+      "subtree",
+      "products",
+      "rollups"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-26",
+    "slug": "adh-average-salary-in-engineering-subtree",
+    "title": "Calculate Average Salary Across Entire Engineering Org Subtree",
+    "description_markdown": "Using a recursive CTE starting at the VP of Engineering (`emp_id = 2`), collect all employees within the engineering branch. In the outer query, compute the mean salary of all staff in this branch using `ROUND(AVG(salary), 2)` as `eng_avg_salary`. Return `eng_avg_salary`.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "eng_avg_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average salary in engineering subtree\nWITH RECURSIVE eng_tree AS (\n  SELECT emp_id, salary\n  FROM employees\n  WHERE emp_id = 2\n  UNION ALL\n  SELECT e.emp_id, e.salary\n  FROM employees e\n  JOIN eng_tree et ON e.manager_id = et.emp_id\n)\nSELECT ROUND(AVG(salary), 2) AS eng_avg_salary\nFROM eng_tree;",
+    "solution_query": "WITH RECURSIVE eng_tree AS (SELECT emp_id, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT ROUND(AVG(salary), 2) AS eng_avg_salary FROM eng_tree;",
+    "solution_explanation": "Averages all compensation packages across the entire subtree under a division leader.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the ROUND function on the resulting decimal."
+    ],
+    "interview_tip": "Division-wide aggregate benchmarks measure organizational talent investment.",
+    "hints": [
+      "Select `emp_id, salary` in the recursive CTE.",
+      "Use `ROUND(AVG(salary), 2) AS eng_avg_salary` in the outer query.",
+      "Query: WITH RECURSIVE eng_tree AS (SELECT emp_id, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT ROUND(AVG(salary), 2) AS eng_avg_salary FROM eng_tree;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "average",
+      "payroll",
+      "engineering"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-27",
+    "slug": "adh-identify-multi-tiered-managers",
+    "title": "Identify Multi-Tiered Managers Who Supervise Other Managers",
+    "description_markdown": "Find middle-management leaders who manage at least one employee who is also a manager of someone else (`m.manager_id IS NOT NULL`). Return distinct `m.emp_id`, `m.first_name`, and `m.last_name`. Order by `m.emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-tiered managers\nSELECT DISTINCT m.emp_id, m.first_name, m.last_name\nFROM employees m\nJOIN employees sub ON sub.manager_id = m.emp_id\nWHERE m.manager_id IS NOT NULL\nORDER BY m.emp_id ASC;",
+    "solution_query": "SELECT DISTINCT m.emp_id, m.first_name, m.last_name FROM employees m JOIN employees sub ON sub.manager_id = m.emp_id WHERE m.manager_id IS NOT NULL ORDER BY m.emp_id ASC;",
+    "solution_explanation": "Identifies managers who have both an upward supervisor and downstream direct reports.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting DISTINCT resulting in duplicate manager rows."
+    ],
+    "interview_tip": "Middle management identification supports leadership development and delegation auditing.",
+    "hints": [
+      "Join `employees m` with `employees sub ON sub.manager_id = m.emp_id`.",
+      "Filter `WHERE m.manager_id IS NOT NULL`.",
+      "Query: SELECT DISTINCT m.emp_id, m.first_name, m.last_name FROM employees m JOIN employees sub ON sub.manager_id = m.emp_id WHERE m.manager_id IS NOT NULL ORDER BY m.emp_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "self-join",
+      "middle-management",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-28",
+    "slug": "adh-department-management-density-metrics",
+    "title": "Calculate Department Headcount and Active Manager Counts",
+    "description_markdown": "Join `departments d` and `employees e` on `dept_id`. For each department, calculate the total distinct employee count as `total_employees` and the number of distinct active managers in that department (`COUNT(DISTINCT e.manager_id)`) as `active_managers`. Return `d.dept_name`, `total_employees`, and `active_managers`. Order by `total_employees` DESC, `d.dept_name` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_employees",
+        "type": "bigint"
+      },
+      {
+        "name": "active_managers",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department management density\nSELECT d.dept_name, COUNT(DISTINCT e.emp_id) AS total_employees,\n  COUNT(DISTINCT e.manager_id) AS active_managers\nFROM departments d\nJOIN employees e ON d.dept_id = e.dept_id\nGROUP BY d.dept_name\nORDER BY total_employees DESC, d.dept_name ASC;",
+    "solution_query": "SELECT d.dept_name, COUNT(DISTINCT e.emp_id) AS total_employees, COUNT(DISTINCT e.manager_id) AS active_managers FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_name ORDER BY total_employees DESC, d.dept_name ASC;",
+    "solution_explanation": "Measures managerial concentration across corporate divisions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(e.manager_id) without DISTINCT."
+    ],
+    "interview_tip": "Manager-to-staff ratios are key KPIs in headcount planning.",
+    "hints": [
+      "Join `departments` and `employees` on `dept_id`.",
+      "Calculate `COUNT(DISTINCT e.emp_id)` and `COUNT(DISTINCT e.manager_id)`.",
+      "Query: SELECT d.dept_name, COUNT(DISTINCT e.emp_id) AS total_employees, COUNT(DISTINCT e.manager_id) AS active_managers FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_name ORDER BY total_employees DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "density",
+      "departments",
+      "distinct-counts"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-29",
+    "slug": "adh-highest-earning-subordinate-in-engineering",
+    "title": "Identify Highest-Earning Subordinate in Engineering Subtree",
+    "description_markdown": "Using a recursive CTE starting at the VP of Engineering (`emp_id = 2`), traverse the engineering subtree. In the outer query, exclude Marcus himself (`emp_id != 2`), and find the single subordinate with the highest salary. Break ties by `emp_id ASC`. Return `emp_id`, `first_name`, and `salary` with `LIMIT 1`.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Top paid subordinate in engineering\nWITH RECURSIVE eng_tree AS (\n  SELECT emp_id, first_name, salary\n  FROM employees\n  WHERE emp_id = 2\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.salary\n  FROM employees e\n  JOIN eng_tree et ON e.manager_id = et.emp_id\n)\nSELECT emp_id, first_name, salary\nFROM eng_tree\nWHERE emp_id != 2\nORDER BY salary DESC, emp_id ASC\nLIMIT 1;",
+    "solution_query": "WITH RECURSIVE eng_tree AS (SELECT emp_id, first_name, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT emp_id, first_name, salary FROM eng_tree WHERE emp_id != 2 ORDER BY salary DESC, emp_id ASC LIMIT 1;",
+    "solution_explanation": "Filters and ranks recursive subtree nodes to locate top individual contributors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to exclude the root VP (emp_id = 2)."
+    ],
+    "interview_tip": "Subtree extremum queries identify top performers and key person dependencies within organizations.",
+    "hints": [
+      "Traverse subtree under `emp_id = 2`.",
+      "Filter `WHERE emp_id != 2` and order by `salary DESC, emp_id ASC LIMIT 1`.",
+      "Query: WITH RECURSIVE eng_tree AS (SELECT emp_id, first_name, salary FROM employees WHERE emp_id = 2 UNION ALL SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN eng_tree et ON e.manager_id = et.emp_id) SELECT emp_id, first_name, salary FROM eng_tree WHERE emp_id != 2 ORDER BY salary DESC, emp_id ASC LIMIT 1;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "top-performer",
+      "salary",
+      "engineering"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-30",
+    "slug": "adh-team-size-and-average-compensation-by-manager",
+    "title": "Calculate Direct Team Size and Average Salary by Manager ID",
+    "description_markdown": "For all employees who report to a manager (`manager_id IS NOT NULL`), group by `manager_id`. Calculate `COUNT(*) AS team_size` and `ROUND(AVG(salary), 2) AS team_avg_salary`. Return `manager_id`, `team_size`, and `team_avg_salary`. Order by `team_size` DESC, `manager_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_id",
+        "type": "integer"
+      },
+      {
+        "name": "team_size",
+        "type": "bigint"
+      },
+      {
+        "name": "team_avg_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Team size and average salary per manager\nSELECT manager_id, COUNT(*) AS team_size,\n  ROUND(AVG(salary), 2) AS team_avg_salary\nFROM employees\nWHERE manager_id IS NOT NULL\nGROUP BY manager_id\nORDER BY team_size DESC, manager_id ASC;",
+    "solution_query": "SELECT manager_id, COUNT(*) AS team_size, ROUND(AVG(salary), 2) AS team_avg_salary FROM employees WHERE manager_id IS NOT NULL GROUP BY manager_id ORDER BY team_size DESC, manager_id ASC;",
+    "solution_explanation": "Groups immediate reports to compute team statistics per supervisory node.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the ROUND on team_avg_salary."
+    ],
+    "interview_tip": "Benchmarking team average salaries helps HR spot wage discrepancies between managerial pods.",
+    "hints": [
+      "Group by `manager_id` where `manager_id IS NOT NULL`.",
+      "Calculate `COUNT(*)` and `ROUND(AVG(salary), 2)`.",
+      "Query: SELECT manager_id, COUNT(*) AS team_size, ROUND(AVG(salary), 2) AS team_avg_salary FROM employees WHERE manager_id IS NOT NULL GROUP BY manager_id ORDER BY team_size DESC, manager_id ASC;"
+    ],
+    "tags": [
+      "hierarchy",
+      "aggregation",
+      "team-size",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-31",
+    "slug": "adh-maximum-hierarchy-depth-by-department",
+    "title": "Calculate Maximum Hierarchy Depth Level Across Departments",
+    "description_markdown": "Using a recursive CTE starting at the root CEO (`manager_id IS NULL AND dept_id IS NOT NULL` at `depth = 0`), compute the hierarchy depth for every employee. In the outer query, join with `departments d` on `o.dept_id = d.dept_id`, group by `d.dept_name`, and find `MAX(o.depth) AS max_depth`. Return `d.dept_name` and `max_depth`. Order by `max_depth` DESC, `d.dept_name` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department hierarchy depth\nWITH RECURSIVE org AS (\n  SELECT emp_id, dept_id, 0 AS depth\n  FROM employees\n  WHERE manager_id IS NULL AND dept_id IS NOT NULL\n  UNION ALL\n  SELECT e.emp_id, e.dept_id, o.depth + 1\n  FROM employees e\n  JOIN org o ON e.manager_id = o.emp_id\n)\nSELECT d.dept_name, MAX(o.depth) AS max_depth\nFROM org o\nJOIN departments d ON o.dept_id = d.dept_id\nGROUP BY d.dept_name\nORDER BY max_depth DESC, d.dept_name ASC;",
+    "solution_query": "WITH RECURSIVE org AS (SELECT emp_id, dept_id, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.dept_id, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT d.dept_name, MAX(o.depth) AS max_depth FROM org o JOIN departments d ON o.dept_id = d.dept_id GROUP BY d.dept_name ORDER BY max_depth DESC, d.dept_name ASC;",
+    "solution_explanation": "Measures organizational tiers across business units using recursive CTE joining to departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting dept_id in the recursive CTE projection."
+    ],
+    "interview_tip": "Hierarchy depth across business units reveals structural layering variance.",
+    "hints": [
+      "Include `dept_id` in both anchor and recursive queries.",
+      "Group outer query by `dept_name` and compute `MAX(depth)`.",
+      "Query: WITH RECURSIVE org AS (SELECT emp_id, dept_id, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.dept_id, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT d.dept_name, MAX(o.depth) AS max_depth FROM org o JOIN departments d ON o.dept_id = d.dept_id GROUP BY d.dept_name ORDER BY max_depth DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "department",
+      "hierarchy-depth",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-adh-32",
+    "slug": "adh-full-company-depth-lineup",
+    "title": "Generate Company-Wide Organizational Hierarchy Depth Lineup",
+    "description_markdown": "Using a recursive CTE starting at the CEO (`manager_id IS NULL AND dept_id IS NOT NULL` at `depth = 0`), traverse the entire organizational chart. Return `emp_id`, `first_name`, `last_name`, and `depth` for every employee in the tree. Order by `depth` ASC, `emp_id` ASC.",
+    "topic_id": "advanced-ctes-hierarchies",
+    "subtopic_id": "adv-graph",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Company-wide organizational depth lineup\nWITH RECURSIVE org AS (\n  SELECT emp_id, first_name, last_name, 0 AS depth\n  FROM employees\n  WHERE manager_id IS NULL AND dept_id IS NOT NULL\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.last_name, o.depth + 1\n  FROM employees e\n  JOIN org o ON e.manager_id = o.emp_id\n)\nSELECT emp_id, first_name, last_name, depth\nFROM org\nORDER BY depth ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE org AS (SELECT emp_id, first_name, last_name, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.first_name, e.last_name, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT emp_id, first_name, last_name, depth FROM org ORDER BY depth ASC, emp_id ASC;",
+    "solution_explanation": "Constructs the full organizational depth map, numbering all tiers from the CEO down to individual contributors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary sort key emp_id ASC."
+    ],
+    "interview_tip": "Hierarchical depth graphs serve as the backbone for tree-grid UI displays and permission lattices.",
+    "hints": [
+      "Anchor on root node `WHERE manager_id IS NULL AND dept_id IS NOT NULL`.",
+      "Recurse with `o.depth + 1` joining `e.manager_id = o.emp_id`.",
+      "Query: WITH RECURSIVE org AS (SELECT emp_id, first_name, last_name, 0 AS depth FROM employees WHERE manager_id IS NULL AND dept_id IS NOT NULL UNION ALL SELECT e.emp_id, e.first_name, e.last_name, o.depth + 1 FROM employees e JOIN org o ON e.manager_id = o.emp_id) SELECT emp_id, first_name, last_name, depth FROM org ORDER BY depth ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "org-chart",
+      "hierarchy",
+      "depth"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-adh-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-adh-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-adh-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

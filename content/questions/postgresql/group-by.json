@@ -1,0 +1,2366 @@
+[
+  {
+    "id": "q-grp-01",
+    "slug": "headcount-per-department",
+    "title": "Count Employees by Department",
+    "description_markdown": "Count the number of employees in each department. Return `dept_id` and `COUNT(*) AS employee_count`, grouped by `dept_id`. Exclude employees with NULL `dept_id`. Order by `dept_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Group by dept_id\nSELECT dept_id, COUNT(*) AS employee_count\nFROM employees\nWHERE dept_id IS NOT NULL\nGROUP BY ...",
+    "solution_query": "SELECT dept_id, COUNT(*) AS employee_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY dept_id ASC;",
+    "solution_explanation": "GROUP BY partitions matching rows by `dept_id` and applies the COUNT(*) aggregate function to each partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter out NULLs with `WHERE dept_id IS NOT NULL`.",
+      "Add `GROUP BY dept_id ORDER BY dept_id ASC`.",
+      "Query: SELECT dept_id, COUNT(*) AS employee_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-02",
+    "slug": "average-salary-by-department",
+    "title": "Departmental Average Salary Benchmark",
+    "description_markdown": "Calculate the average salary for each department. Return `dept_id` and `ROUND(AVG(salary), 2) AS avg_salary`, grouped by `dept_id`. Exclude NULL `dept_id`. Order by `avg_salary` descending, then `dept_id`.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "avg_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average salary grouped by dept_id\nSELECT ...",
+    "solution_query": "SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY avg_salary DESC, dept_id ASC;",
+    "solution_explanation": "Computes the arithmetic mean of salaries within each distinct department group.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(AVG(salary), 2) AS avg_salary`.",
+      "Order by `avg_salary DESC, dept_id ASC`.",
+      "Query: SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY avg_salary DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-03",
+    "slug": "orders-revenue-by-status",
+    "title": "Aggregate Order Count and Revenue by Status",
+    "description_markdown": "For each order status in `orders`, calculate total orders (`COUNT(*) AS order_count`) and total revenue (`SUM(total_amount) AS total_revenue`). Return `order_status`, `order_count`, and `total_revenue`. Order by `total_revenue` descending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Summarize orders by status\nSELECT ...",
+    "solution_query": "SELECT order_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue FROM orders GROUP BY order_status ORDER BY total_revenue DESC, order_status ASC;",
+    "solution_explanation": "Groups by `order_status` to evaluate lifecycle stages across transaction counts and sales volumes.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `order_status`.",
+      "Include COUNT(*) and SUM(total_amount).",
+      "Query: SELECT order_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue FROM orders GROUP BY order_status ORDER BY total_revenue DESC, order_status ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "ecommerce-status"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-04",
+    "slug": "ecommercedb-orders-per-customer",
+    "title": "Aggregate Order Frequency and Spend per Customer",
+    "description_markdown": "From `orders`, calculate total orders placed (`COUNT(*) AS order_count`) and total cumulative spend (`SUM(total_amount) AS total_spent`) grouped by `customer_id`. Order by `customer_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Group by customer_id\nSELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent\nFROM orders\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id ORDER BY customer_id ASC;",
+    "solution_explanation": "Partitions retail purchases by customer_id to compute order counts and total transaction dollar volume.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting customer_id from the GROUP BY clause.",
+      "Forgetting ORDER BY customer_id ASC."
+    ],
+    "hints": [
+      "Select customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent.",
+      "Group by customer_id and sort by customer_id ASC.",
+      "Query: SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "aggregation",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-05",
+    "slug": "collegedb-students-major-headcount-gpa",
+    "title": "Calculate Student Headcount and Mean GPA per Major",
+    "description_markdown": "From `students`, return `major`, total students enrolled (`COUNT(*) AS student_count`), and average GPA rounded to 2 decimals as `avg_gpa`. Group by `major` and order by `major` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "student_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student demographics by major\nSELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa\nFROM students\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa FROM students GROUP BY major ORDER BY major ASC;",
+    "solution_explanation": "Groups students by academic major and computes cohort sizes and grade benchmarks.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting ROUND on average GPA."
+    ],
+    "hints": [
+      "Group by major.",
+      "Use COUNT(*) AS student_count and ROUND(AVG(gpa), 2) AS avg_gpa.",
+      "Query: SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa FROM students GROUP BY major ORDER BY major ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "count",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-06",
+    "slug": "banking-accounts-summary-by-type",
+    "title": "Compute Total Balance and Account Count by Account Type",
+    "description_markdown": "From `accounts`, calculate the number of accounts (`COUNT(*) AS account_count`) and total cumulative balance (`SUM(balance) AS total_balance`) for each `account_type`. Order by `account_type` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "account_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Bank liquidity breakdown by account type\nSELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance\nFROM accounts\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY account_type ORDER BY account_type ASC;",
+    "solution_explanation": "Summarizes portfolio deposit liquidity grouped by product line.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting account_type from GROUP BY."
+    ],
+    "hints": [
+      "Group by account_type.",
+      "Query: SELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY account_type ORDER BY account_type ASC;",
+      "The expected query is: SELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY account_type ORDER BY account_type ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-07",
+    "slug": "hospital-doctors-experience-by-department",
+    "title": "Doctor Headcount and Clinical Experience by Department",
+    "description_markdown": "From `doctors`, return `department`, total physicians (`COUNT(*) AS doctor_count`), and average experience rounded to 1 decimal place as `avg_experience`. Group by `department` and order by `department` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "doctor_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_experience",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Physician metrics by department\nSELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience\nFROM doctors\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department ORDER BY department ASC;",
+    "solution_explanation": "Groups medical practitioners by department and calculates staff size and average tenure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding to 2 decimals instead of 1."
+    ],
+    "hints": [
+      "Group by department.",
+      "Query: SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department ORDER BY department ASC;",
+      "The expected query is: SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department ORDER BY department ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-08",
+    "slug": "hotel-rooms-count-and-avg-price-by-type",
+    "title": "Room Inventory Size and Average Nightly Rate by Room Type",
+    "description_markdown": "From `rooms`, return `room_type`, total rooms (`COUNT(*) AS room_count`), and average nightly rate rounded to 2 decimals as `avg_price`. Group by `room_type` and order by `room_type` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "room_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Room inventory summary by type\nSELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price\nFROM rooms\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type ORDER BY room_type ASC;",
+    "solution_explanation": "Summarizes accommodation offerings and pricing per room class.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the alias avg_price."
+    ],
+    "hints": [
+      "Group by room_type.",
+      "Query: SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type ORDER BY room_type ASC;",
+      "The expected query is: SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type ORDER BY room_type ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-09",
+    "slug": "library-books-catalog-and-copies-by-category",
+    "title": "Catalog Titles and Total Inventory by Category",
+    "description_markdown": "From `books`, return `category`, total distinct titles (`COUNT(*) AS title_count`), and total copies in circulation (`SUM(copies_available) AS total_copies`). Group by `category` and order by `category` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "title_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_copies",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Library collection volume by category\nSELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies\nFROM books\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category ORDER BY category ASC;",
+    "solution_explanation": "Aggregates book titles and total shelf stock per genre.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(copies_available) instead of SUM."
+    ],
+    "hints": [
+      "Group by category.",
+      "Query: SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category ORDER BY category ASC;",
+      "The expected query is: SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category ORDER BY category ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-10",
+    "slug": "movie-streaming-movies-ratings-by-genre",
+    "title": "Catalog Film Count and Rating Benchmark by Genre",
+    "description_markdown": "From `movies`, return `genre`, total movies (`COUNT(*) AS movie_count`), and average IMDb rating rounded to 2 decimals as `avg_rating`. Group by `genre` and order by `genre` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "genre",
+        "type": "varchar"
+      },
+      {
+        "name": "movie_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Movie volume and average rating by genre\nSELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating\nFROM movies\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre ORDER BY genre ASC;",
+    "solution_explanation": "Groups motion pictures by genre to evaluate catalog breadth and rating performance.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND on avg_rating."
+    ],
+    "hints": [
+      "Group by genre.",
+      "Query: SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre ORDER BY genre ASC;",
+      "The expected query is: SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre ORDER BY genre ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-11",
+    "slug": "sales-leads-count-by-industry",
+    "title": "Prospect Distribution Across Target Industries",
+    "description_markdown": "From `leads`, return `industry` and the count of corporate leads (`COUNT(*) AS lead_count`) grouped by `industry`. Order by `industry` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "lead_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lead distribution by industry\nSELECT industry, COUNT(*) AS lead_count\nFROM leads\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT industry, COUNT(*) AS lead_count FROM leads GROUP BY industry ORDER BY industry ASC;",
+    "solution_explanation": "Partitions CRM pipeline leads into vertical industry clusters.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ORDER BY industry ASC."
+    ],
+    "hints": [
+      "Group by industry.",
+      "Query: SELECT industry, COUNT(*) AS lead_count FROM leads GROUP BY industry ORDER BY industry ASC;",
+      "The expected query is: SELECT industry, COUNT(*) AS lead_count FROM leads GROUP BY industry ORDER BY industry ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-12",
+    "slug": "food-delivery-restaurants-count-and-rating-by-cuisine",
+    "title": "Restaurant Network Density and Mean Rating by Cuisine",
+    "description_markdown": "From `restaurants`, return `cuisine`, total partner restaurants (`COUNT(*) AS restaurant_count`), and average customer rating rounded to 2 decimals as `avg_rating`. Group by `cuisine` and order by `cuisine` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "restaurant_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Food delivery partners by cuisine\nSELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating\nFROM restaurants\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine ORDER BY cuisine ASC;",
+    "solution_explanation": "Partitions eateries by cuisine to track partner density and customer satisfaction.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing ROUND on rating average."
+    ],
+    "hints": [
+      "Group by cuisine.",
+      "Query: SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine ORDER BY cuisine ASC;",
+      "The expected query is: SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine ORDER BY cuisine ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-13",
+    "slug": "airline-flights-volume-and-fare-by-status",
+    "title": "Flight Frequency and Average Base Fare by Operational Status",
+    "description_markdown": "From `flights`, return `status`, total flights (`COUNT(*) AS flight_count`), and average base fare rounded to 2 decimals as `avg_fare`. Group by `status` and order by `status` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "flight_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_fare",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Flights operational status summary\nSELECT status, COUNT(*) AS flight_count, ROUND(AVG(base_price), 2) AS avg_fare\nFROM flights\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT status, COUNT(*) AS flight_count, ROUND(AVG(base_price), 2) AS avg_fare FROM flights GROUP BY status ORDER BY status ASC;",
+    "solution_explanation": "Groups airline departures by status code to monitor volume and fare distributions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using price instead of base_price."
+    ],
+    "hints": [
+      "Group by status.",
+      "Query: SELECT status, COUNT(*) AS flight_count, ROUND(AVG(base_price), 2) AS avg_fare FROM flights GROUP BY status ORDER BY status ASC;",
+      "The expected query is: SELECT status, COUNT(*) AS flight_count, ROUND(AVG(base_price), 2) AS avg_fare FROM flights GROUP BY status ORDER BY status ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-14",
+    "slug": "inventory-stock-items-inventory-by-warehouse",
+    "title": "Catalog SKU Count and On-Hand Units by Warehouse",
+    "description_markdown": "From `stock_items`, calculate total distinct items (`COUNT(*) AS item_count`) and total units on hand (`SUM(quantity_on_hand) AS total_units`) for each `warehouse_id`. Order by `warehouse_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_units",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Inventory distribution by warehouse\nSELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_units\nFROM stock_items\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_units FROM stock_items GROUP BY warehouse_id ORDER BY warehouse_id ASC;",
+    "solution_explanation": "Partitions warehouse storage by facility ID.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using AVG instead of SUM for total_units."
+    ],
+    "hints": [
+      "Group by warehouse_id.",
+      "Query: SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_units FROM stock_items GROUP BY warehouse_id ORDER BY warehouse_id ASC;",
+      "The expected query is: SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_units FROM stock_items GROUP BY warehouse_id ORDER BY warehouse_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-15",
+    "slug": "finance-stocks-listings-and-pricing-by-sector",
+    "title": "Equity Listings Count and Mean Price by Industry Sector",
+    "description_markdown": "From `stocks`, return `sector`, total listed equities (`COUNT(*) AS stock_count`), and average stock price rounded to 2 decimals as `avg_price`. Group by `sector` and order by `sector` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Equity sector overview\nSELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price\nFROM stocks\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector ORDER BY sector ASC;",
+    "solution_explanation": "Computes capital markets sector concentration and average valuation benchmarks.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND on avg_price."
+    ],
+    "hints": [
+      "Group by sector.",
+      "Query: SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector ORDER BY sector ASC;",
+      "The expected query is: SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector ORDER BY sector ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-16",
+    "slug": "hr-job-postings-requisitions-by-department",
+    "title": "Open Requisitions Volume and Salary Cap by Department",
+    "description_markdown": "From `job_postings`, return `department`, total postings (`COUNT(*) AS postings_count`), and average salary maximum rounded to 2 decimals as `avg_max_salary`. Group by `department` and order by `department` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "postings_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_max_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Talent recruitment volume by department\nSELECT department, COUNT(*) AS postings_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary\nFROM job_postings\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT department, COUNT(*) AS postings_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department ORDER BY department ASC;",
+    "solution_explanation": "Groups recruitment requisitions by department to analyze hiring demands.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using base_salary instead of base_salary_max."
+    ],
+    "hints": [
+      "Group by department.",
+      "Query: SELECT department, COUNT(*) AS postings_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department ORDER BY department ASC;",
+      "The expected query is: SELECT department, COUNT(*) AS postings_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department ORDER BY department ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-17",
+    "slug": "employeedb-assignments-hours-by-project",
+    "title": "Engineering Staff Allocation and Total Hours by Project",
+    "description_markdown": "From `assignments`, return `project_id`, total assignments (`COUNT(*) AS assignment_count`), and cumulative hours worked (`SUM(hours_worked) AS total_hours`). Group by `project_id` and order by `project_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "assignment_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_hours",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Project hours allocation\nSELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours\nFROM assignments\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id ORDER BY project_id ASC;",
+    "solution_explanation": "Aggregates engineering task effort logged against strategic corporate projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting project_id from GROUP BY."
+    ],
+    "hints": [
+      "Group by project_id.",
+      "Query: SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id ORDER BY project_id ASC;",
+      "The expected query is: SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id ORDER BY project_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-18",
+    "slug": "ecommercedb-products-pricing-by-category",
+    "title": "Merchandise Count and Average Retail Price by Category",
+    "description_markdown": "From `products`, return `category_id`, total products (`COUNT(*) AS product_count`), and average retail price rounded to 2 decimals as `avg_price`. Group by `category_id` and order by `category_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Product pricing by category\nSELECT category_id, COUNT(*) AS product_count, ROUND(AVG(price), 2) AS avg_price\nFROM products\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT category_id, COUNT(*) AS product_count, ROUND(AVG(price), 2) AS avg_price FROM products GROUP BY category_id ORDER BY category_id ASC;",
+    "solution_explanation": "Partitions retail catalog items by product category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting ROUND on price average."
+    ],
+    "hints": [
+      "Group by category_id.",
+      "Query: SELECT category_id, COUNT(*) AS product_count, ROUND(AVG(price), 2) AS avg_price FROM products GROUP BY category_id ORDER BY category_id ASC;",
+      "The expected query is: SELECT category_id, COUNT(*) AS product_count, ROUND(AVG(price), 2) AS avg_price FROM products GROUP BY category_id ORDER BY category_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-19",
+    "slug": "collegedb-marks-score-averages-by-assessment",
+    "title": "Assessment Test Volume and Class Mean Score by Assessment Type",
+    "description_markdown": "From `marks`, return `assessment_type`, total graded assessments (`COUNT(*) AS assessment_count`), and average score rounded to 2 decimals as `avg_score`. Group by `assessment_type` and order by `assessment_type` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "assessment_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Academic scoring by assessment type\nSELECT assessment_type, COUNT(*) AS assessment_count, ROUND(AVG(score), 2) AS avg_score\nFROM marks\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT assessment_type, COUNT(*) AS assessment_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type ORDER BY assessment_type ASC;",
+    "solution_explanation": "Partitions exams, projects, and quizzes to evaluate score distributions across assessment formats.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND wrapper."
+    ],
+    "hints": [
+      "Group by assessment_type.",
+      "Query: SELECT assessment_type, COUNT(*) AS assessment_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type ORDER BY assessment_type ASC;",
+      "The expected query is: SELECT assessment_type, COUNT(*) AS assessment_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type ORDER BY assessment_type ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "avg",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-20",
+    "slug": "banking-transactions-turnover-by-type",
+    "title": "Financial Ledger Volume and Total Value by Transaction Type",
+    "description_markdown": "From `transactions`, return `transaction_type`, total transaction count (`COUNT(*) AS tx_count`), and cumulative dollar amount (`SUM(amount) AS total_amount`). Group by `transaction_type` and order by `transaction_type` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "tx_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Financial transactions by type\nSELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount\nFROM transactions\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount FROM transactions GROUP BY transaction_type ORDER BY transaction_type ASC;",
+    "solution_explanation": "Summarizes banking ledger flow partitioned by debit, deposit, or transfer types.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting transaction_type from GROUP BY."
+    ],
+    "hints": [
+      "Group by transaction_type.",
+      "Query: SELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount FROM transactions GROUP BY transaction_type ORDER BY transaction_type ASC;",
+      "The expected query is: SELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount FROM transactions GROUP BY transaction_type ORDER BY transaction_type ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-21",
+    "slug": "hospital-appointments-distribution-by-status",
+    "title": "Clinical Appointment Counts by Status",
+    "description_markdown": "From `appointments`, return `status` and total appointments scheduled (`COUNT(*) AS appt_count`) grouped by `status`. Order by `status` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "appt_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Patient consultations by status\nSELECT status, COUNT(*) AS appt_count\nFROM appointments\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT status, COUNT(*) AS appt_count FROM appointments GROUP BY status ORDER BY status ASC;",
+    "solution_explanation": "Groups healthcare consultations by lifecycle status.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ORDER BY status ASC."
+    ],
+    "hints": [
+      "Group by status.",
+      "Query: SELECT status, COUNT(*) AS appt_count FROM appointments GROUP BY status ORDER BY status ASC;",
+      "The expected query is: SELECT status, COUNT(*) AS appt_count FROM appointments GROUP BY status ORDER BY status ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-22",
+    "slug": "hotel-reservations-revenue-by-status",
+    "title": "Reservation Volume and Revenue by Booking Status",
+    "description_markdown": "From `reservations`, return `status`, total bookings (`COUNT(*) AS reservation_count`), and total booked revenue (`SUM(total_amount) AS total_revenue`). Group by `status` and order by `status` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "reservation_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Hotel reservations by status\nSELECT status, COUNT(*) AS reservation_count, SUM(total_amount) AS total_revenue\nFROM reservations\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT status, COUNT(*) AS reservation_count, SUM(total_amount) AS total_revenue FROM reservations GROUP BY status ORDER BY status ASC;",
+    "solution_explanation": "Partitions hotel reservations by status to assess completed vs cancelled bookings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting status from GROUP BY."
+    ],
+    "hints": [
+      "Group by status.",
+      "Query: SELECT status, COUNT(*) AS reservation_count, SUM(total_amount) AS total_revenue FROM reservations GROUP BY status ORDER BY status ASC;",
+      "The expected query is: SELECT status, COUNT(*) AS reservation_count, SUM(total_amount) AS total_revenue FROM reservations GROUP BY status ORDER BY status ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-23",
+    "slug": "movie-streaming-subscriptions-revenue-by-plan",
+    "title": "Subscriber Count and MRR by Plan Tier",
+    "description_markdown": "From `subscriptions`, return `plan_name`, total accounts (`COUNT(*) AS subscriber_count`), and cumulative monthly recurring revenue (`SUM(monthly_price) AS total_mrr`). Group by `plan_name` and order by `plan_name` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "subscriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "plan_name",
+        "type": "varchar"
+      },
+      {
+        "name": "subscriber_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_mrr",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Streaming subscription MRR by plan\nSELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS total_mrr\nFROM subscriptions\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS total_mrr FROM subscriptions GROUP BY plan_name ORDER BY plan_name ASC;",
+    "solution_explanation": "Calculates MRR contributions across basic, standard, and premium plans.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting plan_name in GROUP BY."
+    ],
+    "hints": [
+      "Group by plan_name.",
+      "Query: SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS total_mrr FROM subscriptions GROUP BY plan_name ORDER BY plan_name ASC;",
+      "The expected query is: SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS total_mrr FROM subscriptions GROUP BY plan_name ORDER BY plan_name ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-24",
+    "slug": "sales-opportunities-pipeline-by-stage",
+    "title": "Deal Velocity and Pipeline Valuation by Sales Stage",
+    "description_markdown": "From `opportunities`, return `stage`, deal count (`COUNT(*) AS deal_count`), and total pipeline value (`SUM(deal_size) AS total_pipeline`). Group by `stage` and order by `stage` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "deal_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_pipeline",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Sales opportunities by stage\nSELECT stage, COUNT(*) AS deal_count, SUM(deal_size) AS total_pipeline\nFROM opportunities\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT stage, COUNT(*) AS deal_count, SUM(deal_size) AS total_pipeline FROM opportunities GROUP BY stage ORDER BY stage ASC;",
+    "solution_explanation": "Measures sales funnel progression across negotiation and closed stages.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting stage from GROUP BY."
+    ],
+    "hints": [
+      "Group by stage.",
+      "Query: SELECT stage, COUNT(*) AS deal_count, SUM(deal_size) AS total_pipeline FROM opportunities GROUP BY stage ORDER BY stage ASC;",
+      "The expected query is: SELECT stage, COUNT(*) AS deal_count, SUM(deal_size) AS total_pipeline FROM opportunities GROUP BY stage ORDER BY stage ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-25",
+    "slug": "food-delivery-orders-revenue-by-status",
+    "title": "Order Fulfillment Volume and Gross Revenue by Status",
+    "description_markdown": "From `delivery_orders`, return `delivery_status`, total orders (`COUNT(*) AS order_count`), and cumulative order value (`SUM(total_amount) AS total_revenue`). Group by `delivery_status` and order by `delivery_status` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "delivery_status",
+        "type": "varchar"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Food delivery order volume by delivery status\nSELECT delivery_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue\nFROM delivery_orders\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT delivery_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue FROM delivery_orders GROUP BY delivery_status ORDER BY delivery_status ASC;",
+    "solution_explanation": "Groups customer orders by fulfillment status.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using order_status instead of delivery_status."
+    ],
+    "hints": [
+      "Group by delivery_status.",
+      "Query: SELECT delivery_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue FROM delivery_orders GROUP BY delivery_status ORDER BY delivery_status ASC;",
+      "The expected query is: SELECT delivery_status, COUNT(*) AS order_count, SUM(total_amount) AS total_revenue FROM delivery_orders GROUP BY delivery_status ORDER BY delivery_status ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-26",
+    "slug": "airline-tickets-manifest-count-by-class",
+    "title": "Passenger Ticket Manifest Counts by Travel Class",
+    "description_markdown": "From `tickets`, return `travel_class` and total issued boarding passes (`COUNT(*) AS ticket_count`) grouped by `travel_class`. Order by `travel_class` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "travel_class",
+        "type": "varchar"
+      },
+      {
+        "name": "ticket_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Passenger counts by cabin class\nSELECT travel_class, COUNT(*) AS ticket_count\nFROM tickets\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT travel_class, COUNT(*) AS ticket_count FROM tickets GROUP BY travel_class ORDER BY travel_class ASC;",
+    "solution_explanation": "Aggregates passenger volumes across first, business, and economy cabins.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ORDER BY travel_class ASC."
+    ],
+    "hints": [
+      "Group by travel_class.",
+      "Query: SELECT travel_class, COUNT(*) AS ticket_count FROM tickets GROUP BY travel_class ORDER BY travel_class ASC;",
+      "The expected query is: SELECT travel_class, COUNT(*) AS ticket_count FROM tickets GROUP BY travel_class ORDER BY travel_class ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-27",
+    "slug": "inventory-stock-transactions-volume-by-type",
+    "title": "Warehouse Stock Ledger Movement by Transaction Type",
+    "description_markdown": "From `stock_transactions`, return `transaction_type`, total log events (`COUNT(*) AS movement_count`), and cumulative units moved (`SUM(quantity) AS total_quantity`). Group by `transaction_type` and order by `transaction_type` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "movement_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_quantity",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Inventory log volume by transaction type\nSELECT transaction_type, COUNT(*) AS movement_count, SUM(quantity) AS total_quantity\nFROM stock_transactions\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT transaction_type, COUNT(*) AS movement_count, SUM(quantity) AS total_quantity FROM stock_transactions GROUP BY transaction_type ORDER BY transaction_type ASC;",
+    "solution_explanation": "Summarizes physical stock adjustments, shipments, and receipts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting transaction_type from GROUP BY."
+    ],
+    "hints": [
+      "Group by transaction_type.",
+      "Query: SELECT transaction_type, COUNT(*) AS movement_count, SUM(quantity) AS total_quantity FROM stock_transactions GROUP BY transaction_type ORDER BY transaction_type ASC;",
+      "The expected query is: SELECT transaction_type, COUNT(*) AS movement_count, SUM(quantity) AS total_quantity FROM stock_transactions GROUP BY transaction_type ORDER BY transaction_type ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-28",
+    "slug": "finance-trades-execution-by-portfolio",
+    "title": "Trade Execution Volume and Share Quantity by Portfolio",
+    "description_markdown": "From `trades`, return `portfolio_id`, total executions (`COUNT(*) AS trade_count`), and cumulative shares traded (`SUM(shares) AS total_shares`). Group by `portfolio_id` and order by `portfolio_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "trade_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_shares",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Trade volume by portfolio\nSELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares\nFROM trades\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id ORDER BY portfolio_id ASC;",
+    "solution_explanation": "Groups trading activity by portfolio account.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using trade_id instead of portfolio_id."
+    ],
+    "hints": [
+      "Group by portfolio_id.",
+      "Query: SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id ORDER BY portfolio_id ASC;",
+      "The expected query is: SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id ORDER BY portfolio_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-29",
+    "slug": "hr-applicants-distribution-by-experience",
+    "title": "Candidate Pool Distribution by Years of Experience",
+    "description_markdown": "From `applicants`, return `years_experience` and total candidates (`COUNT(*) AS applicant_count`) grouped by `years_experience`. Order by `years_experience` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "applicant_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Applicants by years of experience\nSELECT years_experience, COUNT(*) AS applicant_count\nFROM applicants\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience ORDER BY years_experience ASC;",
+    "solution_explanation": "Groups recruitment candidates into experience brackets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ORDER BY years_experience ASC."
+    ],
+    "hints": [
+      "Group by years_experience.",
+      "Query: SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience ORDER BY years_experience ASC;",
+      "The expected query is: SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience ORDER BY years_experience ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-30",
+    "slug": "social-media-posts-count-per-user",
+    "title": "Post Publishing Activity Count per User",
+    "description_markdown": "From `posts`, return `user_id` and total posts published (`COUNT(*) AS post_count`) grouped by `user_id`. Order by `user_id` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "post_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Posts authored per user\nSELECT user_id, COUNT(*) AS post_count\nFROM posts\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id ORDER BY user_id ASC;",
+    "solution_explanation": "Computes user engagement frequency by grouping content posts by author user_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting ORDER BY user_id ASC."
+    ],
+    "hints": [
+      "Group by user_id.",
+      "Query: SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id ORDER BY user_id ASC;",
+      "The expected query is: SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id ORDER BY user_id ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-31",
+    "slug": "ecommercedb-payments-settlement-by-method",
+    "title": "Payment Processing Volume and Settlement by Method",
+    "description_markdown": "From `payments`, return `payment_method`, total payments processed (`COUNT(*) AS payment_count`), and cumulative transaction amount (`SUM(amount) AS total_paid`). Group by `payment_method` and order by `payment_method` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "payment_method",
+        "type": "varchar"
+      },
+      {
+        "name": "payment_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_paid",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Payment gateway settlement by method\nSELECT payment_method, COUNT(*) AS payment_count, SUM(amount) AS total_paid\nFROM payments\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT payment_method, COUNT(*) AS payment_count, SUM(amount) AS total_paid FROM payments GROUP BY payment_method ORDER BY payment_method ASC;",
+    "solution_explanation": "Summarizes payment settlements across card, PayPal, and digital wallets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting payment_method from GROUP BY."
+    ],
+    "hints": [
+      "Group by payment_method.",
+      "Query: SELECT payment_method, COUNT(*) AS payment_count, SUM(amount) AS total_paid FROM payments GROUP BY payment_method ORDER BY payment_method ASC;",
+      "The expected query is: SELECT payment_method, COUNT(*) AS payment_count, SUM(amount) AS total_paid FROM payments GROUP BY payment_method ORDER BY payment_method ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "sum",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-grp-32",
+    "slug": "library-authors-distribution-by-nationality",
+    "title": "Author Community Distribution by Nationality",
+    "description_markdown": "From `authors`, return `nationality` and total authors (`COUNT(*) AS author_count`) for authors where `nationality IS NOT NULL`, grouped by `nationality`. Order by `nationality` ascending.",
+    "topic_id": "group-by",
+    "subtopic_id": "grp-single",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors"
+    ],
+    "expected_columns": [
+      {
+        "name": "nationality",
+        "type": "varchar"
+      },
+      {
+        "name": "author_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Author count by nationality\nSELECT nationality, COUNT(*) AS author_count\nFROM authors\nWHERE nationality IS NOT NULL\nGROUP BY ...\nORDER BY ...",
+    "solution_query": "SELECT nationality, COUNT(*) AS author_count FROM authors WHERE nationality IS NOT NULL GROUP BY nationality ORDER BY nationality ASC;",
+    "solution_explanation": "Filters out NULL nationalities before partitioning authors by geographic background.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE nationality IS NOT NULL."
+    ],
+    "hints": [
+      "Filter with WHERE nationality IS NOT NULL.",
+      "Group by nationality.",
+      "Query: SELECT nationality, COUNT(*) AS author_count FROM authors WHERE nationality IS NOT NULL GROUP BY nationality ORDER BY nationality ASC;"
+    ],
+    "tags": [
+      "group-by",
+      "count",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-grp-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-grp-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-grp-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

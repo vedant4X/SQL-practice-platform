@@ -1,0 +1,2465 @@
+[
+  {
+    "id": "q-my-sqf-01",
+    "slug": "derived-table-department-salary-aggregates",
+    "title": "Aggregate Department Payroll via Derived Table",
+    "description_markdown": "From a subquery in the FROM clause that calculates `dept_id` and `AVG(salary) AS avg_salary` for each department in `employees`, select `dept_id` and `ROUND(avg_salary, 2) AS rounded_avg` where `avg_salary >= 130000`. Exclude NULL `dept_id`. Order by `dept_id`.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "rounded_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table in FROM\nSELECT dept_id, ROUND(avg_salary, 2) AS rounded_avg\nFROM (\n  SELECT dept_id, AVG(salary) AS avg_salary\n  FROM employees ...\n) dept_stats ...",
+    "solution_query": "SELECT dept_id, ROUND(avg_salary, 2) AS rounded_avg FROM (SELECT dept_id, AVG(salary) AS avg_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_stats WHERE avg_salary >= 130000 ORDER BY dept_id ASC;",
+    "solution_explanation": "The subquery inside FROM defines an inline derived table (`dept_stats`) with an alias that the outer query queries and filters.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Every derived table in the FROM clause must have an alias (e.g. `AS dept_stats`).",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_id, ROUND(avg_salary, 2) AS rounded_avg FROM (SELECT dept_id, AVG(salary) AS avg_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_stats WHERE avg_salary >= 130000 ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-02",
+    "slug": "customer-order-volume-distribution",
+    "title": "Count Customers by Number of Orders Placed",
+    "description_markdown": "Using a derived table that counts orders per customer (`customer_id` and `COUNT(*) AS order_count` from `orders`), count how many customers fall into each `order_count` tier. Return `order_count` and `COUNT(*) AS total_customers`. Group by `order_count`. Order by `order_count` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_customers",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Aggregate over an aggregate using derived table\nSELECT ...",
+    "solution_query": "SELECT order_count, COUNT(*) AS total_customers FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) user_orders GROUP BY order_count ORDER BY order_count ASC;",
+    "solution_explanation": "Solves the multi-stage aggregation pattern (aggregating the count of an aggregate).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Inner query: `SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id`.",
+      "Outer query: `SELECT order_count, COUNT(*) AS total_customers FROM (...) user_orders GROUP BY order_count`.",
+      "Query: SELECT order_count, COUNT(*) AS total_customers FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) user_orders GROUP BY order_count ORDER BY order_count ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "distribution"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-03",
+    "slug": "top-selling-products-derived-ranking",
+    "title": "Aggregate Order Items with Stock Inventory",
+    "description_markdown": "From a derived table calculating total units sold (`product_id`, `SUM(quantity) AS units_sold` from `order_items`), join with `products` on `product_id`. Return `p.product_name`, `sub.units_sold`, and `p.stock_quantity`. Order by `sub.units_sold` DESC, `p.product_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "units_sold",
+        "type": "bigint"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join derived table with products\nSELECT ...",
+    "solution_query": "SELECT p.product_name, sub.units_sold, p.stock_quantity FROM (SELECT product_id, SUM(quantity) AS units_sold FROM order_items GROUP BY product_id) sub JOIN products p ON sub.product_id = p.product_id ORDER BY sub.units_sold DESC, p.product_id ASC;",
+    "solution_explanation": "Pre-aggregates line items in an inline subquery before joining to the product catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join the derived subquery with `products p` on `sub.product_id = p.product_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.product_name, sub.units_sold, p.stock_quantity FROM (SELECT product_id, SUM(quantity) AS units_sold FROM order_items GROUP BY product_id) sub JOIN products p ON sub.product_id = p.product_id ORDER BY sub.units_sold DESC, p.product_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "pre-aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-04",
+    "slug": "derived-table-department-headcount-filter",
+    "title": "Filter Departments by Staff Headcount via Derived Table",
+    "description_markdown": "From a derived table in the FROM clause that calculates `dept_id` and `COUNT(*) AS emp_count` for each department in `employees` (excluding NULL `dept_id`), select `dept_id` and `emp_count` where `emp_count >= 3`. Order by `emp_count` DESC, `dept_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table in FROM clause\nSELECT dept_id, emp_count\nFROM (\n  SELECT dept_id, COUNT(*) AS emp_count\n  FROM employees\n  WHERE dept_id IS NOT NULL\n  GROUP BY dept_id\n) dept_counts\nWHERE emp_count >= 3\nORDER BY emp_count DESC, dept_id ASC;",
+    "solution_query": "SELECT dept_id, emp_count FROM (SELECT dept_id, COUNT(*) AS emp_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_counts WHERE emp_count >= 3 ORDER BY emp_count DESC, dept_id ASC;",
+    "solution_explanation": "The derived table `dept_counts` pre-aggregates employee headcounts per department before the outer query filters and sorts the resulting relation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the mandatory alias for the subquery in the FROM clause."
+    ],
+    "interview_tip": "Every derived table in the FROM clause must be assigned an alias in standard SQL and MySQL.",
+    "hints": [
+      "Aggregate in the FROM subquery: `SELECT dept_id, COUNT(*) AS emp_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id`.",
+      "Alias the subquery as `dept_counts` and filter with `WHERE emp_count >= 3`.",
+      "Query: SELECT dept_id, emp_count FROM (SELECT dept_id, COUNT(*) AS emp_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_counts WHERE emp_count >= 3 ORDER BY emp_count DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "grouping",
+      "aggregates"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-05",
+    "slug": "derived-table-category-average-price",
+    "title": "Category Pricing Metrics via Derived Table",
+    "description_markdown": "From a derived table in the FROM clause calculating `category_id`, `ROUND(AVG(price), 2) AS avg_price`, and `COUNT(*) AS item_count` grouped by `category_id`, select `category_id`, `avg_price`, and `item_count` where `avg_price > 100.00`. Order by `category_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "avg_price",
+        "type": "decimal"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table calculating category price metrics\nSELECT category_id, avg_price, item_count\nFROM (\n  SELECT category_id, ROUND(AVG(price), 2) AS avg_price, COUNT(*) AS item_count\n  FROM products\n  GROUP BY category_id\n) cat_summary\nWHERE avg_price > 100.00\nORDER BY category_id ASC;",
+    "solution_query": "SELECT category_id, avg_price, item_count FROM (SELECT category_id, ROUND(AVG(price), 2) AS avg_price, COUNT(*) AS item_count FROM products GROUP BY category_id) cat_summary WHERE avg_price > 100.00 ORDER BY category_id ASC;",
+    "solution_explanation": "Derived tables allow you to refer to aggregate calculation results by their column alias in the outer WHERE clause, avoiding repeated expressions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to use the column alias in the inner WHERE clause."
+    ],
+    "interview_tip": "Derived tables eliminate the restriction of having to use HAVING by transforming aggregates into queryable columns.",
+    "hints": [
+      "Compute `ROUND(AVG(price), 2) AS avg_price` in the inner query.",
+      "Filter `avg_price > 100.00` in the outer query.",
+      "Query: SELECT category_id, avg_price, item_count FROM (SELECT category_id, ROUND(AVG(price), 2) AS avg_price, COUNT(*) AS item_count FROM products GROUP BY category_id) cat_summary WHERE avg_price > 100.00 ORDER BY category_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "aggregates",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-06",
+    "slug": "derived-table-student-gpa-tier-count",
+    "title": "Count Students per Academic Tier via Inline Categorization",
+    "description_markdown": "Using a derived table in the FROM clause that assigns each student to an academic tier (`CASE WHEN gpa >= 3.5 THEN 'Honor Roll' WHEN gpa >= 3.0 THEN 'Good Standing' ELSE 'Academic Probation' END AS tier`), count how many students fall into each tier. Return `tier` and `COUNT(*) AS student_count`. Order by `student_count` DESC, `tier` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "tier",
+        "type": "varchar"
+      },
+      {
+        "name": "student_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table for student tier distribution\nSELECT tier, COUNT(*) AS student_count\nFROM (\n  SELECT student_id, CASE ... END AS tier\n  FROM students\n) student_tiers\nGROUP BY tier\nORDER BY student_count DESC, tier ASC;",
+    "solution_query": "SELECT tier, COUNT(*) AS student_count FROM (SELECT student_id, CASE WHEN gpa >= 3.5 THEN 'Honor Roll' WHEN gpa >= 3.0 THEN 'Good Standing' ELSE 'Academic Probation' END AS tier FROM students) student_tiers GROUP BY tier ORDER BY student_count DESC, tier ASC;",
+    "solution_explanation": "Derives a categorized column `tier` via a CASE expression inside a subquery, then groups by this computed label in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Duplicating the entire CASE expression in the GROUP BY without a derived table."
+    ],
+    "interview_tip": "Derived tables are the cleanest way to perform bucketing/segmentation followed by aggregation.",
+    "hints": [
+      "Use CASE inside the subquery to produce the `tier` column.",
+      "Group by `tier` in the outer query.",
+      "Query: SELECT tier, COUNT(*) AS student_count FROM (SELECT student_id, CASE WHEN gpa >= 3.5 THEN 'Honor Roll' WHEN gpa >= 3.0 THEN 'Good Standing' ELSE 'Academic Probation' END AS tier FROM students) student_tiers GROUP BY tier ORDER BY student_count DESC, tier ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "bucketing",
+      "case"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-07",
+    "slug": "derived-table-customer-total-spending",
+    "title": "Join Customers with Pre-Aggregated Spending Derived Table",
+    "description_markdown": "Join `customers c` with a derived table in the FROM clause that aggregates completed order spend per customer (`(SELECT customer_id, SUM(total_amount) AS total_spent FROM orders WHERE order_status = 'completed' GROUP BY customer_id) spends`). Return `c.customer_id`, `c.first_name`, and `spends.total_spent`. Order by `spends.total_spent` DESC, `c.customer_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spent",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join customer records with spending derived table\nSELECT c.customer_id, c.first_name, spends.total_spent\nFROM customers c\nJOIN (\n  SELECT customer_id, SUM(total_amount) AS total_spent\n  FROM orders\n  WHERE order_status = 'completed'\n  GROUP BY customer_id\n) spends ON c.customer_id = spends.customer_id\nORDER BY spends.total_spent DESC, c.customer_id ASC;",
+    "solution_query": "SELECT c.customer_id, c.first_name, spends.total_spent FROM customers c JOIN (SELECT customer_id, SUM(total_amount) AS total_spent FROM orders WHERE order_status = 'completed' GROUP BY customer_id) spends ON c.customer_id = spends.customer_id ORDER BY spends.total_spent DESC, c.customer_id ASC;",
+    "solution_explanation": "Pre-aggregates orders into a derived table before joining with customer dimensions to prevent cartesian inflation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining first and grouping after, which can cause severe performance degradation on large tables."
+    ],
+    "interview_tip": "Pre-aggregating in derived tables before joining dimensions is a core SQL optimization design pattern.",
+    "hints": [
+      "Build the derived table `spends` aggregating orders where `order_status = 'completed'`.",
+      "Join on `c.customer_id = spends.customer_id`.",
+      "Query: SELECT c.customer_id, c.first_name, spends.total_spent FROM customers c JOIN (SELECT customer_id, SUM(total_amount) AS total_spent FROM orders WHERE order_status = 'completed' GROUP BY customer_id) spends ON c.customer_id = spends.customer_id ORDER BY spends.total_spent DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "pre-aggregation",
+      "joins"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-08",
+    "slug": "derived-table-project-assignment-hours",
+    "title": "Join Projects with Derived Assignment Workload Table",
+    "description_markdown": "Join `projects p` with a derived table calculating total logged hours and staffing count per project (`(SELECT project_id, SUM(hours_worked) AS total_hours, COUNT(*) AS staff_count FROM assignments GROUP BY project_id) stats`) on `p.project_id = stats.project_id`. Return `p.project_id`, `p.project_name`, `stats.total_hours`, and `stats.staff_count`. Order by `stats.total_hours` DESC, `p.project_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_hours",
+        "type": "decimal"
+      },
+      {
+        "name": "staff_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join projects with pre-aggregated workload\nSELECT p.project_id, p.project_name, stats.total_hours, stats.staff_count\nFROM projects p\nJOIN (\n  SELECT project_id, SUM(hours_worked) AS total_hours, COUNT(*) AS staff_count\n  FROM assignments\n  GROUP BY project_id\n) stats ON p.project_id = stats.project_id\nORDER BY stats.total_hours DESC, p.project_id ASC;",
+    "solution_query": "SELECT p.project_id, p.project_name, stats.total_hours, stats.staff_count FROM projects p JOIN (SELECT project_id, SUM(hours_worked) AS total_hours, COUNT(*) AS staff_count FROM assignments GROUP BY project_id) stats ON p.project_id = stats.project_id ORDER BY stats.total_hours DESC, p.project_id ASC;",
+    "solution_explanation": "Aggregates project assignments in a derived table and joins to project details, keeping outer logic clean.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the group by project_id in the derived subquery."
+    ],
+    "interview_tip": "Pre-aggregating details tables keeps the grain of the outer query at one row per project.",
+    "hints": [
+      "In the derived table: `SELECT project_id, SUM(hours_worked) AS total_hours, COUNT(*) AS staff_count FROM assignments GROUP BY project_id`.",
+      "Join on `p.project_id = stats.project_id`.",
+      "Query: SELECT p.project_id, p.project_name, stats.total_hours, stats.staff_count FROM projects p JOIN (SELECT project_id, SUM(hours_worked) AS total_hours, COUNT(*) AS staff_count FROM assignments GROUP BY project_id) stats ON p.project_id = stats.project_id ORDER BY stats.total_hours DESC, p.project_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "projects",
+      "workload"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-09",
+    "slug": "derived-table-professor-course-credits",
+    "title": "Join Faculty with Pre-Aggregated Teaching Load",
+    "description_markdown": "Join `professors p` with a derived table summarizing course offerings (`(SELECT professor_id, COUNT(*) AS course_count, SUM(credits) AS total_credits FROM courses WHERE professor_id IS NOT NULL GROUP BY professor_id) c_stats`) on `p.professor_id = c_stats.professor_id`. Return `p.professor_id`, `p.first_name`, `p.last_name`, `c_stats.course_count`, and `c_stats.total_credits`. Order by `c_stats.total_credits` DESC, `p.professor_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_credits",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join faculty with course credits derived table\nSELECT p.professor_id, p.first_name, p.last_name, c_stats.course_count, c_stats.total_credits\nFROM professors p\nJOIN (\n  SELECT professor_id, COUNT(*) AS course_count, SUM(credits) AS total_credits\n  FROM courses\n  WHERE professor_id IS NOT NULL\n  GROUP BY professor_id\n) c_stats ON p.professor_id = c_stats.professor_id\nORDER BY c_stats.total_credits DESC, p.professor_id ASC;",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.last_name, c_stats.course_count, c_stats.total_credits FROM professors p JOIN (SELECT professor_id, COUNT(*) AS course_count, SUM(credits) AS total_credits FROM courses WHERE professor_id IS NOT NULL GROUP BY professor_id) c_stats ON p.professor_id = c_stats.professor_id ORDER BY c_stats.total_credits DESC, p.professor_id ASC;",
+    "solution_explanation": "Pre-aggregates teaching credits in an inline derived table and joins to professors, preserving individual faculty attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Not excluding NULL professor_id in the derived table."
+    ],
+    "interview_tip": "Derived tables prevent cartesian duplication when joining across 1-to-many relationships.",
+    "hints": [
+      "Derive `c_stats` with `SELECT professor_id, COUNT(*) AS course_count, SUM(credits) AS total_credits FROM courses WHERE professor_id IS NOT NULL GROUP BY professor_id`.",
+      "Join with `professors p` on `p.professor_id = c_stats.professor_id`.",
+      "Query: SELECT p.professor_id, p.first_name, p.last_name, c_stats.course_count, c_stats.total_credits FROM professors p JOIN (SELECT professor_id, COUNT(*) AS course_count, SUM(credits) AS total_credits FROM courses WHERE professor_id IS NOT NULL GROUP BY professor_id) c_stats ON p.professor_id = c_stats.professor_id ORDER BY c_stats.total_credits DESC, p.professor_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "faculty",
+      "credits"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-10",
+    "slug": "derived-table-average-of-department-averages",
+    "title": "Double Aggregation: Average of Departmental Averages",
+    "description_markdown": "Calculate the overall average of departmental average salaries using a derived table. In the inner subquery, compute `AVG(salary) AS dept_avg` grouped by `dept_id` for departments where `dept_id IS NOT NULL`. In the outer query, return `ROUND(AVG(dept_avg), 2) AS overall_dept_avg`.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "overall_dept_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Double aggregation via derived table\nSELECT ROUND(AVG(dept_avg), 2) AS overall_dept_avg\nFROM (\n  SELECT dept_id, AVG(salary) AS dept_avg\n  FROM employees\n  WHERE dept_id IS NOT NULL\n  GROUP BY dept_id\n) dept_averages;",
+    "solution_query": "SELECT ROUND(AVG(dept_avg), 2) AS overall_dept_avg FROM (SELECT dept_id, AVG(salary) AS dept_avg FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_averages;",
+    "solution_explanation": "Directly nesting `AVG(AVG(...))` is illegal in SQL. The derived table resolves this by materializing the first-stage averages for outer aggregation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Attempting to write AVG(AVG(salary)), which causes a syntax error."
+    ],
+    "interview_tip": "SQL forbids nested aggregate functions; derived tables are the fundamental solution to multi-stage aggregation.",
+    "hints": [
+      "Inner query calculates `AVG(salary) AS dept_avg` grouped by `dept_id`.",
+      "Outer query takes `ROUND(AVG(dept_avg), 2) AS overall_dept_avg`.",
+      "Query: SELECT ROUND(AVG(dept_avg), 2) AS overall_dept_avg FROM (SELECT dept_id, AVG(salary) AS dept_avg FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) dept_averages;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "double-aggregation",
+      "averages"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-11",
+    "slug": "derived-table-customer-order-count-extremes",
+    "title": "Double Aggregation: Extrema of Customer Order Volumes",
+    "description_markdown": "Using a derived table that counts orders per customer (`(SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_orders`), compute the maximum and minimum order counts across all ordering customers. Return `MAX(order_count) AS max_orders` and `MIN(order_count) AS min_orders`.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "max_orders",
+        "type": "bigint"
+      },
+      {
+        "name": "min_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extrema of order counts via derived table\nSELECT MAX(order_count) AS max_orders, MIN(order_count) AS min_orders\nFROM (\n  SELECT customer_id, COUNT(*) AS order_count\n  FROM orders\n  GROUP BY customer_id\n) customer_orders;",
+    "solution_query": "SELECT MAX(order_count) AS max_orders, MIN(order_count) AS min_orders FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_orders;",
+    "solution_explanation": "Computes counts per customer first, then computes global MAX and MIN over those counts in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to compute MAX(COUNT(*)), which is not permitted."
+    ],
+    "interview_tip": "This is the classic interview question: 'Find the highest and lowest volume among customers who placed orders.'",
+    "hints": [
+      "Inner query: `SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id`.",
+      "Outer query: `SELECT MAX(order_count) AS max_orders, MIN(order_count) AS min_orders FROM (...) customer_orders`.",
+      "Query: SELECT MAX(order_count) AS max_orders, MIN(order_count) AS min_orders FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_orders;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "extremes",
+      "double-aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-12",
+    "slug": "derived-table-department-salary-spread",
+    "title": "Calculate Department Pay Spread Using Derived Table",
+    "description_markdown": "From a derived table in the FROM clause that computes `dept_id`, `MAX(salary) AS max_sal`, and `MIN(salary) AS min_sal` for departments with non-null `dept_id`, calculate `dept_id`, `max_sal`, `min_sal`, and `(max_sal - min_sal) AS salary_spread`. Order by `salary_spread` DESC, `dept_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "max_sal",
+        "type": "decimal"
+      },
+      {
+        "name": "min_sal",
+        "type": "decimal"
+      },
+      {
+        "name": "salary_spread",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department salary spread calculation\nSELECT dept_id, max_sal, min_sal, (max_sal - min_sal) AS salary_spread\nFROM (\n  SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal\n  FROM employees\n  WHERE dept_id IS NOT NULL\n  GROUP BY dept_id\n) salary_bounds\nORDER BY salary_spread DESC, dept_id ASC;",
+    "solution_query": "SELECT dept_id, max_sal, min_sal, (max_sal - min_sal) AS salary_spread FROM (SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) salary_bounds ORDER BY salary_spread DESC, dept_id ASC;",
+    "solution_explanation": "Computes boundaries in the derived table so the outer query can cleanly subtract min from max without repeating aggregates.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Recalculating MAX(salary) - MIN(salary) multiple times."
+    ],
+    "interview_tip": "Derived tables prevent redundant evaluations and simplify complex computed expressions.",
+    "hints": [
+      "Derive `max_sal` and `min_sal` per department in the subquery.",
+      "Subtract `(max_sal - min_sal) AS salary_spread` in the outer SELECT.",
+      "Query: SELECT dept_id, max_sal, min_sal, (max_sal - min_sal) AS salary_spread FROM (SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) salary_bounds ORDER BY salary_spread DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "salary-spread",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-13",
+    "slug": "derived-table-product-profit-margin",
+    "title": "Filter High Margin Products via Derived Profit Table",
+    "description_markdown": "From a derived table that calculates unit profit `(price - cost) AS unit_margin` for each product (`(SELECT product_id, product_name, price, cost, (price - cost) AS unit_margin FROM products) prod_margins`), filter for products where `unit_margin >= 100.00`. Return `product_id`, `product_name`, and `unit_margin`. Order by `unit_margin` DESC, `product_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_margin",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table for unit profit margin\nSELECT product_id, product_name, unit_margin\nFROM (\n  SELECT product_id, product_name, price, cost, (price - cost) AS unit_margin\n  FROM products\n) prod_margins\nWHERE unit_margin >= 100.00\nORDER BY unit_margin DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, unit_margin FROM (SELECT product_id, product_name, price, cost, (price - cost) AS unit_margin FROM products) prod_margins WHERE unit_margin >= 100.00 ORDER BY unit_margin DESC, product_id ASC;",
+    "solution_explanation": "Allows filtering by the computed `unit_margin` alias directly in the outer WHERE clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to filter by unit_margin in a WHERE clause of the inner query before it has been defined."
+    ],
+    "interview_tip": "Standard SQL does not permit WHERE clause filtering on aliases defined in the same SELECT; derived tables solve this.",
+    "hints": [
+      "Derive `(price - cost) AS unit_margin` in the subquery.",
+      "Filter `WHERE unit_margin >= 100.00` in the outer query.",
+      "Query: SELECT product_id, product_name, unit_margin FROM (SELECT product_id, product_name, price, cost, (price - cost) AS unit_margin FROM products) prod_margins WHERE unit_margin >= 100.00 ORDER BY unit_margin DESC, product_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "margins",
+      "profitability"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-14",
+    "slug": "derived-table-student-final-exam-honors",
+    "title": "Filter High Final Exam Scores via Derived Table",
+    "description_markdown": "From a derived table selecting all final exam records (`(SELECT enrollment_id, score FROM marks WHERE assessment_type = 'final') finals`), select `enrollment_id` and `score` where `score >= 90.00`. Order by `score` DESC, `enrollment_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table filtering final exams\nSELECT enrollment_id, score\nFROM (\n  SELECT enrollment_id, score\n  FROM marks\n  WHERE assessment_type = 'final'\n) finals\nWHERE score >= 90.00\nORDER BY score DESC, enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id, score FROM (SELECT enrollment_id, score FROM marks WHERE assessment_type = 'final') finals WHERE score >= 90.00 ORDER BY score DESC, enrollment_id ASC;",
+    "solution_explanation": "Isolates final exam scores into a virtual dataset in FROM, then applies grade cutoff criteria.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the table alias finals."
+    ],
+    "interview_tip": "Pre-filtering partitions of a large table in FROM simplifies multi-step reporting pipelines.",
+    "hints": [
+      "Select `enrollment_id, score` from `marks` where `assessment_type = 'final'` in the subquery.",
+      "Filter `score >= 90.00` in the outer query.",
+      "Query: SELECT enrollment_id, score FROM (SELECT enrollment_id, score FROM marks WHERE assessment_type = 'final') finals WHERE score >= 90.00 ORDER BY score DESC, enrollment_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "academic",
+      "grading"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-15",
+    "slug": "derived-table-order-status-breakdown",
+    "title": "Order Status Breakdown via Derived Table",
+    "description_markdown": "From a derived table grouping orders by status (`(SELECT order_status, COUNT(*) AS status_count, SUM(total_amount) AS status_revenue FROM orders GROUP BY order_status) status_stats`), select `order_status`, `status_count`, and `status_revenue` where `status_count >= 1`. Order by `status_count` DESC, `order_status` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "status_count",
+        "type": "bigint"
+      },
+      {
+        "name": "status_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table for order status breakdown\nSELECT order_status, status_count, status_revenue\nFROM (\n  SELECT order_status, COUNT(*) AS status_count, SUM(total_amount) AS status_revenue\n  FROM orders\n  GROUP BY order_status\n) status_stats\nWHERE status_count >= 1\nORDER BY status_count DESC, order_status ASC;",
+    "solution_query": "SELECT order_status, status_count, status_revenue FROM (SELECT order_status, COUNT(*) AS status_count, SUM(total_amount) AS status_revenue FROM orders GROUP BY order_status) status_stats WHERE status_count >= 1 ORDER BY status_count DESC, order_status ASC;",
+    "solution_explanation": "Groups status metrics into a derived table and queries it like an ordinary view.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the derived table alias."
+    ],
+    "interview_tip": "Derived tables act as inline temporary views scoped strictly to the executing query.",
+    "hints": [
+      "Derive `status_count` and `status_revenue` per `order_status`.",
+      "Filter and sort in the outer statement.",
+      "Query: SELECT order_status, status_count, status_revenue FROM (SELECT order_status, COUNT(*) AS status_count, SUM(total_amount) AS status_revenue FROM orders GROUP BY order_status) status_stats WHERE status_count >= 1 ORDER BY status_count DESC, order_status ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "order-status",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-16",
+    "slug": "derived-table-department-budget-surplus",
+    "title": "Calculate Department Budget Surplus via Derived Payroll",
+    "description_markdown": "Join `departments d` with a derived table calculating total department payroll (`(SELECT dept_id, SUM(salary) AS total_payroll FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) payroll`) on `d.dept_id = payroll.dept_id`. Return `d.dept_id`, `d.dept_name`, `d.budget`, `payroll.total_payroll`, and `(d.budget - payroll.total_payroll) AS budget_surplus`. Order by `budget_surplus` DESC, `d.dept_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      },
+      {
+        "name": "total_payroll",
+        "type": "decimal"
+      },
+      {
+        "name": "budget_surplus",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join department budget with pre-computed payroll\nSELECT d.dept_id, d.dept_name, d.budget, payroll.total_payroll,\n       (d.budget - payroll.total_payroll) AS budget_surplus\nFROM departments d\nJOIN (\n  SELECT dept_id, SUM(salary) AS total_payroll\n  FROM employees\n  WHERE dept_id IS NOT NULL\n  GROUP BY dept_id\n) payroll ON d.dept_id = payroll.dept_id\nORDER BY budget_surplus DESC, d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget, payroll.total_payroll, (d.budget - payroll.total_payroll) AS budget_surplus FROM departments d JOIN (SELECT dept_id, SUM(salary) AS total_payroll FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) payroll ON d.dept_id = payroll.dept_id ORDER BY budget_surplus DESC, d.dept_id ASC;",
+    "solution_explanation": "Pre-aggregates total salaries by department before joining to departments to compute budget surplus.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining first and grouping by department columns, which risks SQL mode full-group-by errors."
+    ],
+    "interview_tip": "Pre-aggregating before joining is cleaner and avoids tricky GROUP BY restrictions on dimension attributes.",
+    "hints": [
+      "Derive `payroll` with `SELECT dept_id, SUM(salary) AS total_payroll FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id`.",
+      "Calculate `(d.budget - payroll.total_payroll) AS budget_surplus`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget, payroll.total_payroll, (d.budget - payroll.total_payroll) AS budget_surplus FROM departments d JOIN (SELECT dept_id, SUM(salary) AS total_payroll FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) payroll ON d.dept_id = payroll.dept_id ORDER BY budget_surplus DESC, d.dept_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "budget",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-17",
+    "slug": "derived-table-product-gross-sales",
+    "title": "Join Products with Pre-Aggregated Gross Sales",
+    "description_markdown": "Join `products p` with a derived table calculating total gross sales from `order_items` (`(SELECT product_id, SUM(quantity * unit_price) AS gross_sales FROM order_items GROUP BY product_id) sales`) on `p.product_id = sales.product_id`. Return `p.product_id`, `p.product_name`, and `sales.gross_sales`. Order by `sales.gross_sales` DESC, `p.product_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gross_sales",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join products with derived gross sales table\nSELECT p.product_id, p.product_name, sales.gross_sales\nFROM products p\nJOIN (\n  SELECT product_id, SUM(quantity * unit_price) AS gross_sales\n  FROM order_items\n  GROUP BY product_id\n) sales ON p.product_id = sales.product_id\nORDER BY sales.gross_sales DESC, p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, sales.gross_sales FROM products p JOIN (SELECT product_id, SUM(quantity * unit_price) AS gross_sales FROM order_items GROUP BY product_id) sales ON p.product_id = sales.product_id ORDER BY sales.gross_sales DESC, p.product_id ASC;",
+    "solution_explanation": "Pre-aggregates total order item sales per product in a subquery and joins with product catalog metadata.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to multiply quantity by unit_price in order_items."
+    ],
+    "interview_tip": "Pre-aggregation derived tables keep data volumes minimal before joining to dimensional tables.",
+    "hints": [
+      "Derive `sales` with `SELECT product_id, SUM(quantity * unit_price) AS gross_sales FROM order_items GROUP BY product_id`.",
+      "Join on `p.product_id = sales.product_id`.",
+      "Query: SELECT p.product_id, p.product_name, sales.gross_sales FROM products p JOIN (SELECT product_id, SUM(quantity * unit_price) AS gross_sales FROM order_items GROUP BY product_id) sales ON p.product_id = sales.product_id ORDER BY sales.gross_sales DESC, p.product_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "sales",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-18",
+    "slug": "derived-table-course-average-final-score",
+    "title": "Join Courses with Derived Final Exam Averages",
+    "description_markdown": "Join `courses c` with a derived table calculating average final exam scores per course (`(SELECT e.course_id, ROUND(AVG(m.score), 2) AS avg_final_score FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' GROUP BY e.course_id) scores`) on `c.course_id = scores.course_id`. Return `c.course_code`, `c.course_name`, and `scores.avg_final_score`. Order by `scores.avg_final_score` DESC, `c.course_code` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_final_score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join courses with pre-calculated final exam scores\nSELECT c.course_code, c.course_name, scores.avg_final_score\nFROM courses c\nJOIN (\n  SELECT e.course_id, ROUND(AVG(m.score), 2) AS avg_final_score\n  FROM enrollments e\n  JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE m.assessment_type = 'final'\n  GROUP BY e.course_id\n) scores ON c.course_id = scores.course_id\nORDER BY scores.avg_final_score DESC, c.course_code ASC;",
+    "solution_query": "SELECT c.course_code, c.course_name, scores.avg_final_score FROM courses c JOIN (SELECT e.course_id, ROUND(AVG(m.score), 2) AS avg_final_score FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' GROUP BY e.course_id) scores ON c.course_id = scores.course_id ORDER BY scores.avg_final_score DESC, c.course_code ASC;",
+    "solution_explanation": "Pre-aggregates assessment marks per course inside a subquery before joining to the courses table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter assessment_type = 'final' in the subquery."
+    ],
+    "interview_tip": "Multi-table joins inside derived tables isolate calculation complexity from the main query.",
+    "hints": [
+      "Inner query joins enrollments and marks on enrollment_id.",
+      "Outer query joins courses on course_id.",
+      "Query: SELECT c.course_code, c.course_name, scores.avg_final_score FROM courses c JOIN (SELECT e.course_id, ROUND(AVG(m.score), 2) AS avg_final_score FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' GROUP BY e.course_id) scores ON c.course_id = scores.course_id ORDER BY scores.avg_final_score DESC, c.course_code ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "course-performance",
+      "grades"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-19",
+    "slug": "derived-table-product-catalog-status-counts",
+    "title": "Aggregate Over Computed Product Status via Derived Table",
+    "description_markdown": "Using a derived table that classifies products into status strings (`(SELECT product_id, CASE WHEN is_active THEN 'Active' ELSE 'Inactive' END AS status_label FROM products) classified`), count products by status. Return `status_label` and `COUNT(*) AS total_products`. Group by `status_label`. Order by `status_label` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "status_label",
+        "type": "varchar"
+      },
+      {
+        "name": "total_products",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Group by computed status label via derived table\nSELECT status_label, COUNT(*) AS total_products\nFROM (\n  SELECT product_id, CASE WHEN is_active THEN 'Active' ELSE 'Inactive' END AS status_label\n  FROM products\n) classified\nGROUP BY status_label\nORDER BY status_label ASC;",
+    "solution_query": "SELECT status_label, COUNT(*) AS total_products FROM (SELECT product_id, CASE WHEN is_active THEN 'Active' ELSE 'Inactive' END AS status_label FROM products) classified GROUP BY status_label ORDER BY status_label ASC;",
+    "solution_explanation": "Creates an intermediate virtual table with a human-readable status label, then groups by that column in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the GROUP BY status_label in the outer query."
+    ],
+    "interview_tip": "Grouping on derived table columns avoids repeating lengthy CASE WHEN constructs in GROUP BY clauses.",
+    "hints": [
+      "Inner query creates `status_label` from `is_active`.",
+      "Outer query performs `GROUP BY status_label`.",
+      "Query: SELECT status_label, COUNT(*) AS total_products FROM (SELECT product_id, CASE WHEN is_active THEN 'Active' ELSE 'Inactive' END AS status_label FROM products) classified GROUP BY status_label ORDER BY status_label ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "case-classification",
+      "grouping"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-20",
+    "slug": "derived-table-employee-compensation-brackets",
+    "title": "Salary Bracket Headcount Distribution via Derived Table",
+    "description_markdown": "Using a derived table that labels employees into salary brackets (`(SELECT emp_id, CASE WHEN salary >= 150000 THEN 'Executive Tier' WHEN salary >= 100000 THEN 'Mid-Senior Tier' ELSE 'Associate Tier' END AS bracket FROM employees) classified`), count employees in each bracket. Return `bracket` and `COUNT(*) AS employee_count`. Group by `bracket`. Order by `bracket` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "bracket",
+        "type": "varchar"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table for compensation brackets\nSELECT bracket, COUNT(*) AS employee_count\nFROM (\n  SELECT emp_id, CASE ... END AS bracket\n  FROM employees\n) classified\nGROUP BY bracket\nORDER BY bracket ASC;",
+    "solution_query": "SELECT bracket, COUNT(*) AS employee_count FROM (SELECT emp_id, CASE WHEN salary >= 150000 THEN 'Executive Tier' WHEN salary >= 100000 THEN 'Mid-Senior Tier' ELSE 'Associate Tier' END AS bracket FROM employees) classified GROUP BY bracket ORDER BY bracket ASC;",
+    "solution_explanation": "Maps salary values into categories in the derived table, then aggregates counts per category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the ELSE clause in CASE, producing unexpected NULL brackets."
+    ],
+    "interview_tip": "Distribution histograms across continuous numeric dimensions are almost always built with derived tables.",
+    "hints": [
+      "Categorize `salary` using `CASE` in the subquery.",
+      "Group by `bracket` in the outer query.",
+      "Query: SELECT bracket, COUNT(*) AS employee_count FROM (SELECT emp_id, CASE WHEN salary >= 150000 THEN 'Executive Tier' WHEN salary >= 100000 THEN 'Mid-Senior Tier' ELSE 'Associate Tier' END AS bracket FROM employees) classified GROUP BY bracket ORDER BY bracket ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "salary-brackets",
+      "histogram"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-21",
+    "slug": "derived-table-average-orders-per-customer",
+    "title": "Double Aggregation: Average Orders Placed per Customer",
+    "description_markdown": "From a derived table counting total orders placed per customer (`(SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_counts`), calculate the average number of orders per customer rounded to 2 decimal places. Return `ROUND(AVG(order_count), 2) AS avg_orders_per_customer`.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_orders_per_customer",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average of customer order counts\nSELECT ROUND(AVG(order_count), 2) AS avg_orders_per_customer\nFROM (\n  SELECT customer_id, COUNT(*) AS order_count\n  FROM orders\n  GROUP BY customer_id\n) customer_counts;",
+    "solution_query": "SELECT ROUND(AVG(order_count), 2) AS avg_orders_per_customer FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_counts;",
+    "solution_explanation": "First aggregates orders per customer in the FROM subquery, then computes the overall average across all customer totals.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to compute AVG(COUNT(order_id)) directly without a subquery."
+    ],
+    "interview_tip": "This is a quintessential e-commerce engagement metric, requiring two-stage aggregation.",
+    "hints": [
+      "Inner subquery groups orders by customer_id to count them.",
+      "Outer query computes `ROUND(AVG(order_count), 2)`.",
+      "Query: SELECT ROUND(AVG(order_count), 2) AS avg_orders_per_customer FROM (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) customer_counts;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "double-aggregation",
+      "order-frequency"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-22",
+    "slug": "derived-table-project-cost-per-hour",
+    "title": "Calculate Project Cost Per Logged Hour via Derived Table",
+    "description_markdown": "Join `projects p` with a derived table calculating total logged hours per project (`(SELECT project_id, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id) logged`) on `p.project_id = logged.project_id`. Select `p.project_id`, `p.project_name`, `p.budget`, `logged.total_hours`, and `ROUND(p.budget / logged.total_hours, 2) AS cost_per_hour` where `logged.total_hours > 0`. Order by `cost_per_hour` DESC, `p.project_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      },
+      {
+        "name": "total_hours",
+        "type": "decimal"
+      },
+      {
+        "name": "cost_per_hour",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate cost per hour using derived table\nSELECT p.project_id, p.project_name, p.budget, logged.total_hours,\n       ROUND(p.budget / logged.total_hours, 2) AS cost_per_hour\nFROM projects p\nJOIN (\n  SELECT project_id, SUM(hours_worked) AS total_hours\n  FROM assignments\n  GROUP BY project_id\n) logged ON p.project_id = logged.project_id\nWHERE logged.total_hours > 0\nORDER BY cost_per_hour DESC, p.project_id ASC;",
+    "solution_query": "SELECT p.project_id, p.project_name, p.budget, logged.total_hours, ROUND(p.budget / logged.total_hours, 2) AS cost_per_hour FROM projects p JOIN (SELECT project_id, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id) logged ON p.project_id = logged.project_id WHERE logged.total_hours > 0 ORDER BY cost_per_hour DESC, p.project_id ASC;",
+    "solution_explanation": "Pre-aggregates total project hours before joining to projects, permitting division of budget by hours.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Dividing before aggregating, which creates erroneous row-level quotients."
+    ],
+    "interview_tip": "Always sum quantities before dividing ratios (sum of parts vs ratio of sums).",
+    "hints": [
+      "Inner subquery sums hours per project.",
+      "Outer query joins projects and calculates `ROUND(p.budget / logged.total_hours, 2)`.",
+      "Query: SELECT p.project_id, p.project_name, p.budget, logged.total_hours, ROUND(p.budget / logged.total_hours, 2) AS cost_per_hour FROM projects p JOIN (SELECT project_id, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id) logged ON p.project_id = logged.project_id WHERE logged.total_hours > 0 ORDER BY cost_per_hour DESC, p.project_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "burn-rate",
+      "efficiency"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-23",
+    "slug": "derived-table-customer-order-frequency-tiers",
+    "title": "Customer Order Volume Distribution via Derived Table",
+    "description_markdown": "From a derived table that classifies ordering customers by order volume (`(SELECT customer_id, CASE WHEN COUNT(*) >= 3 THEN 'Frequent' WHEN COUNT(*) = 2 THEN 'Regular' ELSE 'One-time' END AS frequency_tier FROM orders GROUP BY customer_id) tiers`), count how many customers are in each frequency tier. Return `frequency_tier` and `COUNT(*) AS customer_count`. Group by `frequency_tier`. Order by `frequency_tier` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "frequency_tier",
+        "type": "varchar"
+      },
+      {
+        "name": "customer_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer order frequency tier counts\nSELECT frequency_tier, COUNT(*) AS customer_count\nFROM (\n  SELECT customer_id, CASE WHEN COUNT(*) >= 3 THEN 'Frequent' WHEN COUNT(*) = 2 THEN 'Regular' ELSE 'One-time' END AS frequency_tier\n  FROM orders\n  GROUP BY customer_id\n) tiers\nGROUP BY frequency_tier\nORDER BY frequency_tier ASC;",
+    "solution_query": "SELECT frequency_tier, COUNT(*) AS customer_count FROM (SELECT customer_id, CASE WHEN COUNT(*) >= 3 THEN 'Frequent' WHEN COUNT(*) = 2 THEN 'Regular' ELSE 'One-time' END AS frequency_tier FROM orders GROUP BY customer_id) tiers GROUP BY frequency_tier ORDER BY frequency_tier ASC;",
+    "solution_explanation": "Aggregates orders per customer and assigns a frequency tier, then aggregates customers per tier in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to group by frequency_tier directly without an intermediate derived table."
+    ],
+    "interview_tip": "Cohort and frequency tier distributions are classic business analytics questions solved with derived tables.",
+    "hints": [
+      "Inner subquery groups orders by customer_id and assigns the tier.",
+      "Outer query groups by `frequency_tier` and counts customers.",
+      "Query: SELECT frequency_tier, COUNT(*) AS customer_count FROM (SELECT customer_id, CASE WHEN COUNT(*) >= 3 THEN 'Frequent' WHEN COUNT(*) = 2 THEN 'Regular' ELSE 'One-time' END AS frequency_tier FROM orders GROUP BY customer_id) tiers GROUP BY frequency_tier ORDER BY frequency_tier ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "cohorts",
+      "distribution"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-24",
+    "slug": "derived-table-department-salary-aggregates-join",
+    "title": "Join Department Names with Pre-Aggregated Payroll Metrics",
+    "description_markdown": "Join `departments d` with a derived table summarizing department salary statistics (`(SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal, AVG(salary) AS avg_sal FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) stats`) on `d.dept_id = stats.dept_id`. Return `d.dept_name`, `stats.max_sal`, `stats.min_sal`, and `ROUND(stats.avg_sal, 2) AS rounded_avg`. Order by `d.dept_name` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_sal",
+        "type": "decimal"
+      },
+      {
+        "name": "min_sal",
+        "type": "decimal"
+      },
+      {
+        "name": "rounded_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join departments with pre-aggregated salary stats\nSELECT d.dept_name, stats.max_sal, stats.min_sal, ROUND(stats.avg_sal, 2) AS rounded_avg\nFROM departments d\nJOIN (\n  SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal, AVG(salary) AS avg_sal\n  FROM employees\n  WHERE dept_id IS NOT NULL\n  GROUP BY dept_id\n) stats ON d.dept_id = stats.dept_id\nORDER BY d.dept_name ASC;",
+    "solution_query": "SELECT d.dept_name, stats.max_sal, stats.min_sal, ROUND(stats.avg_sal, 2) AS rounded_avg FROM departments d JOIN (SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal, AVG(salary) AS avg_sal FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) stats ON d.dept_id = stats.dept_id ORDER BY d.dept_name ASC;",
+    "solution_explanation": "Pre-aggregates max, min, and average salaries by department in a derived table before joining back to the departments table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining first and grouping by dept_name, which can fail if two departments share names."
+    ],
+    "interview_tip": "Grouping on surrogate keys (dept_id) in a derived table ensures correct granularity regardless of descriptive column contents.",
+    "hints": [
+      "Derive `stats` with min, max, avg per dept_id.",
+      "Join to `departments d` on `d.dept_id = stats.dept_id`.",
+      "Query: SELECT d.dept_name, stats.max_sal, stats.min_sal, ROUND(stats.avg_sal, 2) AS rounded_avg FROM departments d JOIN (SELECT dept_id, MAX(salary) AS max_sal, MIN(salary) AS min_sal, AVG(salary) AS avg_sal FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) stats ON d.dept_id = stats.dept_id ORDER BY d.dept_name ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "department-metrics",
+      "joins"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-25",
+    "slug": "derived-table-products-exceeding-category-avg-join",
+    "title": "Filter Products Above Category Mean Using Derived Table Join",
+    "description_markdown": "Join `products p` with a derived table computing average price per category (`(SELECT category_id, AVG(price) AS cat_avg_price FROM products GROUP BY category_id) cat_stats`) on `p.category_id = cat_stats.category_id`. Filter for products where `p.price > cat_stats.cat_avg_price`. Return `p.product_id`, `p.product_name`, `p.price`, and `ROUND(cat_stats.cat_avg_price, 2) AS cat_avg_price`. Order by `p.product_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "cat_avg_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join products with derived category average table\nSELECT p.product_id, p.product_name, p.price, ROUND(cat_stats.cat_avg_price, 2) AS cat_avg_price\nFROM products p\nJOIN (\n  SELECT category_id, AVG(price) AS cat_avg_price\n  FROM products\n  GROUP BY category_id\n) cat_stats ON p.category_id = cat_stats.category_id\nWHERE p.price > cat_stats.cat_avg_price\nORDER BY p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price, ROUND(cat_stats.cat_avg_price, 2) AS cat_avg_price FROM products p JOIN (SELECT category_id, AVG(price) AS cat_avg_price FROM products GROUP BY category_id) cat_stats ON p.category_id = cat_stats.category_id WHERE p.price > cat_stats.cat_avg_price ORDER BY p.product_id ASC;",
+    "solution_explanation": "An alternative to a correlated subquery: materializes category averages once into a derived table and joins products against it.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= instead of strictly > in the filter."
+    ],
+    "interview_tip": "Derived table joins often optimize better than correlated subqueries in MySQL and PostgreSQL query planners.",
+    "hints": [
+      "Inner subquery computes `AVG(price) AS cat_avg_price` per category.",
+      "Outer query joins `products p` on `category_id` and filters `p.price > cat_stats.cat_avg_price`.",
+      "Query: SELECT p.product_id, p.product_name, p.price, ROUND(cat_stats.cat_avg_price, 2) AS cat_avg_price FROM products p JOIN (SELECT category_id, AVG(price) AS cat_avg_price FROM products GROUP BY category_id) cat_stats ON p.category_id = cat_stats.category_id WHERE p.price > cat_stats.cat_avg_price ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "benchmarking",
+      "category-avg"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-26",
+    "slug": "derived-table-student-highest-marks-join",
+    "title": "Join Student Enrollments with Derived Maximum Mark",
+    "description_markdown": "Join `enrollments e` with a derived table calculating top assessment score per enrollment (`(SELECT enrollment_id, MAX(score) AS top_score FROM marks GROUP BY enrollment_id) top_marks`) on `e.enrollment_id = top_marks.enrollment_id`. Return `e.student_id`, `e.course_id`, and `top_marks.top_score`. Order by `e.student_id` ASC, `e.course_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "top_score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join enrollments with top score derived table\nSELECT e.student_id, e.course_id, top_marks.top_score\nFROM enrollments e\nJOIN (\n  SELECT enrollment_id, MAX(score) AS top_score\n  FROM marks\n  GROUP BY enrollment_id\n) top_marks ON e.enrollment_id = top_marks.enrollment_id\nORDER BY e.student_id ASC, e.course_id ASC;",
+    "solution_query": "SELECT e.student_id, e.course_id, top_marks.top_score FROM enrollments e JOIN (SELECT enrollment_id, MAX(score) AS top_score FROM marks GROUP BY enrollment_id) top_marks ON e.enrollment_id = top_marks.enrollment_id ORDER BY e.student_id ASC, e.course_id ASC;",
+    "solution_explanation": "Pre-aggregates max scores by enrollment in a derived table and joins to enrollment dimension rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the enrollment_id join condition."
+    ],
+    "interview_tip": "Pre-aggregating in derived tables avoids unwanted Cartesian product rows when joining 1-to-many structures.",
+    "hints": [
+      "Derive `top_marks` with `SELECT enrollment_id, MAX(score) AS top_score FROM marks GROUP BY enrollment_id`.",
+      "Join on `e.enrollment_id = top_marks.enrollment_id`.",
+      "Query: SELECT e.student_id, e.course_id, top_marks.top_score FROM enrollments e JOIN (SELECT enrollment_id, MAX(score) AS top_score FROM marks GROUP BY enrollment_id) top_marks ON e.enrollment_id = top_marks.enrollment_id ORDER BY e.student_id ASC, e.course_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "top-score",
+      "enrollments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-27",
+    "slug": "derived-table-average-units-per-order",
+    "title": "Double Aggregation: Average Quantity per Order Basket",
+    "description_markdown": "From a derived table aggregating total quantity per order (`(SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id) order_units`), calculate the overall average units per order rounded to 2 decimal places. Return `ROUND(AVG(units), 2) AS avg_units_per_order`.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_units_per_order",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Overall average units per order via derived table\nSELECT ROUND(AVG(units), 2) AS avg_units_per_order\nFROM (\n  SELECT order_id, SUM(quantity) AS units\n  FROM order_items\n  GROUP BY order_id\n) order_units;",
+    "solution_query": "SELECT ROUND(AVG(units), 2) AS avg_units_per_order FROM (SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id) order_units;",
+    "solution_explanation": "First aggregates quantity per order, then computes the overall average across orders in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Averaging item line quantities directly rather than summing per order first."
+    ],
+    "interview_tip": "Average basket size is an aggregate of an aggregate—always requires a derived table or CTE.",
+    "hints": [
+      "Inner query sums quantity grouped by order_id.",
+      "Outer query takes `ROUND(AVG(units), 2)`.",
+      "Query: SELECT ROUND(AVG(units), 2) AS avg_units_per_order FROM (SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id) order_units;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "double-aggregation",
+      "basket-size"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-28",
+    "slug": "derived-table-department-avg-assignment-rating",
+    "title": "Join Departments with Derived Project Performance Ratings",
+    "description_markdown": "Join `departments d` with a derived table that calculates average project assignment ratings grouped by `dept_id` (`(SELECT p.dept_id, ROUND(AVG(a.rating), 2) AS dept_avg_rating FROM projects p JOIN assignments a ON p.project_id = a.project_id WHERE a.rating IS NOT NULL AND p.dept_id IS NOT NULL GROUP BY p.dept_id) prj_ratings`) on `d.dept_id = prj_ratings.dept_id`. Return `d.dept_id`, `d.dept_name`, and `prj_ratings.dept_avg_rating`. Order by `prj_ratings.dept_avg_rating` DESC, `d.dept_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_avg_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join departments with derived multi-table aggregate\nSELECT d.dept_id, d.dept_name, prj_ratings.dept_avg_rating\nFROM departments d\nJOIN (\n  SELECT p.dept_id, ROUND(AVG(a.rating), 2) AS dept_avg_rating\n  FROM projects p\n  JOIN assignments a ON p.project_id = a.project_id\n  WHERE a.rating IS NOT NULL AND p.dept_id IS NOT NULL\n  GROUP BY p.dept_id\n) prj_ratings ON d.dept_id = prj_ratings.dept_id\nORDER BY prj_ratings.dept_avg_rating DESC, d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, prj_ratings.dept_avg_rating FROM departments d JOIN (SELECT p.dept_id, ROUND(AVG(a.rating), 2) AS dept_avg_rating FROM projects p JOIN assignments a ON p.project_id = a.project_id WHERE a.rating IS NOT NULL AND p.dept_id IS NOT NULL GROUP BY p.dept_id) prj_ratings ON d.dept_id = prj_ratings.dept_id ORDER BY prj_ratings.dept_avg_rating DESC, d.dept_id ASC;",
+    "solution_explanation": "Encapsulates a multi-table join and grouping across projects and assignments inside a derived table, joined cleanly to department master data.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Not excluding NULL ratings before averaging."
+    ],
+    "interview_tip": "Encapsulating multi-table aggregations within derived tables is modular, clean, and avoids outer grouping complications.",
+    "hints": [
+      "Join projects and assignments in the inner derived query.",
+      "Outer query joins `departments d` on `dept_id`.",
+      "Query: SELECT d.dept_id, d.dept_name, prj_ratings.dept_avg_rating FROM departments d JOIN (SELECT p.dept_id, ROUND(AVG(a.rating), 2) AS dept_avg_rating FROM projects p JOIN assignments a ON p.project_id = a.project_id WHERE a.rating IS NOT NULL AND p.dept_id IS NOT NULL GROUP BY p.dept_id) prj_ratings ON d.dept_id = prj_ratings.dept_id ORDER BY prj_ratings.dept_avg_rating DESC, d.dept_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "ratings",
+      "multi-table"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-29",
+    "slug": "derived-table-customer-order-status-breakdown",
+    "title": "Customer Completed vs Refunded Spend via Derived Table",
+    "description_markdown": "From a derived table summarizing completed versus refunded spending per customer (`(SELECT customer_id, SUM(CASE WHEN order_status = 'completed' THEN total_amount ELSE 0.00 END) AS completed_spend, SUM(CASE WHEN order_status = 'refunded' THEN total_amount ELSE 0.00 END) AS refunded_spend FROM orders GROUP BY customer_id) spend_summary`), select `customer_id`, `completed_spend`, and `refunded_spend` where `completed_spend > 0`. Order by `completed_spend` DESC, `customer_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "completed_spend",
+        "type": "decimal"
+      },
+      {
+        "name": "refunded_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table pivoting order status spend\nSELECT customer_id, completed_spend, refunded_spend\nFROM (\n  SELECT customer_id,\n         SUM(CASE WHEN order_status = 'completed' THEN total_amount ELSE 0.00 END) AS completed_spend,\n         SUM(CASE WHEN order_status = 'refunded' THEN total_amount ELSE 0.00 END) AS refunded_spend\n  FROM orders\n  GROUP BY customer_id\n) spend_summary\nWHERE completed_spend > 0\nORDER BY completed_spend DESC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, completed_spend, refunded_spend FROM (SELECT customer_id, SUM(CASE WHEN order_status = 'completed' THEN total_amount ELSE 0.00 END) AS completed_spend, SUM(CASE WHEN order_status = 'refunded' THEN total_amount ELSE 0.00 END) AS refunded_spend FROM orders GROUP BY customer_id) spend_summary WHERE completed_spend > 0 ORDER BY completed_spend DESC, customer_id ASC;",
+    "solution_explanation": "Performs conditional aggregations inside the derived table, then applies outer filtering on the resulting aggregated columns.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering before pivoting, which loses refunded spend when completed spend is filtered."
+    ],
+    "interview_tip": "Conditional aggregation inside derived tables is the standard cross-dialect pivot technique in SQL.",
+    "hints": [
+      "Use `SUM(CASE WHEN ... THEN total_amount ELSE 0.00 END)` in the inner subquery.",
+      "Filter `WHERE completed_spend > 0` in the outer query.",
+      "Query: SELECT customer_id, completed_spend, refunded_spend FROM (SELECT customer_id, SUM(CASE WHEN order_status = 'completed' THEN total_amount ELSE 0.00 END) AS completed_spend, SUM(CASE WHEN order_status = 'refunded' THEN total_amount ELSE 0.00 END) AS refunded_spend FROM orders GROUP BY customer_id) spend_summary WHERE completed_spend > 0 ORDER BY completed_spend DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "pivoting",
+      "conditional-aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-30",
+    "slug": "derived-table-employee-manager-salary-ratio",
+    "title": "Calculate Subordinate to Manager Salary Ratio via Derived Table",
+    "description_markdown": "Join `employees e` with a derived table of manager compensation (`(SELECT emp_id AS mgr_id, salary AS mgr_salary FROM employees) mgrs`) on `e.manager_id = mgrs.mgr_id`. Select `e.emp_id`, `e.first_name`, `e.salary`, `mgrs.mgr_salary`, and `ROUND(e.salary / mgrs.mgr_salary, 2) AS salary_ratio`. Order by `salary_ratio` DESC, `e.emp_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "mgr_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "salary_ratio",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Derived table for manager compensation lookup\nSELECT e.emp_id, e.first_name, e.salary, mgrs.mgr_salary,\n       ROUND(e.salary / mgrs.mgr_salary, 2) AS salary_ratio\nFROM employees e\nJOIN (\n  SELECT emp_id AS mgr_id, salary AS mgr_salary\n  FROM employees\n) mgrs ON e.manager_id = mgrs.mgr_id\nORDER BY salary_ratio DESC, e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary, mgrs.mgr_salary, ROUND(e.salary / mgrs.mgr_salary, 2) AS salary_ratio FROM employees e JOIN (SELECT emp_id AS mgr_id, salary AS mgr_salary FROM employees) mgrs ON e.manager_id = mgrs.mgr_id ORDER BY salary_ratio DESC, e.emp_id ASC;",
+    "solution_explanation": "Uses a derived projection table for managers to cleanly self-join against employees and compute the salary ratio.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on e.emp_id = mgrs.mgr_id instead of e.manager_id = mgrs.mgr_id."
+    ],
+    "interview_tip": "Derived tables can act as explicit projection projections in self-joins, preventing column name collisions.",
+    "hints": [
+      "Derive `mgrs` with `SELECT emp_id AS mgr_id, salary AS mgr_salary FROM employees`.",
+      "Join on `e.manager_id = mgrs.mgr_id`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary, mgrs.mgr_salary, ROUND(e.salary / mgrs.mgr_salary, 2) AS salary_ratio FROM employees e JOIN (SELECT emp_id AS mgr_id, salary AS mgr_salary FROM employees) mgrs ON e.manager_id = mgrs.mgr_id ORDER BY salary_ratio DESC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "self-join",
+      "ratios"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-31",
+    "slug": "derived-table-major-gpa-summary-filter",
+    "title": "Filter Major Academic Metrics via Derived Table",
+    "description_markdown": "From a derived table calculating major academic metrics (`(SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa, MAX(gpa) AS max_gpa FROM students GROUP BY major) major_stats`), filter for majors with `student_count >= 2`. Return `major`, `student_count`, `avg_gpa`, and `max_gpa`. Order by `avg_gpa` DESC, `major` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "student_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "max_gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter pre-computed major statistics\nSELECT major, student_count, avg_gpa, max_gpa\nFROM (\n  SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa, MAX(gpa) AS max_gpa\n  FROM students\n  GROUP BY major\n) major_stats\nWHERE student_count >= 2\nORDER BY avg_gpa DESC, major ASC;",
+    "solution_query": "SELECT major, student_count, avg_gpa, max_gpa FROM (SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa, MAX(gpa) AS max_gpa FROM students GROUP BY major) major_stats WHERE student_count >= 2 ORDER BY avg_gpa DESC, major ASC;",
+    "solution_explanation": "Pre-aggregates headcount, average GPA, and peak GPA per major in a derived table before filtering majors by minimum enrollment.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to filter student_count in the inner WHERE clause."
+    ],
+    "interview_tip": "Derived tables transform aggregate results into ordinary columns ready for simple filtering.",
+    "hints": [
+      "Inner subquery aggregates metrics by major.",
+      "Outer query filters `student_count >= 2`.",
+      "Query: SELECT major, student_count, avg_gpa, max_gpa FROM (SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa, MAX(gpa) AS max_gpa FROM students GROUP BY major) major_stats WHERE student_count >= 2 ORDER BY avg_gpa DESC, major ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "academic-metrics",
+      "benchmarks"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sqf-32",
+    "slug": "derived-table-product-sales-velocity-ranking",
+    "title": "Product Sales Velocity Metrics via Derived Table Join",
+    "description_markdown": "Join `products p` with a derived table calculating item sales volume and unique order count (`(SELECT product_id, SUM(quantity) AS units_sold, COUNT(DISTINCT order_id) AS distinct_orders FROM order_items GROUP BY product_id) velocity`) on `p.product_id = velocity.product_id`. Return `p.product_id`, `p.product_name`, `p.price`, `velocity.units_sold`, and `velocity.distinct_orders`. Order by `velocity.units_sold` DESC, `velocity.distinct_orders` DESC, `p.product_id` ASC.",
+    "topic_id": "subqueries-in-from",
+    "subtopic_id": "sub-from",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "units_sold",
+        "type": "bigint"
+      },
+      {
+        "name": "distinct_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join product catalog with sales velocity derived table\nSELECT p.product_id, p.product_name, p.price, velocity.units_sold, velocity.distinct_orders\nFROM products p\nJOIN (\n  SELECT product_id, SUM(quantity) AS units_sold, COUNT(DISTINCT order_id) AS distinct_orders\n  FROM order_items\n  GROUP BY product_id\n) velocity ON p.product_id = velocity.product_id\nORDER BY velocity.units_sold DESC, velocity.distinct_orders DESC, p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price, velocity.units_sold, velocity.distinct_orders FROM products p JOIN (SELECT product_id, SUM(quantity) AS units_sold, COUNT(DISTINCT order_id) AS distinct_orders FROM order_items GROUP BY product_id) velocity ON p.product_id = velocity.product_id ORDER BY velocity.units_sold DESC, velocity.distinct_orders DESC, p.product_id ASC;",
+    "solution_explanation": "Pre-aggregates distinct order penetration and total quantity inside a derived table before joining to product metadata.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(order_id) instead of COUNT(DISTINCT order_id)."
+    ],
+    "interview_tip": "Distinct metrics over child tables should always be calculated in derived tables or CTEs to avoid inaccurate duplicates.",
+    "hints": [
+      "In the subquery: `SELECT product_id, SUM(quantity) AS units_sold, COUNT(DISTINCT order_id) AS distinct_orders FROM order_items GROUP BY product_id`.",
+      "Join to `products p` on `product_id`.",
+      "Query: SELECT p.product_id, p.product_name, p.price, velocity.units_sold, velocity.distinct_orders FROM products p JOIN (SELECT product_id, SUM(quantity) AS units_sold, COUNT(DISTINCT order_id) AS distinct_orders FROM order_items GROUP BY product_id) velocity ON p.product_id = velocity.product_id ORDER BY velocity.units_sold DESC, velocity.distinct_orders DESC, p.product_id ASC;"
+    ],
+    "tags": [
+      "derived-table",
+      "from-subquery",
+      "sales-velocity",
+      "distinct-count"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sqf-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sqf-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sqf-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

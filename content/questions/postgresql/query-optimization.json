@@ -1,0 +1,2461 @@
+[
+  {
+    "id": "q-opt-01",
+    "slug": "query-plan-index-scan-simulation",
+    "title": "Optimized SARGable Filter on Primary Keys",
+    "description_markdown": "Write an index-friendly (SARGable) query to locate employee with `emp_id = 4`. Avoid applying functions to the `emp_id` column. Return `emp_id`, `first_name`, and `salary`.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- SARGable filter on emp_id\nSELECT emp_id, first_name, salary FROM employees WHERE ...",
+    "solution_query": "SELECT emp_id, first_name, salary FROM employees WHERE emp_id = 4;",
+    "solution_explanation": "Direct equality predicates on primary key columns allow PostgreSQL's planner to utilize efficient Index Scans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE emp_id = 4`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT emp_id, first_name, salary FROM employees WHERE emp_id = 4;"
+    ],
+    "tags": [
+      "optimization",
+      "sargable"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-02",
+    "slug": "avoid-cartesian-explosion-join-optimization",
+    "title": "Eliminate Accidental Cartesian Products in Joins",
+    "description_markdown": "Optimize a query joining `departments` and `projects`: ensure the join connects strictly on `d.dept_id = p.dept_id`. Return `d.dept_name` and `p.project_name` for projects with budget >= 500,000. Order by `d.dept_name` ASC, `p.project_name` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Explicit INNER JOIN predicate\nSELECT ...",
+    "solution_query": "SELECT d.dept_name, p.project_name FROM departments d JOIN projects p ON d.dept_id = p.dept_id WHERE p.budget >= 500000 ORDER BY d.dept_name ASC, p.project_name ASC;",
+    "solution_explanation": "Explicit join predicates allow Hash Join or Merge Join planner nodes, avoiding catastrophic $O(N \\times M)$ nested loop scans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `d.dept_id = p.dept_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.dept_name, p.project_name FROM departments d JOIN projects p ON d.dept_id = p.dept_id WHERE p.budget >= 500000 ORDER BY d.dept_name ASC, p.project_name ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "join-conditions"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-03",
+    "slug": "exists-over-count-existence-check",
+    "title": "High-Performance Semi-Join via EXISTS",
+    "description_markdown": "Check whether products have had any reviews without calculating the entire count of reviews using `EXISTS`. Return `product_id`, `product_name`, and `price` for reviewed products. Order by `product_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS short-circuit semi-join\nSELECT ...",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id) ORDER BY p.product_id ASC;",
+    "solution_explanation": "EXISTS short-circuits upon the first matching index leaf entry, outperforming COUNT(*) > 0 which scans entire tables.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id) ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "short-circuit-exists"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-04",
+    "slug": "opt-sargable-date-range-filter",
+    "title": "Apply SARGable Boundary Filtering to Calendar Date Columns",
+    "description_markdown": "Write an index-friendly (SARGable) query to find all employees hired in calendar year 2021 without wrapping `hire_date` in any function. Use the half-open range `hire_date >= '2021-01-01' AND hire_date < '2022-01-01'`. Return `emp_id`, `first_name`, and `hire_date`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- SARGable date filtering\nSELECT emp_id, first_name, hire_date\nFROM employees\nWHERE hire_date >= '2021-01-01' AND hire_date < '2022-01-01'\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date FROM employees WHERE hire_date >= '2021-01-01' AND hire_date < '2022-01-01' ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "Wrapping indexed columns in functions (e.g. EXTRACT(YEAR FROM hire_date)) prevents B-tree index seek access.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using YEAR(hire_date) = 2021 which breaks SARGability."
+    ],
+    "interview_tip": "Always write date boundaries as half-open intervals >= start AND < end to enable index range scans.",
+    "hints": [
+      "Use `WHERE hire_date >= '2021-01-01' AND hire_date < '2022-01-01'`.",
+      "Order by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date FROM employees WHERE hire_date >= '2021-01-01' AND hire_date < '2022-01-01' ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "sargable",
+      "date-filtering",
+      "indexes"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-05",
+    "slug": "opt-prefix-wildcard-index-friendly-search",
+    "title": "Optimize Text Search with Prefix-Only LIKE Wildcards",
+    "description_markdown": "Perform an index-friendly prefix search to find products whose name begins with 'Coffee' using `product_name LIKE 'Coffee%'`. Avoid leading wildcards. Return `product_id`, `product_name`, and `price`. Order by `product_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Index-friendly prefix LIKE search\nSELECT product_id, product_name, price\nFROM products\nWHERE product_name LIKE 'Coffee%'\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE product_name LIKE 'Coffee%' ORDER BY product_id ASC;",
+    "solution_explanation": "Prefix patterns like 'Coffee%' utilize standard B-Tree index scans, whereas '%Coffee%' forces full table scans.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using '%Coffee%' which negates index seek benefits."
+    ],
+    "interview_tip": "Leading wildcards defeat B-Tree index lookup because leaf nodes are sorted left-to-right.",
+    "hints": [
+      "Use `WHERE product_name LIKE 'Coffee%'`.",
+      "Order output by `product_id ASC`.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE product_name LIKE 'Coffee%' ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "sargable",
+      "like",
+      "b-tree"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-06",
+    "slug": "opt-isolated-column-comparison-predicate",
+    "title": "Isolate Arithmetic Calculations to Right Hand Side of Predicates",
+    "description_markdown": "Write an optimized SARGable filter to locate employees earning at least 100,000 (`salary >= 100000`). Keep the column alone on the left-hand side of the comparison operator. Return `emp_id`, `first_name`, and `salary`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Isolated comparison predicate\nSELECT emp_id, first_name, salary\nFROM employees\nWHERE salary >= 100000\nORDER BY salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary FROM employees WHERE salary >= 100000 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Isolating the column from arithmetic expressions preserves the database engine's ability to execute index range seeks.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing expressions like salary / 1000 >= 100 on the left-hand side."
+    ],
+    "interview_tip": "Never apply arithmetic operators or conversions to indexed columns on the comparison left-hand side.",
+    "hints": [
+      "Use `WHERE salary >= 100000`.",
+      "Order by `salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary FROM employees WHERE salary >= 100000 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "sargable",
+      "arithmetic",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-07",
+    "slug": "opt-anti-join-via-not-exists-over-not-in",
+    "title": "Construct Null-Safe High-Performance Anti-Join via NOT EXISTS",
+    "description_markdown": "Find customers who have never placed any orders using an efficient `NOT EXISTS` anti-join rather than `NOT IN`. Return `customer_id`, `first_name`, and `email`. Order by `customer_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- NOT EXISTS anti-join\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id\n)\nORDER BY c.customer_id ASC;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "NOT EXISTS avoids NOT IN three-valued logic null traps and transforms cleanly into Hash Anti-Joins.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using NOT IN on columns that could contain NULL values."
+    ],
+    "interview_tip": "NOT EXISTS is universally preferred over NOT IN for safety and query planner optimization.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id)`.",
+      "Sort output by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "not-exists",
+      "anti-join",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-08",
+    "slug": "opt-union-all-over-union-for-disjoint-sets",
+    "title": "Eliminate Unnecessary Deduplication Overhead with UNION ALL",
+    "description_markdown": "Combine customers from 'Seattle' with customers from 'London' using `UNION ALL` to bypass expensive distinct hashing or sorting passes between naturally disjoint sets. Return `customer_id`, `first_name`, and `city`. Order by `customer_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- High-performance UNION ALL\nSELECT customer_id, first_name, city FROM customers WHERE city = 'Seattle'\nUNION ALL\nSELECT customer_id, first_name, city FROM customers WHERE city = 'London'\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id, first_name, city FROM customers WHERE city = 'Seattle' UNION ALL SELECT customer_id, first_name, city FROM customers WHERE city = 'London' ORDER BY customer_id ASC;",
+    "solution_explanation": "UNION performs a costly Sort or Unique Hash operation, whereas UNION ALL streams results directly without overhead.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using plain UNION when the datasets are known to have zero overlap."
+    ],
+    "interview_tip": "Always choose UNION ALL unless distinct deduplication is an explicit business requirement.",
+    "hints": [
+      "Use `UNION ALL` between the two SELECT statements.",
+      "Sort final result by `customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, city FROM customers WHERE city = 'Seattle' UNION ALL SELECT customer_id, first_name, city FROM customers WHERE city = 'London' ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "union-all",
+      "disjoint-sets",
+      "performance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-09",
+    "slug": "opt-lean-column-projection-avoid-select-star",
+    "title": "Reduce I/O and Memory Consumption with Lean Column Projections",
+    "description_markdown": "From `customers`, filter for `country = 'USA'`. Explicitly project only the three necessary columns `customer_id`, `first_name`, and `email`, avoiding wasteful `SELECT *` over-fetching. Order by `customer_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lean column projection\nSELECT customer_id, first_name, email\nFROM customers\nWHERE country = 'USA'\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id, first_name, email FROM customers WHERE country = 'USA' ORDER BY customer_id ASC;",
+    "solution_explanation": "Requesting only required columns enables index-only covering scans and minimizes memory transfer bandwidth.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using SELECT * in production queries."
+    ],
+    "interview_tip": "Restricting column projections prevents index-scan de-optimizations when wide columns are added later.",
+    "hints": [
+      "Select only `customer_id, first_name, email`.",
+      "Filter `WHERE country = 'USA'`.",
+      "Query: SELECT customer_id, first_name, email FROM customers WHERE country = 'USA' ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "projections",
+      "covering-index",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-10",
+    "slug": "opt-top-1-per-group-via-window-function",
+    "title": "Optimize Top-1 Per Group Using Single-Pass Window Function",
+    "description_markdown": "Using a single-pass window function (`ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn`), find the highest-paid employee in each department where `dept_id IS NOT NULL`. Filter for `rn = 1`. Return `emp_id`, `dept_id`, `first_name`, and `salary`. Order by `dept_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Single-pass Top-1 per group\nSELECT emp_id, dept_id, first_name, salary\nFROM (\n  SELECT emp_id, dept_id, first_name, salary,\n    ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn\n  FROM employees\n  WHERE dept_id IS NOT NULL\n) sub\nWHERE rn = 1\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, salary FROM (SELECT emp_id, dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) sub WHERE rn = 1 ORDER BY dept_id ASC;",
+    "solution_explanation": "ROW_NUMBER() finds the top record per group in a single streaming sort, vastly outperforming quadratic correlated subqueries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing correlated subqueries where salary = (SELECT MAX(...) FROM employees e2 WHERE e2.dept_id = e1.dept_id)."
+    ],
+    "interview_tip": "Top-N per group via ROW_NUMBER replaces $O(N^2)$ correlated subqueries with an efficient $O(N \\log N)$ single pass.",
+    "hints": [
+      "Compute `ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn` in derived table.",
+      "Filter outer query `WHERE rn = 1`.",
+      "Query: SELECT emp_id, dept_id, first_name, salary FROM (SELECT emp_id, dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) sub WHERE rn = 1 ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "window-functions",
+      "top-1",
+      "single-pass"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-11",
+    "slug": "opt-group-by-primary-key-with-joined-attributes",
+    "title": "Include Primary Key in Grouping to Leverage Functional Dependency",
+    "description_markdown": "Join `departments d` and `employees e` with `LEFT JOIN` on `d.dept_id = e.dept_id`. Group by `d.dept_id, d.dept_name` to exploit functional dependency on the primary key, and calculate `COUNT(e.emp_id) AS employee_count`. Return `d.dept_name` and `employee_count`. Order by `employee_count` DESC, `d.dept_name` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Group by primary key with dependency\nSELECT d.dept_name, COUNT(e.emp_id) AS employee_count\nFROM departments d\nLEFT JOIN employees e ON d.dept_id = e.dept_id\nGROUP BY d.dept_id, d.dept_name\nORDER BY employee_count DESC, d.dept_name ASC;",
+    "solution_query": "SELECT d.dept_name, COUNT(e.emp_id) AS employee_count FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY employee_count DESC, d.dept_name ASC;",
+    "solution_explanation": "Grouping by primary key (dept_id) ensures strict hash grouping efficiency and satisfies ONLY_FULL_GROUP_BY requirements.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) which would count 1 for empty departments in a LEFT JOIN."
+    ],
+    "interview_tip": "COUNT(e.emp_id) correctly yields 0 when a department contains no assigned employees.",
+    "hints": [
+      "Group by `d.dept_id, d.dept_name`.",
+      "Calculate `COUNT(e.emp_id)`.",
+      "Query: SELECT d.dept_name, COUNT(e.emp_id) AS employee_count FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY employee_count DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "group-by",
+      "primary-key",
+      "left-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-12",
+    "slug": "opt-keyset-pagination-seek-method",
+    "title": "Implement Keyset Pagination via Seek Predicates Over Large Offsets",
+    "description_markdown": "Fetch the next page of 5 orders after `order_id = 10` using keyset pagination (`WHERE order_id > 10`) rather than expensive `OFFSET` scanning. Return `order_id`, `order_date`, and `total_amount`. Order by `order_id` ASC with `LIMIT 5`.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Keyset seek pagination\nSELECT order_id, order_date, total_amount\nFROM orders\nWHERE order_id > 10\nORDER BY order_id ASC\nLIMIT 5;",
+    "solution_query": "SELECT order_id, order_date, total_amount FROM orders WHERE order_id > 10 ORDER BY order_id ASC LIMIT 5;",
+    "solution_explanation": "Keyset (seek-method) pagination performs an immediate index direct seek instead of scanning and discarding skipped rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OFFSET 10 LIMIT 5 which forces the engine to read and discard all prior records."
+    ],
+    "interview_tip": "Keyset pagination remains $O(1)$ constant time regardless of page depth, whereas OFFSET degrades to $O(N)$.",
+    "hints": [
+      "Filter with `WHERE order_id > 10`.",
+      "Sort `ORDER BY order_id ASC LIMIT 5`.",
+      "Query: SELECT order_id, order_date, total_amount FROM orders WHERE order_id > 10 ORDER BY order_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "optimization",
+      "keyset-pagination",
+      "seek-method",
+      "indexing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-13",
+    "slug": "opt-numeric-boundary-indexed-filter",
+    "title": "Apply Exact Decimal Boundary Predicate to Indexed Academic Metrics",
+    "description_markdown": "From `students`, write an index-friendly range filter for students with academic honor standing (`gpa >= 3.50`). Return `student_id`, `first_name`, and `gpa`. Order by `gpa` DESC, `student_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- SARGable GPA threshold filter\nSELECT student_id, first_name, gpa\nFROM students\nWHERE gpa >= 3.50\nORDER BY gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, gpa FROM students WHERE gpa >= 3.50 ORDER BY gpa DESC, student_id ASC;",
+    "solution_explanation": "Comparing numeric literals directly avoids implicit type coercions that disrupt index utilization.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Converting gpa to string or float before comparing."
+    ],
+    "interview_tip": "Ensure data types of search arguments match column definitions to avoid implicit cast plan degradation.",
+    "hints": [
+      "Use `WHERE gpa >= 3.50`.",
+      "Order by `gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, gpa FROM students WHERE gpa >= 3.50 ORDER BY gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "sargable",
+      "numeric",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-14",
+    "slug": "opt-early-filtering-in-subquery-before-join",
+    "title": "Apply Early Predicate Filtering Prior to Multi-Table Joins",
+    "description_markdown": "Filter employees in an inline derived query for `salary >= 120000` before joining with `departments d` on `dept_id`. Return `e.emp_id`, `e.first_name`, and `d.dept_name`. Order by `e.emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Early filtering prior to join\nSELECT e.emp_id, e.first_name, d.dept_name\nFROM (\n  SELECT emp_id, first_name, dept_id\n  FROM employees\n  WHERE salary >= 120000\n) e\nJOIN departments d ON e.dept_id = d.dept_id\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, d.dept_name FROM (SELECT emp_id, first_name, dept_id FROM employees WHERE salary >= 120000) e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Predicate pushdown reduces intermediate join cardinality early in the execution plan pipeline.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining first and filtering post-join across massive outer tables."
+    ],
+    "interview_tip": "Reducing join working set sizes minimizes buffer cache thrashing and temporary spill-to-disk.",
+    "hints": [
+      "Filter `salary >= 120000` inside derived subquery `e`.",
+      "Join with `departments d ON e.dept_id = d.dept_id`.",
+      "Query: SELECT e.emp_id, e.first_name, d.dept_name FROM (SELECT emp_id, first_name, dept_id FROM employees WHERE salary >= 120000) e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "predicate-pushdown",
+      "filtering",
+      "joins"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-15",
+    "slug": "opt-short-circuit-semi-join-professors",
+    "title": "Implement Short-Circuit Semi-Join for Active Faculty via EXISTS",
+    "description_markdown": "Find all professors who teach at least one course using an index-friendly short-circuit `EXISTS` semi-join. Return `professor_id`, `first_name`, and `department`. Order by `professor_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- EXISTS short-circuit semi-join\nSELECT professor_id, first_name, department\nFROM professors p\nWHERE EXISTS (\n  SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id\n)\nORDER BY professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, department FROM professors p WHERE EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY professor_id ASC;",
+    "solution_explanation": "EXISTS halts scanning the courses table upon locating the first matching foreign key row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using JOIN with DISTINCT which forces extra sorting and duplicate elimination."
+    ],
+    "interview_tip": "EXISTS executes as a semi-join, returning immediately upon finding the first match.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id)`.",
+      "Sort output by `professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, department FROM professors p WHERE EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "exists",
+      "semi-join",
+      "professors"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-16",
+    "slug": "opt-unassigned-professors-not-exists",
+    "title": "Detect Unassigned Faculty Members with Clean NOT EXISTS Anti-Join",
+    "description_markdown": "Find professors who currently have zero assigned courses using `NOT EXISTS`. Return `professor_id`, `first_name`, and `department`. Order by `professor_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- NOT EXISTS anti-join for unassigned faculty\nSELECT professor_id, first_name, department\nFROM professors p\nWHERE NOT EXISTS (\n  SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id\n)\nORDER BY professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, department FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY professor_id ASC;",
+    "solution_explanation": "NOT EXISTS transforms efficiently into Hash Anti-Joins without scanning the entire courses table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using NOT IN where NULL foreign keys can corrupt the boolean outcome."
+    ],
+    "interview_tip": "Anti-semi-joins via NOT EXISTS avoid NULL hazards and enable optimal optimizer plans.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id)`.",
+      "Order by `professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, department FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "not-exists",
+      "anti-join",
+      "faculty"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-17",
+    "slug": "opt-composite-predicate-filtering-completed-orders",
+    "title": "Apply Composite Filter Selectivity to Maximize Index Pruning",
+    "description_markdown": "For completed orders (`order_status = 'completed'`) where `total_amount >= 200`, calculate a 10% promotional discount using `ROUND(total_amount * 0.90, 2)` as `discounted_amount`. Return `order_id`, `total_amount`, and `discounted_amount`. Order by `order_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "discounted_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Selective composite filtering\nSELECT order_id, total_amount, ROUND(total_amount * 0.90, 2) AS discounted_amount\nFROM orders\nWHERE order_status = 'completed' AND total_amount >= 200\nORDER BY order_id ASC;",
+    "solution_query": "SELECT order_id, total_amount, ROUND(total_amount * 0.90, 2) AS discounted_amount FROM orders WHERE order_status = 'completed' AND total_amount >= 200 ORDER BY order_id ASC;",
+    "solution_explanation": "Combining high-selectivity equality conditions with range checks leverages composite index structures.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting order_status = 'completed'."
+    ],
+    "interview_tip": "Place high-selectivity equality predicates first to leverage composite index column prefixing.",
+    "hints": [
+      "Filter `WHERE order_status = 'completed' AND total_amount >= 200`.",
+      "Calculate `ROUND(total_amount * 0.90, 2)`.",
+      "Query: SELECT order_id, total_amount, ROUND(total_amount * 0.90, 2) AS discounted_amount FROM orders WHERE order_status = 'completed' AND total_amount >= 200 ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "composite-index",
+      "filtering",
+      "discounts"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-18",
+    "slug": "opt-discrete-in-list-vs-or-predicates",
+    "title": "Structure Discrete Categorical Alternatives Using IN Lists",
+    "description_markdown": "From `employees`, filter for engineering titles using an explicit `IN` list: `job_title IN ('Software Engineer', 'Senior Software Engineer')`. Return `emp_id`, `first_name`, and `job_title`. Order by `emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Index-friendly IN list\nSELECT emp_id, first_name, job_title\nFROM employees\nWHERE job_title IN ('Software Engineer', 'Senior Software Engineer')\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, job_title FROM employees WHERE job_title IN ('Software Engineer', 'Senior Software Engineer') ORDER BY emp_id ASC;",
+    "solution_explanation": "IN lists allow query planners to translate disjunctions into array lookups or index skips.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Chaining complex OR predicates across different columns that defeat single index scans."
+    ],
+    "interview_tip": "IN lists on single columns optimize into index multi-range seeks.",
+    "hints": [
+      "Use `WHERE job_title IN ('Software Engineer', 'Senior Software Engineer')`.",
+      "Sort output by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, job_title FROM employees WHERE job_title IN ('Software Engineer', 'Senior Software Engineer') ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "in-list",
+      "job-titles",
+      "indexing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-19",
+    "slug": "opt-filter-before-group-by-aggregation",
+    "title": "Pre-Filter Datasets in WHERE Clause Prior to GROUP BY Aggregation",
+    "description_markdown": "Count completed orders (`order_status = 'completed'`) per customer as `completed_orders`. Apply the status filter in the `WHERE` clause before `GROUP BY customer_id`. Return `customer_id` and `completed_orders`. Order by `completed_orders` DESC, `customer_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "completed_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Pre-filter prior to aggregation\nSELECT customer_id, COUNT(*) AS completed_orders\nFROM orders\nWHERE order_status = 'completed'\nGROUP BY customer_id\nORDER BY completed_orders DESC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, COUNT(*) AS completed_orders FROM orders WHERE order_status = 'completed' GROUP BY customer_id ORDER BY completed_orders DESC, customer_id ASC;",
+    "solution_explanation": "Filtering rows in WHERE reduces the cardinality passed into the aggregation hashing engine.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering post-aggregation in HAVING using HAVING order_status = 'completed'."
+    ],
+    "interview_tip": "Always filter non-aggregate conditions in WHERE rather than HAVING to avoid wasting memory.",
+    "hints": [
+      "Filter `WHERE order_status = 'completed'`.",
+      "Group by `customer_id`.",
+      "Query: SELECT customer_id, COUNT(*) AS completed_orders FROM orders WHERE order_status = 'completed' GROUP BY customer_id ORDER BY completed_orders DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "where-vs-having",
+      "aggregation",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-20",
+    "slug": "opt-selective-join-attribute-filter",
+    "title": "Filter Joined Dimensions Early to Minimize Intermediate Result Sets",
+    "description_markdown": "Join `employees e` with `departments d` on `dept_id`. Filter for departments located in 'Building A' (`d.location = 'Building A'`). Return `e.emp_id`, `e.first_name`, `e.salary`, and `d.dept_name`. Order by `e.emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Selective dimension join\nSELECT e.emp_id, e.first_name, e.salary, d.dept_name\nFROM employees e\nJOIN departments d ON e.dept_id = d.dept_id\nWHERE d.location = 'Building A'\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary, d.dept_name FROM employees e JOIN departments d ON e.dept_id = d.dept_id WHERE d.location = 'Building A' ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Dimension filtering prunes foreign key scans, minimizing downstream hash join memory.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the join predicate."
+    ],
+    "interview_tip": "Dimension filtering provides optimal selectivity in snowflake and star schemas.",
+    "hints": [
+      "Join `employees` and `departments` on `dept_id`.",
+      "Filter `WHERE d.location = 'Building A'`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary, d.dept_name FROM employees e JOIN departments d ON e.dept_id = d.dept_id WHERE d.location = 'Building A' ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "joins",
+      "filtering",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-21",
+    "slug": "opt-explicit-category-filter-join",
+    "title": "Filter Catalog Products by Dimension Category Using Explicit Inner Join",
+    "description_markdown": "Join `products p` and `categories c` on `category_id`. Filter for products in the 'Electronics' category (`c.category_name = 'Electronics'`). Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Explicit dimension join\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nJOIN categories c ON p.category_id = c.category_id\nWHERE c.category_name = 'Electronics'\nORDER BY p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.category_name = 'Electronics' ORDER BY p.product_id ASC;",
+    "solution_explanation": "Explicit INNER JOIN syntax allows the optimizer to select Hash Join or Index Nested Loops without ambiguous parsing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using implicit comma joins with WHERE conditions."
+    ],
+    "interview_tip": "Modern ANSI explicit join syntax guarantees clear join semantics for both engines.",
+    "hints": [
+      "Join on `p.category_id = c.category_id`.",
+      "Filter `WHERE c.category_name = 'Electronics'`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.category_name = 'Electronics' ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "inner-join",
+      "categories",
+      "products"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-22",
+    "slug": "opt-group-by-filtering-via-having-threshold",
+    "title": "Apply Post-Aggregation Thresholds Efficiently in HAVING Clause",
+    "description_markdown": "Join `students s` and `enrollments e` on `student_id`. Group by `s.student_id, s.first_name`. Filter for students enrolled in at least 2 courses (`HAVING COUNT(e.enrollment_id) >= 2`) as `course_count`. Return `s.student_id`, `s.first_name`, and `course_count`. Order by `course_count` DESC, `s.student_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Post-aggregation HAVING filter\nSELECT s.student_id, s.first_name, COUNT(e.enrollment_id) AS course_count\nFROM students s\nJOIN enrollments e ON s.student_id = e.student_id\nGROUP BY s.student_id, s.first_name\nHAVING COUNT(e.enrollment_id) >= 2\nORDER BY course_count DESC, s.student_id ASC;",
+    "solution_query": "SELECT s.student_id, s.first_name, COUNT(e.enrollment_id) AS course_count FROM students s JOIN enrollments e ON s.student_id = e.student_id GROUP BY s.student_id, s.first_name HAVING COUNT(e.enrollment_id) >= 2 ORDER BY course_count DESC, s.student_id ASC;",
+    "solution_explanation": "HAVING filters groups post-aggregation after the GROUP BY hash table is populated.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to filter aggregate metrics in WHERE."
+    ],
+    "interview_tip": "Group by primary key columns to permit safe projection of non-aggregate attributes.",
+    "hints": [
+      "Group by `s.student_id, s.first_name`.",
+      "Filter with `HAVING COUNT(e.enrollment_id) >= 2`.",
+      "Query: SELECT s.student_id, s.first_name, COUNT(e.enrollment_id) AS course_count FROM students s JOIN enrollments e ON s.student_id = e.student_id GROUP BY s.student_id, s.first_name HAVING COUNT(e.enrollment_id) >= 2 ORDER BY course_count DESC, s.student_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "having",
+      "aggregation",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-23",
+    "slug": "opt-bounded-budget-range-scan",
+    "title": "Execute Bounded Range Scan on Project Financial Budgets",
+    "description_markdown": "From `projects`, find all initiatives with budgets between 200,000 and 600,000 using `budget BETWEEN 200000 AND 600000`. Return `project_id`, `project_name`, and `budget`. Order by `budget` DESC, `project_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Bounded budget range scan\nSELECT project_id, project_name, budget\nFROM projects\nWHERE budget BETWEEN 200000 AND 600000\nORDER BY budget DESC, project_id ASC;",
+    "solution_query": "SELECT project_id, project_name, budget FROM projects WHERE budget BETWEEN 200000 AND 600000 ORDER BY budget DESC, project_id ASC;",
+    "solution_explanation": "BETWEEN establishes both lower and upper bounding keys, enabling exact B-Tree leaf range scans.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the lower and upper bounds in BETWEEN."
+    ],
+    "interview_tip": "Bounded range queries utilize index seek points on both start and stop leaf pages.",
+    "hints": [
+      "Use `WHERE budget BETWEEN 200000 AND 600000`.",
+      "Sort by `budget DESC, project_id ASC`.",
+      "Query: SELECT project_id, project_name, budget FROM projects WHERE budget BETWEEN 200000 AND 600000 ORDER BY budget DESC, project_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "between",
+      "range-scan",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-24",
+    "slug": "opt-filter-high-value-successful-payments",
+    "title": "Prune Settlement Transactions Using High-Selectivity Multi-Condition Filtering",
+    "description_markdown": "From `payments`, filter for successful transactions (`payment_status = 'success'`) where `amount >= 150`. Return `payment_id`, `order_id`, and `amount`. Order by `amount` DESC, `payment_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "payment_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- High-value successful payments\nSELECT payment_id, order_id, amount\nFROM payments\nWHERE payment_status = 'success' AND amount >= 150\nORDER BY amount DESC, payment_id ASC;",
+    "solution_query": "SELECT payment_id, order_id, amount FROM payments WHERE payment_status = 'success' AND amount >= 150 ORDER BY amount DESC, payment_id ASC;",
+    "solution_explanation": "Combines status filter with numeric threshold to maximize index pruning.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the status filter."
+    ],
+    "interview_tip": "Combining equality and inequality filters matches composite indexes on (status, amount).",
+    "hints": [
+      "Filter `WHERE payment_status = 'success' AND amount >= 150`.",
+      "Sort output by `amount DESC, payment_id ASC`.",
+      "Query: SELECT payment_id, order_id, amount FROM payments WHERE payment_status = 'success' AND amount >= 150 ORDER BY amount DESC, payment_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "filtering",
+      "payments",
+      "transactions"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-25",
+    "slug": "opt-active-enrollments-lean-scan",
+    "title": "Filter Active Academic Registrations with Direct Equality Predicates",
+    "description_markdown": "From `enrollments`, filter for active course registrations (`status = 'enrolled'`). Select only `enrollment_id`, `student_id`, and `course_id`. Order by `enrollment_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Active course registrations\nSELECT enrollment_id, student_id, course_id\nFROM enrollments\nWHERE status = 'enrolled'\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id, student_id, course_id FROM enrollments WHERE status = 'enrolled' ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Direct status equality scanning prunes completed/dropped records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting unnecessary text columns."
+    ],
+    "interview_tip": "Low-cardinality status filters perform best with partial indexes or composite keys.",
+    "hints": [
+      "Filter `WHERE status = 'enrolled'`.",
+      "Order by `enrollment_id ASC`.",
+      "Query: SELECT enrollment_id, student_id, course_id FROM enrollments WHERE status = 'enrolled' ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "equality",
+      "enrollments",
+      "projections"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-26",
+    "slug": "opt-filter-positive-hours-assignments",
+    "title": "Prune Zero-Effort Rows Early from Assignment Analysis",
+    "description_markdown": "From `assignments`, filter out non-billable zero-hour records (`hours_worked > 0`). Project `assignment_id`, `emp_id`, and `hours_worked`. Order by `hours_worked` DESC, `assignment_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter positive effort hours\nSELECT assignment_id, emp_id, hours_worked\nFROM assignments\nWHERE hours_worked > 0\nORDER BY hours_worked DESC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, emp_id, hours_worked FROM assignments WHERE hours_worked > 0 ORDER BY hours_worked DESC, assignment_id ASC;",
+    "solution_explanation": "Eliminating zero-weight records reduces row volume before analytical processing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 0 which includes idle assignments."
+    ],
+    "interview_tip": "Filtering out identity or empty records reduces sort overhead.",
+    "hints": [
+      "Filter with `WHERE hours_worked > 0`.",
+      "Order by `hours_worked DESC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, emp_id, hours_worked FROM assignments WHERE hours_worked > 0 ORDER BY hours_worked DESC, assignment_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "filtering",
+      "assignments",
+      "work-hours"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-27",
+    "slug": "opt-active-stocked-products-index-scan",
+    "title": "Filter Active In-Stock SKUs Using Composite Predicates",
+    "description_markdown": "From `products`, locate active products with positive inventory (`is_active = true AND stock_quantity > 0`). Return `product_id`, `product_name`, and `stock_quantity`. Order by `stock_quantity` DESC, `product_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- In-stock active products\nSELECT product_id, product_name, stock_quantity\nFROM products\nWHERE is_active = true AND stock_quantity > 0\nORDER BY stock_quantity DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, stock_quantity FROM products WHERE is_active = true AND stock_quantity > 0 ORDER BY stock_quantity DESC, product_id ASC;",
+    "solution_explanation": "Combining boolean active flags with positive quantity checks optimizes buyable product listing feeds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the stock_quantity > 0 check."
+    ],
+    "interview_tip": "E-commerce search engines index only active, stocked catalog records.",
+    "hints": [
+      "Filter `WHERE is_active = true AND stock_quantity > 0` (or TRUE in MySQL).",
+      "Order by `stock_quantity DESC, product_id ASC`.",
+      "Query: SELECT product_id, product_name, stock_quantity FROM products WHERE is_active = true AND stock_quantity > 0 ORDER BY stock_quantity DESC, product_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "inventory",
+      "products",
+      "composite-filter"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-28",
+    "slug": "opt-supervised-employees-not-null-filter",
+    "title": "Filter Supervised Employees with Efficient IS NOT NULL Check",
+    "description_markdown": "From `employees`, filter for staff members who report to a designated manager (`manager_id IS NOT NULL`). Project `emp_id`, `first_name`, and `last_name`. Order by `emp_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Supervised employees\nSELECT emp_id, first_name, last_name\nFROM employees\nWHERE manager_id IS NOT NULL\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, last_name FROM employees WHERE manager_id IS NOT NULL ORDER BY emp_id ASC;",
+    "solution_explanation": "IS NOT NULL checks utilize partial and sparse B-tree indexes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using manager_id != 0 or != NULL."
+    ],
+    "interview_tip": "NULL checks must strictly use IS NULL and IS NOT NULL syntax.",
+    "hints": [
+      "Use `WHERE manager_id IS NOT NULL`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, last_name FROM employees WHERE manager_id IS NOT NULL ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "is-not-null",
+      "employees",
+      "null-handling"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-29",
+    "slug": "opt-course-credit-threshold-filter",
+    "title": "Filter High-Credit Advanced Academic Courses via Direct Comparison",
+    "description_markdown": "From `courses`, select major intensive courses offering at least 4 credits (`credits >= 4`). Project `course_id`, `course_code`, and `credits`. Order by `course_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Advanced credit courses\nSELECT course_id, course_code, credits\nFROM courses\nWHERE credits >= 4\nORDER BY course_id ASC;",
+    "solution_query": "SELECT course_id, course_code, credits FROM courses WHERE credits >= 4 ORDER BY course_id ASC;",
+    "solution_explanation": "Direct integer comparisons enable efficient index seek operations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the primary key order for deterministic testing."
+    ],
+    "interview_tip": "Always verify sort stability by appending primary keys to ORDER BY clauses.",
+    "hints": [
+      "Filter `WHERE credits >= 4`.",
+      "Order output by `course_id ASC`.",
+      "Query: SELECT course_id, course_code, credits FROM courses WHERE credits >= 4 ORDER BY course_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "filtering",
+      "courses",
+      "credits"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-30",
+    "slug": "opt-multi-item-basket-lines-filter",
+    "title": "Filter High-Volume Line Items Using Direct Quantity Predicate",
+    "description_markdown": "From `order_items`, filter for basket lines where quantity is at least 2 (`quantity >= 2`). Project `order_item_id`, `order_id`, `quantity`, and `unit_price`. Order by `order_item_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_item_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "unit_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-item basket lines\nSELECT order_item_id, order_id, quantity, unit_price\nFROM order_items\nWHERE quantity >= 2\nORDER BY order_item_id ASC;",
+    "solution_query": "SELECT order_item_id, order_id, quantity, unit_price FROM order_items WHERE quantity >= 2 ORDER BY order_item_id ASC;",
+    "solution_explanation": "Filtering line item tables on integer metrics targets high-volume order baskets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Projecting all columns rather than specific target attributes."
+    ],
+    "interview_tip": "Keep line item scans lightweight since transaction detail tables are the largest in transaction systems.",
+    "hints": [
+      "Filter `WHERE quantity >= 2`.",
+      "Sort by `order_item_id ASC`.",
+      "Query: SELECT order_item_id, order_id, quantity, unit_price FROM order_items WHERE quantity >= 2 ORDER BY order_item_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "line-items",
+      "quantity",
+      "projections"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-31",
+    "slug": "opt-coalesce-null-handling-in-left-join-aggregates",
+    "title": "Safely Handle NULL Values in Left Join Aggregates with COALESCE",
+    "description_markdown": "Join `departments d` and `employees e` using `LEFT JOIN` on `dept_id`. Group by `d.dept_id, d.dept_name, d.budget`. Calculate total department payroll, wrapping in `COALESCE(SUM(e.salary), 0)` as `total_payroll` to ensure zero is reported for unstaffed departments. Return `d.dept_id`, `d.dept_name`, `d.budget`, and `total_payroll`. Order by `d.dept_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "total_payroll",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Safe COALESCE aggregate rollups\nSELECT d.dept_id, d.dept_name, d.budget, COALESCE(SUM(e.salary), 0) AS total_payroll\nFROM departments d\nLEFT JOIN employees e ON d.dept_id = e.dept_id\nGROUP BY d.dept_id, d.dept_name, d.budget\nORDER BY d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget, COALESCE(SUM(e.salary), 0) AS total_payroll FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name, d.budget ORDER BY d.dept_id ASC;",
+    "solution_explanation": "COALESCE prevents NULL values from escaping into application layers when LEFT JOINs have no right-side matches.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting COALESCE, allowing NULL to be returned instead of 0."
+    ],
+    "interview_tip": "Always coalesce sums in outer joins to maintain consistent numeric reporting.",
+    "hints": [
+      "Use `COALESCE(SUM(e.salary), 0) AS total_payroll`.",
+      "Group by `d.dept_id, d.dept_name, d.budget`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget, COALESCE(SUM(e.salary), 0) AS total_payroll FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name, d.budget ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "coalesce",
+      "left-join",
+      "group-by"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-opt-32",
+    "slug": "opt-pushing-join-filters-into-on-clause",
+    "title": "Push Dimension Filtering into the Outer Join ON Clause",
+    "description_markdown": "Join `customers c` and `orders o` using `LEFT JOIN` on `c.customer_id = o.customer_id AND o.order_status = 'completed'`. By placing `o.order_status = 'completed'` in the `ON` clause, all customers are retained while only completed orders are summed. Group by `c.customer_id, c.first_name`, and calculate `COALESCE(SUM(o.total_amount), 0) AS total_spent`. Return `c.customer_id`, `c.first_name`, and `total_spent`. Order by `total_spent` DESC, `c.customer_id` ASC.",
+    "topic_id": "query-optimization",
+    "subtopic_id": "adv-explain",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter in outer join ON clause\nSELECT c.customer_id, c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed'\nGROUP BY c.customer_id, c.first_name\nORDER BY total_spent DESC, c.customer_id ASC;",
+    "solution_query": "SELECT c.customer_id, c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.customer_id ASC;",
+    "solution_explanation": "Filtering the right table in the ON clause preserves all left table records, whereas filtering in WHERE converts the LEFT JOIN into an INNER JOIN.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing WHERE o.order_status = 'completed' in the WHERE clause, which accidentally eliminates customers without completed orders."
+    ],
+    "interview_tip": "Understanding the crucial semantic and performance difference between filtering in ON vs WHERE is a senior SQL hallmark.",
+    "hints": [
+      "Place `AND o.order_status = 'completed'` inside the LEFT JOIN ON clause.",
+      "Calculate `COALESCE(SUM(o.total_amount), 0) AS total_spent`.",
+      "Query: SELECT c.customer_id, c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "optimization",
+      "on-vs-where",
+      "left-join",
+      "aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-opt-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-opt-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-opt-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

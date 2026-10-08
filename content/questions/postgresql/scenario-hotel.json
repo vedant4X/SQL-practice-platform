@@ -1,0 +1,2399 @@
+[
+  {
+    "id": "q-sc-htl-01",
+    "slug": "hotel-luxury-room-rates",
+    "title": "List 5-Star Hotel Suites and Nightly Rates",
+    "description_markdown": "Hospitality request: Find all rooms of type 'suite' in hotels with a 5-star rating (`star_rating = 5`). Return `h.name AS hotel_name`, `r.room_number`, and `r.price_per_night`. Order by `r.price_per_night` DESC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Luxury suites query\nSELECT ...",
+    "solution_query": "SELECT h.name AS hotel_name, r.room_number, r.price_per_night FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id WHERE h.star_rating = 5 AND r.room_type = 'suite' ORDER BY r.price_per_night DESC, r.room_number ASC;",
+    "solution_explanation": "Filters hotel inventory for top-tier accommodations.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join hotels and rooms on `h.hotel_id = r.hotel_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT h.name AS hotel_name, r.room_number, r.price_per_night FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id WHERE h.star_rating = 5 AND r.room_type = 'suite' ORDER BY r.price_per_night DESC, r.room_number ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "rates"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-htl-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-htl-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-htl-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-htl-02",
+    "slug": "hotel-total-guest-spend",
+    "title": "Calculate Total Guest Room Revenue",
+    "description_markdown": "Front desk billing request: For guests with completed or confirmed reservations, calculate total booking amount (`SUM(total_amount)` as `total_room_spend`). Return `g.first_name`, `g.last_name`, and `total_room_spend`. Order by `total_room_spend` DESC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_room_spend",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total spend per guest\nSELECT ...",
+    "solution_query": "SELECT g.first_name, g.last_name, SUM(r.total_amount) AS total_room_spend FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status IN ('confirmed', 'checked_out') GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY total_room_spend DESC, g.guest_id ASC;",
+    "solution_explanation": "Aggregates revenue across completed stays.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join guests to reservations and filter out cancellations.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT g.first_name, g.last_name, SUM(r.total_amount) AS total_room_spend FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status IN ('confirmed', 'checked_out') GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY total_room_spend DESC, g.guest_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "billing"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-htl-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-htl-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-htl-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-htl-03",
+    "slug": "hotel-room-service-incidentals-revenue",
+    "title": "Aggregate Room Service Revenue per Reservation",
+    "description_markdown": "Concierge request: Calculate total room service ancillary charges (`SUM(charge)` as `service_charges`) per reservation. Join with `hotel_guests` and `rooms`. Return `g.last_name AS guest_name`, `rm.room_number`, and `service_charges`. Order by `service_charges` DESC, `g.last_name` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations",
+      "rooms",
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_name",
+        "type": "varchar"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "service_charges",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Ancillary charges\nSELECT ...",
+    "solution_query": "SELECT g.last_name AS guest_name, rm.room_number, SUM(rs.charge) AS service_charges FROM reservations r JOIN hotel_guests g ON r.guest_id = g.guest_id JOIN rooms rm ON r.room_id = rm.room_id JOIN room_services rs ON r.reservation_id = rs.reservation_id GROUP BY r.reservation_id, g.last_name, rm.room_number ORDER BY service_charges DESC, g.last_name ASC;",
+    "solution_explanation": "Tracks secondary hotel revenue streams per reservation stay.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join reservations -> hotel_guests, rooms, room_services.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT g.last_name AS guest_name, rm.room_number, SUM(rs.charge) AS service_charges FROM reservations r JOIN hotel_guests g ON r.guest_id = g.guest_id JOIN rooms rm ON r.room_id = rm.room_id JOIN room_services rs ON r.reservation_id = rs.reservation_id GROUP BY r.reservation_id, g.last_name, rm.room_number ORDER BY service_charges DESC, g.last_name ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "ancillary-revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-htl-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-htl-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-htl-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-04",
+    "slug": "htl-luxury-five-star-properties",
+    "title": "Filter Luxury Five-Star Hotel Properties",
+    "description_markdown": "List all luxury five-star hotels (`star_rating = 5`). Return `hotel_id`, `name`, `city`, and `star_rating`. Order by `name` ASC, `hotel_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating = 5 ORDER BY name ASC, hotel_id ASC;",
+    "solution_explanation": "Filters hotels where star_rating = 5.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE star_rating = 5`.",
+      "Order by `name` ASC, `hotel_id` ASC.",
+      "Query: SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating = 5 ORDER BY name ASC, hotel_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-05",
+    "slug": "htl-premium-deluxe-and-suite-inventory",
+    "title": "Filter Available Deluxe and Suite Room Inventory",
+    "description_markdown": "Retrieve room inventory classified as either 'deluxe' or 'suite'. Return `room_id`, `room_number`, `room_type`, and `price_per_night`. Order by `price_per_night` DESC, `room_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE room_type IN ('deluxe', 'suite') ORDER BY price_per_night DESC, room_id ASC;",
+    "solution_explanation": "Filters rooms where room_type IN ('deluxe', 'suite').",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE room_type IN ('deluxe', 'suite')`.",
+      "Order by `price_per_night` DESC, `room_id` ASC.",
+      "Query: SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE room_type IN ('deluxe', 'suite') ORDER BY price_per_night DESC, room_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-06",
+    "slug": "htl-room-inventory-type-summary",
+    "title": "Aggregate Room Capacity and Pricing by Category",
+    "description_markdown": "Calculate total rooms (`room_count`) and average price per night rounded to 2 decimals as `avg_nightly_price` grouped by `room_type`. Order by `avg_nightly_price` DESC, `room_type` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "room_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_nightly_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_nightly_price FROM rooms GROUP BY room_type ORDER BY avg_nightly_price DESC, room_type ASC;",
+    "solution_explanation": "Groups rooms by room_type and computes count and rounded average price.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `room_type`.",
+      "Use `ROUND(AVG(price_per_night), 2) AS avg_nightly_price`.",
+      "Query: SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_nightly_price FROM rooms GROUP BY room_type ORDER BY avg_nightly_price DESC, room_type ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-07",
+    "slug": "htl-completed-checkout-stays",
+    "title": "Filter Completed Checked-Out Guest Reservations",
+    "description_markdown": "Retrieve reservations with `status = 'checked_out'`. Return `reservation_id`, `guest_id`, and `total_amount`. Order by `total_amount` DESC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT reservation_id, guest_id, total_amount FROM reservations WHERE status = 'checked_out' ORDER BY total_amount DESC, reservation_id ASC;",
+    "solution_explanation": "Filters reservations where status = 'checked_out'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE status = 'checked_out'`.",
+      "Order by `total_amount` DESC, `reservation_id` ASC.",
+      "Query: SELECT reservation_id, guest_id, total_amount FROM reservations WHERE status = 'checked_out' ORDER BY total_amount DESC, reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-08",
+    "slug": "htl-room-service-revenue-by-type",
+    "title": "Aggregate Room Service Revenue by Department",
+    "description_markdown": "Calculate total service orders (`order_count`) and sum of charges (`total_charges`) grouped by `service_type`. Order by `total_charges` DESC, `service_type` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "service_type",
+        "type": "varchar"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_charges",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT service_type, COUNT(*) AS order_count, SUM(charge) AS total_charges FROM room_services GROUP BY service_type ORDER BY total_charges DESC, service_type ASC;",
+    "solution_explanation": "Groups room_services by service_type and aggregates count and sum.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `service_type`.",
+      "Aggregate with `COUNT(*)` and `SUM(charge)`.",
+      "Query: SELECT service_type, COUNT(*) AS order_count, SUM(charge) AS total_charges FROM room_services GROUP BY service_type ORDER BY total_charges DESC, service_type ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-09",
+    "slug": "htl-guests-with-cancelled-stays",
+    "title": "Identify Guests Who Experienced Stays Cancelled",
+    "description_markdown": "Find distinct guests who have had at least one cancelled reservation. Return `guest_id`, `first_name`, and `last_name`. Order by `guest_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT g.guest_id, g.first_name, g.last_name FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status = 'cancelled' ORDER BY g.guest_id ASC;",
+    "solution_explanation": "Joins hotel_guests and reservations filtering on status = 'cancelled'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `hotel_guests` and `reservations`.",
+      "Filter with `WHERE r.status = 'cancelled'`.",
+      "Query: SELECT DISTINCT g.guest_id, g.first_name, g.last_name FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status = 'cancelled' ORDER BY g.guest_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-10",
+    "slug": "htl-property-room-capacity-summary",
+    "title": "Summarize Room Capacity and Pricing per Hotel",
+    "description_markdown": "For each hotel, calculate `total_rooms` and average price per night rounded to 2 decimals as `avg_room_price`. Order by `total_rooms` DESC, `avg_room_price` DESC, `hotel_name` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_rooms",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_room_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT h.name AS hotel_name, COUNT(r.room_id) AS total_rooms, ROUND(AVG(r.price_per_night), 2) AS avg_room_price FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id GROUP BY h.hotel_id, h.name ORDER BY total_rooms DESC, avg_room_price DESC, hotel_name ASC;",
+    "solution_explanation": "Joins hotels and rooms, grouping by hotel.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `hotels` and `rooms` on `h.hotel_id = r.hotel_id`.",
+      "Compute `ROUND(AVG(r.price_per_night), 2) AS avg_room_price`.",
+      "Query: SELECT h.name AS hotel_name, COUNT(r.room_id) AS total_rooms, ROUND(AVG(r.price_per_night), 2) AS avg_room_price FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id GROUP BY h.hotel_id, h.name ORDER BY total_rooms DESC, avg_room_price DESC, hotel_name ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-11",
+    "slug": "htl-rank-rooms-by-price-per-hotel",
+    "title": "Rank Rooms by Nightly Tariff Within Each Hotel",
+    "description_markdown": "For each hotel, rank its rooms from most expensive to least expensive using `DENSE_RANK()` as `price_rank`. Return `hotel_name`, `room_number`, `price_per_night`, and `price_rank`. Order by `hotel_name` ASC, `price_rank` ASC, `room_number` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      },
+      {
+        "name": "price_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT h.name AS hotel_name, r.room_number, r.price_per_night, DENSE_RANK() OVER (PARTITION BY r.hotel_id ORDER BY r.price_per_night DESC) AS price_rank FROM rooms r JOIN hotels h ON r.hotel_id = h.hotel_id ORDER BY hotel_name ASC, price_rank ASC, r.room_number ASC;",
+    "solution_explanation": "Applies DENSE_RANK() partitioned by r.hotel_id ordered by price_per_night DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY r.hotel_id ORDER BY r.price_per_night DESC) AS price_rank`.",
+      "Join `rooms` with `hotels`.",
+      "Query: SELECT h.name AS hotel_name, r.room_number, r.price_per_night, DENSE_RANK() OVER (PARTITION BY r.hotel_id ORDER BY r.price_per_night DESC) AS price_rank FROM rooms r JOIN hotels h ON r.hotel_id = h.hotel_id ORDER BY hotel_name ASC, price_rank ASC, r.room_number ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-12",
+    "slug": "htl-reservations-with-heavy-incidental-services",
+    "title": "Filter Stays with Substantial Room Service Charges",
+    "description_markdown": "Find reservations where total room service charges equal or exceed $50.00 as `total_service_charges`. Return `reservation_id`, `guest_id`, and `total_service_charges`. Order by `total_service_charges` DESC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations",
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_service_charges",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.reservation_id, r.guest_id, SUM(s.charge) AS total_service_charges FROM reservations r JOIN room_services s ON r.reservation_id = s.reservation_id GROUP BY r.reservation_id, r.guest_id HAVING SUM(s.charge) >= 50.00 ORDER BY total_service_charges DESC, r.reservation_id ASC;",
+    "solution_explanation": "Joins reservations and room_services with HAVING SUM(s.charge) >= 50.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `reservations` and `room_services`.",
+      "Filter with `HAVING SUM(s.charge) >= 50.00`.",
+      "Query: SELECT r.reservation_id, r.guest_id, SUM(s.charge) AS total_service_charges FROM reservations r JOIN room_services s ON r.reservation_id = s.reservation_id GROUP BY r.reservation_id, r.guest_id HAVING SUM(s.charge) >= 50.00 ORDER BY total_service_charges DESC, r.reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-13",
+    "slug": "htl-rooms-never-booked",
+    "title": "Audit Room Inventory with Zero Historical Reservations",
+    "description_markdown": "Identify rooms that have never been reserved by any guest. Return `room_id`, `hotel_id`, and `room_number`. Order by `room_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.room_id, r.hotel_id, r.room_number FROM rooms r LEFT JOIN reservations res ON r.room_id = res.room_id WHERE res.reservation_id IS NULL ORDER BY r.room_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE res.reservation_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `reservations res` on `r.room_id = res.room_id`.",
+      "Filter with `WHERE res.reservation_id IS NULL`.",
+      "Query: SELECT r.room_id, r.hotel_id, r.room_number FROM rooms r LEFT JOIN reservations res ON r.room_id = res.room_id WHERE res.reservation_id IS NULL ORDER BY r.room_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-14",
+    "slug": "htl-average-stay-duration-days",
+    "title": "Calculate Average Completed Stay Duration in Days",
+    "description_markdown": "Calculate the average length of stay in days for checked-out reservations, rounded to 1 decimal place as `avg_stay_days`.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_stay_days",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT ROUND(AVG(check_out - check_in), 1) AS avg_stay_days FROM reservations WHERE status = 'checked_out';",
+    "solution_explanation": "Calculates day difference between check_out and check_in for checked_out reservations.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "In Postgres use `(check_out - check_in)`, in MySQL use `DATEDIFF(check_out, check_in)`.",
+      "Filter with `WHERE status = 'checked_out'`.",
+      "Query: SELECT ROUND(AVG(check_out - check_in), 1) AS avg_stay_days FROM reservations WHERE status = 'checked_out';"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-15",
+    "slug": "htl-highest-priced-suite-per-hotel",
+    "title": "Identify Highest Priced Room in Each Property",
+    "description_markdown": "For each hotel, find the maximum room price per night as `max_price`. Return `hotel_name` and `max_price`. Order by `max_price` DESC, `hotel_name` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT h.name AS hotel_name, MAX(r.price_per_night) AS max_price FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id GROUP BY h.hotel_id, h.name ORDER BY max_price DESC, hotel_name ASC;",
+    "solution_explanation": "Joins hotels and rooms, computing MAX(price_per_night) grouped by hotel.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `hotels` and `rooms`.",
+      "Compute `MAX(r.price_per_night) AS max_price`.",
+      "Query: SELECT h.name AS hotel_name, MAX(r.price_per_night) AS max_price FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id GROUP BY h.hotel_id, h.name ORDER BY max_price DESC, hotel_name ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-16",
+    "slug": "htl-room-price-tier-classification",
+    "title": "Classify Hotel Rooms into Nightly Rate Tiers",
+    "description_markdown": "Classify rooms into rate tiers using CASE: 'Ultra Luxury' for price >= 500, 'Premium' for price >= 250, and 'Standard' otherwise as `rate_tier`. Order by `price_per_night` DESC, `room_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      },
+      {
+        "name": "rate_tier",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT room_id, room_number, price_per_night, CASE WHEN price_per_night >= 500.00 THEN 'Ultra Luxury' WHEN price_per_night >= 250.00 THEN 'Premium' ELSE 'Standard' END AS rate_tier FROM rooms ORDER BY price_per_night DESC, room_id ASC;",
+    "solution_explanation": "Uses CASE expression to classify nightly room rates into categories.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN price_per_night >= 500.00 THEN 'Ultra Luxury' ... END`.",
+      "Order by `price_per_night` DESC, `room_id` ASC.",
+      "Query: SELECT room_id, room_number, price_per_night, CASE WHEN price_per_night >= 500.00 THEN 'Ultra Luxury' WHEN price_per_night >= 250.00 THEN 'Premium' ELSE 'Standard' END AS rate_tier FROM rooms ORDER BY price_per_night DESC, room_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-17",
+    "slug": "htl-cumulative-room-booking-revenue",
+    "title": "Calculate Cumulative Hospitality Room Revenue Over Time",
+    "description_markdown": "Calculate running cumulative revenue for non-cancelled reservations ordered chronologically by check-in date as `cumulative_revenue`. Return `reservation_id`, `check_in`, `total_amount`, and `cumulative_revenue`. Order by `check_in` ASC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "check_in",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "cumulative_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT reservation_id, check_in, total_amount, SUM(total_amount) OVER (ORDER BY check_in ASC, reservation_id ASC) AS cumulative_revenue FROM reservations WHERE status != 'cancelled' ORDER BY check_in ASC, reservation_id ASC;",
+    "solution_explanation": "Uses window function SUM(total_amount) OVER (ORDER BY check_in ASC, reservation_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE status != 'cancelled'`.",
+      "Use `SUM(total_amount) OVER (ORDER BY check_in ASC, reservation_id ASC)`.",
+      "Query: SELECT reservation_id, check_in, total_amount, SUM(total_amount) OVER (ORDER BY check_in ASC, reservation_id ASC) AS cumulative_revenue FROM reservations WHERE status != 'cancelled' ORDER BY check_in ASC, reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-18",
+    "slug": "htl-french-domain-hotel-guests",
+    "title": "Filter Guests with French Domain Contact Addresses",
+    "description_markdown": "Find hotel guests whose email address ends with '.fr'. Return `guest_id`, `first_name`, `last_name`, and `email`. Order by `guest_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT guest_id, first_name, last_name, email FROM hotel_guests WHERE email LIKE '%.fr' ORDER BY guest_id ASC;",
+    "solution_explanation": "Filters hotel_guests with pattern matching email LIKE '%.fr'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE email LIKE '%.fr'`.",
+      "Order by `guest_id` ASC.",
+      "Query: SELECT guest_id, first_name, last_name, email FROM hotel_guests WHERE email LIKE '%.fr' ORDER BY guest_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-19",
+    "slug": "htl-frequent-guests-multiple-stays",
+    "title": "Identify Repeat Guests with Multiple Reservations",
+    "description_markdown": "Identify repeat guests who have booked at least 2 reservations. Return `guest_id`, `first_name`, `last_name`, and `reservation_count`. Order by `reservation_count` DESC, `guest_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "reservation_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT g.guest_id, g.first_name, g.last_name, COUNT(r.reservation_id) AS reservation_count FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id GROUP BY g.guest_id, g.first_name, g.last_name HAVING COUNT(r.reservation_id) >= 2 ORDER BY reservation_count DESC, g.guest_id ASC;",
+    "solution_explanation": "Joins hotel_guests and reservations with HAVING COUNT(r.reservation_id) >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `hotel_guests` and `reservations`.",
+      "Filter with `HAVING COUNT(r.reservation_id) >= 2`.",
+      "Query: SELECT g.guest_id, g.first_name, g.last_name, COUNT(r.reservation_id) AS reservation_count FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id GROUP BY g.guest_id, g.first_name, g.last_name HAVING COUNT(r.reservation_id) >= 2 ORDER BY reservation_count DESC, g.guest_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-20",
+    "slug": "htl-hotel-room-service-total-by-property",
+    "title": "Aggregate Property Room Service Ancillary Revenue",
+    "description_markdown": "Calculate total ancillary room service revenue earned across all reservations for each hotel property as `ancillary_revenue`. Return `hotel_name` and `ancillary_revenue`. Order by `ancillary_revenue` DESC, `hotel_name` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms",
+      "reservations",
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "ancillary_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT h.name AS hotel_name, COALESCE(SUM(s.charge), 0.0) AS ancillary_revenue FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id JOIN reservations res ON r.room_id = res.room_id LEFT JOIN room_services s ON res.reservation_id = s.reservation_id GROUP BY h.hotel_id, h.name ORDER BY ancillary_revenue DESC, hotel_name ASC;",
+    "solution_explanation": "Joins hotels, rooms, reservations, and room_services, grouping by hotel.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `hotels`, `rooms`, `reservations`, and LEFT JOIN `room_services`.",
+      "Use `COALESCE(SUM(s.charge), 0.0) AS ancillary_revenue`.",
+      "Query: SELECT h.name AS hotel_name, COALESCE(SUM(s.charge), 0.0) AS ancillary_revenue FROM hotels h JOIN rooms r ON h.hotel_id = r.hotel_id JOIN reservations res ON r.room_id = res.room_id LEFT JOIN room_services s ON res.reservation_id = s.reservation_id GROUP BY h.hotel_id, h.name ORDER BY ancillary_revenue DESC, hotel_name ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-21",
+    "slug": "htl-lead-reservation-arrival-date",
+    "title": "Track Successive Guest Arrival Dates Using LEAD",
+    "description_markdown": "For each reservation, fetch the guest's next consecutive reservation check-in date as `next_check_in` using `LEAD()`. Return `reservation_id`, `guest_id`, `check_in`, and `next_check_in`. Order by `guest_id` ASC, `check_in` ASC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "check_in",
+        "type": "date"
+      },
+      {
+        "name": "next_check_in",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT reservation_id, guest_id, check_in, LEAD(check_in, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC) AS next_check_in FROM reservations ORDER BY guest_id ASC, check_in ASC, reservation_id ASC;",
+    "solution_explanation": "Applies LEAD(check_in, 1) partitioned by guest_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(check_in, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC)`.",
+      "Order by `guest_id` ASC, `check_in` ASC, `reservation_id` ASC.",
+      "Query: SELECT reservation_id, guest_id, check_in, LEAD(check_in, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC) AS next_check_in FROM reservations ORDER BY guest_id ASC, check_in ASC, reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-22",
+    "slug": "htl-rooms-above-database-average-price",
+    "title": "Find Rooms Priced Above Industry Average Tariff",
+    "description_markdown": "Find rooms whose price per night strictly exceeds the average room price across all rooms in the database. Return `room_id`, `room_number`, and `price_per_night`. Order by `price_per_night` DESC, `room_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT room_id, room_number, price_per_night FROM rooms WHERE price_per_night > (SELECT AVG(price_per_night) FROM rooms) ORDER BY price_per_night DESC, room_id ASC;",
+    "solution_explanation": "Filters rooms using a scalar subquery with AVG(price_per_night).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE price_per_night > (SELECT AVG(price_per_night) FROM rooms)`.",
+      "Order by `price_per_night` DESC, `room_id` ASC.",
+      "Query: SELECT room_id, room_number, price_per_night FROM rooms WHERE price_per_night > (SELECT AVG(price_per_night) FROM rooms) ORDER BY price_per_night DESC, room_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-23",
+    "slug": "htl-reservation-status-census",
+    "title": "Aggregate Reservation Records by Lifecycle Status",
+    "description_markdown": "Count total reservations grouped by lifecycle `status` as `reservation_count`. Order by `reservation_count` DESC, `status` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "reservation_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT status, COUNT(*) AS reservation_count FROM reservations GROUP BY status ORDER BY reservation_count DESC, status ASC;",
+    "solution_explanation": "Groups reservations by status and counts records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `status`.",
+      "Count records with `COUNT(*) AS reservation_count`.",
+      "Query: SELECT status, COUNT(*) AS reservation_count FROM reservations GROUP BY status ORDER BY reservation_count DESC, status ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-24",
+    "slug": "htl-comprehensive-guest-folio-roster",
+    "title": "Compile Guest Folio Manifest with Room Details",
+    "description_markdown": "Assemble guest reservation folios showing concatenated `guest_name`, `hotel_name`, `room_number`, `total_amount`, and reservation `status`. Order by `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations",
+      "hotel_guests",
+      "hotels",
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hotel_name",
+        "type": "varchar"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (g.first_name || ' ' || g.last_name) AS guest_name, h.name AS hotel_name, r.room_number, res.total_amount, res.status FROM reservations res JOIN hotel_guests g ON res.guest_id = g.guest_id JOIN rooms r ON res.room_id = r.room_id JOIN hotels h ON r.hotel_id = h.hotel_id ORDER BY res.reservation_id ASC;",
+    "solution_explanation": "Four-table join across reservations, hotel_guests, rooms, and hotels.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `reservations res`, `hotel_guests g`, `rooms r`, and `hotels h`.",
+      "Order by `res.reservation_id` ASC.",
+      "Query: SELECT (g.first_name || ' ' || g.last_name) AS guest_name, h.name AS hotel_name, r.room_number, res.total_amount, res.status FROM reservations res JOIN hotel_guests g ON res.guest_id = g.guest_id JOIN rooms r ON res.room_id = r.room_id JOIN hotels h ON r.hotel_id = h.hotel_id ORDER BY res.reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-25",
+    "slug": "htl-reservations-with-spa-appointments",
+    "title": "Filter Reservations That Booked Luxury Spa Services",
+    "description_markdown": "Find reservations that ordered 'spa' room service. Return `reservation_id`, `guest_id`, and `spa_charge` (`s.charge`). Order by `spa_charge` DESC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations",
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "spa_charge",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.reservation_id, r.guest_id, s.charge AS spa_charge FROM reservations r JOIN room_services s ON r.reservation_id = s.reservation_id WHERE s.service_type = 'spa' ORDER BY spa_charge DESC, r.reservation_id ASC;",
+    "solution_explanation": "Joins reservations and room_services where service_type = 'spa'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `reservations` and `room_services`.",
+      "Filter with `WHERE s.service_type = 'spa'`.",
+      "Query: SELECT r.reservation_id, r.guest_id, s.charge AS spa_charge FROM reservations r JOIN room_services s ON r.reservation_id = s.reservation_id WHERE s.service_type = 'spa' ORDER BY spa_charge DESC, r.reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-26",
+    "slug": "htl-price-variance-from-hotel-average",
+    "title": "Calculate Room Price Variance from Property Average",
+    "description_markdown": "For each room, display `room_id`, `hotel_id`, `price_per_night`, and the hotel's average room price rounded to 2 decimals as `hotel_avg_price` using window functions. Order by `hotel_id` ASC, `price_per_night` DESC, `room_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      },
+      {
+        "name": "hotel_avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT room_id, hotel_id, price_per_night, ROUND(AVG(price_per_night) OVER (PARTITION BY hotel_id), 2) AS hotel_avg_price FROM rooms ORDER BY hotel_id ASC, price_per_night DESC, room_id ASC;",
+    "solution_explanation": "Computes ROUND(AVG(price_per_night) OVER (PARTITION BY hotel_id), 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(AVG(price_per_night) OVER (PARTITION BY hotel_id), 2) AS hotel_avg_price`.",
+      "Order by `hotel_id` ASC, `price_per_night` DESC, `room_id` ASC.",
+      "Query: SELECT room_id, hotel_id, price_per_night, ROUND(AVG(price_per_night) OVER (PARTITION BY hotel_id), 2) AS hotel_avg_price FROM rooms ORDER BY hotel_id ASC, price_per_night DESC, room_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-27",
+    "slug": "htl-hotels-by-star-rating-count",
+    "title": "Count Hotel Portfolio Distribution by Star Rating",
+    "description_markdown": "Calculate total properties grouped by `star_rating` as `hotel_count`. Order by `star_rating` DESC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "star_rating",
+        "type": "integer"
+      },
+      {
+        "name": "hotel_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT star_rating, COUNT(*) AS hotel_count FROM hotels GROUP BY star_rating ORDER BY star_rating DESC;",
+    "solution_explanation": "Groups hotels by star_rating and counts properties.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `star_rating`.",
+      "Count with `COUNT(*) AS hotel_count`.",
+      "Query: SELECT star_rating, COUNT(*) AS hotel_count FROM hotels GROUP BY star_rating ORDER BY star_rating DESC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-28",
+    "slug": "htl-single-nightly-stays-audit",
+    "title": "Filter Stays Operating with Nightly Total Amount Above Thousand",
+    "description_markdown": "List reservations where `total_amount` is at least $1,000.00. Return `reservation_id`, `guest_id`, and `total_amount`. Order by `total_amount` DESC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT reservation_id, guest_id, total_amount FROM reservations WHERE total_amount >= 1000.00 ORDER BY total_amount DESC, reservation_id ASC;",
+    "solution_explanation": "Filters reservations where total_amount >= 1000.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE total_amount >= 1000.00`.",
+      "Order by `total_amount` DESC, `reservation_id` ASC.",
+      "Query: SELECT reservation_id, guest_id, total_amount FROM reservations WHERE total_amount >= 1000.00 ORDER BY total_amount DESC, reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-29",
+    "slug": "htl-top-spending-guest-overall",
+    "title": "Identify Highest Cumulative Spending Hotel Guest",
+    "description_markdown": "Find the single guest with the highest cumulative spend across non-cancelled reservations. Return `guest_id`, `first_name`, `last_name`, and `total_paid`.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_paid",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT g.guest_id, g.first_name, g.last_name, SUM(r.total_amount) AS total_paid FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status != 'cancelled' GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY total_paid DESC, g.guest_id ASC LIMIT 1;",
+    "solution_explanation": "Groups by guest, sums total_amount on non-cancelled stays, and limits to 1 row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE r.status != 'cancelled'`.",
+      "Order by `total_paid DESC` and limit 1.",
+      "Query: SELECT g.guest_id, g.first_name, g.last_name, SUM(r.total_amount) AS total_paid FROM hotel_guests g JOIN reservations r ON g.guest_id = r.guest_id WHERE r.status != 'cancelled' GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY total_paid DESC, g.guest_id ASC LIMIT 1;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-30",
+    "slug": "htl-lag-reservation-spend-audit",
+    "title": "Track Previous Reservation Billing Amount Using LAG",
+    "description_markdown": "For each reservation, retrieve the amount of the guest's previous stay as `prev_total_amount` using `LAG()`. Return `reservation_id`, `guest_id`, `total_amount`, and `prev_total_amount`. Order by `guest_id` ASC, `check_in` ASC, `reservation_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT reservation_id, guest_id, total_amount, LAG(total_amount, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC) AS prev_total_amount FROM reservations ORDER BY guest_id ASC, check_in ASC, reservation_id ASC;",
+    "solution_explanation": "Applies LAG(total_amount, 1) partitioned by guest_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(total_amount, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC)`.",
+      "Order by `guest_id` ASC, `check_in` ASC, `reservation_id` ASC.",
+      "Query: SELECT reservation_id, guest_id, total_amount, LAG(total_amount, 1) OVER (PARTITION BY guest_id ORDER BY check_in ASC, reservation_id ASC) AS prev_total_amount FROM reservations ORDER BY guest_id ASC, check_in ASC, reservation_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-31",
+    "slug": "htl-guest-comprehensive-hospitality-profile",
+    "title": "Compile Guest Hospitality Stay and Incidental Spend Profile",
+    "description_markdown": "For each guest, compute concatenated `guest_name`, total completed stays (`status = 'checked_out'`) as `completed_stays`, and sum of checked-out amounts as `room_charges_total`. Order by `room_charges_total` DESC, `completed_stays` DESC, `guest_id` ASC.",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests",
+      "reservations",
+      "room_services"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_stays",
+        "type": "bigint"
+      },
+      {
+        "name": "room_charges_total",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT g.guest_id, (g.first_name || ' ' || g.last_name) AS guest_name, COUNT(CASE WHEN r.status = 'checked_out' THEN 1 END) AS completed_stays, COALESCE(SUM(CASE WHEN r.status = 'checked_out' THEN r.total_amount ELSE 0 END), 0.0) AS room_charges_total FROM hotel_guests g LEFT JOIN reservations r ON g.guest_id = r.guest_id GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY room_charges_total DESC, completed_stays DESC, g.guest_id ASC;",
+    "solution_explanation": "LEFT JOINs hotel_guests and reservations, calculating conditional counts and sums for checked_out stays.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `reservations r` on `g.guest_id = r.guest_id`.",
+      "Compute `COUNT(CASE WHEN r.status = 'checked_out' THEN 1 END)`.",
+      "Query: SELECT g.guest_id, (g.first_name || ' ' || g.last_name) AS guest_name, COUNT(CASE WHEN r.status = 'checked_out' THEN 1 END) AS completed_stays, COALESCE(SUM(CASE WHEN r.status = 'checked_out' THEN r.total_amount ELSE 0 END), 0.0) AS room_charges_total FROM hotel_guests g LEFT JOIN reservations r ON g.guest_id = r.guest_id GROUP BY g.guest_id, g.first_name, g.last_name ORDER BY room_charges_total DESC, completed_stays DESC, g.guest_id ASC;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hotel-32",
+    "slug": "htl-hospitality-portfolio-executive-kpi-summary",
+    "title": "Compile Hospitality Chain Executive KPI Scorecard",
+    "description_markdown": "Calculate single-row executive KPI scorecard metrics: `total_hotels`, `total_rooms`, `total_guests`, and `completed_room_revenue` (sum of checked_out reservation amounts).",
+    "topic_id": "scenario-hotel",
+    "subtopic_id": "sc-hotel",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels",
+      "rooms",
+      "hotel_guests",
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_hotels",
+        "type": "bigint"
+      },
+      {
+        "name": "total_rooms",
+        "type": "bigint"
+      },
+      {
+        "name": "total_guests",
+        "type": "bigint"
+      },
+      {
+        "name": "completed_room_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM hotels) AS total_hotels, (SELECT COUNT(*) FROM rooms) AS total_rooms, (SELECT COUNT(*) FROM hotel_guests) AS total_guests, (SELECT SUM(total_amount) FROM reservations WHERE status = 'checked_out') AS completed_room_revenue;",
+    "solution_explanation": "Uses scalar subqueries to compile an executive hotel portfolio KPI scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each metric.",
+      "Sum total_amount for checked_out reservations.",
+      "Query: SELECT (SELECT COUNT(*) FROM hotels) AS total_hotels, (SELECT COUNT(*) FROM rooms) AS total_rooms, (SELECT COUNT(*) FROM hotel_guests) AS total_guests, (SELECT SUM(total_amount) FROM reservations WHERE status = 'checked_out') AS completed_room_revenue;"
+    ],
+    "tags": [
+      "hotel",
+      "sc-hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hotel-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hotel-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hotel-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

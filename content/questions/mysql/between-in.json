@@ -1,0 +1,2396 @@
+[
+  {
+    "id": "q-my-btn-01",
+    "slug": "salaries-in-target-bracket",
+    "title": "Salaries Within Mid-Level Bracket",
+    "description_markdown": "Find employees whose salary is between 90,000 and 140,000 (inclusive). Return `first_name`, `last_name`, and `salary`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter using BETWEEN\nSELECT first_name, last_name, salary\nFROM employees\nWHERE salary BETWEEN ...",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary BETWEEN 90000 AND 140000;",
+    "solution_explanation": "BETWEEN is inclusive of both endpoints (equivalent to salary >= 90000 AND salary <= 140000).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use the syntax: WHERE salary BETWEEN 90000 AND 140000",
+      "BETWEEN includes both 90000 and 140000.",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary BETWEEN 90000 AND 140000;"
+    ],
+    "tags": [
+      "between",
+      "range"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-02",
+    "slug": "customers-in-selected-regions",
+    "title": "Target Customers in Priority Countries",
+    "description_markdown": "Retrieve `customer_id`, `first_name`, `last_name`, and `country` for customers located in 'USA', 'UK', or 'Canada'.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Use IN operator\nSELECT ...",
+    "solution_query": "SELECT customer_id, first_name, last_name, country FROM customers WHERE country IN ('USA', 'UK', 'Canada');",
+    "solution_explanation": "The IN operator checks if a column value matches any literal within the specified tuple set.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use: WHERE country IN ('USA', 'UK', 'Canada')",
+      "Strings must be wrapped in single quotes.",
+      "Query: SELECT customer_id, first_name, last_name, country FROM customers WHERE country IN ('USA', 'UK', 'Canada');"
+    ],
+    "tags": [
+      "in",
+      "filtering"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-03",
+    "slug": "exclude-non-core-departments",
+    "title": "Exclude Non-Core Departments Using NOT IN",
+    "description_markdown": "Find all employees whose `dept_id` is NOT in (2, 4, 5). Exclude records where `dept_id` is NULL. Return `emp_id`, `first_name`, and `dept_id`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Exclude departments with NOT IN\nSELECT ...",
+    "solution_query": "SELECT emp_id, first_name, dept_id FROM employees WHERE dept_id NOT IN (2, 4, 5);",
+    "solution_explanation": "NOT IN filters out records belonging to the list. Note that in SQL, rows where dept_id is NULL evaluate to UNKNOWN and are naturally omitted.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use: WHERE dept_id NOT IN (2, 4, 5)",
+      "Remember dept_id is an integer.",
+      "Query: SELECT emp_id, first_name, dept_id FROM employees WHERE dept_id NOT IN (2, 4, 5);"
+    ],
+    "tags": [
+      "not-in",
+      "null-edge-case"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-04",
+    "slug": "student-gpa-bracket",
+    "title": "Mid-to-High Tier Student GPA Band",
+    "description_markdown": "Query `students` to find students whose `gpa` falls between 3.2 and 3.7 (inclusive). Return `student_id`, `first_name`, `last_name`, and `gpa`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Students with GPA BETWEEN 3.2 AND 3.7\nSELECT student_id, first_name, last_name, gpa\nFROM students\nWHERE gpa BETWEEN ...",
+    "solution_query": "SELECT student_id, first_name, last_name, gpa FROM students WHERE gpa BETWEEN 3.2 AND 3.7;",
+    "solution_explanation": "The BETWEEN operator selects values within the inclusive interval [3.2, 3.7].",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing order (BETWEEN 3.7 AND 3.2 returns 0 rows in SQL)."
+    ],
+    "hints": [
+      "Use WHERE gpa BETWEEN 3.2 AND 3.7.",
+      "Lower bound comes first in BETWEEN syntax.",
+      "Query: SELECT student_id, first_name, last_name, gpa FROM students WHERE gpa BETWEEN 3.2 AND 3.7;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-05",
+    "slug": "product-price-bracket",
+    "title": "Mid-Market Product Pricing Band",
+    "description_markdown": "Find all items in `products` where `price` is between 50.00 and 150.00 inclusive. Return `product_id`, `product_name`, and `price`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Products priced between 50 and 150\nSELECT product_id, product_name, price\nFROM products\nWHERE price BETWEEN ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE price BETWEEN 50.00 AND 150.00;",
+    "solution_explanation": "Filters retail inventory to items priced inside the target mid-range bracket.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using commas in place of AND in BETWEEN."
+    ],
+    "hints": [
+      "Syntax: WHERE price BETWEEN 50.00 AND 150.00.",
+      "Project product_id, product_name, price.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE price BETWEEN 50.00 AND 150.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-06",
+    "slug": "flight-fare-bracket",
+    "title": "Economy Fare Ticket Range",
+    "description_markdown": "Query `flights` to select flights with `base_price` between 150.00 and 350.00 inclusive. Project `flight_number`, `origin`, `destination`, and `base_price`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flights with base_price BETWEEN 150 and 350\nSELECT flight_number, origin, destination, base_price\nFROM flights\nWHERE base_price BETWEEN ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price FROM flights WHERE base_price BETWEEN 150.00 AND 350.00;",
+    "solution_explanation": "Restricts flight routes to the defined fare range.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting origin or destination columns."
+    ],
+    "hints": [
+      "Use base_price BETWEEN 150.00 AND 350.00.",
+      "Query: SELECT flight_number, origin, destination, base_price FROM flights WHERE base_price BETWEEN 150.00 AND 350.00;",
+      "The expected query is: SELECT flight_number, origin, destination, base_price FROM flights WHERE base_price BETWEEN 150.00 AND 350.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-07",
+    "slug": "bank-customers-credit-score-range",
+    "title": "Prime Credit Tier Bank Customers",
+    "description_markdown": "Select `customer_id`, `name`, and `credit_score` from `bank_customers` where `credit_score` is between 650 and 750 inclusive.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "credit_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Credit score between 650 and 750\nSELECT customer_id, name, credit_score\nFROM bank_customers\nWHERE ...",
+    "solution_query": "SELECT customer_id, name, credit_score FROM bank_customers WHERE credit_score BETWEEN 650 AND 750;",
+    "solution_explanation": "Filters retail banking clientele inside the standard prime lending score range.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Excluding bounds by using > and <."
+    ],
+    "hints": [
+      "Use credit_score BETWEEN 650 AND 750.",
+      "Query: SELECT customer_id, name, credit_score FROM bank_customers WHERE credit_score BETWEEN 650 AND 750;",
+      "The expected query is: SELECT customer_id, name, credit_score FROM bank_customers WHERE credit_score BETWEEN 650 AND 750;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-08",
+    "slug": "stock-price-channel",
+    "title": "Securities Trading in Price Channel",
+    "description_markdown": "Find stocks with `current_price` between 25.00 and 80.00 inclusive. Return `symbol`, `company_name`, and `current_price`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stocks between 25 and 80\nSELECT symbol, company_name, current_price\nFROM stocks\nWHERE ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks WHERE current_price BETWEEN 25.00 AND 80.00;",
+    "solution_explanation": "Filters equity listings inside the specified trading price corridor.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing BETWEEN 80.00 AND 25.00."
+    ],
+    "hints": [
+      "Condition: WHERE current_price BETWEEN 25.00 AND 80.00.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks WHERE current_price BETWEEN 25.00 AND 80.00;",
+      "The expected query is: SELECT symbol, company_name, current_price FROM stocks WHERE current_price BETWEEN 25.00 AND 80.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-09",
+    "slug": "restaurant-rating-range",
+    "title": "Satisfactory Restaurant Score Range",
+    "description_markdown": "Query `restaurants` to find establishments where `rating` is between 3.8 and 4.4 inclusive. Return `restaurant_id`, `name`, `cuisine`, and `rating`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Restaurants with rating BETWEEN 3.8 AND 4.4\nSELECT restaurant_id, name, cuisine, rating\nFROM restaurants\nWHERE ...",
+    "solution_query": "SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating BETWEEN 3.8 AND 4.4;",
+    "solution_explanation": "Extracts restaurants falling into the solid mid-tier review distribution.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting city instead of cuisine."
+    ],
+    "hints": [
+      "Use rating BETWEEN 3.8 AND 4.4.",
+      "Query: SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating BETWEEN 3.8 AND 4.4;",
+      "The expected query is: SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating BETWEEN 3.8 AND 4.4;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-10",
+    "slug": "doctor-experience-mid-tier",
+    "title": "Mid-Career Medical Staff Tenure",
+    "description_markdown": "Find doctors whose `experience_years` is between 5 and 12 years inclusive. Return `doctor_id`, `name`, `specialization`, and `experience_years`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Doctors with experience between 5 and 12\nSELECT doctor_id, name, specialization, experience_years\nFROM doctors\nWHERE ...",
+    "solution_query": "SELECT doctor_id, name, specialization, experience_years FROM doctors WHERE experience_years BETWEEN 5 AND 12;",
+    "solution_explanation": "Screens physician rosters for mid-career professional experience ranges.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering department instead of specialization."
+    ],
+    "hints": [
+      "Use experience_years BETWEEN 5 AND 12.",
+      "Query: SELECT doctor_id, name, specialization, experience_years FROM doctors WHERE experience_years BETWEEN 5 AND 12;",
+      "The expected query is: SELECT doctor_id, name, specialization, experience_years FROM doctors WHERE experience_years BETWEEN 5 AND 12;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-11",
+    "slug": "hotel-room-rate-bracket",
+    "title": "Standard Lodging Room Rate Bracket",
+    "description_markdown": "Query `rooms` for accommodation rooms where `price_per_night` is between 80.00 and 180.00 inclusive. Return `room_id`, `room_number`, `room_type`, and `price_per_night`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Room price between 80 and 180\nSELECT room_id, room_number, room_type, price_per_night\nFROM rooms\nWHERE ...",
+    "solution_query": "SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE price_per_night BETWEEN 80.00 AND 180.00;",
+    "solution_explanation": "Filters hotel rooms to those falling within standard commercial price limits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering star_rating instead of price_per_night."
+    ],
+    "hints": [
+      "Condition: WHERE price_per_night BETWEEN 80.00 AND 180.00.",
+      "Query: SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE price_per_night BETWEEN 80.00 AND 180.00;",
+      "The expected query is: SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE price_per_night BETWEEN 80.00 AND 180.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-12",
+    "slug": "recruiting-candidate-experience-range",
+    "title": "Mid-Level Professional Applicant Pool",
+    "description_markdown": "Select `applicant_id`, `first_name`, `last_name`, and `years_experience` from `applicants` where `years_experience` is between 3 and 7 inclusive.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Applicants between 3 and 7 years experience\nSELECT applicant_id, first_name, last_name, years_experience\nFROM applicants\nWHERE ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, years_experience FROM applicants WHERE years_experience BETWEEN 3 AND 7;",
+    "solution_explanation": "Isolates applicants matching mid-level staffing requirements.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting current_company."
+    ],
+    "hints": [
+      "Condition: WHERE years_experience BETWEEN 3 AND 7.",
+      "Query: SELECT applicant_id, first_name, last_name, years_experience FROM applicants WHERE years_experience BETWEEN 3 AND 7;",
+      "The expected query is: SELECT applicant_id, first_name, last_name, years_experience FROM applicants WHERE years_experience BETWEEN 3 AND 7;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-13",
+    "slug": "inventory-unit-cost-band",
+    "title": "Component Unit Procurement Cost Band",
+    "description_markdown": "Find inventory parts in `stock_items` where `unit_cost` is between 10.00 and 45.00 inclusive. Return `item_id`, `sku`, `name`, and `unit_cost`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_cost",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stock unit_cost between 10 and 45\nSELECT item_id, sku, name, unit_cost\nFROM stock_items\nWHERE ...",
+    "solution_query": "SELECT item_id, sku, name, unit_cost FROM stock_items WHERE unit_cost BETWEEN 10.00 AND 45.00;",
+    "solution_explanation": "Filters stock items to standard procurement cost boundaries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering quantity_on_hand instead of unit_cost."
+    ],
+    "hints": [
+      "Condition: WHERE unit_cost BETWEEN 10.00 AND 45.00.",
+      "Query: SELECT item_id, sku, name, unit_cost FROM stock_items WHERE unit_cost BETWEEN 10.00 AND 45.00;",
+      "The expected query is: SELECT item_id, sku, name, unit_cost FROM stock_items WHERE unit_cost BETWEEN 10.00 AND 45.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-14",
+    "slug": "book-publication-era",
+    "title": "Late 20th and Early 21st Century Publications",
+    "description_markdown": "Query `books` for titles published between 1990 and 2005 inclusive. Return `book_id`, `title`, and `publication_year`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Books published between 1990 and 2005\nSELECT book_id, title, publication_year\nFROM books\nWHERE ...",
+    "solution_query": "SELECT book_id, title, publication_year FROM books WHERE publication_year BETWEEN 1990 AND 2005;",
+    "solution_explanation": "Restricts library holdings to the 1990-2005 publication window.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using quotes around numeric year values."
+    ],
+    "hints": [
+      "Use publication_year BETWEEN 1990 AND 2005.",
+      "Query: SELECT book_id, title, publication_year FROM books WHERE publication_year BETWEEN 1990 AND 2005;",
+      "The expected query is: SELECT book_id, title, publication_year FROM books WHERE publication_year BETWEEN 1990 AND 2005;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-15",
+    "slug": "movie-release-decade",
+    "title": "Millennium Era Cinematic Catalog",
+    "description_markdown": "Retrieve `movie_id`, `title`, `release_year`, and `imdb_rating` from `movies` for films released between 2000 and 2015 inclusive.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "release_year",
+        "type": "integer"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Movies released between 2000 and 2015\nSELECT movie_id, title, release_year, imdb_rating\nFROM movies\nWHERE ...",
+    "solution_query": "SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year BETWEEN 2000 AND 2015;",
+    "solution_explanation": "Filters the film library for releases in the 2000-2015 chronological span.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting imdb_rating from projection."
+    ],
+    "hints": [
+      "Condition: WHERE release_year BETWEEN 2000 AND 2015.",
+      "Query: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year BETWEEN 2000 AND 2015;",
+      "The expected query is: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year BETWEEN 2000 AND 2015;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-16",
+    "slug": "sales-lead-quota-band",
+    "title": "Mid-Market Commercial Opportunities",
+    "description_markdown": "Find opportunities in `opportunities` where `deal_size` is between 25000.00 and 75000.00 inclusive. Return `opportunity_id`, `lead_id`, `deal_size`, and `stage`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Deal size between 25000 and 75000\nSELECT opportunity_id, lead_id, deal_size, stage\nFROM opportunities\nWHERE ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE deal_size BETWEEN 25000.00 AND 75000.00;",
+    "solution_explanation": "Selects mid-tier sales opportunities based on deal value limits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using commas in currency numbers."
+    ],
+    "hints": [
+      "Condition: WHERE deal_size BETWEEN 25000.00 AND 75000.00.",
+      "Query: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE deal_size BETWEEN 25000.00 AND 75000.00;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE deal_size BETWEEN 25000.00 AND 75000.00;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-17",
+    "slug": "course-credit-range",
+    "title": "Standard Academic Credit Offerings",
+    "description_markdown": "Query `courses` to find curriculum offerings where `credits` is in the set (3, 4). Return `course_code`, `course_name`, and `credits`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Courses with credits IN (3, 4)\nSELECT course_code, course_name, credits\nFROM courses\nWHERE credits IN ...",
+    "solution_query": "SELECT course_code, course_name, credits FROM courses WHERE credits IN (3, 4);",
+    "solution_explanation": "Uses the IN operator to match discrete integer values in a set.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing IN [3, 4] with brackets instead of parentheses."
+    ],
+    "hints": [
+      "SQL sets use parentheses: IN (3, 4).",
+      "Query: SELECT course_code, course_name, credits FROM courses WHERE credits IN (3, 4);",
+      "The expected query is: SELECT course_code, course_name, credits FROM courses WHERE credits IN (3, 4);"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-18",
+    "slug": "selected-flight-hubs",
+    "title": "Departures from Priority Hub Airports",
+    "description_markdown": "Find flights departing from 'JFK', 'LAX', or 'ORD'. Project `flight_number`, `origin`, `destination`, and `status` from `flights`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flights departing from JFK, LAX, ORD\nSELECT flight_number, origin, destination, status\nFROM flights\nWHERE origin IN ...",
+    "solution_query": "SELECT flight_number, origin, destination, status FROM flights WHERE origin IN ('JFK', 'LAX', 'ORD');",
+    "solution_explanation": "Filters flight origins against a set of major hub airport codes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting quotes around airport string codes."
+    ],
+    "hints": [
+      "Use: WHERE origin IN ('JFK', 'LAX', 'ORD').",
+      "Query: SELECT flight_number, origin, destination, status FROM flights WHERE origin IN ('JFK', 'LAX', 'ORD');",
+      "The expected query is: SELECT flight_number, origin, destination, status FROM flights WHERE origin IN ('JFK', 'LAX', 'ORD');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-19",
+    "slug": "target-account-types",
+    "title": "Liquid Retail Banking Accounts",
+    "description_markdown": "Retrieve `account_id`, `account_type`, and `balance` from `accounts` for accounts where `account_type` is in ('savings', 'checking').",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Savings or checking accounts\nSELECT account_id, account_type, balance\nFROM accounts\nWHERE account_type IN ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts WHERE account_type IN ('savings', 'checking');",
+    "solution_explanation": "Selects retail liquid deposit accounts using set membership.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using double quotes for strings."
+    ],
+    "hints": [
+      "Use single quotes: ('savings', 'checking').",
+      "Query: SELECT account_id, account_type, balance FROM accounts WHERE account_type IN ('savings', 'checking');",
+      "The expected query is: SELECT account_id, account_type, balance FROM accounts WHERE account_type IN ('savings', 'checking');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-20",
+    "slug": "target-stock-sectors",
+    "title": "Defensive and Real Economy Sectors",
+    "description_markdown": "Query `stocks` for companies in sectors ('Healthcare', 'Energy', 'Finance'). Return `symbol`, `company_name`, `sector`, and `current_price`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stocks in Healthcare, Energy, Finance\nSELECT symbol, company_name, sector, current_price\nFROM stocks\nWHERE sector IN ...",
+    "solution_query": "SELECT symbol, company_name, sector, current_price FROM stocks WHERE sector IN ('Healthcare', 'Energy', 'Finance');",
+    "solution_explanation": "Screens equities belonging to the three specified economic sectors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling sector names."
+    ],
+    "hints": [
+      "Condition: WHERE sector IN ('Healthcare', 'Energy', 'Finance').",
+      "Query: SELECT symbol, company_name, sector, current_price FROM stocks WHERE sector IN ('Healthcare', 'Energy', 'Finance');",
+      "The expected query is: SELECT symbol, company_name, sector, current_price FROM stocks WHERE sector IN ('Healthcare', 'Energy', 'Finance');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-21",
+    "slug": "cuisine-preference-selection",
+    "title": "International Dining Favorites",
+    "description_markdown": "Find restaurants in `restaurants` where `cuisine` is in ('Italian', 'Japanese', 'Mexican'). Return `restaurant_id`, `name`, `cuisine`, and `city`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Restaurants with Italian, Japanese, or Mexican cuisine\nSELECT restaurant_id, name, cuisine, city\nFROM restaurants\nWHERE cuisine IN ...",
+    "solution_query": "SELECT restaurant_id, name, cuisine, city FROM restaurants WHERE cuisine IN ('Italian', 'Japanese', 'Mexican');",
+    "solution_explanation": "Filters partner food establishments matching desired cuisine styles.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting rating instead of city."
+    ],
+    "hints": [
+      "Condition: WHERE cuisine IN ('Italian', 'Japanese', 'Mexican').",
+      "Query: SELECT restaurant_id, name, cuisine, city FROM restaurants WHERE cuisine IN ('Italian', 'Japanese', 'Mexican');",
+      "The expected query is: SELECT restaurant_id, name, cuisine, city FROM restaurants WHERE cuisine IN ('Italian', 'Japanese', 'Mexican');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-22",
+    "slug": "selected-specialization-clinics",
+    "title": "Specialized Clinical Departments Physicians",
+    "description_markdown": "Query `doctors` for physicians specialized in ('Pediatrics', 'Neurology', 'Orthopedics'). Return `doctor_id`, `name`, `specialization`, and `department`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Doctors in Pediatrics, Neurology, Orthopedics\nSELECT doctor_id, name, specialization, department\nFROM doctors\nWHERE specialization IN ...",
+    "solution_query": "SELECT doctor_id, name, specialization, department FROM doctors WHERE specialization IN ('Pediatrics', 'Neurology', 'Orthopedics');",
+    "solution_explanation": "Filters clinical specialists against a list of target medical fields.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering department column instead of specialization."
+    ],
+    "hints": [
+      "Target the specialization column.",
+      "Use IN ('Pediatrics', 'Neurology', 'Orthopedics').",
+      "Query: SELECT doctor_id, name, specialization, department FROM doctors WHERE specialization IN ('Pediatrics', 'Neurology', 'Orthopedics');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-23",
+    "slug": "star-rating-hotel-tiers",
+    "title": "Upscale and Luxury Tier Hotels",
+    "description_markdown": "Retrieve `hotel_id`, `name`, `city`, and `star_rating` from `hotels` for establishments with `star_rating` in (4, 5).",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Hotels with 4 or 5 stars\nSELECT hotel_id, name, city, star_rating\nFROM hotels\nWHERE star_rating IN ...",
+    "solution_query": "SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating IN (4, 5);",
+    "solution_explanation": "Filters hospitality properties matching top rating tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing star_rating = 4 OR 5 (syntax error without re-specifying star_rating = 5)."
+    ],
+    "hints": [
+      "Use IN (4, 5).",
+      "Query: SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating IN (4, 5);",
+      "The expected query is: SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating IN (4, 5);"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-24",
+    "slug": "target-genres-streaming",
+    "title": "High Action and Suspense Media Catalog",
+    "description_markdown": "Query `movies` for films where `genre` is in ('Sci-Fi', 'Action', 'Thriller'). Return `movie_id`, `title`, `genre`, and `imdb_rating`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "genre",
+        "type": "varchar"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Movies in Sci-Fi, Action, Thriller\nSELECT movie_id, title, genre, imdb_rating\nFROM movies\nWHERE genre IN ...",
+    "solution_query": "SELECT movie_id, title, genre, imdb_rating FROM movies WHERE genre IN ('Sci-Fi', 'Action', 'Thriller');",
+    "solution_explanation": "Screens movie titles matching selected high-engagement genres.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling 'Sci-Fi'."
+    ],
+    "hints": [
+      "Condition: WHERE genre IN ('Sci-Fi', 'Action', 'Thriller').",
+      "Query: SELECT movie_id, title, genre, imdb_rating FROM movies WHERE genre IN ('Sci-Fi', 'Action', 'Thriller');",
+      "The expected query is: SELECT movie_id, title, genre, imdb_rating FROM movies WHERE genre IN ('Sci-Fi', 'Action', 'Thriller');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-25",
+    "slug": "pipeline-stages-in-progress",
+    "title": "Active Mid-Funnel Sales Opportunities",
+    "description_markdown": "Find opportunities in `opportunities` where `stage` is in ('Discovery', 'Proposal', 'Negotiation'). Return `opportunity_id`, `lead_id`, `deal_size`, and `stage`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Active pipeline stages\nSELECT opportunity_id, lead_id, deal_size, stage\nFROM opportunities\nWHERE stage IN ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE stage IN ('Discovery', 'Proposal', 'Negotiation');",
+    "solution_explanation": "Tracks in-flight sales deals progressing through negotiation phases.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including closed or lost stages."
+    ],
+    "hints": [
+      "Use IN ('Discovery', 'Proposal', 'Negotiation').",
+      "Query: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE stage IN ('Discovery', 'Proposal', 'Negotiation');",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE stage IN ('Discovery', 'Proposal', 'Negotiation');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-26",
+    "slug": "courses-in-selected-departments",
+    "title": "STEM Department Curriculum Offerings",
+    "description_markdown": "Query `courses` for subjects offered by ('Computer Science', 'Mathematics'). Return `course_code`, `course_name`, `department`, and `credits`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- CS and Math courses\nSELECT course_code, course_name, department, credits\nFROM courses\nWHERE department IN ...",
+    "solution_query": "SELECT course_code, course_name, department, credits FROM courses WHERE department IN ('Computer Science', 'Mathematics');",
+    "solution_explanation": "Filters course offerings across quantitative science divisions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling department names."
+    ],
+    "hints": [
+      "Use IN ('Computer Science', 'Mathematics').",
+      "Query: SELECT course_code, course_name, department, credits FROM courses WHERE department IN ('Computer Science', 'Mathematics');",
+      "The expected query is: SELECT course_code, course_name, department, credits FROM courses WHERE department IN ('Computer Science', 'Mathematics');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-27",
+    "slug": "exclude-cancelled-flight-statuses",
+    "title": "Filter Operable Commercial Flights",
+    "description_markdown": "Find flights in `flights` whose `status` is NOT in ('cancelled', 'diverted'). Return `flight_number`, `origin`, `destination`, and `status`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Exclude cancelled and diverted flights\nSELECT flight_number, origin, destination, status\nFROM flights\nWHERE status NOT IN ...",
+    "solution_query": "SELECT flight_number, origin, destination, status FROM flights WHERE status NOT IN ('cancelled', 'diverted');",
+    "solution_explanation": "Uses NOT IN to exclude disrupted flight operations from schedule display.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing NOT status IN instead of status NOT IN."
+    ],
+    "hints": [
+      "Condition: WHERE status NOT IN ('cancelled', 'diverted').",
+      "Query: SELECT flight_number, origin, destination, status FROM flights WHERE status NOT IN ('cancelled', 'diverted');",
+      "The expected query is: SELECT flight_number, origin, destination, status FROM flights WHERE status NOT IN ('cancelled', 'diverted');"
+    ],
+    "tags": [
+      "not-in",
+      "membership",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-28",
+    "slug": "exclude-low-priority-lead-industries",
+    "title": "Exclude Non-Target Industries from Pipeline",
+    "description_markdown": "Query `leads` to retrieve prospects whose `industry` is NOT in ('Retail', 'Hospitality'). Return `lead_id`, `rep_id`, `company_name`, and `industry`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Exclude Retail and Hospitality\nSELECT lead_id, rep_id, company_name, industry\nFROM leads\nWHERE industry NOT IN ...",
+    "solution_query": "SELECT lead_id, rep_id, company_name, industry FROM leads WHERE industry NOT IN ('Retail', 'Hospitality');",
+    "solution_explanation": "Excludes deprioritized market verticals from outreach lists.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling industry names."
+    ],
+    "hints": [
+      "Use: WHERE industry NOT IN ('Retail', 'Hospitality').",
+      "Query: SELECT lead_id, rep_id, company_name, industry FROM leads WHERE industry NOT IN ('Retail', 'Hospitality');",
+      "The expected query is: SELECT lead_id, rep_id, company_name, industry FROM leads WHERE industry NOT IN ('Retail', 'Hospitality');"
+    ],
+    "tags": [
+      "not-in",
+      "membership",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-29",
+    "slug": "exclude-infrequent-vehicle-types",
+    "title": "Motorized Fleet Couriers Only",
+    "description_markdown": "Find delivery couriers in `delivery_drivers` whose `vehicle_type` is NOT in ('walking', 'scooter'). Return `driver_id`, `name`, `vehicle_type`, and `rating`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Exclude walking and scooter\nSELECT driver_id, name, vehicle_type, rating\nFROM delivery_drivers\nWHERE vehicle_type NOT IN ...",
+    "solution_query": "SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE vehicle_type NOT IN ('walking', 'scooter');",
+    "solution_explanation": "Eliminates low-distance transit modes using NOT IN.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting vehicle_type from projection."
+    ],
+    "hints": [
+      "Condition: WHERE vehicle_type NOT IN ('walking', 'scooter').",
+      "Query: SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE vehicle_type NOT IN ('walking', 'scooter');",
+      "The expected query is: SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE vehicle_type NOT IN ('walking', 'scooter');"
+    ],
+    "tags": [
+      "not-in",
+      "membership",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-30",
+    "slug": "book-circulation-target-categories",
+    "title": "Key Curated Literary Categories",
+    "description_markdown": "Query `books` for titles where `category` is in ('Fiction', 'Science', 'History'). Return `book_id`, `title`, `category`, and `copies_available`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Books in Fiction, Science, History\nSELECT book_id, title, category, copies_available\nFROM books\nWHERE category IN ...",
+    "solution_query": "SELECT book_id, title, category, copies_available FROM books WHERE category IN ('Fiction', 'Science', 'History');",
+    "solution_explanation": "Filters collection titles for patron circulation reporting.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling category names."
+    ],
+    "hints": [
+      "Use IN ('Fiction', 'Science', 'History').",
+      "Query: SELECT book_id, title, category, copies_available FROM books WHERE category IN ('Fiction', 'Science', 'History');",
+      "The expected query is: SELECT book_id, title, category, copies_available FROM books WHERE category IN ('Fiction', 'Science', 'History');"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-31",
+    "slug": "warehouse-high-turnover-bracket",
+    "title": "Optimal Warehouse Inventory Reserve Range",
+    "description_markdown": "Find inventory items in `stock_items` where `quantity_on_hand` is between 50 and 200 inclusive. Return `item_id`, `sku`, `warehouse_id`, and `quantity_on_hand`.",
+    "topic_id": "between-in",
+    "subtopic_id": "between-range",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stock between 50 and 200\nSELECT item_id, sku, warehouse_id, quantity_on_hand\nFROM stock_items\nWHERE quantity_on_hand BETWEEN ...",
+    "solution_query": "SELECT item_id, sku, warehouse_id, quantity_on_hand FROM stock_items WHERE quantity_on_hand BETWEEN 50 AND 200;",
+    "solution_explanation": "Screens warehouse parts inventories within balanced operating inventory buffer limits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering unit_cost instead of quantity_on_hand."
+    ],
+    "hints": [
+      "Condition: WHERE quantity_on_hand BETWEEN 50 AND 200.",
+      "Query: SELECT item_id, sku, warehouse_id, quantity_on_hand FROM stock_items WHERE quantity_on_hand BETWEEN 50 AND 200;",
+      "The expected query is: SELECT item_id, sku, warehouse_id, quantity_on_hand FROM stock_items WHERE quantity_on_hand BETWEEN 50 AND 200;"
+    ],
+    "tags": [
+      "between",
+      "range",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-btn-32",
+    "slug": "contract-duration-commitments",
+    "title": "Standard Enterprise Multi-Year Commitments",
+    "description_markdown": "Query `contracts` for signed agreements with `duration_months` in (12, 24, 36). Return `contract_id`, `opportunity_id`, `annual_contract_value`, and `duration_months`.",
+    "topic_id": "between-in",
+    "subtopic_id": "in-membership",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Contracts of 12, 24, or 36 months\nSELECT contract_id, opportunity_id, annual_contract_value, duration_months\nFROM contracts\nWHERE duration_months IN ...",
+    "solution_query": "SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE duration_months IN (12, 24, 36);",
+    "solution_explanation": "Filters commercial contracts to standard 1, 2, or 3-year term commitments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing IN [12, 24, 36] with square brackets."
+    ],
+    "hints": [
+      "Use IN (12, 24, 36).",
+      "Query: SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE duration_months IN (12, 24, 36);",
+      "The expected query is: SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE duration_months IN (12, 24, 36);"
+    ],
+    "tags": [
+      "in",
+      "membership",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-btn-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-btn-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-btn-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

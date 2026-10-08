@@ -1,0 +1,2402 @@
+[
+  {
+    "id": "q-gai-01",
+    "slug": "identify-missing-order-ids-gap",
+    "title": "Detect Gap in Order Identifier Sequence",
+    "description_markdown": "Find all order IDs where `(order_id + 1)` does NOT exist in `orders`, identifying a gap in the sequence. Exclude the maximum `order_id` in the table. Return `order_id AS gap_start_id`, `(order_id + 1) AS missing_id`. Order by `gap_start_id` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start_id",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Identify sequence gap\nSELECT order_id AS gap_start_id, (order_id + 1) AS missing_id\nFROM orders o\nWHERE NOT EXISTS ...",
+    "solution_query": "SELECT o.order_id AS gap_start_id, (o.order_id + 1) AS missing_id FROM orders o WHERE NOT EXISTS (SELECT 1 FROM orders o2 WHERE o2.order_id = o.order_id + 1) AND o.order_id < (SELECT MAX(order_id) FROM orders) ORDER BY gap_start_id ASC;",
+    "solution_explanation": "Standard anti-semi-join gap detector that flags missing sequential integers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM orders o2 WHERE o2.order_id = o.order_id + 1)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT o.order_id AS gap_start_id, (o.order_id + 1) AS missing_id FROM orders o WHERE NOT EXISTS (SELECT 1 FROM orders o2 WHERE o2.order_id = o.order_id + 1) AND o.order_id < (SELECT MAX(order_id) FROM orders) ORDER BY gap_start_id ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-02",
+    "slug": "consecutive-order-island-grouping",
+    "title": "Group Contiguous Sequential Orders into Islands",
+    "description_markdown": "Using the difference technique `(order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC))` as `island_id`, identify islands of consecutive order IDs. For each island, calculate `MIN(order_id) AS island_start`, `MAX(order_id) AS island_end`, and `COUNT(*) AS island_length`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Classic ROW_NUMBER() island grouping technique\nWITH grouped AS (\n  SELECT order_id,\n    (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp\n  FROM orders\n)\nSELECT ...",
+    "solution_query": "WITH grouped AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_length FROM grouped GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "The constant difference between a sequential integer and a strictly increasing row number defines the island boundary.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `(order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp`.",
+      "Group by `grp` and calculate MIN, MAX, and COUNT(*).",
+      "Query: WITH grouped AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_length FROM grouped GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-03",
+    "slug": "continuous-activity-streak-detection",
+    "title": "Calculate Unbroken Customer Order Streaks",
+    "description_markdown": "Find customers who placed orders on consecutive distinct dates. Using window functions, calculate the maximum length of consecutive distinct order dates per customer as `max_consecutive_days`. Return `customer_id` and `COUNT(DISTINCT order_date) AS total_active_days` for customers with at least 2 active days. Order by `total_active_days` DESC, `customer_id` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_active_days",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Active order day counts\nSELECT ...",
+    "solution_query": "SELECT customer_id, COUNT(DISTINCT order_date) AS total_active_days FROM orders GROUP BY customer_id HAVING COUNT(DISTINCT order_date) >= 2 ORDER BY total_active_days DESC, customer_id ASC;",
+    "solution_explanation": "Groups and filters user transactional frequency across discrete calendar days.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `customer_id` and filter `HAVING COUNT(DISTINCT order_date) >= 2`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT customer_id, COUNT(DISTINCT order_date) AS total_active_days FROM orders GROUP BY customer_id HAVING COUNT(DISTINCT order_date) >= 2 ORDER BY total_active_days DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "streaks"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-04",
+    "slug": "gai-missing-project-ids-not-exists",
+    "title": "Detect Sequence Gaps in Project Identifiers via NOT EXISTS",
+    "description_markdown": "From `projects`, find all project IDs where `project_id + 1` does NOT exist in the table, identifying sequence gaps. Exclude the maximum project ID in the table. Return `project_id AS gap_start` and `(project_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Detect missing project sequence IDs\nSELECT p.project_id AS gap_start, (p.project_id + 1) AS missing_id\nFROM projects p\nWHERE NOT EXISTS (\n  SELECT 1 FROM projects p2 WHERE p2.project_id = p.project_id + 1\n) AND p.project_id < (SELECT MAX(project_id) FROM projects)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT p.project_id AS gap_start, (p.project_id + 1) AS missing_id FROM projects p WHERE NOT EXISTS (SELECT 1 FROM projects p2 WHERE p2.project_id = p.project_id + 1) AND p.project_id < (SELECT MAX(project_id) FROM projects) ORDER BY gap_start ASC;",
+    "solution_explanation": "NOT EXISTS checks for missing adjacent integers in sequence keys.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the condition checking that project_id < MAX(project_id)."
+    ],
+    "interview_tip": "Anti-semi-joins identify sequence breaks without generating full tally or calendar tables.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM projects p2 WHERE p2.project_id = p.project_id + 1)`.",
+      "Filter `AND p.project_id < (SELECT MAX(project_id) FROM projects)`.",
+      "Query: SELECT p.project_id AS gap_start, (p.project_id + 1) AS missing_id FROM projects p WHERE NOT EXISTS (SELECT 1 FROM projects p2 WHERE p2.project_id = p.project_id + 1) AND p.project_id < (SELECT MAX(project_id) FROM projects) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "not-exists",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-05",
+    "slug": "gai-project-gap-size-with-lead",
+    "title": "Calculate Size of Project Identifier Sequence Gaps Using LEAD",
+    "description_markdown": "From `projects`, calculate the next sequential ID using `LEAD(project_id) OVER (ORDER BY project_id ASC) AS next_id`. Filter for instances where `next_id > project_id + 1`, and calculate `(next_id - project_id - 1) AS gap_size`. Return `project_id AS curr_id`, `next_id`, and `gap_size`. Order by `project_id` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "curr_id",
+        "type": "integer"
+      },
+      {
+        "name": "next_id",
+        "type": "integer"
+      },
+      {
+        "name": "gap_size",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate gap size via LEAD\nSELECT project_id AS curr_id, next_id, (next_id - project_id - 1) AS gap_size\nFROM (\n  SELECT project_id, LEAD(project_id) OVER (ORDER BY project_id ASC) AS next_id\n  FROM projects\n) sub\nWHERE next_id > project_id + 1\nORDER BY project_id ASC;",
+    "solution_query": "SELECT project_id AS curr_id, next_id, (next_id - project_id - 1) AS gap_size FROM (SELECT project_id, LEAD(project_id) OVER (ORDER BY project_id ASC) AS next_id FROM projects) sub WHERE next_id > project_id + 1 ORDER BY project_id ASC;",
+    "solution_explanation": "LEAD reveals the subsequent key value, allowing instant computation of gap intervals.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Calculating gap size as next_id - project_id instead of next_id - project_id - 1."
+    ],
+    "interview_tip": "LEAD avoids self-joins when quantifying distance between successive sequence records.",
+    "hints": [
+      "Compute `LEAD(project_id) OVER (ORDER BY project_id ASC) AS next_id` in a derived subquery.",
+      "Filter `WHERE next_id > project_id + 1`.",
+      "Query: SELECT project_id AS curr_id, next_id, (next_id - project_id - 1) AS gap_size FROM (SELECT project_id, LEAD(project_id) OVER (ORDER BY project_id ASC) AS next_id FROM projects) sub WHERE next_id > project_id + 1 ORDER BY project_id ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "lead",
+      "gap-size",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-06",
+    "slug": "gai-project-id-consecutive-islands",
+    "title": "Group Consecutive Project Identifiers into Islands",
+    "description_markdown": "Using the difference technique `(project_id - ROW_NUMBER() OVER (ORDER BY project_id ASC)) AS grp`, group contiguous project IDs into islands. For each island, compute `MIN(project_id) AS island_start`, `MAX(project_id) AS island_end`, and `COUNT(*) AS island_count`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Project ID islands\nWITH grps AS (\n  SELECT project_id,\n    (project_id - ROW_NUMBER() OVER (ORDER BY project_id ASC)) AS grp\n  FROM projects\n)\nSELECT MIN(project_id) AS island_start, MAX(project_id) AS island_end, COUNT(*) AS island_count\nFROM grps\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT project_id, (project_id - ROW_NUMBER() OVER (ORDER BY project_id ASC)) AS grp FROM projects) SELECT MIN(project_id) AS island_start, MAX(project_id) AS island_end, COUNT(*) AS island_count FROM grps GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Subtracting a monotonic row number from a sequence value yields an invariant group identifier for consecutive numbers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ORDER BY project_id ASC inside ROW_NUMBER()."
+    ],
+    "interview_tip": "The value minus row_number technique is the canonical solution for contiguous integer grouping.",
+    "hints": [
+      "Use `(project_id - ROW_NUMBER() OVER (ORDER BY project_id ASC)) AS grp`.",
+      "Group by `grp` and calculate MIN, MAX, COUNT(*).",
+      "Query: WITH grps AS (SELECT project_id, (project_id - ROW_NUMBER() OVER (ORDER BY project_id ASC)) AS grp FROM projects) SELECT MIN(project_id) AS island_start, MAX(project_id) AS island_end, COUNT(*) AS island_count FROM grps GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands",
+      "difference-method",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-07",
+    "slug": "gai-missing-student-ids-not-exists",
+    "title": "Detect Gap in Student Matriculation Numbers via NOT EXISTS",
+    "description_markdown": "From `students`, find all student IDs where `student_id + 1` does NOT exist in the table, excluding the maximum `student_id`. Return `student_id AS gap_start` and `(student_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing student sequence numbers\nSELECT s.student_id AS gap_start, (s.student_id + 1) AS missing_id\nFROM students s\nWHERE NOT EXISTS (\n  SELECT 1 FROM students s2 WHERE s2.student_id = s.student_id + 1\n) AND s.student_id < (SELECT MAX(student_id) FROM students)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT s.student_id AS gap_start, (s.student_id + 1) AS missing_id FROM students s WHERE NOT EXISTS (SELECT 1 FROM students s2 WHERE s2.student_id = s.student_id + 1) AND s.student_id < (SELECT MAX(student_id) FROM students) ORDER BY gap_start ASC;",
+    "solution_explanation": "NOT EXISTS flags missing student roll numbers in college rosters.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Excluding the table max condition, which would flag the final record."
+    ],
+    "interview_tip": "Detecting missing IDs is crucial for audit trails and sequential voucher reconciliation.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM students s2 WHERE s2.student_id = s.student_id + 1)`.",
+      "Filter `AND s.student_id < (SELECT MAX(student_id) FROM students)`.",
+      "Query: SELECT s.student_id AS gap_start, (s.student_id + 1) AS missing_id FROM students s WHERE NOT EXISTS (SELECT 1 FROM students s2 WHERE s2.student_id = s.student_id + 1) AND s.student_id < (SELECT MAX(student_id) FROM students) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "students",
+      "audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-08",
+    "slug": "gai-student-id-gap-distance-lead",
+    "title": "Calculate Missing ID Interval Distance Across Students Using LEAD",
+    "description_markdown": "From `students`, find pairs where `next_id > student_id + 1` using `LEAD(student_id) OVER (ORDER BY student_id ASC) AS next_id`. Calculate `(next_id - student_id - 1) AS gap_size`. Return `student_id AS curr_id`, `next_id`, and `gap_size`. Order by `student_id` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "curr_id",
+        "type": "integer"
+      },
+      {
+        "name": "next_id",
+        "type": "integer"
+      },
+      {
+        "name": "gap_size",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student ID gap intervals\nSELECT student_id AS curr_id, next_id, (next_id - student_id - 1) AS gap_size\nFROM (\n  SELECT student_id, LEAD(student_id) OVER (ORDER BY student_id ASC) AS next_id\n  FROM students\n) sub\nWHERE next_id > student_id + 1\nORDER BY student_id ASC;",
+    "solution_query": "SELECT student_id AS curr_id, next_id, (next_id - student_id - 1) AS gap_size FROM (SELECT student_id, LEAD(student_id) OVER (ORDER BY student_id ASC) AS next_id FROM students) sub WHERE next_id > student_id + 1 ORDER BY student_id ASC;",
+    "solution_explanation": "LEAD identifies the gap boundaries and size without self-joins.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting in reverse order."
+    ],
+    "interview_tip": "LEAD window functions provide clean $O(N)$ sequential gap detection.",
+    "hints": [
+      "Use `LEAD(student_id) OVER (ORDER BY student_id ASC) AS next_id`.",
+      "Filter `WHERE next_id > student_id + 1`.",
+      "Query: SELECT student_id AS curr_id, next_id, (next_id - student_id - 1) AS gap_size FROM (SELECT student_id, LEAD(student_id) OVER (ORDER BY student_id ASC) AS next_id FROM students) sub WHERE next_id > student_id + 1 ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "lead",
+      "gap-size",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-09",
+    "slug": "gai-consecutive-student-id-islands",
+    "title": "Group Contiguous Student Enrollment Blocks into Islands",
+    "description_markdown": "From `students`, group consecutive student IDs using `(student_id - ROW_NUMBER() OVER (ORDER BY student_id ASC)) AS grp`. For each island, calculate `MIN(student_id) AS island_start`, `MAX(student_id) AS island_end`, and `COUNT(*) AS island_size`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_size",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student ID islands\nWITH grps AS (\n  SELECT student_id,\n    (student_id - ROW_NUMBER() OVER (ORDER BY student_id ASC)) AS grp\n  FROM students\n)\nSELECT MIN(student_id) AS island_start, MAX(student_id) AS island_end, COUNT(*) AS island_size\nFROM grps\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT student_id, (student_id - ROW_NUMBER() OVER (ORDER BY student_id ASC)) AS grp FROM students) SELECT MIN(student_id) AS island_start, MAX(student_id) AS island_end, COUNT(*) AS island_size FROM grps GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Isolates clusters of consecutively matriculated students into discrete ranges.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Grouping by student_id instead of grp."
+    ],
+    "interview_tip": "Range compression converts long lists of IDs into start/end spans.",
+    "hints": [
+      "Use `(student_id - ROW_NUMBER() OVER (ORDER BY student_id ASC)) AS grp`.",
+      "Group by `grp` and compute MIN, MAX, and COUNT(*).",
+      "Query: WITH grps AS (SELECT student_id, (student_id - ROW_NUMBER() OVER (ORDER BY student_id ASC)) AS grp FROM students) SELECT MIN(student_id) AS island_start, MAX(student_id) AS island_end, COUNT(*) AS island_size FROM grps GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands",
+      "students",
+      "range-compression"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-10",
+    "slug": "gai-missing-assignment-ids-anti-join",
+    "title": "Locate Gaps in Assignment Sequence via Anti-Join",
+    "description_markdown": "From `assignments`, detect missing sequential assignment IDs where `assignment_id + 1` does NOT exist in the table. Exclude the maximum assignment ID. Return `assignment_id AS gap_start` and `(assignment_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing assignment IDs\nSELECT a.assignment_id AS gap_start, (a.assignment_id + 1) AS missing_id\nFROM assignments a\nWHERE NOT EXISTS (\n  SELECT 1 FROM assignments a2 WHERE a2.assignment_id = a.assignment_id + 1\n) AND a.assignment_id < (SELECT MAX(assignment_id) FROM assignments)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT a.assignment_id AS gap_start, (a.assignment_id + 1) AS missing_id FROM assignments a WHERE NOT EXISTS (SELECT 1 FROM assignments a2 WHERE a2.assignment_id = a.assignment_id + 1) AND a.assignment_id < (SELECT MAX(assignment_id) FROM assignments) ORDER BY gap_start ASC;",
+    "solution_explanation": "Validates sequence continuity in project work logs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking assignment_id - 1 instead of + 1."
+    ],
+    "interview_tip": "Detecting missing assignment IDs ensures work hours have not been deleted without audit record.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM assignments a2 WHERE a2.assignment_id = a.assignment_id + 1)`.",
+      "Filter `AND a.assignment_id < (SELECT MAX(assignment_id) FROM assignments)`.",
+      "Query: SELECT a.assignment_id AS gap_start, (a.assignment_id + 1) AS missing_id FROM assignments a WHERE NOT EXISTS (SELECT 1 FROM assignments a2 WHERE a2.assignment_id = a.assignment_id + 1) AND a.assignment_id < (SELECT MAX(assignment_id) FROM assignments) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "assignments",
+      "integrity"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-11",
+    "slug": "gai-assignment-id-consecutive-islands",
+    "title": "Group Continuous Assignment IDs into Contiguous Islands",
+    "description_markdown": "Using `(assignment_id - ROW_NUMBER() OVER (ORDER BY assignment_id ASC)) AS grp`, group consecutive assignment IDs in `assignments`. Return `MIN(assignment_id) AS island_start`, `MAX(assignment_id) AS island_end`, and `COUNT(*) AS island_len`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_len",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Assignment ID islands\nWITH grps AS (\n  SELECT assignment_id,\n    (assignment_id - ROW_NUMBER() OVER (ORDER BY assignment_id ASC)) AS grp\n  FROM assignments\n)\nSELECT MIN(assignment_id) AS island_start, MAX(assignment_id) AS island_end, COUNT(*) AS island_len\nFROM grps\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT assignment_id, (assignment_id - ROW_NUMBER() OVER (ORDER BY assignment_id ASC)) AS grp FROM assignments) SELECT MIN(assignment_id) AS island_start, MAX(assignment_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Compresses contiguous work record segments into boundary summaries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROW_NUMBER ORDER BY."
+    ],
+    "interview_tip": "Boundary compression saves index memory when caching sequence intervals.",
+    "hints": [
+      "Use `(assignment_id - ROW_NUMBER() OVER (ORDER BY assignment_id ASC)) AS grp`.",
+      "Group by `grp` and order by `island_start ASC`.",
+      "Query: WITH grps AS (SELECT assignment_id, (assignment_id - ROW_NUMBER() OVER (ORDER BY assignment_id ASC)) AS grp FROM assignments) SELECT MIN(assignment_id) AS island_start, MAX(assignment_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands",
+      "assignments",
+      "compression"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-12",
+    "slug": "gai-isolated-single-order-islands",
+    "title": "Filter Single-Element Isolated Islands in Orders Sequence",
+    "description_markdown": "From `orders`, group consecutive order IDs using `(order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp`. Filter for islands that contain exactly one single isolated order ID (`COUNT(*) = 1`). Return `MIN(order_id) AS isolated_id`. Order by `isolated_id` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "isolated_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Isolated single-element islands\nWITH grps AS (\n  SELECT order_id,\n    (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp\n  FROM orders\n)\nSELECT MIN(order_id) AS isolated_id\nFROM grps\nGROUP BY grp\nHAVING COUNT(*) = 1\nORDER BY isolated_id ASC;",
+    "solution_query": "WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS isolated_id FROM grps GROUP BY grp HAVING COUNT(*) = 1 ORDER BY isolated_id ASC;",
+    "solution_explanation": "HAVING COUNT(*) = 1 isolates singleton islands surrounded by gaps on both sides.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering in WHERE instead of HAVING."
+    ],
+    "interview_tip": "Identifying singletons helps detect isolated transactions or sparse sampling periods.",
+    "hints": [
+      "Group by `grp` and filter `HAVING COUNT(*) = 1`.",
+      "Sort output by `isolated_id ASC`.",
+      "Query: WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS isolated_id FROM grps GROUP BY grp HAVING COUNT(*) = 1 ORDER BY isolated_id ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "singletons",
+      "having",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-13",
+    "slug": "gai-multi-element-islands-minimum-length-two",
+    "title": "Filter Contiguous Islands with at Least Two Consecutive Elements",
+    "description_markdown": "From `orders`, identify islands of consecutive order IDs with a minimum length of 2 (`COUNT(*) >= 2`). Return `MIN(order_id) AS island_start`, `MAX(order_id) AS island_end`, and `COUNT(*) AS island_len`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_len",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-element islands (length >= 2)\nWITH grps AS (\n  SELECT order_id,\n    (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp\n  FROM orders\n)\nSELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len\nFROM grps\nGROUP BY grp\nHAVING COUNT(*) >= 2\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp HAVING COUNT(*) >= 2 ORDER BY island_start ASC;",
+    "solution_explanation": "HAVING COUNT(*) >= 2 filters out solitary records to focus exclusively on sustained clusters.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) > 2 instead of >= 2."
+    ],
+    "interview_tip": "Filtering by island length is the standard pattern for detecting runs, streaks, and burst activity.",
+    "hints": [
+      "Compute `grp = order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)`.",
+      "Filter with `HAVING COUNT(*) >= 2`.",
+      "Query: WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders) SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp HAVING COUNT(*) >= 2 ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "clusters",
+      "having",
+      "streaks"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-14",
+    "slug": "gai-longest-consecutive-order-island",
+    "title": "Identify the Single Longest Consecutive Order Identifier Island",
+    "description_markdown": "From `orders`, group contiguous order IDs into islands using `(order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp`. Identify the single island with the greatest length (`island_len`). Break ties by `island_start ASC`. Return `island_start`, `island_end`, and `island_len` with `LIMIT 1`.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_len",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Longest consecutive order island\nWITH grps AS (\n  SELECT order_id,\n    (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp\n  FROM orders\n),\nstats AS (\n  SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len\n  FROM grps\n  GROUP BY grp\n)\nSELECT island_start, island_end, island_len\nFROM stats\nORDER BY island_len DESC, island_start ASC\nLIMIT 1;",
+    "solution_query": "WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders), stats AS (SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp) SELECT island_start, island_end, island_len FROM stats ORDER BY island_len DESC, island_start ASC LIMIT 1;",
+    "solution_explanation": "Orders grouped islands by length descending to locate the peak contiguous run.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary sort key island_start ASC."
+    ],
+    "interview_tip": "Finding the longest consecutive sequence is among the most popular interview challenges.",
+    "hints": [
+      "Group contiguous IDs with the difference technique.",
+      "Sort grouped stats by `island_len DESC, island_start ASC LIMIT 1`.",
+      "Query: WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders), stats AS (SELECT MIN(order_id) AS island_start, MAX(order_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp) SELECT island_start, island_end, island_len FROM stats ORDER BY island_len DESC, island_start ASC LIMIT 1;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "longest-streak",
+      "peak-run",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-15",
+    "slug": "gai-missing-course-ids-gap-check",
+    "title": "Detect Missing Course IDs in Academic Catalog",
+    "description_markdown": "From `courses`, detect any sequence gaps where `course_id + 1` does NOT exist in the table. Exclude the maximum `course_id`. Return `course_id AS gap_start` and `(course_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing course catalog IDs\nSELECT c.course_id AS gap_start, (c.course_id + 1) AS missing_id\nFROM courses c\nWHERE NOT EXISTS (\n  SELECT 1 FROM courses c2 WHERE c2.course_id = c.course_id + 1\n) AND c.course_id < (SELECT MAX(course_id) FROM courses)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT c.course_id AS gap_start, (c.course_id + 1) AS missing_id FROM courses c WHERE NOT EXISTS (SELECT 1 FROM courses c2 WHERE c2.course_id = c.course_id + 1) AND c.course_id < (SELECT MAX(course_id) FROM courses) ORDER BY gap_start ASC;",
+    "solution_explanation": "NOT EXISTS identifies missing courses in the curriculum numbering registry.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the table MAX boundary filter."
+    ],
+    "interview_tip": "Catalog gap checking verifies whether deprecated or discontinued courses left holes.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM courses c2 WHERE c2.course_id = c.course_id + 1)`.",
+      "Filter `AND c.course_id < (SELECT MAX(course_id) FROM courses)`.",
+      "Query: SELECT c.course_id AS gap_start, (c.course_id + 1) AS missing_id FROM courses c WHERE NOT EXISTS (SELECT 1 FROM courses c2 WHERE c2.course_id = c.course_id + 1) AND c.course_id < (SELECT MAX(course_id) FROM courses) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "courses",
+      "curriculum"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-16",
+    "slug": "gai-consecutive-order-islands-per-customer",
+    "title": "Group Consecutive Order ID Sequences Partitioned by Customer",
+    "description_markdown": "Partition `orders` by `customer_id` and compute `(order_id - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_id ASC)) AS grp`. For each partition group, calculate `customer_id`, `MIN(order_id) AS seq_start`, `MAX(order_id) AS seq_end`, and `COUNT(*) AS seq_count`. Order by `customer_id` ASC, `seq_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "seq_start",
+        "type": "integer"
+      },
+      {
+        "name": "seq_end",
+        "type": "integer"
+      },
+      {
+        "name": "seq_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer-specific order ID islands\nWITH grps AS (\n  SELECT customer_id, order_id,\n    (order_id - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_id ASC)) AS grp\n  FROM orders\n)\nSELECT customer_id, MIN(order_id) AS seq_start, MAX(order_id) AS seq_end, COUNT(*) AS seq_count\nFROM grps\nGROUP BY customer_id, grp\nORDER BY customer_id ASC, seq_start ASC;",
+    "solution_query": "WITH grps AS (SELECT customer_id, order_id, (order_id - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_id ASC)) AS grp FROM orders) SELECT customer_id, MIN(order_id) AS seq_start, MAX(order_id) AS seq_end, COUNT(*) AS seq_count FROM grps GROUP BY customer_id, grp ORDER BY customer_id ASC, seq_start ASC;",
+    "solution_explanation": "Partitioning by customer_id isolates consecutive batch orders placed by individual clients.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting customer_id from the GROUP BY clause."
+    ],
+    "interview_tip": "Partitioned island detection allows per-entity run analysis across multi-tenant tables.",
+    "hints": [
+      "Include `PARTITION BY customer_id` inside ROW_NUMBER().",
+      "Group by `customer_id, grp`.",
+      "Query: WITH grps AS (SELECT customer_id, order_id, (order_id - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_id ASC)) AS grp FROM orders) SELECT customer_id, MIN(order_id) AS seq_start, MAX(order_id) AS seq_end, COUNT(*) AS seq_count FROM grps GROUP BY customer_id, grp ORDER BY customer_id ASC, seq_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "partition-by",
+      "customer",
+      "islands"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-17",
+    "slug": "gai-largest-gap-between-order-ids",
+    "title": "Identify Single Largest Sequence Gap in Order Numbers",
+    "description_markdown": "From `orders`, find the single largest gap between consecutive order numbers using `LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id`. Calculate `(next_id - order_id - 1) AS gap_size`. Return `order_id AS gap_start`, `next_id AS gap_end`, and `gap_size`. Order by `gap_size` DESC, `order_id` ASC with `LIMIT 1`.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "gap_end",
+        "type": "integer"
+      },
+      {
+        "name": "gap_size",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Largest gap between orders\nSELECT order_id AS gap_start, next_id AS gap_end, (next_id - order_id - 1) AS gap_size\nFROM (\n  SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id\n  FROM orders\n) sub\nWHERE next_id > order_id + 1\nORDER BY gap_size DESC, order_id ASC\nLIMIT 1;",
+    "solution_query": "SELECT order_id AS gap_start, next_id AS gap_end, (next_id - order_id - 1) AS gap_size FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1 ORDER BY gap_size DESC, order_id ASC LIMIT 1;",
+    "solution_explanation": "Finds the widest sequence void in the transaction table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting LIMIT 1 or tie-breaker."
+    ],
+    "interview_tip": "Locating maximal gaps detects outages, bulk cancellations, or batch purging operations.",
+    "hints": [
+      "Use `LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id`.",
+      "Sort by `gap_size DESC, order_id ASC LIMIT 1`.",
+      "Query: SELECT order_id AS gap_start, next_id AS gap_end, (next_id - order_id - 1) AS gap_size FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1 ORDER BY gap_size DESC, order_id ASC LIMIT 1;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "max-gap",
+      "lead",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-18",
+    "slug": "gai-missing-department-ids",
+    "title": "Identify Sequence Gaps in Department Identifiers",
+    "description_markdown": "From `departments`, find all department IDs where `dept_id + 1` does NOT exist in the table. Exclude the maximum `dept_id`. Return `dept_id AS gap_start` and `(dept_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing department IDs\nSELECT d.dept_id AS gap_start, (d.dept_id + 1) AS missing_id\nFROM departments d\nWHERE NOT EXISTS (\n  SELECT 1 FROM departments d2 WHERE d2.dept_id = d.dept_id + 1\n) AND d.dept_id < (SELECT MAX(dept_id) FROM departments)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT d.dept_id AS gap_start, (d.dept_id + 1) AS missing_id FROM departments d WHERE NOT EXISTS (SELECT 1 FROM departments d2 WHERE d2.dept_id = d.dept_id + 1) AND d.dept_id < (SELECT MAX(dept_id) FROM departments) ORDER BY gap_start ASC;",
+    "solution_explanation": "Detects missing department keys where organizational divisions were removed or reorganized.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the MAX boundary check."
+    ],
+    "interview_tip": "Anti-semi-joins provide reliable sequence checking on compact lookup tables.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM departments d2 WHERE d2.dept_id = d.dept_id + 1)`.",
+      "Sort output by `gap_start ASC`.",
+      "Query: SELECT d.dept_id AS gap_start, (d.dept_id + 1) AS missing_id FROM departments d WHERE NOT EXISTS (SELECT 1 FROM departments d2 WHERE d2.dept_id = d.dept_id + 1) AND d.dept_id < (SELECT MAX(dept_id) FROM departments) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "departments",
+      "integrity"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-19",
+    "slug": "gai-consecutive-employee-id-islands",
+    "title": "Group Continuous Employee Badging Identifiers into Islands",
+    "description_markdown": "From `employees`, group contiguous employee IDs using `(emp_id - ROW_NUMBER() OVER (ORDER BY emp_id ASC)) AS grp`. For each island, calculate `MIN(emp_id) AS island_start`, `MAX(emp_id) AS island_end`, and `COUNT(*) AS island_len`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_len",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employee ID islands\nWITH grps AS (\n  SELECT emp_id,\n    (emp_id - ROW_NUMBER() OVER (ORDER BY emp_id ASC)) AS grp\n  FROM employees\n)\nSELECT MIN(emp_id) AS island_start, MAX(emp_id) AS island_end, COUNT(*) AS island_len\nFROM grps\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT emp_id, (emp_id - ROW_NUMBER() OVER (ORDER BY emp_id ASC)) AS grp FROM employees) SELECT MIN(emp_id) AS island_start, MAX(emp_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Groups unbroken stretches of staff hire sequence badges.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting ROW_NUMBER in reverse order."
+    ],
+    "interview_tip": "Range compression is ideal for employee badge range auditing.",
+    "hints": [
+      "Use `(emp_id - ROW_NUMBER() OVER (ORDER BY emp_id ASC)) AS grp`.",
+      "Calculate MIN, MAX, COUNT(*) grouped by `grp`.",
+      "Query: WITH grps AS (SELECT emp_id, (emp_id - ROW_NUMBER() OVER (ORDER BY emp_id ASC)) AS grp FROM employees) SELECT MIN(emp_id) AS island_start, MAX(emp_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands",
+      "employees",
+      "badging"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-20",
+    "slug": "gai-missing-marks-ids",
+    "title": "Detect Missing Academic Assessment Mark Identifiers",
+    "description_markdown": "From `marks`, find all mark IDs where `mark_id + 1` does NOT exist in the table. Exclude the maximum `mark_id`. Return `mark_id AS gap_start` and `(mark_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing assessment mark IDs\nSELECT m.mark_id AS gap_start, (m.mark_id + 1) AS missing_id\nFROM marks m\nWHERE NOT EXISTS (\n  SELECT 1 FROM marks m2 WHERE m2.mark_id = m.mark_id + 1\n) AND m.mark_id < (SELECT MAX(mark_id) FROM marks)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT m.mark_id AS gap_start, (m.mark_id + 1) AS missing_id FROM marks m WHERE NOT EXISTS (SELECT 1 FROM marks m2 WHERE m2.mark_id = m.mark_id + 1) AND m.mark_id < (SELECT MAX(mark_id) FROM marks) ORDER BY gap_start ASC;",
+    "solution_explanation": "NOT EXISTS flags missing grades or test entries in academic mark tables.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the MAX boundary condition."
+    ],
+    "interview_tip": "Sequential integrity checks prevent unrecorded test scores in educational reporting.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM marks m2 WHERE m2.mark_id = m.mark_id + 1)`.",
+      "Sort output by `gap_start ASC`.",
+      "Query: SELECT m.mark_id AS gap_start, (m.mark_id + 1) AS missing_id FROM marks m WHERE NOT EXISTS (SELECT 1 FROM marks m2 WHERE m2.mark_id = m.mark_id + 1) AND m.mark_id < (SELECT MAX(mark_id) FROM marks) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "marks",
+      "education"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-21",
+    "slug": "gai-consecutive-order-status-runs",
+    "title": "Group Contiguous Runs of Identical Order Statuses",
+    "description_markdown": "Using the two-row_number technique `(ROW_NUMBER() OVER (ORDER BY order_id ASC) - ROW_NUMBER() OVER (PARTITION BY order_status ORDER BY order_id ASC)) AS grp`, group contiguous runs of identical `order_status` in `orders`. For each run, calculate `order_status`, `MIN(order_id) AS run_start`, `MAX(order_id) AS run_end`, and `COUNT(*) AS run_length`. Order by `run_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "run_start",
+        "type": "integer"
+      },
+      {
+        "name": "run_end",
+        "type": "integer"
+      },
+      {
+        "name": "run_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Contiguous order status runs\nWITH numbered AS (\n  SELECT order_id, order_status,\n    (ROW_NUMBER() OVER (ORDER BY order_id ASC) - ROW_NUMBER() OVER (PARTITION BY order_status ORDER BY order_id ASC)) AS grp\n  FROM orders\n)\nSELECT order_status, MIN(order_id) AS run_start, MAX(order_id) AS run_end, COUNT(*) AS run_length\nFROM numbered\nGROUP BY order_status, grp\nORDER BY run_start ASC;",
+    "solution_query": "WITH numbered AS (SELECT order_id, order_status, (ROW_NUMBER() OVER (ORDER BY order_id ASC) - ROW_NUMBER() OVER (PARTITION BY order_status ORDER BY order_id ASC)) AS grp FROM orders) SELECT order_status, MIN(order_id) AS run_start, MAX(order_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY order_status, grp ORDER BY run_start ASC;",
+    "solution_explanation": "Subtracting a partitioned row number from a global row number produces an invariant group key for contiguous identical values.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Grouping by order_status alone, which collapses disjoint runs into one."
+    ],
+    "interview_tip": "The two-ROW_NUMBER technique is the gold standard for state change and run-length grouping.",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (ORDER BY order_id ASC) - ROW_NUMBER() OVER (PARTITION BY order_status ORDER BY order_id ASC)`.",
+      "Group by `order_status, grp`.",
+      "Query: WITH numbered AS (SELECT order_id, order_status, (ROW_NUMBER() OVER (ORDER BY order_id ASC) - ROW_NUMBER() OVER (PARTITION BY order_status ORDER BY order_id ASC)) AS grp FROM orders) SELECT order_status, MIN(order_id) AS run_start, MAX(order_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY order_status, grp ORDER BY run_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "runs",
+      "state-changes",
+      "two-row-number"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-22",
+    "slug": "gai-consecutive-payment-method-runs",
+    "title": "Identify Contiguous Runs of Identical Payment Methods",
+    "description_markdown": "Using `(ROW_NUMBER() OVER (ORDER BY payment_id ASC) - ROW_NUMBER() OVER (PARTITION BY payment_method ORDER BY payment_id ASC)) AS grp`, group contiguous runs of the same `payment_method` in `payments`. Return `payment_method`, `MIN(payment_id) AS run_start`, `MAX(payment_id) AS run_end`, and `COUNT(*) AS run_length`. Order by `run_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "payment_method",
+        "type": "varchar"
+      },
+      {
+        "name": "run_start",
+        "type": "integer"
+      },
+      {
+        "name": "run_end",
+        "type": "integer"
+      },
+      {
+        "name": "run_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Consecutive payment method runs\nWITH numbered AS (\n  SELECT payment_id, payment_method,\n    (ROW_NUMBER() OVER (ORDER BY payment_id ASC) - ROW_NUMBER() OVER (PARTITION BY payment_method ORDER BY payment_id ASC)) AS grp\n  FROM payments\n)\nSELECT payment_method, MIN(payment_id) AS run_start, MAX(payment_id) AS run_end, COUNT(*) AS run_length\nFROM numbered\nGROUP BY payment_method, grp\nORDER BY run_start ASC;",
+    "solution_query": "WITH numbered AS (SELECT payment_id, payment_method, (ROW_NUMBER() OVER (ORDER BY payment_id ASC) - ROW_NUMBER() OVER (PARTITION BY payment_method ORDER BY payment_id ASC)) AS grp FROM payments) SELECT payment_method, MIN(payment_id) AS run_start, MAX(payment_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY payment_method, grp ORDER BY run_start ASC;",
+    "solution_explanation": "Two-row_number technique isolates consecutive transaction sequences processed via the same provider.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the PARTITION BY in the second ROW_NUMBER."
+    ],
+    "interview_tip": "Clustered payment method runs detect automated testing scripts or merchant checkout glitches.",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (ORDER BY payment_id ASC) - ROW_NUMBER() OVER (PARTITION BY payment_method ORDER BY payment_id ASC)`.",
+      "Group by `payment_method, grp`.",
+      "Query: WITH numbered AS (SELECT payment_id, payment_method, (ROW_NUMBER() OVER (ORDER BY payment_id ASC) - ROW_NUMBER() OVER (PARTITION BY payment_method ORDER BY payment_id ASC)) AS grp FROM payments) SELECT payment_method, MIN(payment_id) AS run_start, MAX(payment_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY payment_method, grp ORDER BY run_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "runs",
+      "payments",
+      "two-row-number"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-23",
+    "slug": "gai-missing-payment-ids-gap-audit",
+    "title": "Detect Sequence Gaps in Financial Payment Records",
+    "description_markdown": "From `payments`, identify sequence gaps where `payment_id + 1` does NOT exist in the table. Exclude the maximum `payment_id`. Return `payment_id AS gap_start` and `(payment_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing payment IDs\nSELECT p.payment_id AS gap_start, (p.payment_id + 1) AS missing_id\nFROM payments p\nWHERE NOT EXISTS (\n  SELECT 1 FROM payments p2 WHERE p2.payment_id = p.payment_id + 1\n) AND p.payment_id < (SELECT MAX(payment_id) FROM payments)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT p.payment_id AS gap_start, (p.payment_id + 1) AS missing_id FROM payments p WHERE NOT EXISTS (SELECT 1 FROM payments p2 WHERE p2.payment_id = p.payment_id + 1) AND p.payment_id < (SELECT MAX(payment_id) FROM payments) ORDER BY gap_start ASC;",
+    "solution_explanation": "Audits financial ledger transaction sequence gaps for SOX compliance.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the MAX payment_id filter."
+    ],
+    "interview_tip": "Auditing missing transaction IDs is mandatory in regulated financial environments.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM payments p2 WHERE p2.payment_id = p.payment_id + 1)`.",
+      "Sort output by `gap_start ASC`.",
+      "Query: SELECT p.payment_id AS gap_start, (p.payment_id + 1) AS missing_id FROM payments p WHERE NOT EXISTS (SELECT 1 FROM payments p2 WHERE p2.payment_id = p.payment_id + 1) AND p.payment_id < (SELECT MAX(payment_id) FROM payments) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "payments",
+      "financial-audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-24",
+    "slug": "gai-islands-of-successful-payments",
+    "title": "Group Continuous Streaks of Successful Payments into Islands",
+    "description_markdown": "For successful payments (`payment_status = 'success'`), calculate `(payment_id - ROW_NUMBER() OVER (ORDER BY payment_id ASC)) AS grp`. For each island of unbroken successful payments, calculate `MIN(payment_id) AS island_start`, `MAX(payment_id) AS island_end`, and `COUNT(*) AS streak_length`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "streak_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Successful payment streaks\nWITH success_seq AS (\n  SELECT payment_id,\n    (payment_id - ROW_NUMBER() OVER (ORDER BY payment_id ASC)) AS grp\n  FROM payments\n  WHERE payment_status = 'success'\n)\nSELECT MIN(payment_id) AS island_start, MAX(payment_id) AS island_end, COUNT(*) AS streak_length\nFROM success_seq\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH success_seq AS (SELECT payment_id, (payment_id - ROW_NUMBER() OVER (ORDER BY payment_id ASC)) AS grp FROM payments WHERE payment_status = 'success') SELECT MIN(payment_id) AS island_start, MAX(payment_id) AS island_end, COUNT(*) AS streak_length FROM success_seq GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Filters payments for success and measures unbroken intervals between payment failures.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the payment_status = 'success' filter."
+    ],
+    "interview_tip": "Tracking consecutive successful transaction streaks monitors gateway uptime stability.",
+    "hints": [
+      "Filter `WHERE payment_status = 'success'`.",
+      "Use `payment_id - ROW_NUMBER() OVER (ORDER BY payment_id ASC) AS grp`.",
+      "Query: WITH success_seq AS (SELECT payment_id, (payment_id - ROW_NUMBER() OVER (ORDER BY payment_id ASC)) AS grp FROM payments WHERE payment_status = 'success') SELECT MIN(payment_id) AS island_start, MAX(payment_id) AS island_end, COUNT(*) AS streak_length FROM success_seq GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "streaks",
+      "payments",
+      "success-rate"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-25",
+    "slug": "gai-missing-product-ids-in-catalog",
+    "title": "Detect Missing Product Identifiers in Catalog Inventory",
+    "description_markdown": "From `products`, detect sequence voids where `product_id + 1` does NOT exist in the table. Exclude the maximum `product_id`. Return `product_id AS gap_start` and `(product_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing product catalog IDs\nSELECT p.product_id AS gap_start, (p.product_id + 1) AS missing_id\nFROM products p\nWHERE NOT EXISTS (\n  SELECT 1 FROM products p2 WHERE p2.product_id = p.product_id + 1\n) AND p.product_id < (SELECT MAX(product_id) FROM products)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT p.product_id AS gap_start, (p.product_id + 1) AS missing_id FROM products p WHERE NOT EXISTS (SELECT 1 FROM products p2 WHERE p2.product_id = p.product_id + 1) AND p.product_id < (SELECT MAX(product_id) FROM products) ORDER BY gap_start ASC;",
+    "solution_explanation": "NOT EXISTS flags removed or retired SKU identifiers in the product catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the MAX product_id boundary check."
+    ],
+    "interview_tip": "Catalog holes often indicate deleted SKUs that need redirection handling.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM products p2 WHERE p2.product_id = p.product_id + 1)`.",
+      "Sort output by `gap_start ASC`.",
+      "Query: SELECT p.product_id AS gap_start, (p.product_id + 1) AS missing_id FROM products p WHERE NOT EXISTS (SELECT 1 FROM products p2 WHERE p2.product_id = p.product_id + 1) AND p.product_id < (SELECT MAX(product_id) FROM products) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "products",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-26",
+    "slug": "gai-consecutive-product-id-islands",
+    "title": "Group Contiguous Product SKUs into Dense Identifier Islands",
+    "description_markdown": "From `products`, group contiguous product IDs using `(product_id - ROW_NUMBER() OVER (ORDER BY product_id ASC)) AS grp`. Return `MIN(product_id) AS island_start`, `MAX(product_id) AS island_end`, and `COUNT(*) AS island_len`. Order by `island_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_start",
+        "type": "integer"
+      },
+      {
+        "name": "island_end",
+        "type": "integer"
+      },
+      {
+        "name": "island_len",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Product SKU islands\nWITH grps AS (\n  SELECT product_id,\n    (product_id - ROW_NUMBER() OVER (ORDER BY product_id ASC)) AS grp\n  FROM products\n)\nSELECT MIN(product_id) AS island_start, MAX(product_id) AS island_end, COUNT(*) AS island_len\nFROM grps\nGROUP BY grp\nORDER BY island_start ASC;",
+    "solution_query": "WITH grps AS (SELECT product_id, (product_id - ROW_NUMBER() OVER (ORDER BY product_id ASC)) AS grp FROM products) SELECT MIN(product_id) AS island_start, MAX(product_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;",
+    "solution_explanation": "Compresses sequential SKU ranges into contiguous spans.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out ROW_NUMBER ORDER BY."
+    ],
+    "interview_tip": "Range compression accelerates sharded catalog queries and partition pruning.",
+    "hints": [
+      "Use `(product_id - ROW_NUMBER() OVER (ORDER BY product_id ASC)) AS grp`.",
+      "Calculate MIN, MAX, COUNT(*) grouped by `grp`.",
+      "Query: WITH grps AS (SELECT product_id, (product_id - ROW_NUMBER() OVER (ORDER BY product_id ASC)) AS grp FROM products) SELECT MIN(product_id) AS island_start, MAX(product_id) AS island_end, COUNT(*) AS island_len FROM grps GROUP BY grp ORDER BY island_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "islands",
+      "products",
+      "compression"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-27",
+    "slug": "gai-consecutive-enrollment-streaks-per-student",
+    "title": "Calculate Consecutive Completed Course Enrollment Streaks per Student",
+    "description_markdown": "For completed course enrollments (`status = 'completed'`), group contiguous enrollment IDs per student using `(enrollment_id - ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_id ASC)) AS grp`. For each streak, calculate `student_id`, `MIN(enrollment_id) AS streak_start`, `MAX(enrollment_id) AS streak_end`, and `COUNT(*) AS streak_length`. Order by `student_id` ASC, `streak_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "streak_start",
+        "type": "integer"
+      },
+      {
+        "name": "streak_end",
+        "type": "integer"
+      },
+      {
+        "name": "streak_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student enrollment streaks\nWITH grps AS (\n  SELECT student_id, enrollment_id,\n    (enrollment_id - ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_id ASC)) AS grp\n  FROM enrollments\n  WHERE status = 'completed'\n)\nSELECT student_id, MIN(enrollment_id) AS streak_start, MAX(enrollment_id) AS streak_end, COUNT(*) AS streak_length\nFROM grps\nGROUP BY student_id, grp\nORDER BY student_id ASC, streak_start ASC;",
+    "solution_query": "WITH grps AS (SELECT student_id, enrollment_id, (enrollment_id - ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_id ASC)) AS grp FROM enrollments WHERE status = 'completed') SELECT student_id, MIN(enrollment_id) AS streak_start, MAX(enrollment_id) AS streak_end, COUNT(*) AS streak_length FROM grps GROUP BY student_id, grp ORDER BY student_id ASC, streak_start ASC;",
+    "solution_explanation": "Partitioning by student groups consecutive completed course registration sequences.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the WHERE status = 'completed' filter."
+    ],
+    "interview_tip": "Academic progression streaks highlight students maintaining unpaused term enrollment.",
+    "hints": [
+      "Filter `WHERE status = 'completed'`.",
+      "Partition by `student_id` and order by `enrollment_id ASC` in ROW_NUMBER.",
+      "Query: WITH grps AS (SELECT student_id, enrollment_id, (enrollment_id - ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY enrollment_id ASC)) AS grp FROM enrollments WHERE status = 'completed') SELECT student_id, MIN(enrollment_id) AS streak_start, MAX(enrollment_id) AS streak_end, COUNT(*) AS streak_length FROM grps GROUP BY student_id, grp ORDER BY student_id ASC, streak_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "streaks",
+      "enrollments",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-28",
+    "slug": "gai-runs-of-identical-assessment-types",
+    "title": "Group Consecutive Runs of Identical Academic Assessment Types",
+    "description_markdown": "Using `(ROW_NUMBER() OVER (ORDER BY mark_id ASC) - ROW_NUMBER() OVER (PARTITION BY assessment_type ORDER BY mark_id ASC)) AS grp`, group contiguous runs of the same `assessment_type` in `marks`. Return `assessment_type`, `MIN(mark_id) AS run_start`, `MAX(mark_id) AS run_end`, and `COUNT(*) AS run_length`. Order by `run_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "run_start",
+        "type": "integer"
+      },
+      {
+        "name": "run_end",
+        "type": "integer"
+      },
+      {
+        "name": "run_length",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Consecutive assessment type runs\nWITH numbered AS (\n  SELECT mark_id, assessment_type,\n    (ROW_NUMBER() OVER (ORDER BY mark_id ASC) - ROW_NUMBER() OVER (PARTITION BY assessment_type ORDER BY mark_id ASC)) AS grp\n  FROM marks\n)\nSELECT assessment_type, MIN(mark_id) AS run_start, MAX(mark_id) AS run_end, COUNT(*) AS run_length\nFROM numbered\nGROUP BY assessment_type, grp\nORDER BY run_start ASC;",
+    "solution_query": "WITH numbered AS (SELECT mark_id, assessment_type, (ROW_NUMBER() OVER (ORDER BY mark_id ASC) - ROW_NUMBER() OVER (PARTITION BY assessment_type ORDER BY mark_id ASC)) AS grp FROM marks) SELECT assessment_type, MIN(mark_id) AS run_start, MAX(mark_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY assessment_type, grp ORDER BY run_start ASC;",
+    "solution_explanation": "Two-row_number technique partitions test evaluation sequences into contiguous examination batches.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the PARTITION BY assessment_type in the second window."
+    ],
+    "interview_tip": "Grouping contiguous categorical values without collapsing disjoint instances is a hallmark of senior SQL proficiency.",
+    "hints": [
+      "Compute `ROW_NUMBER() OVER (ORDER BY mark_id ASC) - ROW_NUMBER() OVER (PARTITION BY assessment_type ORDER BY mark_id ASC)`.",
+      "Group by `assessment_type, grp`.",
+      "Query: WITH numbered AS (SELECT mark_id, assessment_type, (ROW_NUMBER() OVER (ORDER BY mark_id ASC) - ROW_NUMBER() OVER (PARTITION BY assessment_type ORDER BY mark_id ASC)) AS grp FROM marks) SELECT assessment_type, MIN(mark_id) AS run_start, MAX(mark_id) AS run_end, COUNT(*) AS run_length FROM numbered GROUP BY assessment_type, grp ORDER BY run_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "runs",
+      "marks",
+      "two-row-number"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-29",
+    "slug": "gai-total-count-of-order-gaps",
+    "title": "Calculate Aggregate Count of Sequence Gaps in Orders",
+    "description_markdown": "From `orders`, calculate the total number of distinct sequence breaks where `next_id > order_id + 1` using `LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id`. Return `COUNT(*) AS total_gaps`.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_gaps",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total gap count in orders\nSELECT COUNT(*) AS total_gaps\nFROM (\n  SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id\n  FROM orders\n) sub\nWHERE next_id > order_id + 1;",
+    "solution_query": "SELECT COUNT(*) AS total_gaps FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1;",
+    "solution_explanation": "Counts the total frequency of discontinuities across primary key sequences.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using next_id >= order_id + 1 which would count normal contiguous records."
+    ],
+    "interview_tip": "Macro health metrics summarize sequence fragmentation across database tables.",
+    "hints": [
+      "Calculate `next_id = LEAD(order_id) OVER (ORDER BY order_id ASC)`.",
+      "Filter `WHERE next_id > order_id + 1` and compute `COUNT(*)`.",
+      "Query: SELECT COUNT(*) AS total_gaps FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "aggregate",
+      "gaps",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-30",
+    "slug": "gai-total-missing-ids-sum-across-orders",
+    "title": "Calculate Cumulative Total Missing Identifiers Across All Order Gaps",
+    "description_markdown": "From `orders`, compute the cumulative sum of all missing integer IDs across every sequence gap using `LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id`. Wrap in `COALESCE(SUM(next_id - order_id - 1), 0) AS total_missing_ids`. Return `total_missing_ids`.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_missing_ids",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total missing IDs in orders\nSELECT COALESCE(SUM(next_id - order_id - 1), 0) AS total_missing_ids\nFROM (\n  SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id\n  FROM orders\n) sub\nWHERE next_id > order_id + 1;",
+    "solution_query": "SELECT COALESCE(SUM(next_id - order_id - 1), 0) AS total_missing_ids FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1;",
+    "solution_explanation": "Sums the size of all sequence voids to calculate total lost or skipped primary keys.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the - 1 subtraction from the gap size formula."
+    ],
+    "interview_tip": "Quantifying total lost sequence numbers detects auto-increment waste or deleted transaction volumes.",
+    "hints": [
+      "Use `LEAD(order_id) OVER (ORDER BY order_id ASC)`.",
+      "Calculate `SUM(next_id - order_id - 1)`.",
+      "Query: SELECT COALESCE(SUM(next_id - order_id - 1), 0) AS total_missing_ids FROM (SELECT order_id, LEAD(order_id) OVER (ORDER BY order_id ASC) AS next_id FROM orders) sub WHERE next_id > order_id + 1;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "sum",
+      "gaps",
+      "metrics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-31",
+    "slug": "gai-missing-enrollment-ids",
+    "title": "Detect Missing Enrollment Identifiers via Anti-Join",
+    "description_markdown": "From `enrollments`, detect sequence gaps where `enrollment_id + 1` does NOT exist in the table. Exclude the maximum `enrollment_id`. Return `enrollment_id AS gap_start` and `(enrollment_id + 1) AS missing_id`. Order by `gap_start` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "gap_start",
+        "type": "integer"
+      },
+      {
+        "name": "missing_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Missing enrollment IDs\nSELECT e.enrollment_id AS gap_start, (e.enrollment_id + 1) AS missing_id\nFROM enrollments e\nWHERE NOT EXISTS (\n  SELECT 1 FROM enrollments e2 WHERE e2.enrollment_id = e.enrollment_id + 1\n) AND e.enrollment_id < (SELECT MAX(enrollment_id) FROM enrollments)\nORDER BY gap_start ASC;",
+    "solution_query": "SELECT e.enrollment_id AS gap_start, (e.enrollment_id + 1) AS missing_id FROM enrollments e WHERE NOT EXISTS (SELECT 1 FROM enrollments e2 WHERE e2.enrollment_id = e.enrollment_id + 1) AND e.enrollment_id < (SELECT MAX(enrollment_id) FROM enrollments) ORDER BY gap_start ASC;",
+    "solution_explanation": "Verifies student registration transaction log continuity.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the MAX enrollment_id constraint."
+    ],
+    "interview_tip": "Anti-semi-join gap checks are standard data validation routines in database ETL pipelines.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM enrollments e2 WHERE e2.enrollment_id = e.enrollment_id + 1)`.",
+      "Sort output by `gap_start ASC`.",
+      "Query: SELECT e.enrollment_id AS gap_start, (e.enrollment_id + 1) AS missing_id FROM enrollments e WHERE NOT EXISTS (SELECT 1 FROM enrollments e2 WHERE e2.enrollment_id = e.enrollment_id + 1) AND e.enrollment_id < (SELECT MAX(enrollment_id) FROM enrollments) ORDER BY gap_start ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "gaps",
+      "enrollments",
+      "auditing"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-gai-32",
+    "slug": "gai-distribution-of-island-lengths-in-orders",
+    "title": "Calculate Frequency Distribution of Consecutive Island Lengths",
+    "description_markdown": "From `orders`, group consecutive order IDs into islands using `(order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp`. Calculate the size of each island (`island_len`). In an outer query, calculate the frequency distribution: count how many islands exist for each distinct `island_len` as `frequency`. Return `island_len` and `frequency`. Order by `island_len` ASC.",
+    "topic_id": "gaps-and-islands",
+    "subtopic_id": "adv-gaps",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "island_len",
+        "type": "bigint"
+      },
+      {
+        "name": "frequency",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Frequency distribution of island lengths\nWITH grps AS (\n  SELECT order_id,\n    (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp\n  FROM orders\n),\nisland_sizes AS (\n  SELECT COUNT(*) AS island_len\n  FROM grps\n  GROUP BY grp\n)\nSELECT island_len, COUNT(*) AS frequency\nFROM island_sizes\nGROUP BY island_len\nORDER BY island_len ASC;",
+    "solution_query": "WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders), island_sizes AS (SELECT COUNT(*) AS island_len FROM grps GROUP BY grp) SELECT island_len, COUNT(*) AS frequency FROM island_sizes GROUP BY island_len ORDER BY island_len ASC;",
+    "solution_explanation": "Two-stage grouping computes the histogram of island streak sizes across the dataset.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Attempting to compute COUNT(COUNT(*)) in a single grouping stage."
+    ],
+    "interview_tip": "Histogramming island sizes evaluates whether transactions arrive in sporadic bursts or steady continuous streams.",
+    "hints": [
+      "Compute `island_len = COUNT(*)` grouped by `grp` in CTE.",
+      "Group outer query by `island_len` and compute `COUNT(*) AS frequency`.",
+      "Query: WITH grps AS (SELECT order_id, (order_id - ROW_NUMBER() OVER (ORDER BY order_id ASC)) AS grp FROM orders), island_sizes AS (SELECT COUNT(*) AS island_len FROM grps GROUP BY grp) SELECT island_len, COUNT(*) AS frequency FROM island_sizes GROUP BY island_len ORDER BY island_len ASC;"
+    ],
+    "tags": [
+      "gaps-and-islands",
+      "histogram",
+      "distribution",
+      "analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-gai-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-gai-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-gai-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

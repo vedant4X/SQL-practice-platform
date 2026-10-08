@@ -1,0 +1,2408 @@
+[
+  {
+    "id": "q-my-whe-01",
+    "slug": "high-earning-employees",
+    "title": "Filter High Earning Employees",
+    "description_markdown": "Find the `first_name`, `last_name`, and `salary` of all employees with a salary greater than 120,000.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter employees by salary > 120000\nSELECT first_name, last_name, salary\nFROM employees\nWHERE ...",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary > 120000;",
+    "solution_explanation": "The WHERE clause restricts output to rows satisfying the condition `salary > 120000`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use the > operator in your WHERE predicate.",
+      "Write: WHERE salary > 120000",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary > 120000;"
+    ],
+    "tags": [
+      "where",
+      "filtering"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-02",
+    "slug": "engineering-staff-salary-filter",
+    "title": "Engineering Specialists in Salary Band",
+    "description_markdown": "Find all employees in department 1 (`dept_id = 1`) who earn at least 135,000 (`salary >= 135000`). Return `first_name`, `last_name`, and `job_title`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter with AND condition\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, job_title FROM employees WHERE dept_id = 1 AND salary >= 135000;",
+    "solution_explanation": "Combines two conditions using the logical AND operator.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use the AND operator to join the dept_id and salary checks.",
+      "dept_id = 1 AND salary >= 135000",
+      "Query: SELECT first_name, last_name, job_title FROM employees WHERE dept_id = 1 AND salary >= 135000;"
+    ],
+    "tags": [
+      "where",
+      "boolean-logic"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-03",
+    "slug": "completed-high-value-orders",
+    "title": "Flagged High-Value Completed Orders",
+    "description_markdown": "Find all completed orders (`order_status = 'completed'`) where `total_amount >= 500.00`. Return `order_id`, `customer_id`, and `total_amount`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter completed orders with high amount\nSELECT ...",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders WHERE order_status = 'completed' AND total_amount >= 500.00;",
+    "solution_explanation": "Filters the orders table to only include completed transactions meeting the dollar threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Strings in SQL must be enclosed in single quotes ('completed').",
+      "Use AND total_amount >= 500.00.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders WHERE order_status = 'completed' AND total_amount >= 500.00;"
+    ],
+    "tags": [
+      "where",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-04",
+    "slug": "high-gpa-students",
+    "title": "Honor Roll Students by GPA Threshold",
+    "description_markdown": "Filter `students` to return `first_name`, `last_name`, and `gpa` for all students with a `gpa >= 3.8`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter students by gpa >= 3.8\nSELECT first_name, last_name, gpa\nFROM students\nWHERE ...",
+    "solution_query": "SELECT first_name, last_name, gpa FROM students WHERE gpa >= 3.8;",
+    "solution_explanation": "Applies the greater-than-or-equal comparison operator to identify students meeting the academic threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > instead of >=, which excludes students with exactly 3.8 GPA."
+    ],
+    "hints": [
+      "Use the >= comparison operator.",
+      "Condition: WHERE gpa >= 3.8",
+      "Query: SELECT first_name, last_name, gpa FROM students WHERE gpa >= 3.8;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-05",
+    "slug": "understocked-products",
+    "title": "Low Inventory Warning Level",
+    "description_markdown": "Retrieve `product_id`, `product_name`, and `stock_quantity` for items in `products` where `stock_quantity < 20`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Products with low stock\nSELECT product_id, product_name, stock_quantity\nFROM products\nWHERE ...",
+    "solution_query": "SELECT product_id, product_name, stock_quantity FROM products WHERE stock_quantity < 20;",
+    "solution_explanation": "Restricts items to those with stock levels below the threshold of 20 units.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using <= instead of strictly <."
+    ],
+    "hints": [
+      "Filter where stock_quantity < 20.",
+      "Project product_id, product_name, stock_quantity.",
+      "Query: SELECT product_id, product_name, stock_quantity FROM products WHERE stock_quantity < 20;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-06",
+    "slug": "long-duration-flights",
+    "title": "Premium Fare Flight Routes",
+    "description_markdown": "Find flights where `base_price > 300.00`. Project `flight_number`, `origin`, `destination`, and `base_price`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flights with base_price > 300.00\nSELECT flight_number, origin, destination, base_price\nFROM flights\nWHERE ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price FROM flights WHERE base_price > 300.00;",
+    "solution_explanation": "Filters the flight schedule to premium price tiers using the > operator.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the decimal places or using currency symbols."
+    ],
+    "hints": [
+      "Use WHERE base_price > 300.00.",
+      "Select the four requested columns.",
+      "Query: SELECT flight_number, origin, destination, base_price FROM flights WHERE base_price > 300.00;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-07",
+    "slug": "high-balance-checking-accounts",
+    "title": "Substantial Balance Checking Accounts",
+    "description_markdown": "Filter `accounts` for accounts where `account_type = 'checking'` AND `balance >= 10000.00`. Return `account_id`, `account_type`, and `balance`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Checking accounts with balance >= 10000\nSELECT account_id, account_type, balance\nFROM accounts\nWHERE ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts WHERE account_type = 'checking' AND balance >= 10000.00;",
+    "solution_explanation": "Combines an equality filter and an inequality filter using the AND logical operator.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR instead of AND, returning all checking accounts regardless of balance."
+    ],
+    "hints": [
+      "Match account_type = 'checking'.",
+      "Use AND balance >= 10000.00.",
+      "Query: SELECT account_id, account_type, balance FROM accounts WHERE account_type = 'checking' AND balance >= 10000.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-08",
+    "slug": "tech-sector-stocks",
+    "title": "Filter Securities in Technology Sector",
+    "description_markdown": "Select `symbol`, `company_name`, and `current_price` from `stocks` where `sector = 'Technology'`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stocks in Technology sector\nSELECT symbol, company_name, current_price\nFROM stocks\nWHERE ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks WHERE sector = 'Technology';",
+    "solution_explanation": "Filters rows with an exact string match on the sector attribute.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Double quotes around string literal instead of single quotes."
+    ],
+    "hints": [
+      "Single quotes for string literals: 'Technology'.",
+      "WHERE sector = 'Technology'.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks WHERE sector = 'Technology';"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-09",
+    "slug": "top-rated-restaurants",
+    "title": "Acclaimed High Rating Restaurants",
+    "description_markdown": "Query `restaurants` to find eateries where `rating >= 4.5`. Return `restaurant_id`, `name`, `cuisine`, and `rating`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Restaurants with rating >= 4.5\nSELECT restaurant_id, name, cuisine, rating\nFROM restaurants\nWHERE ...",
+    "solution_query": "SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating >= 4.5;",
+    "solution_explanation": "Retrieves top rated restaurants meeting customer satisfaction threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > instead of >=."
+    ],
+    "hints": [
+      "Use rating >= 4.5 in WHERE clause.",
+      "Select all four specified columns.",
+      "Query: SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating >= 4.5;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-10",
+    "slug": "veteran-doctors",
+    "title": "Senior Medical Staff by Years of Experience",
+    "description_markdown": "Find all doctors with at least 15 years of experience (`experience_years >= 15`). Project `doctor_id`, `name`, `specialization`, and `experience_years`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Doctors with experience >= 15\nSELECT doctor_id, name, specialization, experience_years\nFROM doctors\nWHERE ...",
+    "solution_query": "SELECT doctor_id, name, specialization, experience_years FROM doctors WHERE experience_years >= 15;",
+    "solution_explanation": "Filters the clinical registry for seasoned physicians based on career longevity.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting department instead of specialization."
+    ],
+    "hints": [
+      "Filter with experience_years >= 15.",
+      "Select doctor_id, name, specialization, experience_years.",
+      "Query: SELECT doctor_id, name, specialization, experience_years FROM doctors WHERE experience_years >= 15;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-11",
+    "slug": "luxury-hotel-properties",
+    "title": "Five-Star Luxury Hotel Accommodations",
+    "description_markdown": "Retrieve `hotel_id`, `name`, `city`, and `star_rating` from `hotels` for establishments where `star_rating = 5`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Five-star hotels\nSELECT hotel_id, name, city, star_rating\nFROM hotels\nWHERE ...",
+    "solution_query": "SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating = 5;",
+    "solution_explanation": "Filters hotels by exact star classification.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using double equals == (valid in JS, syntax error in SQL)."
+    ],
+    "hints": [
+      "SQL equality is a single equals sign: =.",
+      "WHERE star_rating = 5.",
+      "Query: SELECT hotel_id, name, city, star_rating FROM hotels WHERE star_rating = 5;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-12",
+    "slug": "experienced-job-applicants",
+    "title": "Senior Job Applicants Career Experience",
+    "description_markdown": "Query `applicants` for candidates possessing `years_experience >= 8`. Return `applicant_id`, `first_name`, `last_name`, and `years_experience`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Applicants with years_experience >= 8\nSELECT applicant_id, first_name, last_name, years_experience\nFROM applicants\nWHERE ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, years_experience FROM applicants WHERE years_experience >= 8;",
+    "solution_explanation": "Filters recruiting pipeline to candidates with senior professional tenure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting current_company instead of years_experience."
+    ],
+    "hints": [
+      "WHERE years_experience >= 8.",
+      "List applicant_id, first_name, last_name, years_experience.",
+      "Query: SELECT applicant_id, first_name, last_name, years_experience FROM applicants WHERE years_experience >= 8;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-13",
+    "slug": "scarce-library-books",
+    "title": "Limited Inventory Library Titles",
+    "description_markdown": "Find books in the `books` catalog that have 2 or fewer copies remaining (`copies_available <= 2`). Return `book_id`, `title`, and `copies_available`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Books with copies_available <= 2\nSELECT book_id, title, copies_available\nFROM books\nWHERE ...",
+    "solution_query": "SELECT book_id, title, copies_available FROM books WHERE copies_available <= 2;",
+    "solution_explanation": "Filters library circulation inventory to identify titles near depletion.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using < instead of <=."
+    ],
+    "hints": [
+      "Use <= comparison.",
+      "WHERE copies_available <= 2.",
+      "Query: SELECT book_id, title, copies_available FROM books WHERE copies_available <= 2;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-14",
+    "slug": "high-rated-classic-movies",
+    "title": "Critically Acclaimed Pre-2010 Releases",
+    "description_markdown": "Query `movies` to find films released before 2010 (`release_year < 2010`) that scored `imdb_rating >= 8.5`. Project `movie_id`, `title`, `release_year`, and `imdb_rating`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "release_year",
+        "type": "integer"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Pre-2010 movies with imdb_rating >= 8.5\nSELECT movie_id, title, release_year, imdb_rating\nFROM movies\nWHERE ...",
+    "solution_query": "SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year < 2010 AND imdb_rating >= 8.5;",
+    "solution_explanation": "Combines year threshold and rating criteria using the AND operator.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using comma instead of AND between predicates."
+    ],
+    "hints": [
+      "Join criteria with AND: release_year < 2010 AND imdb_rating >= 8.5.",
+      "Query: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year < 2010 AND imdb_rating >= 8.5;",
+      "The expected query is: SELECT movie_id, title, release_year, imdb_rating FROM movies WHERE release_year < 2010 AND imdb_rating >= 8.5;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-15",
+    "slug": "large-enterprise-deals",
+    "title": "Major Enterprise Pipeline Opportunities",
+    "description_markdown": "Find opportunities where `deal_size >= 100000.00`. Project `opportunity_id`, `lead_id`, `deal_size`, and `stage`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Large deals\nSELECT opportunity_id, lead_id, deal_size, stage\nFROM opportunities\nWHERE ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE deal_size >= 100000.00;",
+    "solution_explanation": "Filters high-value commercial sales deals based on monetary size threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Formatting numbers with commas in SQL literals (use 100000.00, not 100,000.00)."
+    ],
+    "hints": [
+      "Do not put commas in numeric constants.",
+      "WHERE deal_size >= 100000.00.",
+      "Query: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE deal_size >= 100000.00;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-16",
+    "slug": "senior-professors-salary",
+    "title": "High Remuneration University Faculty",
+    "description_markdown": "Query the `professors` table to find all faculty members with `salary >= 95000.00`. Return `professor_id`, `first_name`, `last_name`, and `salary`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Professors with salary >= 95000\nSELECT professor_id, first_name, last_name, salary\nFROM professors\nWHERE ...",
+    "solution_query": "SELECT professor_id, first_name, last_name, salary FROM professors WHERE salary >= 95000.00;",
+    "solution_explanation": "Filters the faculty database for salaries reaching or exceeding 95,000.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering department instead of salary."
+    ],
+    "hints": [
+      "Use WHERE salary >= 95000.00.",
+      "Query: SELECT professor_id, first_name, last_name, salary FROM professors WHERE salary >= 95000.00;",
+      "The expected query is: SELECT professor_id, first_name, last_name, salary FROM professors WHERE salary >= 95000.00;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-17",
+    "slug": "active-expensive-menu-items",
+    "title": "Artisan Vegetarian Specialties",
+    "description_markdown": "Retrieve `item_id`, `item_name`, and `price` from `menu_items` where `is_vegetarian = true` AND `price > 15.00`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Vegetarian items priced > 15.00\nSELECT item_id, item_name, price\nFROM menu_items\nWHERE ...",
+    "solution_query": "SELECT item_id, item_name, price FROM menu_items WHERE is_vegetarian = TRUE AND price > 15.00;",
+    "solution_explanation": "Filters for premium vegetarian menu offerings combining boolean and numeric conditions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using strings 'true' instead of boolean literal true."
+    ],
+    "hints": [
+      "Check is_vegetarian = true AND price > 15.00.",
+      "Query: SELECT item_id, item_name, price FROM menu_items WHERE is_vegetarian = true AND price > 15.00;",
+      "The expected query is: SELECT item_id, item_name, price FROM menu_items WHERE is_vegetarian = TRUE AND price > 15.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-18",
+    "slug": "critical-reorder-stock",
+    "title": "Items at or Below Reorder Threshold",
+    "description_markdown": "Filter `stock_items` where `quantity_on_hand <= reorder_level` to detect restocking needs. Return `item_id`, `sku`, `quantity_on_hand`, and `reorder_level`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Reorder condition\nSELECT item_id, sku, quantity_on_hand, reorder_level\nFROM stock_items\nWHERE ...",
+    "solution_query": "SELECT item_id, sku, quantity_on_hand, reorder_level FROM stock_items WHERE quantity_on_hand <= reorder_level;",
+    "solution_explanation": "Compares two columns against each other directly in the WHERE clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Hardcoding a constant instead of comparing against reorder_level column."
+    ],
+    "hints": [
+      "Compare quantity_on_hand directly with reorder_level.",
+      "Syntax: WHERE quantity_on_hand <= reorder_level",
+      "Query: SELECT item_id, sku, quantity_on_hand, reorder_level FROM stock_items WHERE quantity_on_hand <= reorder_level;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-19",
+    "slug": "high-quota-sales-reps",
+    "title": "Enterprise Territory Sales Rep Targets",
+    "description_markdown": "Query `sales_reps` to find all representatives with `quota >= 500000.00`. Project `rep_id`, `name`, `territory`, and `quota`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-comparison",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Reps with quota >= 500000\nSELECT rep_id, name, territory, quota\nFROM sales_reps\nWHERE ...",
+    "solution_query": "SELECT rep_id, name, territory, quota FROM sales_reps WHERE quota >= 500000.00;",
+    "solution_explanation": "Filters sales personnel by quota magnitude.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including currency symbol $."
+    ],
+    "hints": [
+      "Filter WHERE quota >= 500000.00.",
+      "Query: SELECT rep_id, name, territory, quota FROM sales_reps WHERE quota >= 500000.00;",
+      "The expected query is: SELECT rep_id, name, territory, quota FROM sales_reps WHERE quota >= 500000.00;"
+    ],
+    "tags": [
+      "where",
+      "comparison",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-20",
+    "slug": "budget-hotel-rooms",
+    "title": "Vacant Affordable Lodging Rooms",
+    "description_markdown": "Find available rooms (`is_available = true`) priced under 100 per night (`price_per_night < 100.00`). Return `room_id`, `room_number`, `room_type`, and `price_per_night`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Available rooms under 100\nSELECT room_id, room_number, room_type, price_per_night\nFROM rooms\nWHERE ...",
+    "solution_query": "SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE is_available = TRUE AND price_per_night < 100.00;",
+    "solution_explanation": "Filters room vacancies using boolean status and price ceiling criteria.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking is_available as string 'available' instead of boolean."
+    ],
+    "hints": [
+      "Check is_available = true AND price_per_night < 100.00.",
+      "Query: SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE is_available = true AND price_per_night < 100.00;",
+      "The expected query is: SELECT room_id, room_number, room_type, price_per_night FROM rooms WHERE is_available = TRUE AND price_per_night < 100.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-21",
+    "slug": "scheduled-airline-flights",
+    "title": "Confirmed Low Fare Flight Departures",
+    "description_markdown": "Query `flights` for flights with `status = 'scheduled'` AND `base_price <= 250.00`. Project `flight_id`, `flight_number`, `origin`, `destination`, and `base_price`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Scheduled flights <= 250\nSELECT flight_id, flight_number, origin, destination, base_price\nFROM flights\nWHERE ...",
+    "solution_query": "SELECT flight_id, flight_number, origin, destination, base_price FROM flights WHERE status = 'scheduled' AND base_price <= 250.00;",
+    "solution_explanation": "Combines status filter and fare threshold for budget travel.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using status = 'SCHEDULED' when case matters."
+    ],
+    "hints": [
+      "Ensure 'scheduled' is lowercase.",
+      "Use AND base_price <= 250.00.",
+      "Query: SELECT flight_id, flight_number, origin, destination, base_price FROM flights WHERE status = 'scheduled' AND base_price <= 250.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-22",
+    "slug": "non-negative-bank-transactions",
+    "title": "Substantial Deposit Transactions",
+    "description_markdown": "Find transactions in `transactions` where `transaction_type = 'deposit'` AND `amount >= 1000.00`. Project `transaction_id`, `account_id`, `amount`, and `status`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Large deposits\nSELECT transaction_id, account_id, amount, status\nFROM transactions\nWHERE ...",
+    "solution_query": "SELECT transaction_id, account_id, amount, status FROM transactions WHERE transaction_type = 'deposit' AND amount >= 1000.00;",
+    "solution_explanation": "Filters the ledger for deposits meeting liquidity compliance thresholds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting transaction_type instead of requested status column."
+    ],
+    "hints": [
+      "Filter: WHERE transaction_type = 'deposit' AND amount >= 1000.00.",
+      "Query: SELECT transaction_id, account_id, amount, status FROM transactions WHERE transaction_type = 'deposit' AND amount >= 1000.00;",
+      "The expected query is: SELECT transaction_id, account_id, amount, status FROM transactions WHERE transaction_type = 'deposit' AND amount >= 1000.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-23",
+    "slug": "large-share-trades",
+    "title": "Institutional Volume Securities Executions",
+    "description_markdown": "Select `trade_id`, `symbol`, `shares`, and `price_per_share` from `trades` where `shares >= 500` AND `price_per_share > 100.00`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "shares",
+        "type": "integer"
+      },
+      {
+        "name": "price_per_share",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- High share count & price\nSELECT trade_id, symbol, shares, price_per_share\nFROM trades\nWHERE ...",
+    "solution_query": "SELECT trade_id, symbol, shares, price_per_share FROM trades WHERE shares >= 500 AND price_per_share > 100.00;",
+    "solution_explanation": "Screens market executions for block trading volume and high unit prices.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR instead of AND."
+    ],
+    "hints": [
+      "Condition: WHERE shares >= 500 AND price_per_share > 100.00.",
+      "Query: SELECT trade_id, symbol, shares, price_per_share FROM trades WHERE shares >= 500 AND price_per_share > 100.00;",
+      "The expected query is: SELECT trade_id, symbol, shares, price_per_share FROM trades WHERE shares >= 500 AND price_per_share > 100.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-24",
+    "slug": "long-stay-reservations",
+    "title": "Confirmed High Value Hotel Bookings",
+    "description_markdown": "Retrieve `reservation_id`, `guest_id`, `total_amount`, and `status` from `reservations` where `status = 'confirmed'` AND `total_amount >= 1000.00`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Confirmed high value reservations\nSELECT reservation_id, guest_id, total_amount, status\nFROM reservations\nWHERE ...",
+    "solution_query": "SELECT reservation_id, guest_id, total_amount, status FROM reservations WHERE status = 'confirmed' AND total_amount >= 1000.00;",
+    "solution_explanation": "Identifies valuable completed bookings for concierge attention.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting quotes around string 'confirmed'."
+    ],
+    "hints": [
+      "Use status = 'confirmed' AND total_amount >= 1000.00.",
+      "Query: SELECT reservation_id, guest_id, total_amount, status FROM reservations WHERE status = 'confirmed' AND total_amount >= 1000.00;",
+      "The expected query is: SELECT reservation_id, guest_id, total_amount, status FROM reservations WHERE status = 'confirmed' AND total_amount >= 1000.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-25",
+    "slug": "active-premium-subscriptions",
+    "title": "Active Premium Tier Streaming Accounts",
+    "description_markdown": "Query `subscriptions` for members with `status = 'active'` AND `monthly_price >= 14.99`. Return `subscription_id`, `user_id`, `plan_name`, and `monthly_price`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "subscriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "subscription_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "plan_name",
+        "type": "varchar"
+      },
+      {
+        "name": "monthly_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Active premium subscriptions\nSELECT subscription_id, user_id, plan_name, monthly_price\nFROM subscriptions\nWHERE ...",
+    "solution_query": "SELECT subscription_id, user_id, plan_name, monthly_price FROM subscriptions WHERE status = 'active' AND monthly_price >= 14.99;",
+    "solution_explanation": "Filters active customer memberships paying upper-tier plan prices.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking status != 'canceled' without also ensuring monthly_price >= 14.99."
+    ],
+    "hints": [
+      "Condition: WHERE status = 'active' AND monthly_price >= 14.99.",
+      "Query: SELECT subscription_id, user_id, plan_name, monthly_price FROM subscriptions WHERE status = 'active' AND monthly_price >= 14.99;",
+      "The expected query is: SELECT subscription_id, user_id, plan_name, monthly_price FROM subscriptions WHERE status = 'active' AND monthly_price >= 14.99;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-26",
+    "slug": "senior-role-postings",
+    "title": "Senior Engineering Positions Salary Filter",
+    "description_markdown": "Filter `job_postings` where `min_experience_years >= 5` AND `base_salary_max >= 120000.00`. Return `posting_id`, `title`, `min_experience_years`, and `base_salary_max`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "min_experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Senior job postings\nSELECT posting_id, title, min_experience_years, base_salary_max\nFROM job_postings\nWHERE ...",
+    "solution_query": "SELECT posting_id, title, min_experience_years, base_salary_max FROM job_postings WHERE min_experience_years >= 5 AND base_salary_max >= 120000.00;",
+    "solution_explanation": "Identifies seasoned career opportunities with compensation meeting minimum benchmarks.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering department instead of min_experience_years."
+    ],
+    "hints": [
+      "Use AND between the experience and salary predicates.",
+      "Query: SELECT posting_id, title, min_experience_years, base_salary_max FROM job_postings WHERE min_experience_years >= 5 AND base_salary_max >= 120000.00;",
+      "The expected query is: SELECT posting_id, title, min_experience_years, base_salary_max FROM job_postings WHERE min_experience_years >= 5 AND base_salary_max >= 120000.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-27",
+    "slug": "pediatric-or-cardiology-doctors",
+    "title": "Cardiology and Pediatrics Department Physicians",
+    "description_markdown": "Query `doctors` to find doctors in either the 'Cardiology' OR 'Pediatrics' department. Return `doctor_id`, `name`, `department`, and `specialization`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Doctors in Cardiology or Pediatrics\nSELECT doctor_id, name, department, specialization\nFROM doctors\nWHERE ...",
+    "solution_query": "SELECT doctor_id, name, department, specialization FROM doctors WHERE department = 'Cardiology' OR department = 'Pediatrics';",
+    "solution_explanation": "Uses the OR logical operator to match doctors assigned to either department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using AND which results in 0 rows because one doctor cannot have two distinct department values simultaneously."
+    ],
+    "hints": [
+      "Use the OR operator.",
+      "Condition: department = 'Cardiology' OR department = 'Pediatrics'.",
+      "Query: SELECT doctor_id, name, department, specialization FROM doctors WHERE department = 'Cardiology' OR department = 'Pediatrics';"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-28",
+    "slug": "expensive-low-stock-items",
+    "title": "High Value Capital Items with Low Stock",
+    "description_markdown": "Find inventory items in `stock_items` where `unit_cost >= 50.00` AND `quantity_on_hand < 30`. Project `item_id`, `sku`, `name`, `quantity_on_hand`, and `unit_cost`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "unit_cost",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Expensive low-stock items\nSELECT item_id, sku, name, quantity_on_hand, unit_cost\nFROM stock_items\nWHERE ...",
+    "solution_query": "SELECT item_id, sku, name, quantity_on_hand, unit_cost FROM stock_items WHERE unit_cost >= 50.00 AND quantity_on_hand < 30;",
+    "solution_explanation": "Prioritizes procurement risk by isolating valuable inventory lines having depleted reserves.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using reorder_level instead of quantity_on_hand."
+    ],
+    "hints": [
+      "Check unit_cost >= 50.00 AND quantity_on_hand < 30.",
+      "Query: SELECT item_id, sku, name, quantity_on_hand, unit_cost FROM stock_items WHERE unit_cost >= 50.00 AND quantity_on_hand < 30;",
+      "The expected query is: SELECT item_id, sku, name, quantity_on_hand, unit_cost FROM stock_items WHERE unit_cost >= 50.00 AND quantity_on_hand < 30;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-29",
+    "slug": "high-value-annual-contracts",
+    "title": "Multi-Year High ACV Commercial Contracts",
+    "description_markdown": "Query `contracts` for long-term high-value agreements where `annual_contract_value >= 50000.00` AND `duration_months >= 12`. Return `contract_id`, `opportunity_id`, `annual_contract_value`, and `duration_months`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- High ACV contracts\nSELECT contract_id, opportunity_id, annual_contract_value, duration_months\nFROM contracts\nWHERE ...",
+    "solution_query": "SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE annual_contract_value >= 50000.00 AND duration_months >= 12;",
+    "solution_explanation": "Screens business agreements by annual revenue yield and commitment duration.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using months < 12."
+    ],
+    "hints": [
+      "WHERE annual_contract_value >= 50000.00 AND duration_months >= 12.",
+      "Query: SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE annual_contract_value >= 50000.00 AND duration_months >= 12;",
+      "The expected query is: SELECT contract_id, opportunity_id, annual_contract_value, duration_months FROM contracts WHERE annual_contract_value >= 50000.00 AND duration_months >= 12;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-30",
+    "slug": "senior-professors-computer-science",
+    "title": "Computer Science Distinguished Chairs",
+    "description_markdown": "Find professors in department 'Computer Science' with `salary > 85000.00`. Project `professor_id`, `first_name`, `last_name`, `department`, and `salary`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- CS faculty earning > 85000\nSELECT professor_id, first_name, last_name, department, salary\nFROM professors\nWHERE ...",
+    "solution_query": "SELECT professor_id, first_name, last_name, department, salary FROM professors WHERE department = 'Computer Science' AND salary > 85000.00;",
+    "solution_explanation": "Combines academic department affiliation and salary threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling department string 'Computer Science'."
+    ],
+    "hints": [
+      "Check department = 'Computer Science' AND salary > 85000.00.",
+      "Query: SELECT professor_id, first_name, last_name, department, salary FROM professors WHERE department = 'Computer Science' AND salary > 85000.00;",
+      "The expected query is: SELECT professor_id, first_name, last_name, department, salary FROM professors WHERE department = 'Computer Science' AND salary > 85000.00;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-31",
+    "slug": "active-driver-high-rating",
+    "title": "Elite Active Delivery Courier Fleet",
+    "description_markdown": "Query `delivery_drivers` for active couriers (`is_active = true`) with customer satisfaction score `rating >= 4.8`. Return `driver_id`, `name`, `vehicle_type`, and `rating`.",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Active couriers with rating >= 4.8\nSELECT driver_id, name, vehicle_type, rating\nFROM delivery_drivers\nWHERE ...",
+    "solution_query": "SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE is_active = TRUE AND rating >= 4.8;",
+    "solution_explanation": "Applies dual operational criteria to identify star delivery partners.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using string literal 'true'."
+    ],
+    "hints": [
+      "Condition: WHERE is_active = true AND rating >= 4.8.",
+      "Query: SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE is_active = true AND rating >= 4.8;",
+      "The expected query is: SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE is_active = TRUE AND rating >= 4.8;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-whe-32",
+    "slug": "high-risk-or-large-portfolios",
+    "title": "Large Institutional Stock Acquisitions",
+    "description_markdown": "Retrieve `trade_id`, `portfolio_id`, `symbol`, `trade_type`, and `shares` from `trades` for buy orders (`trade_type = 'buy'`) involving at least 1000 shares (`shares >= 1000`).",
+    "topic_id": "where-filtering",
+    "subtopic_id": "where-boolean",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "trade_id",
+        "type": "integer"
+      },
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "trade_type",
+        "type": "varchar"
+      },
+      {
+        "name": "shares",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Buy orders >= 1000 shares\nSELECT trade_id, portfolio_id, symbol, trade_type, shares\nFROM trades\nWHERE ...",
+    "solution_query": "SELECT trade_id, portfolio_id, symbol, trade_type, shares FROM trades WHERE trade_type = 'buy' AND shares >= 1000;",
+    "solution_explanation": "Filters securities orders for large purchase transactions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering sell trades or using shares > 1000 instead of shares >= 1000."
+    ],
+    "hints": [
+      "Check trade_type = 'buy' AND shares >= 1000.",
+      "Query: SELECT trade_id, portfolio_id, symbol, trade_type, shares FROM trades WHERE trade_type = 'buy' AND shares >= 1000;",
+      "The expected query is: SELECT trade_id, portfolio_id, symbol, trade_type, shares FROM trades WHERE trade_type = 'buy' AND shares >= 1000;"
+    ],
+    "tags": [
+      "where",
+      "boolean",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-whe-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-whe-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-whe-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

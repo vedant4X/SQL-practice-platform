@@ -1,0 +1,2332 @@
+[
+  {
+    "id": "q-lim-01",
+    "slug": "top-3-highest-paid-employees",
+    "title": "Identify Top 3 Compensated Executives",
+    "description_markdown": "Find the top 3 highest-earning employees in the company. Return `first_name`, `last_name`, and `salary`, ordered by `salary` descending.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 highest salaries\nSELECT first_name, last_name, salary\nFROM employees\nORDER BY salary DESC\nLIMIT ...",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC LIMIT 3;",
+    "solution_explanation": "Combines ORDER BY with LIMIT 3 to retrieve the top 3 rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Combine `ORDER BY salary DESC, emp_id ASC` with `LIMIT 3`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-02",
+    "slug": "paginate-e-commerce-orders",
+    "title": "Implement Second Page of Order History",
+    "description_markdown": "Suppose orders are displayed 5 per page, ordered by `order_id` ascending. Write a query to fetch Page 2 (rows 6 through 10). Return `order_id`, `customer_id`, and `total_amount`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Fetch second page of 5 items\nSELECT ...",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders ORDER BY order_id ASC LIMIT 5 OFFSET 5;",
+    "solution_explanation": "OFFSET 5 skips the initial 5 rows (Page 1), and LIMIT 5 extracts the subsequent 5 rows (Page 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "To skip the first 5 rows and fetch 5 rows, use `LIMIT 5 OFFSET 5`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders ORDER BY order_id ASC LIMIT 5 OFFSET 5;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-03",
+    "slug": "second-highest-budget-department",
+    "title": "Identify Department with Second Highest Budget",
+    "description_markdown": "Find the single department with the second-highest budget. Return `dept_name` and `budget`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Fetch 2nd highest budget using LIMIT and OFFSET\nSELECT ...",
+    "solution_query": "SELECT dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC LIMIT 1 OFFSET 1;",
+    "solution_explanation": "Sorting DESC and using `OFFSET 1 LIMIT 1` skips the top record and selects the second highest directly.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Sort by `budget DESC, dept_id ASC`.",
+      "Use `LIMIT 1 OFFSET 1` to skip the highest and return the runner-up.",
+      "Query: SELECT dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC LIMIT 1 OFFSET 1;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "interview-favorite"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-04",
+    "slug": "top-5-cheapest-products",
+    "title": "Catalog Top 5 Most Affordable Retail Items",
+    "description_markdown": "Query `products` for the top 5 least expensive items. Return `product_id`, `product_name`, and `price`, ordered by `price` ascending, then `product_id` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 cheapest products\nSELECT product_id, product_name, price\nFROM products\nORDER BY price ASC, product_id ASC\nLIMIT ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products ORDER BY price ASC, product_id ASC LIMIT 5;",
+    "solution_explanation": "Combines ASC sorting on price with LIMIT 5 to restrict output to the 5 cheapest products.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using DESC which returns the 5 most expensive products."
+    ],
+    "hints": [
+      "Use `ORDER BY price ASC, product_id ASC LIMIT 5`.",
+      "Query: SELECT product_id, product_name, price FROM products ORDER BY price ASC, product_id ASC LIMIT 5;",
+      "The expected query is: SELECT product_id, product_name, price FROM products ORDER BY price ASC, product_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-05",
+    "slug": "top-5-highest-gpa-students",
+    "title": "Top 5 Academic Valedictorians by GPA",
+    "description_markdown": "Find the 5 students with the highest `gpa` in `students`. Return `student_id`, `first_name`, `last_name`, and `gpa`, ordered by `gpa` descending, then `student_id` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 students by GPA\nSELECT student_id, first_name, last_name, gpa\nFROM students\nORDER BY gpa DESC, student_id ASC\nLIMIT ...",
+    "solution_query": "SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 5;",
+    "solution_explanation": "Restricts student records to the top 5 highest GPA achievements.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting student_id tie-breaker."
+    ],
+    "hints": [
+      "Combine `ORDER BY gpa DESC, student_id ASC` with `LIMIT 5`.",
+      "Query: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 5;",
+      "The expected query is: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-06",
+    "slug": "top-3-longest-flights",
+    "title": "Top 3 Premium Fare Airline Routes",
+    "description_markdown": "Query `flights` for the 3 flights with the highest `base_price`. Return `flight_id`, `flight_number`, and `base_price`, ordered by `base_price` descending, then `flight_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 flights by base_price\nSELECT flight_id, flight_number, base_price\nFROM flights\nORDER BY base_price DESC, flight_id ASC\nLIMIT ...",
+    "solution_query": "SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price DESC, flight_id ASC LIMIT 3;",
+    "solution_explanation": "Extracts the top 3 highest airfares from the schedule.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 5 instead of 3."
+    ],
+    "hints": [
+      "Use `LIMIT 3` with `ORDER BY base_price DESC, flight_id ASC`.",
+      "Query: SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price DESC, flight_id ASC LIMIT 3;",
+      "The expected query is: SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price DESC, flight_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-07",
+    "slug": "top-5-richest-bank-accounts",
+    "title": "Top 5 Institutional Accounts by Balance",
+    "description_markdown": "Find the 5 accounts with the largest `balance` in `accounts`. Return `account_id`, `account_type`, and `balance`, sorted by `balance` descending, then `account_id` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 accounts by balance\nSELECT account_id, account_type, balance\nFROM accounts\nORDER BY balance DESC, account_id ASC\nLIMIT ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 5;",
+    "solution_explanation": "Selects the 5 accounts having the highest funds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY balance DESC, account_id ASC LIMIT 5`.",
+      "Query: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 5;",
+      "The expected query is: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-08",
+    "slug": "top-5-highest-priced-stocks",
+    "title": "Top 5 Highest Value Equity Tickers",
+    "description_markdown": "Query `stocks` for the 5 most valuable securities. Return `symbol`, `company_name`, and `current_price`, ordered by `current_price` descending, then `symbol` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 stocks by price\nSELECT symbol, company_name, current_price\nFROM stocks\nORDER BY current_price DESC, symbol ASC\nLIMIT ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 5;",
+    "solution_explanation": "Limits equity output to the 5 highest-priced securities.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting symbol ASC tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY current_price DESC, symbol ASC LIMIT 5`.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 5;",
+      "The expected query is: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-09",
+    "slug": "top-3-rated-restaurants",
+    "title": "Top 3 Culinary Highlights by Rating",
+    "description_markdown": "Find the 3 restaurants with the highest `rating` in `restaurants`. Return `restaurant_id`, `name`, and `rating`, ordered by `rating` descending, then `restaurant_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 restaurants\nSELECT restaurant_id, name, rating\nFROM restaurants\nORDER BY rating DESC, restaurant_id ASC\nLIMIT ...",
+    "solution_query": "SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3;",
+    "solution_explanation": "Restricts restaurant rankings to the 3 highest rated dining establishments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 5 instead of 3."
+    ],
+    "hints": [
+      "Use `ORDER BY rating DESC, restaurant_id ASC LIMIT 3`.",
+      "Query: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3;",
+      "The expected query is: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-10",
+    "slug": "top-3-most-experienced-doctors",
+    "title": "Top 3 Veteran Senior Medical Specialists",
+    "description_markdown": "Query `doctors` for the 3 doctors with greatest `experience_years`. Return `doctor_id`, `name`, and `experience_years`, ordered by `experience_years` descending, then `doctor_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 doctors by experience\nSELECT doctor_id, name, experience_years\nFROM doctors\nORDER BY experience_years DESC, doctor_id ASC\nLIMIT ...",
+    "solution_query": "SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3;",
+    "solution_explanation": "Limits output to the 3 clinical specialists having the longest medical tenure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting doctor_id."
+    ],
+    "hints": [
+      "Use `ORDER BY experience_years DESC, doctor_id ASC LIMIT 3`.",
+      "Query: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3;",
+      "The expected query is: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-11",
+    "slug": "top-4-most-luxurious-hotels",
+    "title": "Top 4 Flagship Hotel Properties",
+    "description_markdown": "Find the 4 highest rated hotels in `hotels`. Return `hotel_id`, `name`, and `star_rating`, sorted by `star_rating` descending, then `hotel_id` ascending, with `LIMIT 4`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 4 hotels\nSELECT hotel_id, name, star_rating\nFROM hotels\nORDER BY star_rating DESC, hotel_id ASC\nLIMIT ...",
+    "solution_query": "SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC LIMIT 4;",
+    "solution_explanation": "Restricts lodging results to 4 premier hotels based on star rating.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 3."
+    ],
+    "hints": [
+      "Use `ORDER BY star_rating DESC, hotel_id ASC LIMIT 4`.",
+      "Query: SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC LIMIT 4;",
+      "The expected query is: SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC LIMIT 4;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-12",
+    "slug": "top-3-most-experienced-applicants",
+    "title": "Top 3 Senior Candidates in Recruitment Pipeline",
+    "description_markdown": "Query `applicants` for the top 3 candidates by `years_experience`. Return `applicant_id`, `first_name`, `last_name`, and `years_experience`, ordered by `years_experience` descending, then `applicant_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 applicants\nSELECT applicant_id, first_name, last_name, years_experience\nFROM applicants\nORDER BY years_experience DESC, applicant_id ASC\nLIMIT ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC LIMIT 3;",
+    "solution_explanation": "Limits talent search to the 3 most tenured job applicants.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting applicant_id."
+    ],
+    "hints": [
+      "Use `ORDER BY years_experience DESC, applicant_id ASC LIMIT 3`.",
+      "Query: SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC LIMIT 3;",
+      "The expected query is: SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-13",
+    "slug": "top-5-lowest-inventory-items",
+    "title": "Top 5 Most Depleted Inventory SKUs",
+    "description_markdown": "Find the 5 stock items with the lowest `quantity_on_hand` in `stock_items`. Return `item_id`, `sku`, and `quantity_on_hand`, ordered by `quantity_on_hand` ascending, then `item_id` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 low stock items\nSELECT item_id, sku, quantity_on_hand\nFROM stock_items\nORDER BY quantity_on_hand ASC, item_id ASC\nLIMIT ...",
+    "solution_query": "SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5;",
+    "solution_explanation": "Returns the 5 most critically depleted parts in stock.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using DESC."
+    ],
+    "hints": [
+      "Use `ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5`.",
+      "Query: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5;",
+      "The expected query is: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-14",
+    "slug": "top-3-earliest-published-books",
+    "title": "Top 3 Oldest Works in Library Catalog",
+    "description_markdown": "Query `books` for the 3 earliest published books. Return `book_id`, `title`, and `publication_year`, ordered by `publication_year` ascending, then `book_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 earliest books\nSELECT book_id, title, publication_year\nFROM books\nORDER BY publication_year ASC, book_id ASC\nLIMIT ...",
+    "solution_query": "SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3;",
+    "solution_explanation": "Identifies the 3 oldest works cataloged in the library collection.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using DESC which gives newest books."
+    ],
+    "hints": [
+      "Use `ORDER BY publication_year ASC, book_id ASC LIMIT 3`.",
+      "Query: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3;",
+      "The expected query is: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-15",
+    "slug": "top-5-highest-rated-movies",
+    "title": "Top 5 Acclaimed Motion Pictures",
+    "description_markdown": "Find the 5 films with the highest `imdb_rating` in `movies`. Return `movie_id`, `title`, and `imdb_rating`, sorted by `imdb_rating` descending, then `movie_id` ascending, with `LIMIT 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 5 movies\nSELECT movie_id, title, imdb_rating\nFROM movies\nORDER BY imdb_rating DESC, movie_id ASC\nLIMIT ...",
+    "solution_query": "SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 5;",
+    "solution_explanation": "Returns the 5 top rated movies in the media catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY imdb_rating DESC, movie_id ASC LIMIT 5`.",
+      "Query: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 5;",
+      "The expected query is: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 5;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-16",
+    "slug": "top-3-largest-opportunities",
+    "title": "Top 3 Enterprise Commercial Deals",
+    "description_markdown": "Query `opportunities` for the 3 largest deals by `deal_size`. Return `opportunity_id`, `lead_id`, and `deal_size`, ordered by `deal_size` descending, then `opportunity_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 opportunities\nSELECT opportunity_id, lead_id, deal_size\nFROM opportunities\nORDER BY deal_size DESC, opportunity_id ASC\nLIMIT ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3;",
+    "solution_explanation": "Isolates the 3 biggest transactions in sales pipeline.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting opportunity_id in ORDER BY."
+    ],
+    "hints": [
+      "Use `ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3`.",
+      "Query: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-17",
+    "slug": "top-3-highest-paid-professors",
+    "title": "Top 3 Highest Compensated University Faculty",
+    "description_markdown": "Find the 3 highest earning professors in `professors`. Return `professor_id`, `first_name`, `last_name`, and `salary`, sorted by `salary` descending, then `professor_id` ascending, with `LIMIT 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 3 professors\nSELECT professor_id, first_name, last_name, salary\nFROM professors\nORDER BY salary DESC, professor_id ASC\nLIMIT ...",
+    "solution_query": "SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC LIMIT 3;",
+    "solution_explanation": "Retrieves the top 3 faculty salaries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting professor_id."
+    ],
+    "hints": [
+      "Use `ORDER BY salary DESC, professor_id ASC LIMIT 3`.",
+      "Query: SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC LIMIT 3;",
+      "The expected query is: SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC LIMIT 3;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-18",
+    "slug": "top-2-highest-budget-depts",
+    "title": "Top 2 Major Corporate Department Budgets",
+    "description_markdown": "Query `departments` for the 2 departments with the highest `budget`. Return `dept_id`, `dept_name`, and `budget`, sorted by `budget` descending, then `dept_id` ascending, with `LIMIT 2`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "limit-top",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 2 departments\nSELECT dept_id, dept_name, budget\nFROM departments\nORDER BY budget DESC, dept_id ASC\nLIMIT ...",
+    "solution_query": "SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC LIMIT 2;",
+    "solution_explanation": "Returns the 2 most heavily funded corporate departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 3."
+    ],
+    "hints": [
+      "Use `ORDER BY budget DESC, dept_id ASC LIMIT 2`.",
+      "Query: SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC LIMIT 2;",
+      "The expected query is: SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC LIMIT 2;"
+    ],
+    "tags": [
+      "limit",
+      "top-n",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-19",
+    "slug": "pagination-products-page-2",
+    "title": "Product Catalog Page 2 Window (Items 6–10)",
+    "description_markdown": "Retrieve page 2 of products (5 items per page): return `product_id`, `product_name`, and `price`, ordered by `price` descending, then `product_id` ascending, skipping the first 5 (`LIMIT 5 OFFSET 5`).",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Products Page 2 (LIMIT 5 OFFSET 5)\nSELECT product_id, product_name, price\nFROM products\nORDER BY price DESC, product_id ASC\nLIMIT 5 OFFSET ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products ORDER BY price DESC, product_id ASC LIMIT 5 OFFSET 5;",
+    "solution_explanation": "OFFSET 5 skips the first 5 records (page 1) and LIMIT 5 returns the next 5 records (page 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OFFSET 6 instead of OFFSET 5."
+    ],
+    "hints": [
+      "OFFSET specifies how many rows to skip.",
+      "Use `LIMIT 5 OFFSET 5`.",
+      "Query: SELECT product_id, product_name, price FROM products ORDER BY price DESC, product_id ASC LIMIT 5 OFFSET 5;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-20",
+    "slug": "pagination-students-page-2",
+    "title": "Student Academic Roster Page 2 Window",
+    "description_markdown": "Retrieve page 2 of student records (3 students per page): return `student_id`, `first_name`, `last_name`, and `gpa`, sorted by `gpa` descending, then `student_id` ascending, skipping the first 3 rows (`LIMIT 3 OFFSET 3`).",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Students Page 2\nSELECT student_id, first_name, last_name, gpa\nFROM students\nORDER BY gpa DESC, student_id ASC\nLIMIT ... OFFSET ...",
+    "solution_query": "SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Fetches items 4-6 in the student GPA ranking using LIMIT 3 OFFSET 3.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing OFFSET before LIMIT."
+    ],
+    "hints": [
+      "Syntax order: ORDER BY ... LIMIT 3 OFFSET 3.",
+      "Query: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-21",
+    "slug": "pagination-employees-page-2",
+    "title": "Employee Payroll Page 2 Window (Workers 5–8)",
+    "description_markdown": "Fetch page 2 of employee salaries (4 per page): return `emp_id`, `first_name`, `last_name`, and `salary`, sorted by `salary` descending, then `emp_id` ascending, with `LIMIT 4 OFFSET 4`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Employees Page 2\nSELECT emp_id, first_name, last_name, salary\nFROM employees\nORDER BY salary DESC, emp_id ASC\nLIMIT 4 OFFSET ...",
+    "solution_query": "SELECT emp_id, first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC LIMIT 4 OFFSET 4;",
+    "solution_explanation": "Retrieves employees 5 through 8 in salary hierarchy.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OFFSET 5."
+    ],
+    "hints": [
+      "Page 2 of 4 items skips 4: `LIMIT 4 OFFSET 4`.",
+      "Query: SELECT emp_id, first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC LIMIT 4 OFFSET 4;",
+      "The expected query is: SELECT emp_id, first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC LIMIT 4 OFFSET 4;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-22",
+    "slug": "pagination-orders-page-2",
+    "title": "Order History Page 2 Window",
+    "description_markdown": "Query `orders` for page 2 of order transactions (5 per page): return `order_id`, `customer_id`, and `total_amount`, ordered by `total_amount` descending, then `order_id` ascending, with `LIMIT 5 OFFSET 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Orders Page 2\nSELECT order_id, customer_id, total_amount\nFROM orders\nORDER BY total_amount DESC, order_id ASC\nLIMIT 5 OFFSET ...",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC LIMIT 5 OFFSET 5;",
+    "solution_explanation": "Skips the 5 largest orders to view the second page of customer purchases.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting order_id tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY total_amount DESC, order_id ASC LIMIT 5 OFFSET 5`.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC LIMIT 5 OFFSET 5;",
+      "The expected query is: SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC LIMIT 5 OFFSET 5;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-23",
+    "slug": "pagination-flights-page-3",
+    "title": "Flight Fares Page 3 Window (Flights 7–9)",
+    "description_markdown": "Find flights on page 3 (3 flights per page): return `flight_id`, `flight_number`, and `base_price`, sorted by `base_price` ascending, then `flight_id` ascending, with `LIMIT 3 OFFSET 6`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Flights Page 3\nSELECT flight_id, flight_number, base_price\nFROM flights\nORDER BY base_price ASC, flight_id ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price ASC, flight_id ASC LIMIT 3 OFFSET 6;",
+    "solution_explanation": "Page 3 with 3 items per page skips 2 * 3 = 6 rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Setting OFFSET 3 instead of 6."
+    ],
+    "hints": [
+      "Page 3 offset = (3 - 1) * 3 = 6.",
+      "Use `LIMIT 3 OFFSET 6`.",
+      "Query: SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price ASC, flight_id ASC LIMIT 3 OFFSET 6;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-24",
+    "slug": "pagination-bank-accounts-page-2",
+    "title": "Bank Accounts Ledger Page 2 Window",
+    "description_markdown": "Retrieve page 2 of accounts (4 per page): return `account_id`, `account_type`, and `balance`, sorted by `balance` descending, then `account_id` ascending, with `LIMIT 4 OFFSET 4`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Accounts Page 2\nSELECT account_id, account_type, balance\nFROM accounts\nORDER BY balance DESC, account_id ASC\nLIMIT 4 OFFSET ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 4 OFFSET 4;",
+    "solution_explanation": "Retrieves accounts 5 to 8 ordered by balance descending.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting account_id."
+    ],
+    "hints": [
+      "Use `ORDER BY balance DESC, account_id ASC LIMIT 4 OFFSET 4`.",
+      "Query: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 4 OFFSET 4;",
+      "The expected query is: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC LIMIT 4 OFFSET 4;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-25",
+    "slug": "pagination-stocks-page-2",
+    "title": "Stock Quotes Page 2 Window",
+    "description_markdown": "Query `stocks` for page 2 (3 items per page): return `symbol`, `company_name`, and `current_price`, ordered by `current_price` descending, then `symbol` ascending, with `LIMIT 3 OFFSET 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stocks Page 2\nSELECT symbol, company_name, current_price\nFROM stocks\nORDER BY current_price DESC, symbol ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Extracts equities ranked 4 through 6 by share price.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OFFSET 2."
+    ],
+    "hints": [
+      "Use `ORDER BY current_price DESC, symbol ASC LIMIT 3 OFFSET 3`.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-26",
+    "slug": "pagination-restaurants-page-2",
+    "title": "Restaurant Directory Page 2 Window",
+    "description_markdown": "Find restaurants for page 2 (3 per page): return `restaurant_id`, `name`, and `rating`, sorted by `rating` descending, then `restaurant_id` ascending, with `LIMIT 3 OFFSET 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Restaurants Page 2\nSELECT restaurant_id, name, rating\nFROM restaurants\nORDER BY rating DESC, restaurant_id ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Paginates culinary listings returning venues 4 through 6.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting restaurant_id."
+    ],
+    "hints": [
+      "Use `ORDER BY rating DESC, restaurant_id ASC LIMIT 3 OFFSET 3`.",
+      "Query: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-27",
+    "slug": "pagination-doctors-page-2",
+    "title": "Physician Directory Page 2 Window",
+    "description_markdown": "Query `doctors` for page 2 (3 doctors per page): return `doctor_id`, `name`, and `experience_years`, sorted by `experience_years` descending, then `doctor_id` ascending, with `LIMIT 3 OFFSET 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Doctors Page 2\nSELECT doctor_id, name, experience_years\nFROM doctors\nORDER BY experience_years DESC, doctor_id ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Returns the second page of physician records by seniority.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY experience_years DESC, doctor_id ASC LIMIT 3 OFFSET 3`.",
+      "Query: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-28",
+    "slug": "pagination-rooms-page-2",
+    "title": "Lodging Accommodations Page 2 Window",
+    "description_markdown": "Find hotel rooms for page 2 (4 rooms per page): return `room_id`, `room_number`, and `price_per_night`, sorted by `price_per_night` ascending, then `room_id` ascending, with `LIMIT 4 OFFSET 4`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Rooms Page 2\nSELECT room_id, room_number, price_per_night\nFROM rooms\nORDER BY price_per_night ASC, room_id ASC\nLIMIT 4 OFFSET ...",
+    "solution_query": "SELECT room_id, room_number, price_per_night FROM rooms ORDER BY price_per_night ASC, room_id ASC LIMIT 4 OFFSET 4;",
+    "solution_explanation": "Retrieves hotel rooms 5 through 8 ordered by nightly rate.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting descending."
+    ],
+    "hints": [
+      "Use `ORDER BY price_per_night ASC, room_id ASC LIMIT 4 OFFSET 4`.",
+      "Query: SELECT room_id, room_number, price_per_night FROM rooms ORDER BY price_per_night ASC, room_id ASC LIMIT 4 OFFSET 4;",
+      "The expected query is: SELECT room_id, room_number, price_per_night FROM rooms ORDER BY price_per_night ASC, room_id ASC LIMIT 4 OFFSET 4;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-29",
+    "slug": "pagination-books-page-2",
+    "title": "Library Catalog Page 2 Window",
+    "description_markdown": "Query `books` for page 2 of publications (3 books per page): return `book_id`, `title`, and `publication_year`, ordered by `publication_year` ascending, then `book_id` ascending, with `LIMIT 3 OFFSET 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Books Page 2\nSELECT book_id, title, publication_year\nFROM books\nORDER BY publication_year ASC, book_id ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Fetches literature titles 4 through 6 in chronological order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting book_id."
+    ],
+    "hints": [
+      "Use `ORDER BY publication_year ASC, book_id ASC LIMIT 3 OFFSET 3`.",
+      "Query: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-30",
+    "slug": "pagination-movies-page-2",
+    "title": "Streaming Cinema Page 2 Window",
+    "description_markdown": "Find films for page 2 (4 per page): return `movie_id`, `title`, and `imdb_rating`, sorted by `imdb_rating` descending, then `movie_id` ascending, with `LIMIT 4 OFFSET 4`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Movies Page 2\nSELECT movie_id, title, imdb_rating\nFROM movies\nORDER BY imdb_rating DESC, movie_id ASC\nLIMIT 4 OFFSET ...",
+    "solution_query": "SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 4 OFFSET 4;",
+    "solution_explanation": "Renders page 2 of media catalog sorted by viewer ratings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY imdb_rating DESC, movie_id ASC LIMIT 4 OFFSET 4`.",
+      "Query: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 4 OFFSET 4;",
+      "The expected query is: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC LIMIT 4 OFFSET 4;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-31",
+    "slug": "pagination-deals-page-2",
+    "title": "Sales Opportunities Page 2 Window",
+    "description_markdown": "Query `opportunities` for page 2 (3 per page): return `opportunity_id`, `lead_id`, and `deal_size`, ordered by `deal_size` descending, then `opportunity_id` ascending, with `LIMIT 3 OFFSET 3`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Deals Page 2\nSELECT opportunity_id, lead_id, deal_size\nFROM opportunities\nORDER BY deal_size DESC, opportunity_id ASC\nLIMIT 3 OFFSET ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3 OFFSET 3;",
+    "solution_explanation": "Paginates pipeline opportunities returning deals 4 to 6.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting opportunity_id in ORDER BY."
+    ],
+    "hints": [
+      "Use `ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3 OFFSET 3`.",
+      "Query: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3 OFFSET 3;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC LIMIT 3 OFFSET 3;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-lim-32",
+    "slug": "pagination-stock-items-page-2",
+    "title": "Warehouse Inventory Page 2 Window",
+    "description_markdown": "Find inventory parts for page 2 (5 items per page): return `item_id`, `sku`, and `quantity_on_hand`, ordered by `quantity_on_hand` ascending, then `item_id` ascending, with `LIMIT 5 OFFSET 5`.",
+    "topic_id": "limit-offset",
+    "subtopic_id": "offset-paging",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stock items Page 2\nSELECT item_id, sku, quantity_on_hand\nFROM stock_items\nORDER BY quantity_on_hand ASC, item_id ASC\nLIMIT 5 OFFSET ...",
+    "solution_query": "SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5 OFFSET 5;",
+    "solution_explanation": "Selects items 6 to 10 in restock priority order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OFFSET 4."
+    ],
+    "hints": [
+      "Use `ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5 OFFSET 5`.",
+      "Query: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5 OFFSET 5;",
+      "The expected query is: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC LIMIT 5 OFFSET 5;"
+    ],
+    "tags": [
+      "limit",
+      "offset",
+      "pagination",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lim-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lim-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lim-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

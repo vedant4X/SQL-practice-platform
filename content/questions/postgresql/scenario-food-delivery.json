@@ -1,0 +1,2354 @@
+[
+  {
+    "id": "q-sc-fdl-01",
+    "slug": "food-delivery-top-restaurants-by-revenue",
+    "title": "Identify Top Grossing Restaurants",
+    "description_markdown": "Business request: Calculate total revenue (`SUM(total_amount)` as `gross_sales`) and order volume (`COUNT(order_id)` as `order_volume`) for delivered orders per restaurant. Return `r.name`, `r.cuisine`, `order_volume`, and `gross_sales`. Order by `gross_sales` DESC, `r.restaurant_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "order_volume",
+        "type": "bigint"
+      },
+      {
+        "name": "gross_sales",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Restaurant sales summary\nSELECT ...",
+    "solution_query": "SELECT r.name, r.cuisine, COUNT(o.order_id) AS order_volume, SUM(o.total_amount) AS gross_sales FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name, r.cuisine ORDER BY gross_sales DESC, r.restaurant_id ASC;",
+    "solution_explanation": "Aggregates marketplace transaction volumes by restaurant partner.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE o.delivery_status = 'delivered'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT r.name, r.cuisine, COUNT(o.order_id) AS order_volume, SUM(o.total_amount) AS gross_sales FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name, r.cuisine ORDER BY gross_sales DESC, r.restaurant_id ASC;"
+    ],
+    "tags": [
+      "food-delivery",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-fdl-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-fdl-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-fdl-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-02",
+    "slug": "food-delivery-driver-performance",
+    "title": "Driver Completed Deliveries and Rating Analysis",
+    "description_markdown": "Fleet ops request: For active drivers (`is_active = TRUE`), count how many orders they have delivered (`COUNT(o.order_id)` as `completed_deliveries`). Return `d.name`, `d.vehicle_type`, `d.rating`, and `completed_deliveries`. Order by `completed_deliveries` DESC, `d.rating` DESC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      },
+      {
+        "name": "completed_deliveries",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Driver performance metrics\nSELECT ...",
+    "solution_query": "SELECT d.name, d.vehicle_type, d.rating, COUNT(o.order_id) AS completed_deliveries FROM delivery_drivers d LEFT JOIN delivery_orders o ON d.driver_id = o.driver_id AND o.delivery_status = 'delivered' WHERE d.is_active = TRUE GROUP BY d.driver_id, d.name, d.vehicle_type, d.rating ORDER BY completed_deliveries DESC, d.rating DESC, d.driver_id ASC;",
+    "solution_explanation": "Measures driver productivity across transport modalities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN delivery_orders o ON d.driver_id = o.driver_id AND o.delivery_status = 'delivered'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.name, d.vehicle_type, d.rating, COUNT(o.order_id) AS completed_deliveries FROM delivery_drivers d LEFT JOIN delivery_orders o ON d.driver_id = o.driver_id AND o.delivery_status = 'delivered' WHERE d.is_active = TRUE GROUP BY d.driver_id, d.name, d.vehicle_type, d.rating ORDER BY completed_deliveries DESC, d.rating DESC, d.driver_id ASC;"
+    ],
+    "tags": [
+      "food-delivery",
+      "fleet"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-fdl-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-fdl-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-fdl-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-03",
+    "slug": "food-delivery-vegetarian-item-popularity",
+    "title": "Vegetarian Dish Sales Share per Restaurant",
+    "description_markdown": "Product team request: For each restaurant, calculate total menu items as `total_items`, and count of vegetarian options as `veg_items`. Return `r.name`, `r.cuisine`, `total_items`, and `veg_items`. Filter for restaurants with `total_items >= 2`. Order by `veg_items` DESC, `r.restaurant_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "total_items",
+        "type": "bigint"
+      },
+      {
+        "name": "veg_items",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Menu vegetarian breakdown\nSELECT ...",
+    "solution_query": "SELECT r.name, r.cuisine, COUNT(m.item_id) AS total_items, COUNT(m.item_id) FILTER (WHERE m.is_vegetarian = TRUE) AS veg_items FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.restaurant_id, r.name, r.cuisine HAVING COUNT(m.item_id) >= 2 ORDER BY veg_items DESC, r.restaurant_id ASC;",
+    "solution_explanation": "Uses conditional filtering to analyze menu composition.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(m.item_id) FILTER (WHERE m.is_vegetarian = TRUE) AS veg_items`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT r.name, r.cuisine, COUNT(m.item_id) AS total_items, COUNT(m.item_id) FILTER (WHERE m.is_vegetarian = TRUE) AS veg_items FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.restaurant_id, r.name, r.cuisine HAVING COUNT(m.item_id) >= 2 ORDER BY veg_items DESC, r.restaurant_id ASC;"
+    ],
+    "tags": [
+      "food-delivery",
+      "filter-aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-fdl-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-fdl-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-fdl-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-04",
+    "slug": "fdl-vegetarian-menu-items-catalog",
+    "title": "Filter Plant-Based and Vegetarian Dishes",
+    "description_markdown": "Retrieve all vegetarian menu items (`is_vegetarian = TRUE`). Return `item_id`, `item_name`, and `price`. Order by `price` DESC, `item_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT item_id, item_name, price FROM menu_items WHERE is_vegetarian = TRUE ORDER BY price DESC, item_id ASC;",
+    "solution_explanation": "Filters menu_items where is_vegetarian = TRUE.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE is_vegetarian = TRUE`.",
+      "Order by `price` DESC, `item_id` ASC.",
+      "Query: SELECT item_id, item_name, price FROM menu_items WHERE is_vegetarian = TRUE ORDER BY price DESC, item_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-05",
+    "slug": "fdl-top-tier-rated-restaurants",
+    "title": "Identify Top-Rated Restaurants",
+    "description_markdown": "List restaurants with a customer `rating` of 4.7 or higher. Return `restaurant_id`, `name`, `cuisine`, and `rating`. Order by `rating` DESC, `restaurant_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating >= 4.7 ORDER BY rating DESC, restaurant_id ASC;",
+    "solution_explanation": "Filters restaurants by rating threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE rating >= 4.7`.",
+      "Order by `rating` DESC, `restaurant_id` ASC.",
+      "Query: SELECT restaurant_id, name, cuisine, rating FROM restaurants WHERE rating >= 4.7 ORDER BY rating DESC, restaurant_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-06",
+    "slug": "fdl-active-fleet-drivers-by-vehicle",
+    "title": "Count Active Drivers by Vehicle Modality",
+    "description_markdown": "Count active delivery drivers (`is_active = TRUE`) grouped by `vehicle_type` as `active_driver_count`. Order by `active_driver_count` DESC, `vehicle_type` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      },
+      {
+        "name": "active_driver_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT vehicle_type, COUNT(*) AS active_driver_count FROM delivery_drivers WHERE is_active = TRUE GROUP BY vehicle_type ORDER BY active_driver_count DESC, vehicle_type ASC;",
+    "solution_explanation": "Filters active drivers and groups by vehicle_type.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE is_active = TRUE`.",
+      "Group by `vehicle_type`.",
+      "Query: SELECT vehicle_type, COUNT(*) AS active_driver_count FROM delivery_drivers WHERE is_active = TRUE GROUP BY vehicle_type ORDER BY active_driver_count DESC, vehicle_type ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-07",
+    "slug": "fdl-average-dish-price-by-cuisine",
+    "title": "Calculate Average Dish Pricing by Cuisine",
+    "description_markdown": "Calculate the average menu item price for each restaurant `cuisine` as `avg_dish_price`, rounded to 2 decimal places. Order by `avg_dish_price` DESC, `cuisine` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_dish_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.cuisine, ROUND(AVG(m.price), 2) AS avg_dish_price FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.cuisine ORDER BY avg_dish_price DESC, r.cuisine ASC;",
+    "solution_explanation": "Joins restaurants and menu_items, computing ROUND(AVG(price), 2) grouped by cuisine.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `restaurants r` and `menu_items m` on `r.restaurant_id = m.restaurant_id`.",
+      "Use `ROUND(AVG(m.price), 2) AS avg_dish_price`.",
+      "Query: SELECT r.cuisine, ROUND(AVG(m.price), 2) AS avg_dish_price FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.cuisine ORDER BY avg_dish_price DESC, r.cuisine ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-08",
+    "slug": "fdl-high-ticket-delivered-orders",
+    "title": "Filter High-Ticket Delivered Orders",
+    "description_markdown": "Find all completed deliveries (`delivery_status = 'delivered'`) where the `total_amount` is at least $30.00. Return `order_id`, `customer_name`, and `total_amount`. Order by `total_amount` DESC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, customer_name, total_amount FROM delivery_orders WHERE delivery_status = 'delivered' AND total_amount >= 30.00 ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Filters delivered orders with total_amount >= 30.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE delivery_status = 'delivered' AND total_amount >= 30.00`.",
+      "Order by `total_amount` DESC, `order_id` ASC.",
+      "Query: SELECT order_id, customer_name, total_amount FROM delivery_orders WHERE delivery_status = 'delivered' AND total_amount >= 30.00 ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-09",
+    "slug": "fdl-high-performing-active-drivers",
+    "title": "Identify Star Active Drivers with Top Ratings",
+    "description_markdown": "List active drivers (`is_active = TRUE`) who maintain a rating of 4.8 or higher. Return `driver_id`, `name`, `vehicle_type`, and `rating`. Order by `rating` DESC, `driver_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "vehicle_type",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE is_active = TRUE AND rating >= 4.8 ORDER BY rating DESC, driver_id ASC;",
+    "solution_explanation": "Filters active drivers with rating >= 4.8.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE is_active = TRUE AND rating >= 4.8`.",
+      "Order by `rating` DESC, `driver_id` ASC.",
+      "Query: SELECT driver_id, name, vehicle_type, rating FROM delivery_drivers WHERE is_active = TRUE AND rating >= 4.8 ORDER BY rating DESC, driver_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-10",
+    "slug": "fdl-completed-trips-per-driver",
+    "title": "Calculate Completed Deliveries per Driver",
+    "description_markdown": "For each driver, count the total number of successfully delivered orders as `completed_orders`. Include drivers with zero delivered orders. Return `driver_name` and `completed_orders`. Order by `completed_orders` DESC, `driver_name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT d.name AS driver_name, COUNT(o.order_id) AS completed_orders FROM delivery_drivers d LEFT JOIN delivery_orders o ON d.driver_id = o.driver_id AND o.delivery_status = 'delivered' GROUP BY d.driver_id, d.name ORDER BY completed_orders DESC, driver_name ASC;",
+    "solution_explanation": "Uses LEFT JOIN between delivery_drivers and delivery_orders on delivered status.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `delivery_drivers d` and `delivery_orders o` with condition `AND o.delivery_status = 'delivered'`.",
+      "Group by `d.driver_id, d.name` and count orders.",
+      "Query: SELECT d.name AS driver_name, COUNT(o.order_id) AS completed_orders FROM delivery_drivers d LEFT JOIN delivery_orders o ON d.driver_id = o.driver_id AND o.delivery_status = 'delivered' GROUP BY d.driver_id, d.name ORDER BY completed_orders DESC, driver_name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-11",
+    "slug": "fdl-item-order-velocity-units-sold",
+    "title": "Aggregate Cumulative Units Sold per Menu Item",
+    "description_markdown": "Calculate total units sold (`units_sold`) for each menu item across all placed orders. Include items with 0 sales using `COALESCE`. Order by `units_sold` DESC, `item_name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items",
+      "delivery_order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "units_sold",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.item_name, COALESCE(SUM(doi.quantity), 0) AS units_sold FROM menu_items m LEFT JOIN delivery_order_items doi ON m.item_id = doi.item_id GROUP BY m.item_id, m.item_name ORDER BY units_sold DESC, m.item_name ASC;",
+    "solution_explanation": "LEFT JOINs menu_items to delivery_order_items and sums quantity with COALESCE.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `menu_items m` to `delivery_order_items doi` on `m.item_id = doi.item_id`.",
+      "Use `COALESCE(SUM(doi.quantity), 0) AS units_sold`.",
+      "Query: SELECT m.item_name, COALESCE(SUM(doi.quantity), 0) AS units_sold FROM menu_items m LEFT JOIN delivery_order_items doi ON m.item_id = doi.item_id GROUP BY m.item_id, m.item_name ORDER BY units_sold DESC, m.item_name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-12",
+    "slug": "fdl-most-expensive-item-per-restaurant",
+    "title": "Find Highest Priced Dish per Restaurant",
+    "description_markdown": "For each restaurant, determine the maximum dish price offered as `max_price`. Return `restaurant_name` and `max_price`. Order by `max_price` DESC, `restaurant_name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.name AS restaurant_name, MAX(m.price) AS max_price FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.restaurant_id, r.name ORDER BY max_price DESC, restaurant_name ASC;",
+    "solution_explanation": "Joins restaurants and menu_items, grouping by restaurant to find MAX(price).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `restaurants r` and `menu_items m` on `r.restaurant_id = m.restaurant_id`.",
+      "Group by restaurant and use `MAX(m.price)`.",
+      "Query: SELECT r.name AS restaurant_name, MAX(m.price) AS max_price FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id GROUP BY r.restaurant_id, r.name ORDER BY max_price DESC, restaurant_name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-13",
+    "slug": "fdl-orders-with-high-delivery-fee",
+    "title": "Filter Orders with Premium Delivery Surcharges",
+    "description_markdown": "Find orders where the `delivery_fee` is at least $3.50. Return `order_id`, `customer_name`, and `delivery_fee`. Order by `delivery_fee` DESC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "delivery_fee",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, customer_name, delivery_fee FROM delivery_orders WHERE delivery_fee >= 3.50 ORDER BY delivery_fee DESC, order_id ASC;",
+    "solution_explanation": "Filters delivery_orders where delivery_fee >= 3.50.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE delivery_fee >= 3.50`.",
+      "Order by `delivery_fee` DESC, `order_id` ASC.",
+      "Query: SELECT order_id, customer_name, delivery_fee FROM delivery_orders WHERE delivery_fee >= 3.50 ORDER BY delivery_fee DESC, order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-14",
+    "slug": "fdl-restaurants-with-multiple-vegetarian-options",
+    "title": "Identify Restaurants with Extensive Vegetarian Menus",
+    "description_markdown": "Find restaurants offering at least 2 vegetarian dishes. Return restaurant `name` and total vegetarian dishes as `veg_item_count`. Order by `veg_item_count` DESC, `name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "veg_item_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.name, COUNT(m.item_id) AS veg_item_count FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id WHERE m.is_vegetarian = TRUE GROUP BY r.restaurant_id, r.name HAVING COUNT(m.item_id) >= 2 ORDER BY veg_item_count DESC, r.name ASC;",
+    "solution_explanation": "Filters vegetarian dishes and groups by restaurant with HAVING COUNT >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE m.is_vegetarian = TRUE`.",
+      "Group by restaurant with `HAVING COUNT(m.item_id) >= 2`.",
+      "Query: SELECT r.name, COUNT(m.item_id) AS veg_item_count FROM restaurants r JOIN menu_items m ON r.restaurant_id = m.restaurant_id WHERE m.is_vegetarian = TRUE GROUP BY r.restaurant_id, r.name HAVING COUNT(m.item_id) >= 2 ORDER BY veg_item_count DESC, r.name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-15",
+    "slug": "fdl-rank-menu-items-by-price-per-restaurant",
+    "title": "Rank Menu Items by Price Within Each Restaurant",
+    "description_markdown": "For each restaurant, rank dishes by price from highest to lowest using `DENSE_RANK()` as `price_rank`. Return `restaurant_name`, `item_name`, `price`, and `price_rank`. Order by `restaurant_name` ASC, `price_rank` ASC, `item_name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_name",
+        "type": "varchar"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "price_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.name AS restaurant_name, m.item_name, m.price, DENSE_RANK() OVER (PARTITION BY m.restaurant_id ORDER BY m.price DESC) AS price_rank FROM menu_items m JOIN restaurants r ON m.restaurant_id = r.restaurant_id ORDER BY restaurant_name ASC, price_rank ASC, m.item_name ASC;",
+    "solution_explanation": "Applies DENSE_RANK() partitioned by restaurant_id ordered by price DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY m.restaurant_id ORDER BY m.price DESC)`.",
+      "Join `menu_items` with `restaurants`.",
+      "Query: SELECT r.name AS restaurant_name, m.item_name, m.price, DENSE_RANK() OVER (PARTITION BY m.restaurant_id ORDER BY m.price DESC) AS price_rank FROM menu_items m JOIN restaurants r ON m.restaurant_id = r.restaurant_id ORDER BY restaurant_name ASC, price_rank ASC, m.item_name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-16",
+    "slug": "fdl-unassigned-or-cancelled-orders",
+    "title": "Audit Unfulfilled or Cancelled Delivery Orders",
+    "description_markdown": "Find orders that were either cancelled or have no driver assigned (`driver_id IS NULL`). Return `order_id`, `customer_name`, and `delivery_status`. Order by `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "delivery_status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, customer_name, delivery_status FROM delivery_orders WHERE delivery_status = 'cancelled' OR driver_id IS NULL ORDER BY order_id ASC;",
+    "solution_explanation": "Filters delivery_orders where delivery_status = 'cancelled' OR driver_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE delivery_status = 'cancelled' OR driver_id IS NULL`.",
+      "Order by `order_id` ASC.",
+      "Query: SELECT order_id, customer_name, delivery_status FROM delivery_orders WHERE delivery_status = 'cancelled' OR driver_id IS NULL ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-17",
+    "slug": "fdl-restaurant-fulfilled-gmv",
+    "title": "Calculate Total Fulfilled Gross Merchandise Value per Restaurant",
+    "description_markdown": "Calculate total delivered order revenue as `total_revenue` for each restaurant. Return restaurant `name` and `total_revenue`. Order by `total_revenue` DESC, `name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.name, SUM(o.total_amount) AS total_revenue FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name ORDER BY total_revenue DESC, r.name ASC;",
+    "solution_explanation": "Joins restaurants and delivery_orders, filters on delivered, and sums total_amount.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE o.delivery_status = 'delivered'`.",
+      "Group by `r.restaurant_id, r.name` and sum `o.total_amount`.",
+      "Query: SELECT r.name, SUM(o.total_amount) AS total_revenue FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name ORDER BY total_revenue DESC, r.name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-18",
+    "slug": "fdl-average-delivery-surcharge-by-cuisine",
+    "title": "Compare Average Delivery Fees Across Cuisines",
+    "description_markdown": "Calculate the average `delivery_fee` paid for orders by restaurant `cuisine`, rounded to 2 decimal places as `avg_delivery_fee`. Order by `avg_delivery_fee` DESC, `cuisine` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_delivery_fee",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.cuisine, ROUND(AVG(o.delivery_fee), 2) AS avg_delivery_fee FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id GROUP BY r.cuisine ORDER BY avg_delivery_fee DESC, r.cuisine ASC;",
+    "solution_explanation": "Joins restaurants and delivery_orders and calculates ROUND(AVG(delivery_fee), 2) grouped by cuisine.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `restaurants` and `delivery_orders`.",
+      "Use `ROUND(AVG(o.delivery_fee), 2) AS avg_delivery_fee`.",
+      "Query: SELECT r.cuisine, ROUND(AVG(o.delivery_fee), 2) AS avg_delivery_fee FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id GROUP BY r.cuisine ORDER BY avg_delivery_fee DESC, r.cuisine ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-19",
+    "slug": "fdl-orders-with-distinct-items-count",
+    "title": "Count Distinct Dishes Ordered in Each Delivery Basket",
+    "description_markdown": "For each order with items, count the number of distinct menu items ordered as `distinct_items`. Return `order_id`, `customer_name`, and `distinct_items`. Order by `distinct_items` DESC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders",
+      "delivery_order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "distinct_items",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT o.order_id, o.customer_name, COUNT(doi.item_id) AS distinct_items FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id GROUP BY o.order_id, o.customer_name ORDER BY distinct_items DESC, o.order_id ASC;",
+    "solution_explanation": "Joins delivery_orders and delivery_order_items, grouping by order.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `delivery_orders` and `delivery_order_items`.",
+      "Count items with `COUNT(doi.item_id) AS distinct_items`.",
+      "Query: SELECT o.order_id, o.customer_name, COUNT(doi.item_id) AS distinct_items FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id GROUP BY o.order_id, o.customer_name ORDER BY distinct_items DESC, o.order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-20",
+    "slug": "fdl-cumulative-delivered-gross-revenue",
+    "title": "Calculate Cumulative Platform Revenue Chronologically",
+    "description_markdown": "Calculate the chronological running total of revenue for delivered orders as `running_revenue`. Return `order_id`, `total_amount`, and `running_revenue`. Order by `order_timestamp` ASC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "running_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, total_amount, SUM(total_amount) OVER (ORDER BY order_timestamp ASC, order_id ASC) AS running_revenue FROM delivery_orders WHERE delivery_status = 'delivered' ORDER BY order_timestamp ASC, order_id ASC;",
+    "solution_explanation": "Uses window function SUM(total_amount) OVER (ORDER BY order_timestamp ASC, order_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE delivery_status = 'delivered'`.",
+      "Use `SUM(total_amount) OVER (ORDER BY order_timestamp ASC, order_id ASC)`.",
+      "Query: SELECT order_id, total_amount, SUM(total_amount) OVER (ORDER BY order_timestamp ASC, order_id ASC) AS running_revenue FROM delivery_orders WHERE delivery_status = 'delivered' ORDER BY order_timestamp ASC, order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-21",
+    "slug": "fdl-orders-containing-vegetarian-items",
+    "title": "Identify Delivery Orders Containing Vegetarian Dishes",
+    "description_markdown": "Find distinct orders that include at least one vegetarian menu item. Return `order_id` and `customer_name`. Order by `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders",
+      "delivery_order_items",
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT o.order_id, o.customer_name FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id JOIN menu_items m ON doi.item_id = m.item_id WHERE m.is_vegetarian = TRUE ORDER BY o.order_id ASC;",
+    "solution_explanation": "Joins delivery_orders, delivery_order_items, and menu_items with condition is_vegetarian = TRUE.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `delivery_orders`, `delivery_order_items`, and `menu_items`.",
+      "Filter `WHERE m.is_vegetarian = TRUE`.",
+      "Query: SELECT DISTINCT o.order_id, o.customer_name FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id JOIN menu_items m ON doi.item_id = m.item_id WHERE m.is_vegetarian = TRUE ORDER BY o.order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-22",
+    "slug": "fdl-order-value-deviation-from-platform-average",
+    "title": "Compute Order Basket Deviation from Platform Average",
+    "description_markdown": "For all delivered orders, display `order_id`, `total_amount`, and the overall platform average order amount rounded to 2 decimal places as `platform_avg_amount` using window functions. Order by `total_amount` DESC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "platform_avg_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, total_amount, ROUND(AVG(total_amount) OVER (), 2) AS platform_avg_amount FROM delivery_orders WHERE delivery_status = 'delivered' ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Calculates ROUND(AVG(total_amount) OVER (), 2) across delivered orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(AVG(total_amount) OVER (), 2) AS platform_avg_amount`.",
+      "Filter with `WHERE delivery_status = 'delivered'`.",
+      "Query: SELECT order_id, total_amount, ROUND(AVG(total_amount) OVER (), 2) AS platform_avg_amount FROM delivery_orders WHERE delivery_status = 'delivered' ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-23",
+    "slug": "fdl-driver-fleet-rating-roster",
+    "title": "List Driver Fleet Roster by Performance Rating",
+    "description_markdown": "List all delivery drivers showing `driver_id`, `name`, and `rating`. Order by `rating` DESC, `driver_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT driver_id, name, rating FROM delivery_drivers ORDER BY rating DESC, driver_id ASC;",
+    "solution_explanation": "Selects drivers ordered by rating descending.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Select `driver_id`, `name`, and `rating` from `delivery_drivers`.",
+      "Order by `rating` DESC, `driver_id` ASC.",
+      "Query: SELECT driver_id, name, rating FROM delivery_drivers ORDER BY rating DESC, driver_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-24",
+    "slug": "fdl-total-basket-units-per-order",
+    "title": "Calculate Total Food Items Quantity per Order",
+    "description_markdown": "Sum the total quantity of items ordered in each delivery order as `total_quantity`. Return `order_id`, `customer_name`, and `total_quantity`. Order by `total_quantity` DESC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders",
+      "delivery_order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_quantity",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT o.order_id, o.customer_name, SUM(doi.quantity) AS total_quantity FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id GROUP BY o.order_id, o.customer_name ORDER BY total_quantity DESC, o.order_id ASC;",
+    "solution_explanation": "Joins delivery_orders and delivery_order_items and sums quantity.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `delivery_orders` and `delivery_order_items`.",
+      "Group by order and sum `SUM(doi.quantity)`.",
+      "Query: SELECT o.order_id, o.customer_name, SUM(doi.quantity) AS total_quantity FROM delivery_orders o JOIN delivery_order_items doi ON o.order_id = doi.order_id GROUP BY o.order_id, o.customer_name ORDER BY total_quantity DESC, o.order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-25",
+    "slug": "fdl-dishes-priced-under-fifteen-dollars",
+    "title": "Filter Budget Menu Items Priced Under $15",
+    "description_markdown": "List menu items priced strictly below $15.00. Return `item_id`, `item_name`, and `price`. Order by `price` ASC, `item_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT item_id, item_name, price FROM menu_items WHERE price < 15.00 ORDER BY price ASC, item_id ASC;",
+    "solution_explanation": "Filters menu_items with price < 15.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE price < 15.00`.",
+      "Order by `price` ASC, `item_id` ASC.",
+      "Query: SELECT item_id, item_name, price FROM menu_items WHERE price < 15.00 ORDER BY price ASC, item_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-26",
+    "slug": "fdl-restaurant-rating-classification",
+    "title": "Classify Restaurants into Culinary Rating Tiers",
+    "description_markdown": "Classify restaurants using CASE: 'Elite' for rating >= 4.8, 'Premier' for rating >= 4.6, and 'Standard' otherwise as `tier`. Return `name`, `cuisine`, `rating`, and `tier`. Order by `rating` DESC, `name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      },
+      {
+        "name": "tier",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT name, cuisine, rating, CASE WHEN rating >= 4.8 THEN 'Elite' WHEN rating >= 4.6 THEN 'Premier' ELSE 'Standard' END AS tier FROM restaurants ORDER BY rating DESC, name ASC;",
+    "solution_explanation": "Uses CASE expression to categorize restaurants by rating tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN rating >= 4.8 THEN 'Elite' ... END`.",
+      "Order by `rating` DESC, `name` ASC.",
+      "Query: SELECT name, cuisine, rating, CASE WHEN rating >= 4.8 THEN 'Elite' WHEN rating >= 4.6 THEN 'Premier' ELSE 'Standard' END AS tier FROM restaurants ORDER BY rating DESC, name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-27",
+    "slug": "fdl-dishes-above-restaurant-average-price",
+    "title": "Find Menu Items Costing More Than Restaurant Average",
+    "description_markdown": "Identify dishes whose price is strictly greater than the average price of dishes served at their restaurant using a correlated subquery. Return `item_id`, `restaurant_id`, `item_name`, and `price`. Order by `restaurant_id` ASC, `price` DESC, `item_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m1.item_id, m1.restaurant_id, m1.item_name, m1.price FROM menu_items m1 WHERE m1.price > (SELECT AVG(m2.price) FROM menu_items m2 WHERE m2.restaurant_id = m1.restaurant_id) ORDER BY m1.restaurant_id ASC, m1.price DESC, m1.item_id ASC;",
+    "solution_explanation": "Uses correlated subquery to compare dish price against restaurant average.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Correlate with `WHERE m2.restaurant_id = m1.restaurant_id` in the subquery.",
+      "Compare `m1.price > (SELECT AVG(m2.price) ...)`.",
+      "Query: SELECT m1.item_id, m1.restaurant_id, m1.item_name, m1.price FROM menu_items m1 WHERE m1.price > (SELECT AVG(m2.price) FROM menu_items m2 WHERE m2.restaurant_id = m1.restaurant_id) ORDER BY m1.restaurant_id ASC, m1.price DESC, m1.item_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-28",
+    "slug": "fdl-lead-order-timestamp-per-restaurant",
+    "title": "Track Successive Order Timestamps per Restaurant",
+    "description_markdown": "For each delivery order, fetch the timestamp of the next consecutive order placed at the same restaurant as `next_order_time` using `LEAD()`. Return `order_id`, `restaurant_id`, `order_timestamp`, and `next_order_time`. Order by `restaurant_id` ASC, `order_timestamp` ASC, `order_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_timestamp",
+        "type": "timestamp"
+      },
+      {
+        "name": "next_order_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT order_id, restaurant_id, order_timestamp, LEAD(order_timestamp, 1) OVER (PARTITION BY restaurant_id ORDER BY order_timestamp ASC, order_id ASC) AS next_order_time FROM delivery_orders ORDER BY restaurant_id ASC, order_timestamp ASC, order_id ASC;",
+    "solution_explanation": "Uses LEAD(order_timestamp, 1) partitioned by restaurant_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(order_timestamp, 1) OVER (PARTITION BY restaurant_id ORDER BY order_timestamp ASC, order_id ASC)`.",
+      "Order by `restaurant_id` ASC, `order_timestamp` ASC, `order_id` ASC.",
+      "Query: SELECT order_id, restaurant_id, order_timestamp, LEAD(order_timestamp, 1) OVER (PARTITION BY restaurant_id ORDER BY order_timestamp ASC, order_id ASC) AS next_order_time FROM delivery_orders ORDER BY restaurant_id ASC, order_timestamp ASC, order_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-29",
+    "slug": "fdl-menu-items-never-ordered",
+    "title": "Audit Menu Offerings with Zero Customer Orders",
+    "description_markdown": "Find all menu items that have never been included in any customer order. Return `item_id`, `item_name`, and `price`. Order by `item_id` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items",
+      "delivery_order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.item_id, m.item_name, m.price FROM menu_items m LEFT JOIN delivery_order_items doi ON m.item_id = doi.item_id WHERE doi.order_item_id IS NULL ORDER BY m.item_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE doi.order_item_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `delivery_order_items doi` on `m.item_id = doi.item_id`.",
+      "Filter with `WHERE doi.order_item_id IS NULL`.",
+      "Query: SELECT m.item_id, m.item_name, m.price FROM menu_items m LEFT JOIN delivery_order_items doi ON m.item_id = doi.item_id WHERE doi.order_item_id IS NULL ORDER BY m.item_id ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-30",
+    "slug": "fdl-restaurants-average-basket-size",
+    "title": "Calculate Average Order Value per Restaurant",
+    "description_markdown": "For each restaurant with delivered orders, calculate the average order total amount rounded to 2 decimals as `avg_order_value`. Return `name` and `avg_order_value`. Order by `avg_order_value` DESC, `name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_order_value",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT r.name, ROUND(AVG(o.total_amount), 2) AS avg_order_value FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name ORDER BY avg_order_value DESC, r.name ASC;",
+    "solution_explanation": "Joins restaurants and delivery_orders, filters on delivered, and computes ROUND(AVG(total_amount), 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE o.delivery_status = 'delivered'`.",
+      "Compute `ROUND(AVG(o.total_amount), 2) AS avg_order_value`.",
+      "Query: SELECT r.name, ROUND(AVG(o.total_amount), 2) AS avg_order_value FROM restaurants r JOIN delivery_orders o ON r.restaurant_id = o.restaurant_id WHERE o.delivery_status = 'delivered' GROUP BY r.restaurant_id, r.name ORDER BY avg_order_value DESC, r.name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-31",
+    "slug": "fdl-top-earning-menu-item-overall",
+    "title": "Identify Top Grossing Dish by Cumulative Sales Revenue",
+    "description_markdown": "Calculate total revenue generated per menu item (`quantity * item_price`) as `total_item_revenue`. Return `item_name` and `total_item_revenue`. Order by `total_item_revenue` DESC, `item_name` ASC.",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items",
+      "delivery_order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_item_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.item_name, SUM(doi.quantity * doi.item_price) AS total_item_revenue FROM menu_items m JOIN delivery_order_items doi ON m.item_id = doi.item_id GROUP BY m.item_id, m.item_name ORDER BY total_item_revenue DESC, m.item_name ASC;",
+    "solution_explanation": "Joins menu_items and delivery_order_items and sums product of quantity and price.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Calculate revenue with `SUM(doi.quantity * doi.item_price)`.",
+      "Group by `m.item_id, m.item_name`.",
+      "Query: SELECT m.item_name, SUM(doi.quantity * doi.item_price) AS total_item_revenue FROM menu_items m JOIN delivery_order_items doi ON m.item_id = doi.item_id GROUP BY m.item_id, m.item_name ORDER BY total_item_revenue DESC, m.item_name ASC;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-fdl-32",
+    "slug": "fdl-operations-executive-kpi-summary",
+    "title": "Compile Food Delivery Marketplace Executive KPI Scorecard",
+    "description_markdown": "Produce single-row marketplace operations summary metrics: `total_restaurants`, `active_drivers`, `delivered_orders`, and `total_gmv` (sum of delivered order amounts).",
+    "topic_id": "scenario-food-delivery",
+    "subtopic_id": "sc-food",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants",
+      "delivery_drivers",
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_restaurants",
+        "type": "bigint"
+      },
+      {
+        "name": "active_drivers",
+        "type": "bigint"
+      },
+      {
+        "name": "delivered_orders",
+        "type": "bigint"
+      },
+      {
+        "name": "total_gmv",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM restaurants) AS total_restaurants, (SELECT COUNT(*) FROM delivery_drivers WHERE is_active = TRUE) AS active_drivers, (SELECT COUNT(*) FROM delivery_orders WHERE delivery_status = 'delivered') AS delivered_orders, (SELECT SUM(total_amount) FROM delivery_orders WHERE delivery_status = 'delivered') AS total_gmv;",
+    "solution_explanation": "Uses scalar subqueries to build an executive marketplace scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each metric.",
+      "Sum total_amount for delivered orders.",
+      "Query: SELECT (SELECT COUNT(*) FROM restaurants) AS total_restaurants, (SELECT COUNT(*) FROM delivery_drivers WHERE is_active = TRUE) AS active_drivers, (SELECT COUNT(*) FROM delivery_orders WHERE delivery_status = 'delivered') AS delivered_orders, (SELECT SUM(total_amount) FROM delivery_orders WHERE delivery_status = 'delivered') AS total_gmv;"
+    ],
+    "tags": [
+      "food_delivery",
+      "sc-food"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-fdl-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-fdl-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-fdl-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

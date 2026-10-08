@@ -1,0 +1,2329 @@
+[
+  {
+    "id": "q-my-agg-01",
+    "slug": "total-employee-count",
+    "title": "Calculate Total Company Headcount",
+    "description_markdown": "Count the total number of employees in the organization. Return a single column named `total_employees`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_employees",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Compute headcount using COUNT\nSELECT COUNT(*) AS total_employees FROM ...",
+    "solution_query": "SELECT COUNT(*) AS total_employees FROM employees;",
+    "solution_explanation": "COUNT(*) computes the total number of rows matching the query criteria.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(*) AS total_employees`.",
+      "Target `employees` table.",
+      "Query: SELECT COUNT(*) AS total_employees FROM employees;"
+    ],
+    "tags": [
+      "aggregates",
+      "count"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-02",
+    "slug": "payroll-summary-statistics",
+    "title": "Comprehensive Payroll Financial Metrics",
+    "description_markdown": "Calculate the total payroll (`SUM(salary)` as `total_payroll`), the average salary (`ROUND(AVG(salary), 2)` as `avg_salary`), minimum salary (`MIN(salary)` as `min_salary`), and maximum salary (`MAX(salary)` as `max_salary`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_payroll",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "min_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "max_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Compute SUM, AVG, MIN, MAX\nSELECT ...",
+    "solution_query": "SELECT SUM(salary) AS total_payroll, ROUND(AVG(salary), 2) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;",
+    "solution_explanation": "Aggregates all rows in `employees` into a single summary tuple.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Combine SUM(salary), ROUND(AVG(salary), 2), MIN(salary), MAX(salary).",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT SUM(salary) AS total_payroll, ROUND(AVG(salary), 2) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;"
+    ],
+    "tags": [
+      "aggregates",
+      "statistics"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-03",
+    "slug": "unique-active-customers-with-orders",
+    "title": "Count Unique Customers Who Placed Orders",
+    "description_markdown": "Count the number of distinct customers who have placed at least one order. Return a single column named `active_customers`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "active_customers",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count distinct customer IDs\nSELECT ...",
+    "solution_query": "SELECT COUNT(DISTINCT customer_id) AS active_customers FROM orders;",
+    "solution_explanation": "COUNT(DISTINCT customer_id) counts unique customer IDs appearing in the orders table, avoiding duplicates from multiple orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(DISTINCT customer_id)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT COUNT(DISTINCT customer_id) AS active_customers FROM orders;"
+    ],
+    "tags": [
+      "aggregates",
+      "count-distinct"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-04",
+    "slug": "ecommercedb-completed-orders-revenue",
+    "title": "Calculate Total Revenue from Completed Orders",
+    "description_markdown": "Calculate the total revenue generated across all completed orders (`order_status = 'completed'`). Return a single column aliased as `total_revenue`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total completed order revenue\nSELECT SUM(...) AS total_revenue\nFROM orders\nWHERE ...",
+    "solution_query": "SELECT SUM(total_amount) AS total_revenue FROM orders WHERE order_status = 'completed';",
+    "solution_explanation": "Aggregates total_amount using SUM with a WHERE filter restricting calculation to finalized transactions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter by order_status = 'completed'",
+      "Missing column alias total_revenue"
+    ],
+    "hints": [
+      "Use SUM(total_amount) AS total_revenue.",
+      "Filter rows where order_status = 'completed'.",
+      "Query: SELECT SUM(total_amount) AS total_revenue FROM orders WHERE order_status = 'completed';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-05",
+    "slug": "collegedb-professors-avg-salary-count",
+    "title": "Faculty Headcount and Average Compensation",
+    "description_markdown": "From `professors`, calculate the average salary rounded to 2 decimal places as `avg_salary`, and the total count of professors as `total_professors`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "total_professors",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average salary and total faculty\nSELECT ROUND(AVG(salary), 2) AS avg_salary, ...\nFROM professors;",
+    "solution_query": "SELECT ROUND(AVG(salary), 2) AS avg_salary, COUNT(*) AS total_professors FROM professors;",
+    "solution_explanation": "Computes AVG(salary) with ROUND and COUNT(*) for overall faculty count in a single summary tuple.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding without specifying 2 decimal places.",
+      "Misspelling total_professors."
+    ],
+    "hints": [
+      "Combine ROUND(AVG(salary), 2) AS avg_salary and COUNT(*) AS total_professors.",
+      "Target the professors table without a WHERE filter.",
+      "Query: SELECT ROUND(AVG(salary), 2) AS avg_salary, COUNT(*) AS total_professors FROM professors;"
+    ],
+    "tags": [
+      "aggregates",
+      "avg",
+      "count",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-06",
+    "slug": "banking-checking-balance-and-max",
+    "title": "Checking Account Total Liquidity and Maximum Balance",
+    "description_markdown": "Calculate the total balance (`SUM(balance)` as `total_checking_balance`) and the highest individual balance (`MAX(balance)` as `highest_balance`) among all accounts where `account_type = 'checking'`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_checking_balance",
+        "type": "decimal"
+      },
+      {
+        "name": "highest_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Aggregate checking account liquidity\nSELECT SUM(...) AS total_checking_balance, MAX(...) AS highest_balance\nFROM accounts\nWHERE ...",
+    "solution_query": "SELECT SUM(balance) AS total_checking_balance, MAX(balance) AS highest_balance FROM accounts WHERE account_type = 'checking';",
+    "solution_explanation": "Applies SUM and MAX simultaneously on balance filtered to checking accounts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for the wrong account type or omitting column aliases."
+    ],
+    "hints": [
+      "Select SUM(balance) AS total_checking_balance, MAX(balance) AS highest_balance.",
+      "Add WHERE account_type = 'checking'.",
+      "Query: SELECT SUM(balance) AS total_checking_balance, MAX(balance) AS highest_balance FROM accounts WHERE account_type = 'checking';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "max",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-07",
+    "slug": "hospital-doctors-experience-extremes",
+    "title": "Medical Staff Average and Minimum Experience",
+    "description_markdown": "Find the average clinical experience of all doctors (`ROUND(AVG(experience_years), 1)` as `avg_experience`) and the minimum years of experience (`MIN(experience_years)` as `min_experience`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_experience",
+        "type": "decimal"
+      },
+      {
+        "name": "min_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Experience statistics for doctors\nSELECT ...\nFROM doctors;",
+    "solution_query": "SELECT ROUND(AVG(experience_years), 1) AS avg_experience, MIN(experience_years) AS min_experience FROM doctors;",
+    "solution_explanation": "Computes average rounded to 1 decimal place and lowest experience years using MIN.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding to 2 decimal places instead of 1.",
+      "Missing min_experience alias."
+    ],
+    "hints": [
+      "Use ROUND(AVG(experience_years), 1) AS avg_experience.",
+      "Use MIN(experience_years) AS min_experience.",
+      "Query: SELECT ROUND(AVG(experience_years), 1) AS avg_experience, MIN(experience_years) AS min_experience FROM doctors;"
+    ],
+    "tags": [
+      "aggregates",
+      "avg",
+      "min",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-08",
+    "slug": "hotel-available-rooms-pricing-summary",
+    "title": "Available Rooms Count and Average Nightly Rate",
+    "description_markdown": "Calculate the total count of currently available rooms (`COUNT(*)` as `available_rooms`) and their average nightly price (`ROUND(AVG(price_per_night), 2)` as `avg_nightly_price`) where `is_available = true`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "available_rooms",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_nightly_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Available room metrics\nSELECT COUNT(*) AS available_rooms, ROUND(AVG(price_per_night), 2) AS avg_nightly_price\nFROM rooms\nWHERE ...",
+    "solution_query": "SELECT COUNT(*) AS available_rooms, ROUND(AVG(price_per_night), 2) AS avg_nightly_price FROM rooms WHERE is_available = true;",
+    "solution_explanation": "Counts active inventory and calculates average rate filtered by is_available = true.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the is_available filter.",
+      "Forgetting ROUND on the average price."
+    ],
+    "hints": [
+      "Filter by is_available = true.",
+      "Use COUNT(*) AS available_rooms and ROUND(AVG(price_per_night), 2) AS avg_nightly_price.",
+      "Query: SELECT COUNT(*) AS available_rooms, ROUND(AVG(price_per_night), 2) AS avg_nightly_price FROM rooms WHERE is_available = true;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "avg",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-09",
+    "slug": "library-total-copies-and-categories",
+    "title": "Total Book Copies and Distinct Genre Count",
+    "description_markdown": "Calculate total book copies across the collection (`SUM(copies_available)` as `total_inventory`) and count how many unique categories are represented (`COUNT(DISTINCT category)` as `distinct_categories`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_inventory",
+        "type": "bigint"
+      },
+      {
+        "name": "distinct_categories",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Library inventory and unique categories\nSELECT SUM(...) AS total_inventory, COUNT(DISTINCT ...) AS distinct_categories\nFROM books;",
+    "solution_query": "SELECT SUM(copies_available) AS total_inventory, COUNT(DISTINCT category) AS distinct_categories FROM books;",
+    "solution_explanation": "Demonstrates SUM on inventory units combined with COUNT(DISTINCT) to eliminate duplicate category tags.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(category) instead of COUNT(DISTINCT category)."
+    ],
+    "hints": [
+      "Use SUM(copies_available) AS total_inventory.",
+      "Use COUNT(DISTINCT category) AS distinct_categories.",
+      "Query: SELECT SUM(copies_available) AS total_inventory, COUNT(DISTINCT category) AS distinct_categories FROM books;"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "count-distinct",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-10",
+    "slug": "movie-streaming-duration-and-rating-metrics",
+    "title": "Movie Catalog Duration Extremes and Rating Benchmark",
+    "description_markdown": "Query `movies` to calculate the shortest runtime (`MIN(duration_minutes)` as `min_duration`), longest runtime (`MAX(duration_minutes)` as `max_duration`), and average IMDb rating (`ROUND(AVG(imdb_rating), 2)` as `avg_rating`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "min_duration",
+        "type": "integer"
+      },
+      {
+        "name": "max_duration",
+        "type": "integer"
+      },
+      {
+        "name": "avg_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Duration range and average rating\nSELECT MIN(...) AS min_duration, MAX(...) AS max_duration, ROUND(...) AS avg_rating\nFROM movies;",
+    "solution_query": "SELECT MIN(duration_minutes) AS min_duration, MAX(duration_minutes) AS max_duration, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies;",
+    "solution_explanation": "Calculates MIN, MAX, and rounded AVG simultaneously over catalog metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping MIN and MAX or forgetting to round the rating."
+    ],
+    "hints": [
+      "Calculate MIN(duration_minutes), MAX(duration_minutes), and ROUND(AVG(imdb_rating), 2).",
+      "Query: SELECT MIN(duration_minutes) AS min_duration, MAX(duration_minutes) AS max_duration, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies;",
+      "The expected query is: SELECT MIN(duration_minutes) AS min_duration, MAX(duration_minutes) AS max_duration, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies;"
+    ],
+    "tags": [
+      "aggregates",
+      "min",
+      "max",
+      "avg",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-11",
+    "slug": "sales-closed-won-pipeline-total",
+    "title": "Closed-Won Deal Revenue Aggregate",
+    "description_markdown": "Calculate the total value of all successfully closed opportunities (`SUM(deal_size)` as `won_pipeline_value`) where `stage = 'closed_won'`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "won_pipeline_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Won pipeline total\nSELECT SUM(...) AS won_pipeline_value\nFROM opportunities\nWHERE ...",
+    "solution_query": "SELECT SUM(deal_size) AS won_pipeline_value FROM opportunities WHERE stage = 'closed_won';",
+    "solution_explanation": "Aggregates revenue generated from winning enterprise opportunities.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the WHERE stage = 'closed_won' condition."
+    ],
+    "hints": [
+      "Use SUM(deal_size) AS won_pipeline_value.",
+      "Add WHERE stage = 'closed_won'.",
+      "Query: SELECT SUM(deal_size) AS won_pipeline_value FROM opportunities WHERE stage = 'closed_won';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-12",
+    "slug": "food-delivery-restaurant-count-avg-rating",
+    "title": "Restaurant Network Size and Mean Satisfaction Score",
+    "description_markdown": "Count the total number of partner restaurants (`COUNT(*)` as `total_restaurants`) and their average customer rating rounded to 2 decimal places as `avg_rating`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_restaurants",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Partner restaurants count and average rating\nSELECT COUNT(*) AS total_restaurants, ROUND(AVG(rating), 2) AS avg_rating\nFROM restaurants;",
+    "solution_query": "SELECT COUNT(*) AS total_restaurants, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants;",
+    "solution_explanation": "Calculates COUNT(*) and ROUND(AVG(rating), 2) across the restaurant network.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing the ROUND wrapper or incorrect alias names."
+    ],
+    "hints": [
+      "Use COUNT(*) AS total_restaurants and ROUND(AVG(rating), 2) AS avg_rating.",
+      "Query: SELECT COUNT(*) AS total_restaurants, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants;",
+      "The expected query is: SELECT COUNT(*) AS total_restaurants, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "avg",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-13",
+    "slug": "airline-flight-schedule-price-spread",
+    "title": "Flight Network Size and Fare Range",
+    "description_markdown": "From `flights`, calculate the total number of scheduled flights (`COUNT(*)` as `total_flights`), the lowest base fare (`MIN(base_price)` as `min_fare`), and the highest base fare (`MAX(base_price)` as `max_fare`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_flights",
+        "type": "bigint"
+      },
+      {
+        "name": "min_fare",
+        "type": "decimal"
+      },
+      {
+        "name": "max_fare",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Flight network fare spread\nSELECT COUNT(*) AS total_flights, MIN(...) AS min_fare, MAX(...) AS max_fare\nFROM flights;",
+    "solution_query": "SELECT COUNT(*) AS total_flights, MIN(base_price) AS min_fare, MAX(base_price) AS max_fare FROM flights;",
+    "solution_explanation": "Summarizes flight schedule size alongside minimum and maximum fare bounds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using price instead of base_price."
+    ],
+    "hints": [
+      "Select COUNT(*) AS total_flights, MIN(base_price) AS min_fare, MAX(base_price) AS max_fare.",
+      "Query: SELECT COUNT(*) AS total_flights, MIN(base_price) AS min_fare, MAX(base_price) AS max_fare FROM flights;",
+      "The expected query is: SELECT COUNT(*) AS total_flights, MIN(base_price) AS min_fare, MAX(base_price) AS max_fare FROM flights;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "min",
+      "max",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-14",
+    "slug": "inventory-stock-units-and-avg-unit-cost",
+    "title": "Inventory Stock Volume and Average Unit Cost",
+    "description_markdown": "Calculate total inventory units on hand (`SUM(quantity_on_hand)` as `total_stock`) and average unit acquisition cost rounded to 2 decimal places as `avg_unit_cost`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_stock",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_unit_cost",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stock units and mean unit cost\nSELECT SUM(...) AS total_stock, ROUND(AVG(...), 2) AS avg_unit_cost\nFROM stock_items;",
+    "solution_query": "SELECT SUM(quantity_on_hand) AS total_stock, ROUND(AVG(unit_cost), 2) AS avg_unit_cost FROM stock_items;",
+    "solution_explanation": "Sums inventory units and computes rounded average unit cost.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using AVG(quantity_on_hand) instead of SUM."
+    ],
+    "hints": [
+      "Use SUM(quantity_on_hand) AS total_stock and ROUND(AVG(unit_cost), 2) AS avg_unit_cost.",
+      "Query: SELECT SUM(quantity_on_hand) AS total_stock, ROUND(AVG(unit_cost), 2) AS avg_unit_cost FROM stock_items;",
+      "The expected query is: SELECT SUM(quantity_on_hand) AS total_stock, ROUND(AVG(unit_cost), 2) AS avg_unit_cost FROM stock_items;"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "avg",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-15",
+    "slug": "finance-stock-pricing-extremes-and-mean",
+    "title": "Equity Market Valuation Extremes and Average Price",
+    "description_markdown": "Calculate the highest stock price (`MAX(current_price)` as `peak_price`), lowest price (`MIN(current_price)` as `lowest_price`), and the average market price rounded to 2 decimal places as `avg_price`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "peak_price",
+        "type": "decimal"
+      },
+      {
+        "name": "lowest_price",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stock price range and average\nSELECT MAX(...) AS peak_price, MIN(...) AS lowest_price, ROUND(...) AS avg_price\nFROM stocks;",
+    "solution_query": "SELECT MAX(current_price) AS peak_price, MIN(current_price) AS lowest_price, ROUND(AVG(current_price), 2) AS avg_price FROM stocks;",
+    "solution_explanation": "Evaluates pricing bounds across the equities universe using MAX, MIN, and rounded AVG.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the ROUND function on average price."
+    ],
+    "hints": [
+      "Select MAX(current_price) AS peak_price, MIN(current_price) AS lowest_price, ROUND(AVG(current_price), 2) AS avg_price.",
+      "Query: SELECT MAX(current_price) AS peak_price, MIN(current_price) AS lowest_price, ROUND(AVG(current_price), 2) AS avg_price FROM stocks;",
+      "The expected query is: SELECT MAX(current_price) AS peak_price, MIN(current_price) AS lowest_price, ROUND(AVG(current_price), 2) AS avg_price FROM stocks;"
+    ],
+    "tags": [
+      "aggregates",
+      "max",
+      "min",
+      "avg",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-16",
+    "slug": "hr-job-postings-headcount-and-salary-cap",
+    "title": "Open Positions Volume and Average Salary Cap",
+    "description_markdown": "Find the total number of job postings (`COUNT(*)` as `total_postings`) and their average maximum compensation (`ROUND(AVG(base_salary_max), 2)` as `avg_salary_cap`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_postings",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_salary_cap",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Job postings volume and average salary ceiling\nSELECT COUNT(*) AS total_postings, ROUND(...) AS avg_salary_cap\nFROM job_postings;",
+    "solution_query": "SELECT COUNT(*) AS total_postings, ROUND(AVG(base_salary_max), 2) AS avg_salary_cap FROM job_postings;",
+    "solution_explanation": "Counts total hiring listings and calculates average compensation ceilings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using base_salary instead of base_salary_max."
+    ],
+    "hints": [
+      "Select COUNT(*) AS total_postings, ROUND(AVG(base_salary_max), 2) AS avg_salary_cap.",
+      "Query: SELECT COUNT(*) AS total_postings, ROUND(AVG(base_salary_max), 2) AS avg_salary_cap FROM job_postings;",
+      "The expected query is: SELECT COUNT(*) AS total_postings, ROUND(AVG(base_salary_max), 2) AS avg_salary_cap FROM job_postings;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "avg",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-17",
+    "slug": "social-media-posts-and-media-coverage",
+    "title": "Total Posts and Media Attachment Count",
+    "description_markdown": "Calculate the total number of published posts (`COUNT(*)` as `total_posts`) and the number of posts that include a media attachment (`COUNT(media_url)` as `posts_with_media`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_posts",
+        "type": "bigint"
+      },
+      {
+        "name": "posts_with_media",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total posts vs posts containing non-null media\nSELECT COUNT(*) AS total_posts, COUNT(...) AS posts_with_media\nFROM posts;",
+    "solution_query": "SELECT COUNT(*) AS total_posts, COUNT(media_url) AS posts_with_media FROM posts;",
+    "solution_explanation": "Demonstrates that COUNT(*) counts all rows including NULLs, whereas COUNT(column_name) ignores NULL rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) for both expressions or using WHERE media_url IS NOT NULL which drops the total_posts count."
+    ],
+    "hints": [
+      "COUNT(*) counts all records.",
+      "COUNT(media_url) automatically ignores rows where media_url is NULL.",
+      "Query: SELECT COUNT(*) AS total_posts, COUNT(media_url) AS posts_with_media FROM posts;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "nulls",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-18",
+    "slug": "employeedb-assignments-effort-and-rating",
+    "title": "Project Assignments Cumulative Hours and Mean Rating",
+    "description_markdown": "Compute the total logged project hours (`SUM(hours_worked)` as `total_hours`) and the average performance rating (`ROUND(AVG(rating), 2)` as `avg_rating`) across all project assignments.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_hours",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total hours and mean rating\nSELECT SUM(...) AS total_hours, ROUND(AVG(...), 2) AS avg_rating\nFROM assignments;",
+    "solution_query": "SELECT SUM(hours_worked) AS total_hours, ROUND(AVG(rating), 2) AS avg_rating FROM assignments;",
+    "solution_explanation": "Aggregates effort logged across engineering assignments along with performance rating.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the ROUND function on average rating."
+    ],
+    "hints": [
+      "Select SUM(hours_worked) AS total_hours and ROUND(AVG(rating), 2) AS avg_rating.",
+      "Query: SELECT SUM(hours_worked) AS total_hours, ROUND(AVG(rating), 2) AS avg_rating FROM assignments;",
+      "The expected query is: SELECT SUM(hours_worked) AS total_hours, ROUND(AVG(rating), 2) AS avg_rating FROM assignments;"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "avg",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-19",
+    "slug": "ecommercedb-reviews-overview-and-distinct-products",
+    "title": "Customer Review Volume, Distinct Products, and Rating",
+    "description_markdown": "Calculate the total number of product reviews (`COUNT(*)` as `total_reviews`), unique products reviewed (`COUNT(DISTINCT product_id)` as `reviewed_products`), and the overall average rating rounded to 2 decimals as `avg_product_rating`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_reviews",
+        "type": "bigint"
+      },
+      {
+        "name": "reviewed_products",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_product_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Review volume, distinct products, and average rating\nSELECT COUNT(*) AS total_reviews, COUNT(DISTINCT ...) AS reviewed_products, ROUND(...) AS avg_product_rating\nFROM reviews;",
+    "solution_query": "SELECT COUNT(*) AS total_reviews, COUNT(DISTINCT product_id) AS reviewed_products, ROUND(AVG(rating), 2) AS avg_product_rating FROM reviews;",
+    "solution_explanation": "Combines overall count, distinct key count, and rounded average into an e-commerce review KPI.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(product_id) instead of COUNT(DISTINCT product_id)."
+    ],
+    "hints": [
+      "Use COUNT(DISTINCT product_id) to count unique items reviewed.",
+      "Round the average rating with ROUND(AVG(rating), 2).",
+      "Query: SELECT COUNT(*) AS total_reviews, COUNT(DISTINCT product_id) AS reviewed_products, ROUND(AVG(rating), 2) AS avg_product_rating FROM reviews;"
+    ],
+    "tags": [
+      "aggregates",
+      "count-distinct",
+      "avg",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-20",
+    "slug": "collegedb-final-marks-score-spread",
+    "title": "Final Exam Score Range and Class Average",
+    "description_markdown": "For all assessments where `assessment_type = 'final'`, find the lowest score (`MIN(score)` as `lowest_score`), highest score (`MAX(score)` as `highest_score`), and average score rounded to 2 decimals as `average_score`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "lowest_score",
+        "type": "decimal"
+      },
+      {
+        "name": "highest_score",
+        "type": "decimal"
+      },
+      {
+        "name": "average_score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Final exam score extremes and mean\nSELECT MIN(score) AS lowest_score, MAX(score) AS highest_score, ROUND(AVG(score), 2) AS average_score\nFROM marks\nWHERE ...",
+    "solution_query": "SELECT MIN(score) AS lowest_score, MAX(score) AS highest_score, ROUND(AVG(score), 2) AS average_score FROM marks WHERE assessment_type = 'final';",
+    "solution_explanation": "Filters for final exam scores and computes range and average metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the WHERE assessment_type = 'final' filter."
+    ],
+    "hints": [
+      "Filter by assessment_type = 'final'.",
+      "Compute MIN(score), MAX(score), and ROUND(AVG(score), 2).",
+      "Query: SELECT MIN(score) AS lowest_score, MAX(score) AS highest_score, ROUND(AVG(score), 2) AS average_score FROM marks WHERE assessment_type = 'final';"
+    ],
+    "tags": [
+      "aggregates",
+      "min",
+      "max",
+      "avg",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-21",
+    "slug": "banking-deposit-transactions-volume",
+    "title": "Deposit Inflows Total Value and Count",
+    "description_markdown": "Calculate the total dollar volume (`SUM(amount)` as `total_deposit_amount`) and count of transactions (`COUNT(*)` as `deposit_count`) for transactions where `transaction_type = 'deposit'`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_deposit_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "deposit_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Deposit volume and transaction count\nSELECT SUM(...) AS total_deposit_amount, COUNT(*) AS deposit_count\nFROM transactions\nWHERE ...",
+    "solution_query": "SELECT SUM(amount) AS total_deposit_amount, COUNT(*) AS deposit_count FROM transactions WHERE transaction_type = 'deposit';",
+    "solution_explanation": "Summarizes cumulative cash deposits and transaction frequency.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting transaction_type = 'deposit'."
+    ],
+    "hints": [
+      "Filter rows where transaction_type = 'deposit'.",
+      "Query: SELECT SUM(amount) AS total_deposit_amount, COUNT(*) AS deposit_count FROM transactions WHERE transaction_type = 'deposit';",
+      "The expected query is: SELECT SUM(amount) AS total_deposit_amount, COUNT(*) AS deposit_count FROM transactions WHERE transaction_type = 'deposit';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "count",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-22",
+    "slug": "hospital-prescriptions-duration-metrics",
+    "title": "Prescription Treatment Average and Peak Duration",
+    "description_markdown": "Calculate the average prescription course length in days rounded to 1 decimal place as `avg_duration_days`, and the longest single treatment duration as `max_duration_days`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_duration_days",
+        "type": "decimal"
+      },
+      {
+        "name": "max_duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Prescription duration metrics\nSELECT ROUND(AVG(duration_days), 1) AS avg_duration_days, MAX(duration_days) AS max_duration_days\nFROM prescriptions;",
+    "solution_query": "SELECT ROUND(AVG(duration_days), 1) AS avg_duration_days, MAX(duration_days) AS max_duration_days FROM prescriptions;",
+    "solution_explanation": "Evaluates treatment protocols using rounded average and maximum days.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding to 2 decimal places instead of 1."
+    ],
+    "hints": [
+      "Use ROUND(AVG(duration_days), 1) AS avg_duration_days.",
+      "Use MAX(duration_days) AS max_duration_days.",
+      "Query: SELECT ROUND(AVG(duration_days), 1) AS avg_duration_days, MAX(duration_days) AS max_duration_days FROM prescriptions;"
+    ],
+    "tags": [
+      "aggregates",
+      "avg",
+      "max",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-23",
+    "slug": "hotel-reservations-active-revenue-count",
+    "title": "Retained Reservation Headcount and Total Booked Revenue",
+    "description_markdown": "Calculate total non-cancelled bookings (`COUNT(*)` as `total_reservations`) and cumulative revenue (`SUM(total_amount)` as `total_booking_revenue`) where `status != 'cancelled'`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_reservations",
+        "type": "bigint"
+      },
+      {
+        "name": "total_booking_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Non-cancelled booking totals\nSELECT COUNT(*) AS total_reservations, SUM(total_amount) AS total_booking_revenue\nFROM reservations\nWHERE ...",
+    "solution_query": "SELECT COUNT(*) AS total_reservations, SUM(total_amount) AS total_booking_revenue FROM reservations WHERE status != 'cancelled';",
+    "solution_explanation": "Filters out cancellations to calculate retained guest reservations and revenue.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including cancelled reservations."
+    ],
+    "hints": [
+      "Filter with status != 'cancelled'.",
+      "Query: SELECT COUNT(*) AS total_reservations, SUM(total_amount) AS total_booking_revenue FROM reservations WHERE status != 'cancelled';",
+      "The expected query is: SELECT COUNT(*) AS total_reservations, SUM(total_amount) AS total_booking_revenue FROM reservations WHERE status != 'cancelled';"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "sum",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-24",
+    "slug": "library-book-loans-turnover-metrics",
+    "title": "Total Book Loans and Completed Returns Count",
+    "description_markdown": "Query `book_loans` to compute the total number of loans issued (`COUNT(*)` as `total_loans`) and the count of loans that have been successfully returned (`COUNT(returned_date)` as `returned_loans`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_loans",
+        "type": "bigint"
+      },
+      {
+        "name": "returned_loans",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total loans vs completed returns\nSELECT COUNT(*) AS total_loans, COUNT(returned_date) AS returned_loans\nFROM book_loans;",
+    "solution_query": "SELECT COUNT(*) AS total_loans, COUNT(returned_date) AS returned_loans FROM book_loans;",
+    "solution_explanation": "COUNT(returned_date) excludes unreturned books where returned_date is NULL without discarding them from COUNT(*).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE returned_date IS NOT NULL which drops unreturned records from total_loans."
+    ],
+    "hints": [
+      "Use COUNT(*) for total loans and COUNT(returned_date) for returned loans.",
+      "Query: SELECT COUNT(*) AS total_loans, COUNT(returned_date) AS returned_loans FROM book_loans;",
+      "The expected query is: SELECT COUNT(*) AS total_loans, COUNT(returned_date) AS returned_loans FROM book_loans;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-25",
+    "slug": "movie-streaming-active-mrr-and-subscribers",
+    "title": "Active Monthly Recurring Revenue and Subscriber Count",
+    "description_markdown": "Calculate total Monthly Recurring Revenue (`SUM(monthly_price)` as `active_mrr`) and active subscriber count (`COUNT(*)` as `active_subscribers`) from `subscriptions` where `status = 'active'`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "subscriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "active_mrr",
+        "type": "decimal"
+      },
+      {
+        "name": "active_subscribers",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Active MRR and subscriber count\nSELECT SUM(...) AS active_mrr, COUNT(*) AS active_subscribers\nFROM subscriptions\nWHERE ...",
+    "solution_query": "SELECT SUM(monthly_price) AS active_mrr, COUNT(*) AS active_subscribers FROM subscriptions WHERE status = 'active';",
+    "solution_explanation": "Calculates MRR KPI by summing subscription values for active customer plans.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE status = 'active'."
+    ],
+    "hints": [
+      "Filter by status = 'active'.",
+      "Select SUM(monthly_price) AS active_mrr and COUNT(*) AS active_subscribers.",
+      "Query: SELECT SUM(monthly_price) AS active_mrr, COUNT(*) AS active_subscribers FROM subscriptions WHERE status = 'active';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "count",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-26",
+    "slug": "sales-contracts-portfolio-acv-duration",
+    "title": "Signed Contracts Portfolio Value and Average Duration",
+    "description_markdown": "Calculate total Annual Contract Value (`SUM(annual_contract_value)` as `total_acv`) and average contract duration in months rounded to 1 decimal place as `avg_contract_months` across all contracts.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_acv",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_contract_months",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Total ACV and average contract duration\nSELECT SUM(...) AS total_acv, ROUND(AVG(...), 1) AS avg_contract_months\nFROM contracts;",
+    "solution_query": "SELECT SUM(annual_contract_value) AS total_acv, ROUND(AVG(duration_months), 1) AS avg_contract_months FROM contracts;",
+    "solution_explanation": "Summarizes portfolio value and average tenure across signed corporate agreements.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding to 2 decimal places instead of 1."
+    ],
+    "hints": [
+      "Use SUM(annual_contract_value) AS total_acv.",
+      "Use ROUND(AVG(duration_months), 1) AS avg_contract_months.",
+      "Query: SELECT SUM(annual_contract_value) AS total_acv, ROUND(AVG(duration_months), 1) AS avg_contract_months FROM contracts;"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "avg",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-27",
+    "slug": "food-delivery-delivered-orders-kpis",
+    "title": "Delivered Orders Gross Merchandise Value and Delivery Fee",
+    "description_markdown": "For fulfilled deliveries (`delivery_status = 'delivered'`), calculate the count of orders (`COUNT(*)` as `completed_deliveries`), total order amount (`SUM(total_amount)` as `gross_order_value`), and average delivery fee rounded to 2 decimals as `avg_delivery_fee`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "completed_deliveries",
+        "type": "bigint"
+      },
+      {
+        "name": "gross_order_value",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_delivery_fee",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Fulfilled delivery KPIs\nSELECT COUNT(*) AS completed_deliveries, SUM(...) AS gross_order_value, ROUND(...) AS avg_delivery_fee\nFROM delivery_orders\nWHERE ...",
+    "solution_query": "SELECT COUNT(*) AS completed_deliveries, SUM(total_amount) AS gross_order_value, ROUND(AVG(delivery_fee), 2) AS avg_delivery_fee FROM delivery_orders WHERE delivery_status = 'delivered';",
+    "solution_explanation": "Evaluates fulfillment volume, GMV, and logistics fee averages for completed food deliveries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the delivery_status = 'delivered' condition."
+    ],
+    "hints": [
+      "Filter by delivery_status = 'delivered'.",
+      "Compute COUNT(*), SUM(total_amount), and ROUND(AVG(delivery_fee), 2).",
+      "Query: SELECT COUNT(*) AS completed_deliveries, SUM(total_amount) AS gross_order_value, ROUND(AVG(delivery_fee), 2) AS avg_delivery_fee FROM delivery_orders WHERE delivery_status = 'delivered';"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "sum",
+      "avg",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-28",
+    "slug": "airline-passengers-miles-statistics",
+    "title": "Frequent Flyer Passenger Count, Peak, and Mean Mileage",
+    "description_markdown": "Calculate total registered passengers (`COUNT(*)` as `total_passengers`), maximum mileage accumulated (`MAX(frequent_flyer_miles)` as `max_miles`), and average miles rounded to 1 decimal place as `avg_miles`.",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_passengers",
+        "type": "bigint"
+      },
+      {
+        "name": "max_miles",
+        "type": "integer"
+      },
+      {
+        "name": "avg_miles",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Passenger mileage metrics\nSELECT COUNT(*) AS total_passengers, MAX(...) AS max_miles, ROUND(...) AS avg_miles\nFROM passengers;",
+    "solution_query": "SELECT COUNT(*) AS total_passengers, MAX(frequent_flyer_miles) AS max_miles, ROUND(AVG(frequent_flyer_miles), 1) AS avg_miles FROM passengers;",
+    "solution_explanation": "Summarizes loyalty tier parameters across airline traveler accounts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding to 2 decimals instead of 1."
+    ],
+    "hints": [
+      "Use COUNT(*) AS total_passengers, MAX(frequent_flyer_miles) AS max_miles, ROUND(AVG(frequent_flyer_miles), 1) AS avg_miles.",
+      "Query: SELECT COUNT(*) AS total_passengers, MAX(frequent_flyer_miles) AS max_miles, ROUND(AVG(frequent_flyer_miles), 1) AS avg_miles FROM passengers;",
+      "The expected query is: SELECT COUNT(*) AS total_passengers, MAX(frequent_flyer_miles) AS max_miles, ROUND(AVG(frequent_flyer_miles), 1) AS avg_miles FROM passengers;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "max",
+      "avg",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-29",
+    "slug": "inventory-warehouses-capacity-and-locations",
+    "title": "Logistics Network Total Storage Capacity and City Count",
+    "description_markdown": "Calculate total storage capacity across all facilities (`SUM(capacity)` as `total_warehouse_capacity`) and the count of distinct warehouse locations (`COUNT(DISTINCT location)` as `unique_locations`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_warehouse_capacity",
+        "type": "bigint"
+      },
+      {
+        "name": "unique_locations",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Warehouse capacity and unique locations\nSELECT SUM(...) AS total_warehouse_capacity, COUNT(DISTINCT ...) AS unique_locations\nFROM warehouses;",
+    "solution_query": "SELECT SUM(capacity) AS total_warehouse_capacity, COUNT(DISTINCT location) AS unique_locations FROM warehouses;",
+    "solution_explanation": "Demonstrates SUM on facility volume paired with COUNT(DISTINCT) on geographical locations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(location) without DISTINCT."
+    ],
+    "hints": [
+      "Select SUM(capacity) AS total_warehouse_capacity and COUNT(DISTINCT location) AS unique_locations.",
+      "Query: SELECT SUM(capacity) AS total_warehouse_capacity, COUNT(DISTINCT location) AS unique_locations FROM warehouses;",
+      "The expected query is: SELECT SUM(capacity) AS total_warehouse_capacity, COUNT(DISTINCT location) AS unique_locations FROM warehouses;"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "count-distinct",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-30",
+    "slug": "finance-buy-trades-volume-and-executions",
+    "title": "Buy Trade Execution Count and Total Shares Traded",
+    "description_markdown": "For buy orders (`trade_type = 'BUY'`), calculate the total number of shares traded (`SUM(shares)` as `total_shares_traded`) and total execution count (`COUNT(*)` as `buy_trade_count`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_shares_traded",
+        "type": "bigint"
+      },
+      {
+        "name": "buy_trade_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Buy trades share volume and count\nSELECT SUM(...) AS total_shares_traded, COUNT(*) AS buy_trade_count\nFROM trades\nWHERE ...",
+    "solution_query": "SELECT SUM(shares) AS total_shares_traded, COUNT(*) AS buy_trade_count FROM trades WHERE trade_type = 'BUY';",
+    "solution_explanation": "Aggregates trading desk buy volumes and ticket counts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE trade_type = 'BUY'."
+    ],
+    "hints": [
+      "Filter with trade_type = 'BUY'.",
+      "Query: SELECT SUM(shares) AS total_shares_traded, COUNT(*) AS buy_trade_count FROM trades WHERE trade_type = 'BUY';",
+      "The expected query is: SELECT SUM(shares) AS total_shares_traded, COUNT(*) AS buy_trade_count FROM trades WHERE trade_type = 'BUY';"
+    ],
+    "tags": [
+      "aggregates",
+      "sum",
+      "count",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-31",
+    "slug": "hr-applicants-experience-and-employed-count",
+    "title": "Applicant Pool Experience Benchmark and Employment Rate",
+    "description_markdown": "Calculate total job candidates (`COUNT(*)` as `total_applicants`), average years of experience rounded to 2 decimals as `avg_experience`, and the count of applicants currently holding a position (`COUNT(current_company)` as `employed_applicants`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-stats",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_applicants",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_experience",
+        "type": "decimal"
+      },
+      {
+        "name": "employed_applicants",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Candidate pool metrics\nSELECT COUNT(*) AS total_applicants, ROUND(AVG(...), 2) AS avg_experience, COUNT(...) AS employed_applicants\nFROM applicants;",
+    "solution_query": "SELECT COUNT(*) AS total_applicants, ROUND(AVG(years_experience), 2) AS avg_experience, COUNT(current_company) AS employed_applicants FROM applicants;",
+    "solution_explanation": "Demonstrates COUNT(current_company) which ignores applicants with NULL current_company.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE current_company IS NOT NULL which drops total_applicants count."
+    ],
+    "hints": [
+      "COUNT(*) counts all applicants.",
+      "COUNT(current_company) automatically excludes NULLs.",
+      "Query: SELECT COUNT(*) AS total_applicants, ROUND(AVG(years_experience), 2) AS avg_experience, COUNT(current_company) AS employed_applicants FROM applicants;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "avg",
+      "nulls",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-agg-32",
+    "slug": "social-media-users-total-and-bio-coverage",
+    "title": "User Community Size and Profile Bio Completion Count",
+    "description_markdown": "Calculate the total number of registered platform users (`COUNT(*)` as `total_users`) and the count of users who have authored a profile bio (`COUNT(bio)` as `users_with_bio`).",
+    "topic_id": "aggregates",
+    "subtopic_id": "agg-count",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_users",
+        "type": "bigint"
+      },
+      {
+        "name": "users_with_bio",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- User community size and profile bio coverage\nSELECT COUNT(*) AS total_users, COUNT(bio) AS users_with_bio\nFROM social_users;",
+    "solution_query": "SELECT COUNT(*) AS total_users, COUNT(bio) AS users_with_bio FROM social_users;",
+    "solution_explanation": "Contrasts COUNT(*) (all accounts) with COUNT(bio) (accounts with populated bio).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering with WHERE bio IS NOT NULL which distorts total_users."
+    ],
+    "hints": [
+      "Use COUNT(*) AS total_users and COUNT(bio) AS users_with_bio.",
+      "Query: SELECT COUNT(*) AS total_users, COUNT(bio) AS users_with_bio FROM social_users;",
+      "The expected query is: SELECT COUNT(*) AS total_users, COUNT(bio) AS users_with_bio FROM social_users;"
+    ],
+    "tags": [
+      "aggregates",
+      "count",
+      "nulls",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-agg-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-agg-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-agg-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

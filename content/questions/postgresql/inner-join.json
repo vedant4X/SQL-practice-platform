@@ -1,0 +1,2419 @@
+[
+  {
+    "id": "q-inj-01",
+    "slug": "employees-with-department-names",
+    "title": "Join Employees with Department Names",
+    "description_markdown": "Match each employee with their department name using an INNER JOIN. Return `e.first_name`, `e.last_name`, and `d.dept_name`. Order by `e.emp_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- INNER JOIN employees and departments\nSELECT e.first_name, e.last_name, d.dept_name\nFROM employees e\nJOIN departments d ON ...",
+    "solution_query": "SELECT e.first_name, e.last_name, d.dept_name FROM employees e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "INNER JOIN selects rows that have matching values in both tables (`e.dept_id = d.dept_id`).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `e.dept_id = d.dept_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT e.first_name, e.last_name, d.dept_name FROM employees e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-02",
+    "slug": "products-with-category-names",
+    "title": "Retrieve Products with Category Labels",
+    "description_markdown": "Join `products` with `categories` on `category_id`. Return `p.product_name`, `c.category_name`, and `p.price`. Order by `p.price` descending, then `p.product_id`.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join products and categories\nSELECT ...",
+    "solution_query": "SELECT p.product_name, c.category_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id ORDER BY p.price DESC, p.product_id ASC;",
+    "solution_explanation": "Retrieves catalog products enriched with category metadata.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `p.category_id = c.category_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.product_name, c.category_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id ORDER BY p.price DESC, p.product_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-03",
+    "slug": "courses-taught-by-professors",
+    "title": "Enumerate Courses Taught by Full Professors",
+    "description_markdown": "Join `courses` and `professors` on `professor_id`. Filter for professors whose title is 'Full Professor'. Return `c.course_code`, `c.course_name`, and `p.last_name AS professor_last_name`. Order by `c.course_code` ASC.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "professor_last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join courses and professors with filter\nSELECT ...",
+    "solution_query": "SELECT c.course_code, c.course_name, p.last_name AS professor_last_name FROM courses c JOIN professors p ON c.professor_id = p.professor_id WHERE p.title = 'Full Professor' ORDER BY c.course_code ASC;",
+    "solution_explanation": "Combines an INNER JOIN with a selective WHERE predicate on faculty title.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE p.title = 'Full Professor'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.course_code, c.course_name, p.last_name AS professor_last_name FROM courses c JOIN professors p ON c.professor_id = p.professor_id WHERE p.title = 'Full Professor' ORDER BY c.course_code ASC;"
+    ],
+    "tags": [
+      "joins",
+      "filtering"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-04",
+    "slug": "customer-orders-total",
+    "title": "Link Customers to Their Placed Orders",
+    "description_markdown": "Join `customers` with `orders` on `customer_id`. Return `c.customer_id`, `c.first_name`, `o.order_id`, and `o.total_amount`. Order results by `o.order_id` in ascending order.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Inner join customers and orders\nSELECT c.customer_id, c.first_name, o.order_id, o.total_amount\nFROM customers c\nJOIN orders o ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, o.order_id, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.order_id ASC;",
+    "solution_explanation": "An INNER JOIN matches records between customers and orders using `c.customer_id = o.customer_id`. Customers who have never placed an order are excluded.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting table qualifiers leading to ambiguous column errors on customer_id."
+    ],
+    "interview_tip": "Always qualify columns that exist in more than one table to prevent runtime ambiguity errors.",
+    "hints": [
+      "Use `FROM customers c JOIN orders o ON c.customer_id = o.customer_id`.",
+      "Select the required columns using table aliases.",
+      "Query: SELECT c.customer_id, c.first_name, o.order_id, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.order_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "e-commerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-05",
+    "slug": "employee-project-assignments",
+    "title": "Match Employees with Project Assignments",
+    "description_markdown": "Join `employees` with `assignments` on `emp_id`. Return `e.emp_id`, `e.first_name`, `e.last_name`, `a.project_id`, and `a.role`. Order by `e.emp_id` ascending, then `a.project_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "role",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join employees and assignments\nSELECT ...\nFROM employees e\nJOIN assignments a ON ...\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.last_name, a.project_id, a.role FROM employees e JOIN assignments a ON e.emp_id = a.emp_id ORDER BY e.emp_id ASC, a.project_id ASC;",
+    "solution_explanation": "Inner joining `employees` with `assignments` on `e.emp_id = a.emp_id` returns each active role assigned to an employee.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN when the problem asks for matching assignment records."
+    ],
+    "interview_tip": "When querying many-to-many junction tables, start from the entity table and join the junction table on the primary key.",
+    "hints": [
+      "Join on `e.emp_id = a.emp_id`.",
+      "Order by both `e.emp_id ASC` and `a.project_id ASC`.",
+      "Query: SELECT e.emp_id, e.first_name, e.last_name, a.project_id, a.role FROM employees e JOIN assignments a ON e.emp_id = a.emp_id ORDER BY e.emp_id ASC, a.project_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "staffing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-06",
+    "slug": "student-enrollments-semester",
+    "title": "Display Student Course Enrollments and Semesters",
+    "description_markdown": "Join `students` with `enrollments` on `student_id`. Return `s.student_id`, `s.first_name`, `e.course_id`, and `e.semester`. Order results by `s.student_id` ascending, then `e.course_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "semester",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join students with enrollments\nSELECT ...\nFROM students s\nJOIN enrollments e ON ...\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, e.course_id, e.semester FROM students s JOIN enrollments e ON s.student_id = e.student_id ORDER BY s.student_id ASC, e.course_id ASC;",
+    "solution_explanation": "The query combines student demographic info with their semester enrollment roster on matching student_id keys.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out table aliases when selecting columns."
+    ],
+    "interview_tip": "Always use meaningful short aliases like s for students and e for enrollments.",
+    "hints": [
+      "Join on `s.student_id = e.student_id`.",
+      "Order by `s.student_id ASC, e.course_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, e.course_id, e.semester FROM students s JOIN enrollments e ON s.student_id = e.student_id ORDER BY s.student_id ASC, e.course_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "education"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-07",
+    "slug": "order-items-bulk-quantity",
+    "title": "Filter Line Items with Significant Quantity",
+    "description_markdown": "Join `order_items` with `products` on `product_id`. Filter for line items where `oi.quantity >= 2`. Return `oi.order_id`, `p.product_name`, `oi.quantity`, and `oi.unit_price`. Order by `oi.order_id` ascending, then `p.product_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "unit_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join order_items and products with quantity filter\nSELECT oi.order_id, p.product_name, oi.quantity, oi.unit_price\nFROM order_items oi\nJOIN products p ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT oi.order_id, p.product_name, oi.quantity, oi.unit_price FROM order_items oi JOIN products p ON oi.product_id = p.product_id WHERE oi.quantity >= 2 ORDER BY oi.order_id ASC, p.product_name ASC;",
+    "solution_explanation": "Combines order items and catalog products on product_id while filtering for orders containing multiple units.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the filter in HAVING without a GROUP BY instead of WHERE."
+    ],
+    "interview_tip": "Row-level filters belong in the WHERE clause, not HAVING.",
+    "hints": [
+      "Join on `oi.product_id = p.product_id`.",
+      "Filter with `WHERE oi.quantity >= 2`.",
+      "Query: SELECT oi.order_id, p.product_name, oi.quantity, oi.unit_price FROM order_items oi JOIN products p ON oi.product_id = p.product_id WHERE oi.quantity >= 2 ORDER BY oi.order_id ASC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "filtering"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-08",
+    "slug": "department-major-projects",
+    "title": "Identify Major Departmental Initiatives",
+    "description_markdown": "Join `departments` and `projects` on `dept_id`. Filter for projects with a `budget >= 400000`. Return `d.dept_name`, `p.project_name`, and `p.budget`. Order by `p.budget` descending, then `d.dept_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join departments and projects\nSELECT d.dept_name, p.project_name, p.budget\nFROM departments d\nJOIN projects p ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, p.project_name, p.budget FROM departments d JOIN projects p ON d.dept_id = p.dept_id WHERE p.budget >= 400000 ORDER BY p.budget DESC, d.dept_name ASC;",
+    "solution_explanation": "An INNER JOIN filters out departments with no assigned projects and restricts the result to high-budget ventures.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing department budget with project budget."
+    ],
+    "interview_tip": "Ensure column references use the correct table alias when both tables have a identically named column (like budget).",
+    "hints": [
+      "Join on `d.dept_id = p.dept_id`.",
+      "Filter with `WHERE p.budget >= 400000`.",
+      "Query: SELECT d.dept_name, p.project_name, p.budget FROM departments d JOIN projects p ON d.dept_id = p.dept_id WHERE p.budget >= 400000 ORDER BY p.budget DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-09",
+    "slug": "professors-core-courses",
+    "title": "Find Faculty Teaching Heavy-Credit Courses",
+    "description_markdown": "Join `professors` with `courses` on `professor_id`. Filter for courses where `credits >= 4`. Return `p.first_name`, `p.last_name`, `c.course_name`, and `c.credits`. Order by `p.last_name` ascending, then `c.course_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join professors and courses\nSELECT ...\nFROM professors p\nJOIN courses c ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p.first_name, p.last_name, c.course_name, c.credits FROM professors p JOIN courses c ON p.professor_id = c.professor_id WHERE c.credits >= 4 ORDER BY p.last_name ASC, c.course_name ASC;",
+    "solution_explanation": "Filters the professor and course join to intensive 4-credit offerings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on department instead of primary/foreign key professor_id."
+    ],
+    "interview_tip": "Always join on primary and foreign keys rather than text attributes to ensure referential accuracy.",
+    "hints": [
+      "Join condition is `p.professor_id = c.professor_id`.",
+      "Add `WHERE c.credits >= 4`.",
+      "Query: SELECT p.first_name, p.last_name, c.course_name, c.credits FROM professors p JOIN courses c ON p.professor_id = c.professor_id WHERE c.credits >= 4 ORDER BY p.last_name ASC, c.course_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "curriculum"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-10",
+    "slug": "payments-for-successful-orders",
+    "title": "Inspect Successful Payment Transactions",
+    "description_markdown": "Join `orders` and `payments` on `order_id`. Filter where `pay.payment_status = 'success'`. Return `o.order_id`, `o.order_status`, `pay.payment_method`, and `pay.amount`. Order by `o.order_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "payment_method",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join orders and payments\nSELECT ...\nFROM orders o\nJOIN payments pay ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT o.order_id, o.order_status, pay.payment_method, pay.amount FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_status = 'success' ORDER BY o.order_id ASC;",
+    "solution_explanation": "Matches checkout orders to successful processing transactions on the order_id key.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering on o.order_status instead of pay.payment_status."
+    ],
+    "interview_tip": "Keep payment audits explicit by checking payment verification status directly.",
+    "hints": [
+      "Join condition: `o.order_id = pay.order_id`.",
+      "Filter condition: `pay.payment_status = 'success'`.",
+      "Query: SELECT o.order_id, o.order_status, pay.payment_method, pay.amount FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_status = 'success' ORDER BY o.order_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-11",
+    "slug": "engineering-staff-roster",
+    "title": "List Engineering Department Employees",
+    "description_markdown": "Join `employees` and `departments` on `dept_id`. Filter for members of the 'Engineering' department. Return `e.emp_id`, `e.first_name`, and `e.salary`. Order by `e.salary` descending, then `e.emp_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join employees and departments\nSELECT ...\nFROM employees e\nJOIN departments d ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN departments d ON e.dept_id = d.dept_id WHERE d.dept_name = 'Engineering' ORDER BY e.salary DESC, e.emp_id ASC;",
+    "solution_explanation": "Links engineering employees with their department record and sorts them by top compensation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to order by salary descending."
+    ],
+    "interview_tip": "Adding a secondary tie-breaker like emp_id guarantees deterministic output.",
+    "hints": [
+      "Filter with `WHERE d.dept_name = 'Engineering'`.",
+      "Order by `e.salary DESC, e.emp_id ASC`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN departments d ON e.dept_id = d.dept_id WHERE d.dept_name = 'Engineering' ORDER BY e.salary DESC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-12",
+    "slug": "five-star-product-reviews",
+    "title": "Correlate Products with 5-Star Reviews",
+    "description_markdown": "Join `products` with `reviews` on `product_id`. Filter for reviews where `rating = 5`. Return `p.product_name`, `r.rating`, and `r.review_text`. Order by `p.product_name` ascending, then `r.review_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      },
+      {
+        "name": "review_text",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join products and reviews\nSELECT ...\nFROM products p\nJOIN reviews r ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, r.rating, r.review_text FROM products p JOIN reviews r ON p.product_id = r.product_id WHERE r.rating = 5 ORDER BY p.product_name ASC, r.review_id ASC;",
+    "solution_explanation": "Retrieves excellent feedback by joining product records with reviews matching 5 stars.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the tie-breaker review_id sort."
+    ],
+    "interview_tip": "Always check text columns to ensure they are properly aliased or selected without alteration.",
+    "hints": [
+      "Join condition: `p.product_id = r.product_id`.",
+      "Filter with `WHERE r.rating = 5`.",
+      "Query: SELECT p.product_name, r.rating, r.review_text FROM products p JOIN reviews r ON p.product_id = r.product_id WHERE r.rating = 5 ORDER BY p.product_name ASC, r.review_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "feedback"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-13",
+    "slug": "honors-grade-student-marks",
+    "title": "Inspect High-Scoring Course Assessments",
+    "description_markdown": "Join `enrollments` and `marks` on `enrollment_id`. Filter for assessment scores where `score >= 90`. Return `e.student_id`, `e.course_id`, `m.assessment_type`, and `m.score`. Order by `m.score` descending, then `e.student_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join enrollments and marks\nSELECT ...\nFROM enrollments e\nJOIN marks m ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e.student_id, e.course_id, m.assessment_type, m.score FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.score >= 90 ORDER BY m.score DESC, e.student_id ASC;",
+    "solution_explanation": "Returns individual student academic assessment records where the student earned honors grades (>= 90).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining marks directly to students without using the enrollment bridge table."
+    ],
+    "interview_tip": "In normalized relational schemas, bridge tables like enrollments hold the natural join keys.",
+    "hints": [
+      "Join on `e.enrollment_id = m.enrollment_id`.",
+      "Filter with `WHERE m.score >= 90`.",
+      "Query: SELECT e.student_id, e.course_id, m.assessment_type, m.score FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.score >= 90 ORDER BY m.score DESC, e.student_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-14",
+    "slug": "high-value-customer-orders",
+    "title": "Retrieve Orders Exceeding 500 Dollars",
+    "description_markdown": "Join `customers` with `orders` on `customer_id`. Filter for orders where `total_amount >= 500`. Return `c.email`, `o.order_id`, and `o.total_amount`. Order by `o.total_amount` descending, then `o.order_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join customers and orders for high-value purchases\nSELECT ...\nFROM customers c\nJOIN orders o ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c.email, o.order_id, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.total_amount >= 500 ORDER BY o.total_amount DESC, o.order_id ASC;",
+    "solution_explanation": "Returns customer contact details for transactions with significant basket size.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering using customer_id instead of total_amount."
+    ],
+    "interview_tip": "Filtering post-join on indexed keys is standard; SQL query planners push down predicates automatically.",
+    "hints": [
+      "Join condition: `c.customer_id = o.customer_id`.",
+      "Filter condition: `WHERE o.total_amount >= 500`.",
+      "Query: SELECT c.email, o.order_id, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.total_amount >= 500 ORDER BY o.total_amount DESC, o.order_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-15",
+    "slug": "top-rated-project-assignments",
+    "title": "Inspect Top-Rated Project Contributors",
+    "description_markdown": "Join `projects` and `assignments` on `project_id`. Filter for assignments with `rating >= 4.5`. Return `p.project_name`, `a.emp_id`, `a.hours_worked`, and `a.rating`. Order by `a.rating` descending, then `p.project_name` ascending, then `a.emp_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "numeric"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join projects and assignments\nSELECT ...\nFROM projects p\nJOIN assignments a ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p.project_name, a.emp_id, a.hours_worked, a.rating FROM projects p JOIN assignments a ON p.project_id = a.project_id WHERE a.rating >= 4.5 ORDER BY a.rating DESC, p.project_name ASC, a.emp_id ASC;",
+    "solution_explanation": "Highlights top-performing employee project contributions by joining project names to assignment performance scores.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the tertiary tie-breaker on emp_id."
+    ],
+    "interview_tip": "When multiple rows have equal float ratings, a deterministic primary key in ORDER BY is vital for test parity.",
+    "hints": [
+      "Join on `p.project_id = a.project_id`.",
+      "Filter: `WHERE a.rating >= 4.5`.",
+      "Query: SELECT p.project_name, a.emp_id, a.hours_worked, a.rating FROM projects p JOIN assignments a ON p.project_id = a.project_id WHERE a.rating >= 4.5 ORDER BY a.rating DESC, p.project_name ASC, a.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "performance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-16",
+    "slug": "customer-product-reviews",
+    "title": "Connect Review Authors with Feedback",
+    "description_markdown": "Join `customers` with `reviews` on `customer_id`. Return `c.first_name`, `c.last_name`, `r.product_id`, and `r.rating`. Order by `c.last_name` ascending, then `r.rating` descending, then `r.review_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join customers and reviews\nSELECT ...\nFROM customers c\nJOIN reviews r ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, c.last_name, r.product_id, r.rating FROM customers c JOIN reviews r ON c.customer_id = r.customer_id ORDER BY c.last_name ASC, r.rating DESC, r.review_id ASC;",
+    "solution_explanation": "Links customer identities with the ratings they authored on individual products.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to order by review_id as the final tie-breaker."
+    ],
+    "interview_tip": "Notice how an inner join naturally filters out customers who never submitted a review.",
+    "hints": [
+      "Join on `c.customer_id = r.customer_id`.",
+      "Order by `c.last_name ASC, r.rating DESC, r.review_id ASC`.",
+      "Query: SELECT c.first_name, c.last_name, r.product_id, r.rating FROM customers c JOIN reviews r ON c.customer_id = r.customer_id ORDER BY c.last_name ASC, r.rating DESC, r.review_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "customer-feedback"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-17",
+    "slug": "completed-course-enrollments",
+    "title": "Verify Completed Course Enrollments",
+    "description_markdown": "Join `courses` and `enrollments` on `course_id`. Filter for enrollments where `status = 'completed'`. Return `c.course_code`, `c.course_name`, and `e.student_id`. Order by `c.course_code` ascending, then `e.student_id` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join courses and enrollments\nSELECT ...\nFROM courses c\nJOIN enrollments e ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c.course_code, c.course_name, e.student_id FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.status = 'completed' ORDER BY c.course_code ASC, e.student_id ASC;",
+    "solution_explanation": "Retrieves successful course completions by joining courses with active completion records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the e.status = 'completed' filter."
+    ],
+    "interview_tip": "Business definitions often require filtering on status columns like completed or active.",
+    "hints": [
+      "Join on `c.course_id = e.course_id`.",
+      "Filter with `WHERE e.status = 'completed'`.",
+      "Query: SELECT c.course_code, c.course_name, e.student_id FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.status = 'completed' ORDER BY c.course_code ASC, e.student_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-18",
+    "slug": "employee-salary-history-audit",
+    "title": "Trace Historic Employee Compensation Changes",
+    "description_markdown": "Join `employees` and `salaries_history` on `emp_id`. Return `e.first_name`, `e.last_name`, `sh.effective_date`, and `sh.salary AS historical_salary`. Order by `e.last_name` ascending, then `sh.effective_date` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "effective_date",
+        "type": "date"
+      },
+      {
+        "name": "historical_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join employees and salaries_history\nSELECT e.first_name, e.last_name, sh.effective_date, sh.salary AS historical_salary\nFROM employees e\nJOIN salaries_history sh ON ...\nORDER BY ...;",
+    "solution_query": "SELECT e.first_name, e.last_name, sh.effective_date, sh.salary AS historical_salary FROM employees e JOIN salaries_history sh ON e.emp_id = sh.emp_id ORDER BY e.last_name ASC, sh.effective_date ASC;",
+    "solution_explanation": "Audits historic wage adjustments by connecting the employee roster to point-in-time salary records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting e.salary instead of sh.salary."
+    ],
+    "interview_tip": "Audit logs require carefully separating the current state in the primary table from historical values in the ledger table.",
+    "hints": [
+      "Join on `e.emp_id = sh.emp_id`.",
+      "Alias `sh.salary` as `historical_salary`.",
+      "Query: SELECT e.first_name, e.last_name, sh.effective_date, sh.salary AS historical_salary FROM employees e JOIN salaries_history sh ON e.emp_id = sh.emp_id ORDER BY e.last_name ASC, sh.effective_date ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-19",
+    "slug": "premium-product-categories",
+    "title": "Catalog Premium Products by Category",
+    "description_markdown": "Join `products` and `categories` on `category_id`. Filter for products with `price > 100`. Return `p.product_name`, `c.category_name`, and `p.price`. Order by `p.price` descending, then `p.product_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Join products and categories with price filter\nSELECT ...\nFROM products p\nJOIN categories c ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, c.category_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id WHERE p.price > 100 ORDER BY p.price DESC, p.product_name ASC;",
+    "solution_explanation": "Retrieves premium retail catalog entries joined with their descriptive product categories.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering before the join in an unnecessary subquery."
+    ],
+    "interview_tip": "Joining first and filtering in the WHERE clause is cleaner and standard in SQL.",
+    "hints": [
+      "Join condition: `p.category_id = c.category_id`.",
+      "Filter condition: `WHERE p.price > 100`.",
+      "Query: SELECT p.product_name, c.category_name, p.price FROM products p JOIN categories c ON p.category_id = c.category_id WHERE p.price > 100 ORDER BY p.price DESC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-20",
+    "slug": "department-employee-headcounts",
+    "title": "Aggregate Department Headcounts via Inner Join",
+    "description_markdown": "Join `departments` and `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Return `d.dept_name` and `COUNT(e.emp_id) AS employee_count`. Order by `employee_count` descending, then `d.dept_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "employee_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join and group by department\nSELECT d.dept_name, COUNT(e.emp_id) AS employee_count\nFROM departments d\nJOIN employees e ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, COUNT(e.emp_id) AS employee_count FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY employee_count DESC, d.dept_name ASC;",
+    "solution_explanation": "Counts active employees per department. Departments without any employees are automatically excluded by the INNER JOIN.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving d.dept_name out of the GROUP BY clause."
+    ],
+    "interview_tip": "In ONLY_FULL_GROUP_BY mode, any unaggregated column in SELECT must be included in GROUP BY.",
+    "hints": [
+      "Join on `d.dept_id = e.dept_id`.",
+      "Group by `d.dept_id, d.dept_name`.",
+      "Query: SELECT d.dept_name, COUNT(e.emp_id) AS employee_count FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY employee_count DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-21",
+    "slug": "customer-completed-spend",
+    "title": "Calculate Total Customer Spend on Completed Orders",
+    "description_markdown": "Join `customers` and `orders` on `customer_id`. Filter where `o.order_status = 'completed'`. Group by `c.customer_id` and `c.first_name`. Return `c.first_name` and `SUM(o.total_amount) AS total_spent`. Order by `total_spent` descending, then `c.first_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join customers and completed orders\nSELECT c.first_name, SUM(o.total_amount) AS total_spent\nFROM customers c\nJOIN orders o ON ...\nWHERE ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, SUM(o.total_amount) AS total_spent FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.first_name ASC;",
+    "solution_explanation": "Calculates lifetime completed order value per customer by joining the tables and filtering prior to aggregation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including refunded or cancelled orders in the sum."
+    ],
+    "interview_tip": "Filtering before grouping in the WHERE clause reduces the rows fed to the aggregation engine.",
+    "hints": [
+      "Filter with `WHERE o.order_status = 'completed'`.",
+      "Group by `c.customer_id, c.first_name`.",
+      "Query: SELECT c.first_name, SUM(o.total_amount) AS total_spent FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.first_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-22",
+    "slug": "professor-course-load",
+    "title": "Calculate Teaching Load per Faculty Member",
+    "description_markdown": "Join `professors` with `courses` on `professor_id`. Group by `p.professor_id`, `p.last_name`, and `p.department`. Return `p.last_name`, `p.department`, and `COUNT(c.course_id) AS courses_taught`. Order by `courses_taught` descending, then `p.last_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "courses_taught",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join professors and courses\nSELECT p.last_name, p.department, COUNT(c.course_id) AS courses_taught\nFROM professors p\nJOIN courses c ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.last_name, p.department, COUNT(c.course_id) AS courses_taught FROM professors p JOIN courses c ON p.professor_id = c.professor_id GROUP BY p.professor_id, p.last_name, p.department ORDER BY courses_taught DESC, p.last_name ASC;",
+    "solution_explanation": "Aggregates course count per teaching professor, excluding unassigned faculty members.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing p.department from the GROUP BY clause."
+    ],
+    "interview_tip": "Group by the primary key plus all non-aggregated display columns to maintain strict SQL compatibility.",
+    "hints": [
+      "Join on `p.professor_id = c.professor_id`.",
+      "Group by `p.professor_id, p.last_name, p.department`.",
+      "Query: SELECT p.last_name, p.department, COUNT(c.course_id) AS courses_taught FROM professors p JOIN courses c ON p.professor_id = c.professor_id GROUP BY p.professor_id, p.last_name, p.department ORDER BY courses_taught DESC, p.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-23",
+    "slug": "category-average-price",
+    "title": "Determine Average Product Price by Category",
+    "description_markdown": "Join `categories` with `products` on `category_id`. Group by `c.category_id` and `c.category_name`. Return `c.category_name` and `ROUND(AVG(p.price), 2) AS avg_price`. Order by `avg_price` descending, then `c.category_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join categories and products\nSELECT c.category_name, ROUND(AVG(p.price), 2) AS avg_price\nFROM categories c\nJOIN products p ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.category_name, ROUND(AVG(p.price), 2) AS avg_price FROM categories c JOIN products p ON c.category_id = p.category_id GROUP BY c.category_id, c.category_name ORDER BY avg_price DESC, c.category_name ASC;",
+    "solution_explanation": "Computes the mean catalog price for each merchandise category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting ROUND(..., 2)."
+    ],
+    "interview_tip": "Rounding averages to two decimals is standard financial formatting in reporting queries.",
+    "hints": [
+      "Join on `c.category_id = p.category_id`.",
+      "Use `ROUND(AVG(p.price), 2) AS avg_price`.",
+      "Query: SELECT c.category_name, ROUND(AVG(p.price), 2) AS avg_price FROM categories c JOIN products p ON c.category_id = p.category_id GROUP BY c.category_id, c.category_name ORDER BY avg_price DESC, c.category_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-24",
+    "slug": "project-allocated-hours",
+    "title": "Calculate Total Work Hours Committed per Project",
+    "description_markdown": "Join `projects` and `assignments` on `project_id`. Group by `p.project_id` and `p.project_name`. Return `p.project_name` and `SUM(a.hours_worked) AS total_hours`. Order by `total_hours` descending, then `p.project_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_hours",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join projects and assignments to sum hours\nSELECT p.project_name, SUM(a.hours_worked) AS total_hours\nFROM projects p\nJOIN assignments a ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.project_name, SUM(a.hours_worked) AS total_hours FROM projects p JOIN assignments a ON p.project_id = a.project_id GROUP BY p.project_id, p.project_name ORDER BY total_hours DESC, p.project_name ASC;",
+    "solution_explanation": "Sums all logged assignment hours per project to measure effort expenditure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT instead of SUM on hours_worked."
+    ],
+    "interview_tip": "Ensure SUM is used on numeric continuous metrics like hours worked rather than row count.",
+    "hints": [
+      "Join on `p.project_id = a.project_id`.",
+      "Use `SUM(a.hours_worked) AS total_hours`.",
+      "Query: SELECT p.project_name, SUM(a.hours_worked) AS total_hours FROM projects p JOIN assignments a ON p.project_id = a.project_id GROUP BY p.project_id, p.project_name ORDER BY total_hours DESC, p.project_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "timesheet"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-25",
+    "slug": "students-completed-courses-count",
+    "title": "Count Completed Courses per Student",
+    "description_markdown": "Join `students` with `enrollments` on `student_id`. Filter where `e.status = 'completed'`. Group by `s.student_id`, `s.first_name`, and `s.last_name`. Return `s.first_name`, `s.last_name`, and `COUNT(e.course_id) AS completed_courses`. Order by `completed_courses` descending, then `s.last_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_courses",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count completed courses per student\nSELECT s.first_name, s.last_name, COUNT(e.course_id) AS completed_courses\nFROM students s\nJOIN enrollments e ON ...\nWHERE ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT s.first_name, s.last_name, COUNT(e.course_id) AS completed_courses FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE e.status = 'completed' GROUP BY s.student_id, s.first_name, s.last_name ORDER BY completed_courses DESC, s.last_name ASC;",
+    "solution_explanation": "Finds how many completed classes each student has achieved.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Counting dropped enrollments as completed."
+    ],
+    "interview_tip": "Filtering status = 'completed' before grouping prevents dropped courses from inflating the count.",
+    "hints": [
+      "Filter with `WHERE e.status = 'completed'`.",
+      "Group by `s.student_id, s.first_name, s.last_name`.",
+      "Query: SELECT s.first_name, s.last_name, COUNT(e.course_id) AS completed_courses FROM students s JOIN enrollments e ON s.student_id = e.student_id WHERE e.status = 'completed' GROUP BY s.student_id, s.first_name, s.last_name ORDER BY completed_courses DESC, s.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-26",
+    "slug": "product-order-volume",
+    "title": "Calculate Total Units Sold per Product",
+    "description_markdown": "Join `products` and `order_items` on `product_id`. Group by `p.product_id` and `p.product_name`. Return `p.product_name` and `SUM(oi.quantity) AS total_units_sold`. Order by `total_units_sold` descending, then `p.product_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_units_sold",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join products and order_items\nSELECT p.product_name, SUM(oi.quantity) AS total_units_sold\nFROM products p\nJOIN order_items oi ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, SUM(oi.quantity) AS total_units_sold FROM products p JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY total_units_sold DESC, p.product_name ASC;",
+    "solution_explanation": "Aggregates physical volume sold for each catalog product.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(oi.order_item_id) instead of summing quantity."
+    ],
+    "interview_tip": "Order items can have quantities greater than 1, so SUM(quantity) is required.",
+    "hints": [
+      "Join on `p.product_id = oi.product_id`.",
+      "Use `SUM(oi.quantity) AS total_units_sold`.",
+      "Query: SELECT p.product_name, SUM(oi.quantity) AS total_units_sold FROM products p JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY total_units_sold DESC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "sales-volume"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-27",
+    "slug": "department-average-salary",
+    "title": "Compute Average Employee Salary by Department",
+    "description_markdown": "Join `departments` and `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Return `d.dept_name` and `ROUND(AVG(e.salary), 2) AS avg_salary`. Order by `avg_salary` descending, then `d.dept_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join departments and employees for average salary\nSELECT d.dept_name, ROUND(AVG(e.salary), 2) AS avg_salary\nFROM departments d\nJOIN employees e ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, ROUND(AVG(e.salary), 2) AS avg_salary FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY avg_salary DESC, d.dept_name ASC;",
+    "solution_explanation": "Computes the average salary within each populated department rounded to two decimal places.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to round to 2 decimals."
+    ],
+    "interview_tip": "Joining on foreign keys allows aggregate analytics across parent-child hierarchies.",
+    "hints": [
+      "Join on `d.dept_id = e.dept_id`.",
+      "Use `ROUND(AVG(e.salary), 2) AS avg_salary`.",
+      "Query: SELECT d.dept_name, ROUND(AVG(e.salary), 2) AS avg_salary FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY avg_salary DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-28",
+    "slug": "customer-feedback-sentiment-average",
+    "title": "Calculate Average Customer Review Rating",
+    "description_markdown": "Join `customers` and `reviews` on `customer_id`. Group by `c.customer_id` and `c.first_name`. Return `c.first_name` and `ROUND(AVG(r.rating), 2) AS avg_rating_given`. Order by `avg_rating_given` descending, then `c.first_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_rating_given",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join customers and reviews for average score\nSELECT c.first_name, ROUND(AVG(r.rating), 2) AS avg_rating_given\nFROM customers c\nJOIN reviews r ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, ROUND(AVG(r.rating), 2) AS avg_rating_given FROM customers c JOIN reviews r ON c.customer_id = r.customer_id GROUP BY c.customer_id, c.first_name ORDER BY avg_rating_given DESC, c.first_name ASC;",
+    "solution_explanation": "Evaluates review ratings authored by active customer reviewers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the customer_id in GROUP BY."
+    ],
+    "interview_tip": "Grouping by unique primary key along with first_name avoids ambiguous collapses when two customers share a first name.",
+    "hints": [
+      "Join on `c.customer_id = r.customer_id`.",
+      "Group by `c.customer_id, c.first_name`.",
+      "Query: SELECT c.first_name, ROUND(AVG(r.rating), 2) AS avg_rating_given FROM customers c JOIN reviews r ON c.customer_id = r.customer_id GROUP BY c.customer_id, c.first_name ORDER BY avg_rating_given DESC, c.first_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "customer-sentiment"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-29",
+    "slug": "course-average-final-exam-score",
+    "title": "Calculate Course Final Exam Average Scores",
+    "description_markdown": "Join `courses` to `enrollments` on `course_id`, and `enrollments` to `marks` on `enrollment_id`. Filter for `m.assessment_type = 'final'`. Group by `c.course_id` and `c.course_name`. Return `c.course_name` and `ROUND(AVG(m.score), 2) AS avg_final_score`. Order by `avg_final_score` descending, then `c.course_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_final_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join courses -> enrollments -> marks\nSELECT c.course_name, ROUND(AVG(m.score), 2) AS avg_final_score\nFROM courses c\nJOIN enrollments e ON ...\nJOIN marks m ON ...\nWHERE ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.course_name, ROUND(AVG(m.score), 2) AS avg_final_score FROM courses c JOIN enrollments e ON c.course_id = e.course_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' GROUP BY c.course_id, c.course_name ORDER BY avg_final_score DESC, c.course_name ASC;",
+    "solution_explanation": "Chains two inner joins through the enrollment bridge table to compute aggregate final exam performance across courses.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including midterm or quiz assessments in the average final calculation."
+    ],
+    "interview_tip": "Predicate pushdown on assessment_type prunes unnecessary mark records before the join and aggregation.",
+    "hints": [
+      "Join `courses c JOIN enrollments e ON c.course_id = e.course_id JOIN marks m ON e.enrollment_id = m.enrollment_id`.",
+      "Filter with `WHERE m.assessment_type = 'final'`.",
+      "Query: SELECT c.course_name, ROUND(AVG(m.score), 2) AS avg_final_score FROM courses c JOIN enrollments e ON c.course_id = e.course_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' GROUP BY c.course_id, c.course_name ORDER BY avg_final_score DESC, c.course_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "multi-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-30",
+    "slug": "product-gross-sales-revenue",
+    "title": "Calculate Product Gross Revenue from Line Items",
+    "description_markdown": "Join `products` and `order_items` on `product_id`. Group by `p.product_id` and `p.product_name`. Return `p.product_name` and `SUM(oi.quantity * oi.unit_price) AS gross_revenue`. Order by `gross_revenue` descending, then `p.product_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gross_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join products and order_items to compute revenue\nSELECT p.product_name, SUM(oi.quantity * oi.unit_price) AS gross_revenue\nFROM products p\nJOIN order_items oi ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, SUM(oi.quantity * oi.unit_price) AS gross_revenue FROM products p JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY gross_revenue DESC, p.product_name ASC;",
+    "solution_explanation": "Multiplies quantity by unit price across all line item records to calculate gross product revenue.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Summing product price from the products table instead of the historic oi.unit_price."
+    ],
+    "interview_tip": "Always use historical line-item unit_price rather than the master catalog price when computing revenue.",
+    "hints": [
+      "Join on `p.product_id = oi.product_id`.",
+      "Calculate `SUM(oi.quantity * oi.unit_price) AS gross_revenue`.",
+      "Query: SELECT p.product_name, SUM(oi.quantity * oi.unit_price) AS gross_revenue FROM products p JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY gross_revenue DESC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "revenue",
+      "analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-31",
+    "slug": "departments-with-heavy-payroll",
+    "title": "Filter Departments with Total Payroll Exceeding 200k",
+    "description_markdown": "Join `departments` and `employees` on `dept_id`. Group by `d.dept_id`, `d.dept_name`, and `d.budget`. Filter with `HAVING SUM(e.salary) > 200000`. Return `d.dept_name`, `d.budget`, and `SUM(e.salary) AS total_payroll`. Order by `total_payroll` descending, then `d.dept_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "total_payroll",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Join departments and employees with HAVING\nSELECT d.dept_name, d.budget, SUM(e.salary) AS total_payroll\nFROM departments d\nJOIN employees e ON ...\nGROUP BY ...\nHAVING ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, d.budget, SUM(e.salary) AS total_payroll FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name, d.budget HAVING SUM(e.salary) > 200000 ORDER BY total_payroll DESC, d.dept_name ASC;",
+    "solution_explanation": "Combines inner join, multi-column group by, and aggregate HAVING filtering to find departments exceeding payroll thresholds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the SUM(e.salary) > 200000 condition in the WHERE clause."
+    ],
+    "interview_tip": "Aggregated metric filters must go in HAVING, while row-level filters go in WHERE.",
+    "hints": [
+      "Join on `d.dept_id = e.dept_id`.",
+      "Use `HAVING SUM(e.salary) > 200000`.",
+      "Query: SELECT d.dept_name, d.budget, SUM(e.salary) AS total_payroll FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name, d.budget HAVING SUM(e.salary) > 200000 ORDER BY total_payroll DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "having",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inj-32",
+    "slug": "frequent-completed-buyers",
+    "title": "Identify Customers with Multiple Completed Orders",
+    "description_markdown": "Join `customers` and `orders` on `customer_id`. Filter for orders where `order_status = 'completed'`. Group by `c.customer_id`, `c.first_name`, and `c.last_name`. Filter with `HAVING COUNT(o.order_id) >= 2`. Return `c.first_name`, `c.last_name`, and `COUNT(o.order_id) AS completed_orders_count`. Order by `completed_orders_count` descending, then `c.last_name` ascending.",
+    "topic_id": "inner-join",
+    "subtopic_id": "join-inner",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_orders_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Find frequent buyers with completed orders\nSELECT c.first_name, c.last_name, COUNT(o.order_id) AS completed_orders_count\nFROM customers c\nJOIN orders o ON ...\nWHERE ...\nGROUP BY ...\nHAVING ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, c.last_name, COUNT(o.order_id) AS completed_orders_count FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name, c.last_name HAVING COUNT(o.order_id) >= 2 ORDER BY completed_orders_count DESC, c.last_name ASC;",
+    "solution_explanation": "Identifies loyal repeat purchasers by joining customers with orders, filtering for completed status, and asserting a minimum order count in HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering status in HAVING rather than WHERE."
+    ],
+    "interview_tip": "WHERE filters rows before aggregation; HAVING filters groups after aggregation.",
+    "hints": [
+      "Filter with `WHERE o.order_status = 'completed'`.",
+      "Filter groups with `HAVING COUNT(o.order_id) >= 2`.",
+      "Query: SELECT c.first_name, c.last_name, COUNT(o.order_id) AS completed_orders_count FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name, c.last_name HAVING COUNT(o.order_id) >= 2 ORDER BY completed_orders_count DESC, c.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "inner-join",
+      "retention",
+      "having"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inj-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inj-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inj-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

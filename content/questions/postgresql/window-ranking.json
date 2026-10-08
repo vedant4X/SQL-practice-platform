@@ -1,0 +1,2559 @@
+[
+  {
+    "id": "q-wrk-01",
+    "slug": "rank-salaries-dense-rank",
+    "title": "Assign Dense Salary Rankings Across Company",
+    "description_markdown": "Assign a dense numerical rank to each employee based on `salary` descending using `DENSE_RANK() OVER (ORDER BY salary DESC)` as `salary_rank`. Return `first_name`, `salary`, and `salary_rank`. Order by `salary_rank` ASC, `emp_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "salary_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Window ranking with DENSE_RANK\nSELECT first_name, salary,\n  DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT first_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank FROM employees ORDER BY salary_rank ASC, emp_id ASC;",
+    "solution_explanation": "DENSE_RANK() assigns consecutive rank numbers without skipping values when salary ties occur.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank FROM employees ORDER BY salary_rank ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-02",
+    "slug": "highest-paid-employee-per-department",
+    "title": "Top-1 Earner in Each Department via ROW_NUMBER",
+    "description_markdown": "Using `ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC)` in a CTE or subquery, identify the single highest-paid employee in each department (`dept_id IS NOT NULL`). Return `dept_id`, `first_name`, and `salary`. Order by `dept_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top-1 per group pattern\nWITH ranked AS (\n  SELECT dept_id, first_name, salary,\n    ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn\n  FROM employees\n  WHERE dept_id IS NOT NULL\n)\nSELECT ...",
+    "solution_query": "WITH ranked AS (SELECT dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM ranked WHERE rn = 1 ORDER BY dept_id ASC;",
+    "solution_explanation": "The Top-N per group pattern partitions by group key, orders by metric, and filters `rn = 1` in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Partition by `dept_id` and order by `salary DESC`.",
+      "Filter for `rn = 1` in the outer query.",
+      "Query: WITH ranked AS (SELECT dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM ranked WHERE rn = 1 ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-n",
+      "interview-classic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-03",
+    "slug": "top-2-highest-priced-products-per-category",
+    "title": "Top 2 Products Per Category with Ties Handled",
+    "description_markdown": "Find the top 2 highest-priced products within each category using `DENSE_RANK() OVER (PARTITION BY category_id ORDER BY price DESC)`. Include ties. Return `category_id`, `product_name`, and `price`. Order by `category_id` ASC, `price` DESC, `product_name` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Top 2 with DENSE_RANK\nWITH ranked_products AS (\n  ...\n)\nSELECT ...",
+    "solution_query": "WITH ranked_products AS (SELECT category_id, product_name, price, DENSE_RANK() OVER (PARTITION BY category_id ORDER BY price DESC) AS rnk FROM products) SELECT category_id, product_name, price FROM ranked_products WHERE rnk <= 2 ORDER BY category_id ASC, price DESC, product_name ASC;",
+    "solution_explanation": "Filters `rnk <= 2` to preserve ties within top product prices.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY category_id ORDER BY price DESC) AS rnk`.",
+      "Filter with `WHERE rnk <= 2`.",
+      "Query: WITH ranked_products AS (SELECT category_id, product_name, price, DENSE_RANK() OVER (PARTITION BY category_id ORDER BY price DESC) AS rnk FROM products) SELECT category_id, product_name, price FROM ranked_products WHERE rnk <= 2 ORDER BY category_id ASC, price DESC, product_name ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-n-ties"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-04",
+    "slug": "wrk-row-number-salary-desc",
+    "title": "Rank Employees Universally by Salary with Unique Row Numbers",
+    "description_markdown": "Assign a unique sequence rank to every employee ordered by `salary` DESC, `emp_id` ASC using `ROW_NUMBER() OVER (ORDER BY salary DESC, emp_id ASC)` as `sal_seq`. Return `emp_id`, `first_name`, `salary`, and `sal_seq`. Order by `sal_seq` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "sal_seq",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Universal row number ranking\nSELECT emp_id, first_name, salary,\n  ROW_NUMBER() OVER (ORDER BY salary DESC, emp_id ASC) AS sal_seq\nFROM employees\nORDER BY sal_seq ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, ROW_NUMBER() OVER (ORDER BY salary DESC, emp_id ASC) AS sal_seq FROM employees ORDER BY sal_seq ASC;",
+    "solution_explanation": "ROW_NUMBER() generates a continuous, non-repeating integer sequence across the ordered partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary tie-breaker in ORDER BY causing non-deterministic row numbers."
+    ],
+    "interview_tip": "Always include a unique primary key column in the ROW_NUMBER() ORDER BY clause for deterministic output.",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (ORDER BY salary DESC, emp_id ASC) AS sal_seq`.",
+      "Order outer query by `sal_seq ASC`.",
+      "Query: SELECT emp_id, first_name, salary, ROW_NUMBER() OVER (ORDER BY salary DESC, emp_id ASC) AS sal_seq FROM employees ORDER BY sal_seq ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "row-number",
+      "ranking",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-05",
+    "slug": "wrk-standard-rank-salaries",
+    "title": "Rank Salaries Using Standard Non-Dense Rank",
+    "description_markdown": "Assign standard Olympic rankings with gaps on ties using `RANK() OVER (ORDER BY salary DESC)` as `std_rank`. Return `emp_id`, `first_name`, `salary`, and `std_rank`. Order by `std_rank` ASC, `emp_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "std_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Standard rank with gaps\nSELECT emp_id, first_name, salary,\n  RANK() OVER (ORDER BY salary DESC) AS std_rank\nFROM employees\nORDER BY std_rank ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, RANK() OVER (ORDER BY salary DESC) AS std_rank FROM employees ORDER BY std_rank ASC, emp_id ASC;",
+    "solution_explanation": "RANK() skips rank numbers after tied salary values (e.g. 1, 2, 2, 4).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing RANK() with DENSE_RANK()."
+    ],
+    "interview_tip": "RANK() produces Olympic ranking with gaps; DENSE_RANK() produces consecutive ranks without gaps.",
+    "hints": [
+      "Use `RANK() OVER (ORDER BY salary DESC) AS std_rank`.",
+      "Order by `std_rank ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary, RANK() OVER (ORDER BY salary DESC) AS std_rank FROM employees ORDER BY std_rank ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "rank",
+      "ties",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-06",
+    "slug": "wrk-dense-rank-products-by-price",
+    "title": "Dense Rank Products by Retail Price",
+    "description_markdown": "Assign dense price ranks across all products from `products`: use `DENSE_RANK() OVER (ORDER BY price DESC)` as `price_rank`. Return `product_id`, `product_name`, `price`, and `price_rank`. Order by `price_rank` ASC, `product_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "price_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Dense rank products by price\nSELECT product_id, product_name, price,\n  DENSE_RANK() OVER (ORDER BY price DESC) AS price_rank\nFROM products\nORDER BY price_rank ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price, DENSE_RANK() OVER (ORDER BY price DESC) AS price_rank FROM products ORDER BY price_rank ASC, product_id ASC;",
+    "solution_explanation": "DENSE_RANK() produces contiguous rankings without skipping sequence numbers when equal prices occur.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using RANK() instead of DENSE_RANK()."
+    ],
+    "interview_tip": "DENSE_RANK() is ideal for price tiering where duplicate price values should share the exact same tier number.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY price DESC) AS price_rank`.",
+      "Order by `price_rank ASC, product_id ASC`.",
+      "Query: SELECT product_id, product_name, price, DENSE_RANK() OVER (ORDER BY price DESC) AS price_rank FROM products ORDER BY price_rank ASC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "pricing",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-07",
+    "slug": "wrk-partitioned-row-number-orders-per-customer",
+    "title": "Sequence Customer Orders Chronologically",
+    "description_markdown": "From `orders`, assign an incremental sequence to each order per customer: use `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `order_seq`. Return `order_id`, `customer_id`, `order_date`, and `order_seq`. Order by `customer_id` ASC, `order_seq` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "order_seq",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Partitioned order sequence\nSELECT order_id, customer_id, order_date,\n  ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS order_seq\nFROM orders\nORDER BY customer_id ASC, order_seq ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS order_seq FROM orders ORDER BY customer_id ASC, order_seq ASC;",
+    "solution_explanation": "PARTITION BY resets the row numbering counter for each unique customer.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY customer_id which numbers orders globally."
+    ],
+    "interview_tip": "Partitioned ROW_NUMBER() allows identifying first, second, or nth events in customer journey tracking.",
+    "hints": [
+      "Partition by `customer_id` and order by `order_date ASC, order_id ASC`.",
+      "Alias as `order_seq`.",
+      "Query: SELECT order_id, customer_id, order_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS order_seq FROM orders ORDER BY customer_id ASC, order_seq ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "partition-by",
+      "row-number",
+      "customer-orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-08",
+    "slug": "wrk-students-gpa-rank-by-major",
+    "title": "Rank Students by GPA Within Each Major",
+    "description_markdown": "From `students`, compute student academic standing within their major using `DENSE_RANK() OVER (PARTITION BY major ORDER BY gpa DESC)` as `major_rank`. Return `student_id`, `first_name`, `major`, `gpa`, and `major_rank`. Order by `major` ASC, `major_rank` ASC, `student_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      },
+      {
+        "name": "major_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student GPA rank by major\nSELECT student_id, first_name, major, gpa,\n  DENSE_RANK() OVER (PARTITION BY major ORDER BY gpa DESC) AS major_rank\nFROM students\nORDER BY major ASC, major_rank ASC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa, DENSE_RANK() OVER (PARTITION BY major ORDER BY gpa DESC) AS major_rank FROM students ORDER BY major ASC, major_rank ASC, student_id ASC;",
+    "solution_explanation": "DENSE_RANK partitioned by major ranks students within their specific degree program.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering by GPA ascending instead of descending."
+    ],
+    "interview_tip": "Partitioned dense ranks preserve ties cleanly in competitive cohort comparisons.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY major ORDER BY gpa DESC) AS major_rank`.",
+      "Order outer query by `major ASC, major_rank ASC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, major, gpa, DENSE_RANK() OVER (PARTITION BY major ORDER BY gpa DESC) AS major_rank FROM students ORDER BY major ASC, major_rank ASC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "partition-by",
+      "dense-rank",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-09",
+    "slug": "wrk-top-student-per-major",
+    "title": "Identify Top Student in Each Academic Major",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC)` as `rn`, select the top student (`rn = 1`) in each major. Return `major`, `first_name`, and `gpa`. Order by `major` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Top student per major\nWITH top_students AS (\n  SELECT major, first_name, gpa,\n    ROW_NUMBER() OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS rn\n  FROM students\n)\nSELECT major, first_name, gpa\nFROM top_students\nWHERE rn = 1\nORDER BY major ASC;",
+    "solution_query": "WITH top_students AS (SELECT major, first_name, gpa, ROW_NUMBER() OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS rn FROM students) SELECT major, first_name, gpa FROM top_students WHERE rn = 1 ORDER BY major ASC;",
+    "solution_explanation": "Top-1 per group pattern uses ROW_NUMBER in a CTE filtered by rn = 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to filter rn = 1 in the WHERE clause directly without a CTE or derived table."
+    ],
+    "interview_tip": "Window functions cannot be filtered directly in WHERE; wrapping in a CTE is the standard solution.",
+    "hints": [
+      "Define CTE with `ROW_NUMBER() OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS rn`.",
+      "Filter `WHERE rn = 1` in the outer query.",
+      "Query: WITH top_students AS (SELECT major, first_name, gpa, ROW_NUMBER() OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS rn FROM students) SELECT major, first_name, gpa FROM top_students WHERE rn = 1 ORDER BY major ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-1",
+      "cte",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-10",
+    "slug": "wrk-project-budget-rank",
+    "title": "Rank Corporate Projects by Budget",
+    "description_markdown": "Assign a rank to projects based on `budget` descending using `RANK() OVER (ORDER BY budget DESC)` as `budget_rank`. Return `project_id`, `project_name`, `budget`, and `budget_rank`. Order by `budget_rank` ASC, `project_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "budget_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Project budget rank\nSELECT project_id, project_name, budget,\n  RANK() OVER (ORDER BY budget DESC) AS budget_rank\nFROM projects\nORDER BY budget_rank ASC, project_id ASC;",
+    "solution_query": "SELECT project_id, project_name, budget, RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM projects ORDER BY budget_rank ASC, project_id ASC;",
+    "solution_explanation": "Ranks projects by budget commitment from largest to smallest.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ascending instead of descending order inside OVER()."
+    ],
+    "interview_tip": "RANK() highlights budget tiers while revealing projects that share identical funding allocations.",
+    "hints": [
+      "Use `RANK() OVER (ORDER BY budget DESC) AS budget_rank`.",
+      "Order by `budget_rank ASC, project_id ASC`.",
+      "Query: SELECT project_id, project_name, budget, RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM projects ORDER BY budget_rank ASC, project_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "rank",
+      "projects",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-11",
+    "slug": "wrk-ntile-salary-quartiles",
+    "title": "Divide Company Salaries into Four Quartiles via NTILE",
+    "description_markdown": "Bucket employees into 4 compensation tiers using `NTILE(4) OVER (ORDER BY salary DESC)` as `quartile`. Return `emp_id`, `first_name`, `salary`, and `quartile`. Order by `quartile` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "quartile",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary quartiles with NTILE\nSELECT emp_id, first_name, salary,\n  NTILE(4) OVER (ORDER BY salary DESC) AS quartile\nFROM employees\nORDER BY quartile ASC, salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, NTILE(4) OVER (ORDER BY salary DESC) AS quartile FROM employees ORDER BY quartile ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "NTILE(4) divides rows into four roughly equal buckets numbered 1 to 4.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Passing wrong parameter to NTILE."
+    ],
+    "interview_tip": "NTILE is the fundamental SQL function for quartile, decile, and percentile bucketing.",
+    "hints": [
+      "Use `NTILE(4) OVER (ORDER BY salary DESC) AS quartile`.",
+      "Order by `quartile ASC, salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary, NTILE(4) OVER (ORDER BY salary DESC) AS quartile FROM employees ORDER BY quartile ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "ntile",
+      "quartiles",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-12",
+    "slug": "wrk-ntile-product-price-tertiles",
+    "title": "Segment Products into Three Price Tiers via NTILE",
+    "description_markdown": "Segment all products into 3 pricing groups using `NTILE(3) OVER (ORDER BY price DESC)` as `price_tier`. Return `product_id`, `product_name`, `price`, and `price_tier`. Order by `price_tier` ASC, `price` DESC, `product_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "price_tier",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Product price tertiles\nSELECT product_id, product_name, price,\n  NTILE(3) OVER (ORDER BY price DESC) AS price_tier\nFROM products\nORDER BY price_tier ASC, price DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price, NTILE(3) OVER (ORDER BY price DESC) AS price_tier FROM products ORDER BY price_tier ASC, price DESC, product_id ASC;",
+    "solution_explanation": "Divides catalog products into high, medium, and low price brackets (1, 2, 3).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using NTILE(4) instead of NTILE(3)."
+    ],
+    "interview_tip": "NTILE buckets data into discrete tiers when fixed monetary thresholds are unavailable.",
+    "hints": [
+      "Use `NTILE(3) OVER (ORDER BY price DESC) AS price_tier`.",
+      "Order by `price_tier ASC, price DESC, product_id ASC`.",
+      "Query: SELECT product_id, product_name, price, NTILE(3) OVER (ORDER BY price DESC) AS price_tier FROM products ORDER BY price_tier ASC, price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "ntile",
+      "tertiles",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-13",
+    "slug": "wrk-top-2-highest-paid-per-department",
+    "title": "Select Top 2 Highest Paid Employees Per Department",
+    "description_markdown": "Using a CTE with `DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk`, select employees with `rnk <= 2` where `dept_id IS NOT NULL`. Return `dept_id`, `first_name`, `salary`, and `rnk`. Order by `dept_id` ASC, `rnk` ASC, `salary` DESC, `first_name` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "rnk",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Top 2 paid per department\nWITH dept_ranks AS (\n  SELECT dept_id, first_name, salary,\n    DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk\n  FROM employees\n  WHERE dept_id IS NOT NULL\n)\nSELECT dept_id, first_name, salary, rnk\nFROM dept_ranks\nWHERE rnk <= 2\nORDER BY dept_id ASC, rnk ASC, salary DESC, first_name ASC;",
+    "solution_query": "WITH dept_ranks AS (SELECT dept_id, first_name, salary, DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary, rnk FROM dept_ranks WHERE rnk <= 2 ORDER BY dept_id ASC, rnk ASC, salary DESC, first_name ASC;",
+    "solution_explanation": "DENSE_RANK preserves salary ties so all top-2 tier employees are included.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using ROW_NUMBER which arbitrarily cuts off tied employees."
+    ],
+    "interview_tip": "Top-N with ties questions are solved using DENSE_RANK() in an outer CTE filter.",
+    "hints": [
+      "Compute `DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk`.",
+      "Filter `WHERE rnk <= 2` in the outer query.",
+      "Query: WITH dept_ranks AS (SELECT dept_id, first_name, salary, DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary, rnk FROM dept_ranks WHERE rnk <= 2 ORDER BY dept_id ASC, rnk ASC, salary DESC, first_name ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "top-n-ties",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-14",
+    "slug": "wrk-earliest-hired-employees-rank",
+    "title": "Rank Employees by Seniority Tenure",
+    "description_markdown": "Rank employees based on seniority using `ROW_NUMBER() OVER (ORDER BY hire_date ASC, emp_id ASC)` as `seniority_rank`. Return `emp_id`, `first_name`, `hire_date`, and `seniority_rank`. Order by `seniority_rank` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "seniority_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Seniority rank\nSELECT emp_id, first_name, hire_date,\n  ROW_NUMBER() OVER (ORDER BY hire_date ASC, emp_id ASC) AS seniority_rank\nFROM employees\nORDER BY seniority_rank ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, ROW_NUMBER() OVER (ORDER BY hire_date ASC, emp_id ASC) AS seniority_rank FROM employees ORDER BY seniority_rank ASC;",
+    "solution_explanation": "Assigns tenure sequence numbers based on chronological hire dates.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering by hire_date DESC which ranks newest hires first."
+    ],
+    "interview_tip": "Tie-breaking on emp_id ensures repeatable seniority standings.",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (ORDER BY hire_date ASC, emp_id ASC) AS seniority_rank`.",
+      "Order by `seniority_rank ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, ROW_NUMBER() OVER (ORDER BY hire_date ASC, emp_id ASC) AS seniority_rank FROM employees ORDER BY seniority_rank ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "seniority",
+      "row-number",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-15",
+    "slug": "wrk-customer-lifetime-spend-ranking",
+    "title": "Rank Customers by Total Historical Expenditure",
+    "description_markdown": "In a CTE, aggregate total spend per customer: `ROUND(SUM(total_amount), 2) AS total_spent` from `orders` group by `customer_id`. In the outer query, assign dense spend ranks using `DENSE_RANK() OVER (ORDER BY total_spent DESC)` as `spend_rank`. Return `customer_id`, `total_spent`, and `spend_rank`. Order by `spend_rank` ASC, `customer_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      },
+      {
+        "name": "spend_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer spend ranking\nWITH customer_totals AS (\n  SELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent\n  FROM orders\n  GROUP BY customer_id\n)\nSELECT customer_id, total_spent,\n  DENSE_RANK() OVER (ORDER BY total_spent DESC) AS spend_rank\nFROM customer_totals\nORDER BY spend_rank ASC, customer_id ASC;",
+    "solution_query": "WITH customer_totals AS (SELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent FROM orders GROUP BY customer_id) SELECT customer_id, total_spent, DENSE_RANK() OVER (ORDER BY total_spent DESC) AS spend_rank FROM customer_totals ORDER BY spend_rank ASC, customer_id ASC;",
+    "solution_explanation": "Pre-aggregates customer revenue in a CTE before ranking customer values with DENSE_RANK.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to nest window function inside aggregate function."
+    ],
+    "interview_tip": "Window functions over aggregate results require a two-stage CTE or subquery structure.",
+    "hints": [
+      "Aggregate in CTE: `ROUND(SUM(total_amount), 2) AS total_spent GROUP BY customer_id`.",
+      "Outer query: `DENSE_RANK() OVER (ORDER BY total_spent DESC) AS spend_rank`.",
+      "Query: WITH customer_totals AS (SELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent FROM orders GROUP BY customer_id) SELECT customer_id, total_spent, DENSE_RANK() OVER (ORDER BY total_spent DESC) AS spend_rank FROM customer_totals ORDER BY spend_rank ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "aggregation",
+      "cte",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-16",
+    "slug": "wrk-most-recent-order-per-customer",
+    "title": "Identify Most Recent Order for Each Customer",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC, order_id DESC)` as `rn`, retrieve each customer's latest order (`rn = 1`). Return `customer_id`, `order_id`, `order_date`, and `total_amount`. Order by `customer_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Most recent order per customer\nWITH latest_orders AS (\n  SELECT customer_id, order_id, order_date, total_amount,\n    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC, order_id DESC) AS rn\n  FROM orders\n)\nSELECT customer_id, order_id, order_date, total_amount\nFROM latest_orders\nWHERE rn = 1\nORDER BY customer_id ASC;",
+    "solution_query": "WITH latest_orders AS (SELECT customer_id, order_id, order_date, total_amount, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC, order_id DESC) AS rn FROM orders) SELECT customer_id, order_id, order_date, total_amount FROM latest_orders WHERE rn = 1 ORDER BY customer_id ASC;",
+    "solution_explanation": "Standard pattern for retrieving the latest row per partition using ROW_NUMBER() in a CTE.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering by order_date ASC instead of DESC."
+    ],
+    "interview_tip": "This is one of the most frequently asked SQL interview questions across all tech companies.",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC, order_id DESC) AS rn`.",
+      "Filter `WHERE rn = 1` in the outer query.",
+      "Query: WITH latest_orders AS (SELECT customer_id, order_id, order_date, total_amount, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC, order_id DESC) AS rn FROM orders) SELECT customer_id, order_id, order_date, total_amount FROM latest_orders WHERE rn = 1 ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-1-per-group",
+      "recency",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-17",
+    "slug": "wrk-professor-salary-rank-department",
+    "title": "Rank Professors by Compensation Within Department",
+    "description_markdown": "Rank professors within their respective department using `DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC)` as `dept_sal_rank`. Return `professor_id`, `first_name`, `department`, `salary`, and `dept_sal_rank`. Order by `department` ASC, `dept_sal_rank` ASC, `professor_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "dept_sal_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Professor salary rank by department\nSELECT professor_id, first_name, department, salary,\n  DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_sal_rank\nFROM professors\nORDER BY department ASC, dept_sal_rank ASC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, department, salary, DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_sal_rank FROM professors ORDER BY department ASC, dept_sal_rank ASC, professor_id ASC;",
+    "solution_explanation": "Computes intra-departmental faculty compensation standings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY department."
+    ],
+    "interview_tip": "Intra-group ranking with DENSE_RANK surfaces salary disparities within departments.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_sal_rank`.",
+      "Order by `department ASC, dept_sal_rank ASC, professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, department, salary, DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_sal_rank FROM professors ORDER BY department ASC, dept_sal_rank ASC, professor_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "partition-by",
+      "dense-rank",
+      "faculty"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-18",
+    "slug": "wrk-lowest-paid-employee-per-department",
+    "title": "Find Entry-Level Earner in Each Department",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC)` as `rn`, select the lowest-earning employee (`rn = 1`) in each department (`dept_id IS NOT NULL`). Return `dept_id`, `first_name`, and `salary`. Order by `dept_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lowest paid employee per department\nWITH lowest_earners AS (\n  SELECT dept_id, first_name, salary,\n    ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS rn\n  FROM employees\n  WHERE dept_id IS NOT NULL\n)\nSELECT dept_id, first_name, salary\nFROM lowest_earners\nWHERE rn = 1\nORDER BY dept_id ASC;",
+    "solution_query": "WITH lowest_earners AS (SELECT dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM lowest_earners WHERE rn = 1 ORDER BY dept_id ASC;",
+    "solution_explanation": "Reversing the window order to ASC identifies the minimum-valued record per partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering DESC instead of ASC."
+    ],
+    "interview_tip": "Bottom-1 per group is identical to Top-1 per group with inverted sort order.",
+    "hints": [
+      "Use `ORDER BY salary ASC, emp_id ASC` in ROW_NUMBER.",
+      "Filter `WHERE rn = 1` in the outer query.",
+      "Query: WITH lowest_earners AS (SELECT dept_id, first_name, salary, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS rn FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM lowest_earners WHERE rn = 1 ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "bottom-1",
+      "cte",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-19",
+    "slug": "wrk-rank-courses-by-enrollment",
+    "title": "Rank Courses by Enrollment Volume",
+    "description_markdown": "In a CTE, compute total enrollments per course: `c.course_id`, `c.course_code`, and `COUNT(e.enrollment_id) AS total_enrolled` from `courses c` left joined to `enrollments e` on `c.course_id = e.course_id` grouped by `c.course_id`, `c.course_code`. In the main query, assign `DENSE_RANK() OVER (ORDER BY total_enrolled DESC)` as `enrollment_rank`. Return `course_code`, `total_enrolled`, and `enrollment_rank`. Order by `enrollment_rank` ASC, `course_code` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "total_enrolled",
+        "type": "bigint"
+      },
+      {
+        "name": "enrollment_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Rank courses by enrollment\nWITH course_counts AS (\n  SELECT c.course_id, c.course_code, COUNT(e.enrollment_id) AS total_enrolled\n  FROM courses c\n  LEFT JOIN enrollments e ON c.course_id = e.course_id\n  GROUP BY c.course_id, c.course_code\n)\nSELECT course_code, total_enrolled,\n  DENSE_RANK() OVER (ORDER BY total_enrolled DESC) AS enrollment_rank\nFROM course_counts\nORDER BY enrollment_rank ASC, course_code ASC;",
+    "solution_query": "WITH course_counts AS (SELECT c.course_id, c.course_code, COUNT(e.enrollment_id) AS total_enrolled FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code) SELECT course_code, total_enrolled, DENSE_RANK() OVER (ORDER BY total_enrolled DESC) AS enrollment_rank FROM course_counts ORDER BY enrollment_rank ASC, course_code ASC;",
+    "solution_explanation": "Combines aggregate group counts with window ranking in an outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which discards courses with zero registrations."
+    ],
+    "interview_tip": "LEFT JOIN preserves zero-count rows before passing to window ranking.",
+    "hints": [
+      "Aggregate with `COUNT(e.enrollment_id)` in CTE.",
+      "Assign `DENSE_RANK() OVER (ORDER BY total_enrolled DESC) AS enrollment_rank`.",
+      "Query: WITH course_counts AS (SELECT c.course_id, c.course_code, COUNT(e.enrollment_id) AS total_enrolled FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code) SELECT course_code, total_enrolled, DENSE_RANK() OVER (ORDER BY total_enrolled DESC) AS enrollment_rank FROM course_counts ORDER BY enrollment_rank ASC, course_code ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "aggregation",
+      "courses"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-20",
+    "slug": "wrk-project-assignment-rating-rank",
+    "title": "Rank Assignment Performances Per Project",
+    "description_markdown": "Rank project contributors by performance rating within each project: use `DENSE_RANK() OVER (PARTITION BY project_id ORDER BY rating DESC)` as `rating_rank` from `assignments`. Return `assignment_id`, `project_id`, `emp_id`, `rating`, and `rating_rank`. Order by `project_id` ASC, `rating_rank` ASC, `assignment_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      },
+      {
+        "name": "rating_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Project assignment rating rank\nSELECT assignment_id, project_id, emp_id, rating,\n  DENSE_RANK() OVER (PARTITION BY project_id ORDER BY rating DESC) AS rating_rank\nFROM assignments\nORDER BY project_id ASC, rating_rank ASC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, project_id, emp_id, rating, DENSE_RANK() OVER (PARTITION BY project_id ORDER BY rating DESC) AS rating_rank FROM assignments ORDER BY project_id ASC, rating_rank ASC, assignment_id ASC;",
+    "solution_explanation": "Ranks assignment scores within each individual project initiative.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting project_id partition key."
+    ],
+    "interview_tip": "Partitioning rankings by project allows fair evaluation relative to each specific team context.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY project_id ORDER BY rating DESC) AS rating_rank`.",
+      "Order by `project_id ASC, rating_rank ASC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, project_id, emp_id, rating, DENSE_RANK() OVER (PARTITION BY project_id ORDER BY rating DESC) AS rating_rank FROM assignments ORDER BY project_id ASC, rating_rank ASC, assignment_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "partition-by",
+      "ratings"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-21",
+    "slug": "wrk-top-performing-contributor-per-project",
+    "title": "Identify Top Rated Contributor on Each Project",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY rating DESC, assignment_id ASC)` as `rn`, select the top-performing contributor (`rn = 1`) on each project. Return `project_id`, `emp_id`, and `rating`. Order by `project_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Top contributor per project\nWITH top_contributors AS (\n  SELECT project_id, emp_id, rating,\n    ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY rating DESC, assignment_id ASC) AS rn\n  FROM assignments\n)\nSELECT project_id, emp_id, rating\nFROM top_contributors\nWHERE rn = 1\nORDER BY project_id ASC;",
+    "solution_query": "WITH top_contributors AS (SELECT project_id, emp_id, rating, ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY rating DESC, assignment_id ASC) AS rn FROM assignments) SELECT project_id, emp_id, rating FROM top_contributors WHERE rn = 1 ORDER BY project_id ASC;",
+    "solution_explanation": "Retrieves the single highest-rated contributor per project via partitioned ROW_NUMBER.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting assignment_id tie-breaker."
+    ],
+    "interview_tip": "Deterministic sorting in the window clause guarantees identical top-1 results across all execution runs.",
+    "hints": [
+      "Compute `ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY rating DESC, assignment_id ASC) AS rn`.",
+      "Filter `WHERE rn = 1`.",
+      "Query: WITH top_contributors AS (SELECT project_id, emp_id, rating, ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY rating DESC, assignment_id ASC) AS rn FROM assignments) SELECT project_id, emp_id, rating FROM top_contributors WHERE rn = 1 ORDER BY project_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-1",
+      "assignments",
+      "ratings"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-22",
+    "slug": "wrk-ntile-five-buckets-students",
+    "title": "Segment Students into Quintiles by Academic GPA",
+    "description_markdown": "Segment student body into 5 GPA quintiles using `NTILE(5) OVER (ORDER BY gpa DESC)` as `quintile`. Return `student_id`, `first_name`, `gpa`, and `quintile`. Order by `quintile` ASC, `gpa` DESC, `student_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      },
+      {
+        "name": "quintile",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student GPA quintiles\nSELECT student_id, first_name, gpa,\n  NTILE(5) OVER (ORDER BY gpa DESC) AS quintile\nFROM students\nORDER BY quintile ASC, gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, gpa, NTILE(5) OVER (ORDER BY gpa DESC) AS quintile FROM students ORDER BY quintile ASC, gpa DESC, student_id ASC;",
+    "solution_explanation": "NTILE(5) divides the student population into five balanced academic tiers (quintiles).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Specifying wrong bucket count in NTILE."
+    ],
+    "interview_tip": "Quintile distribution is standard in academic scholarship allocations.",
+    "hints": [
+      "Use `NTILE(5) OVER (ORDER BY gpa DESC) AS quintile`.",
+      "Order by `quintile ASC, gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, gpa, NTILE(5) OVER (ORDER BY gpa DESC) AS quintile FROM students ORDER BY quintile ASC, gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "ntile",
+      "quintiles",
+      "gpa"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-23",
+    "slug": "wrk-highest-scoring-mark-per-enrollment",
+    "title": "Highest Assessment Score Per Course Enrollment",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY enrollment_id ORDER BY score DESC, mark_id ASC)` as `rn`, retrieve the single highest test mark (`rn = 1`) for each enrollment. Return `enrollment_id`, `assessment_type`, and `score`. Order by `enrollment_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Peak mark per enrollment\nWITH best_marks AS (\n  SELECT enrollment_id, assessment_type, score,\n    ROW_NUMBER() OVER (PARTITION BY enrollment_id ORDER BY score DESC, mark_id ASC) AS rn\n  FROM marks\n)\nSELECT enrollment_id, assessment_type, score\nFROM best_marks\nWHERE rn = 1\nORDER BY enrollment_id ASC;",
+    "solution_query": "WITH best_marks AS (SELECT enrollment_id, assessment_type, score, ROW_NUMBER() OVER (PARTITION BY enrollment_id ORDER BY score DESC, mark_id ASC) AS rn FROM marks) SELECT enrollment_id, assessment_type, score FROM best_marks WHERE rn = 1 ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Picks out the best assessment result per student class enrollment.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting mark_id tie-breaker."
+    ],
+    "interview_tip": "Top-1 patterns on assessment logs isolate peak performance records efficiently.",
+    "hints": [
+      "Partition by `enrollment_id` and order by `score DESC, mark_id ASC`.",
+      "Filter `WHERE rn = 1`.",
+      "Query: WITH best_marks AS (SELECT enrollment_id, assessment_type, score, ROW_NUMBER() OVER (PARTITION BY enrollment_id ORDER BY score DESC, mark_id ASC) AS rn FROM marks) SELECT enrollment_id, assessment_type, score FROM best_marks WHERE rn = 1 ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-1",
+      "marks",
+      "assessments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-24",
+    "slug": "wrk-rank-inventory-quantity-per-category",
+    "title": "Rank Stock Quantities Within Each Category",
+    "description_markdown": "Rank products by on-hand inventory within their category using `DENSE_RANK() OVER (PARTITION BY category_id ORDER BY stock_quantity DESC)` as `stock_rank`. Return `category_id`, `product_name`, `stock_quantity`, and `stock_rank`. Order by `category_id` ASC, `stock_rank` ASC, `product_name` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      },
+      {
+        "name": "stock_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stock quantity rank by category\nSELECT category_id, product_name, stock_quantity,\n  DENSE_RANK() OVER (PARTITION BY category_id ORDER BY stock_quantity DESC) AS stock_rank\nFROM products\nORDER BY category_id ASC, stock_rank ASC, product_name ASC;",
+    "solution_query": "SELECT category_id, product_name, stock_quantity, DENSE_RANK() OVER (PARTITION BY category_id ORDER BY stock_quantity DESC) AS stock_rank FROM products ORDER BY category_id ASC, stock_rank ASC, product_name ASC;",
+    "solution_explanation": "Determines the highest inventory depth SKUs inside each product category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Partitioning by product_id instead of category_id."
+    ],
+    "interview_tip": "Intra-category rankings help warehouse managers identify overstocked products.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY category_id ORDER BY stock_quantity DESC) AS stock_rank`.",
+      "Order by `category_id ASC, stock_rank ASC, product_name ASC`.",
+      "Query: SELECT category_id, product_name, stock_quantity, DENSE_RANK() OVER (PARTITION BY category_id ORDER BY stock_quantity DESC) AS stock_rank FROM products ORDER BY category_id ASC, stock_rank ASC, product_name ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "inventory",
+      "category"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-25",
+    "slug": "wrk-first-order-per-customer",
+    "title": "Identify Debut First Order for Each Customer",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `rn`, retrieve each customer's debut first order (`rn = 1`). Return `customer_id`, `order_id`, `order_date`, and `total_amount`. Order by `customer_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Debut first order per customer\nWITH first_orders AS (\n  SELECT customer_id, order_id, order_date, total_amount,\n    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS rn\n  FROM orders\n)\nSELECT customer_id, order_id, order_date, total_amount\nFROM first_orders\nWHERE rn = 1\nORDER BY customer_id ASC;",
+    "solution_query": "WITH first_orders AS (SELECT customer_id, order_id, order_date, total_amount, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS rn FROM orders) SELECT customer_id, order_id, order_date, total_amount FROM first_orders WHERE rn = 1 ORDER BY customer_id ASC;",
+    "solution_explanation": "Identifies initial acquisition orders for customer onboarding cohort analysis.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering DESC instead of ASC."
+    ],
+    "interview_tip": "Debut purchase analysis is fundamental to customer acquisition cost (CAC) payback calculations.",
+    "hints": [
+      "Order by `order_date ASC, order_id ASC` in ROW_NUMBER.",
+      "Filter `WHERE rn = 1`.",
+      "Query: WITH first_orders AS (SELECT customer_id, order_id, order_date, total_amount, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS rn FROM orders) SELECT customer_id, order_id, order_date, total_amount FROM first_orders WHERE rn = 1 ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "acquisition",
+      "first-order",
+      "cohort"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-26",
+    "slug": "wrk-department-budget-allocation-rank",
+    "title": "Rank Operating Departments by Allocated Budget",
+    "description_markdown": "Rank departments by annual budget using `DENSE_RANK() OVER (ORDER BY budget DESC)` as `budget_rank`. Return `dept_id`, `dept_name`, `budget`, and `budget_rank`. Order by `budget_rank` ASC, `dept_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "budget_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department budget rank\nSELECT dept_id, dept_name, budget,\n  DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank\nFROM departments\nORDER BY budget_rank ASC, dept_id ASC;",
+    "solution_query": "SELECT dept_id, dept_name, budget, DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM departments ORDER BY budget_rank ASC, dept_id ASC;",
+    "solution_explanation": "Ranks departments by operational budget scale without gaps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ascending order instead of descending."
+    ],
+    "interview_tip": "Budget rankings highlight capital priority order across the enterprise.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank`.",
+      "Order by `budget_rank ASC, dept_id ASC`.",
+      "Query: SELECT dept_id, dept_name, budget, DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM departments ORDER BY budget_rank ASC, dept_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "departments",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-27",
+    "slug": "wrk-most-expensive-item-per-order",
+    "title": "Identify Most Expensive Line Item in Each Order",
+    "description_markdown": "Using a CTE with `ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY unit_price DESC, order_item_id ASC)` as `rn`, select the single most expensive line item (`rn = 1`) in each order. Return `order_id`, `product_id`, and `unit_price`. Order by `order_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "unit_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Most expensive item per order\nWITH top_items AS (\n  SELECT order_id, product_id, unit_price,\n    ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY unit_price DESC, order_item_id ASC) AS rn\n  FROM order_items\n)\nSELECT order_id, product_id, unit_price\nFROM top_items\nWHERE rn = 1\nORDER BY order_id ASC;",
+    "solution_query": "WITH top_items AS (SELECT order_id, product_id, unit_price, ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY unit_price DESC, order_item_id ASC) AS rn FROM order_items) SELECT order_id, product_id, unit_price FROM top_items WHERE rn = 1 ORDER BY order_id ASC;",
+    "solution_explanation": "Isolates the headline item driving basket value for each order transaction.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting order_item_id secondary tie-breaker."
+    ],
+    "interview_tip": "Top line-item identification feeds recommendation engines and packaging logistics rules.",
+    "hints": [
+      "Partition by `order_id` and order by `unit_price DESC, order_item_id ASC`.",
+      "Filter `WHERE rn = 1`.",
+      "Query: WITH top_items AS (SELECT order_id, product_id, unit_price, ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY unit_price DESC, order_item_id ASC) AS rn FROM order_items) SELECT order_id, product_id, unit_price FROM top_items WHERE rn = 1 ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "top-item",
+      "line-items",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-28",
+    "slug": "wrk-senior-faculty-salary-standing",
+    "title": "Rank Professors Universally by Compensation",
+    "description_markdown": "Rank all university professors based on salary using `DENSE_RANK() OVER (ORDER BY salary DESC)` as `prof_rank`. Return `professor_id`, `first_name`, `title`, `salary`, and `prof_rank`. Order by `prof_rank` ASC, `professor_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "prof_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Universal faculty salary rank\nSELECT professor_id, first_name, title, salary,\n  DENSE_RANK() OVER (ORDER BY salary DESC) AS prof_rank\nFROM professors\nORDER BY prof_rank ASC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, title, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS prof_rank FROM professors ORDER BY prof_rank ASC, professor_id ASC;",
+    "solution_explanation": "Assigns university-wide compensation standings across all departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Partitioning by department when universal ranking is requested."
+    ],
+    "interview_tip": "Unpartitioned window functions rank rows across the complete dataset.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY salary DESC) AS prof_rank`.",
+      "Order by `prof_rank ASC, professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, title, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS prof_rank FROM professors ORDER BY prof_rank ASC, professor_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "faculty",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-29",
+    "slug": "wrk-top-3-salaries-across-company",
+    "title": "Filter Top 3 Highest Salaries Across Company",
+    "description_markdown": "Using a CTE with `DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk`, select employees with `rnk <= 3`. Return `emp_id`, `first_name`, `salary`, and `rnk`. Order by `rnk` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "rnk",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Company top 3 salary tiers\nWITH company_ranks AS (\n  SELECT emp_id, first_name, salary,\n    DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk\n  FROM employees\n)\nSELECT emp_id, first_name, salary, rnk\nFROM company_ranks\nWHERE rnk <= 3\nORDER BY rnk ASC, salary DESC, emp_id ASC;",
+    "solution_query": "WITH company_ranks AS (SELECT emp_id, first_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk FROM employees) SELECT emp_id, first_name, salary, rnk FROM company_ranks WHERE rnk <= 3 ORDER BY rnk ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Selects employees belonging to the top 3 distinct compensation brackets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 3 which does not handle ties correctly."
+    ],
+    "interview_tip": "Top-N distinct value filtering requires DENSE_RANK over simple LIMIT.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk` in CTE.",
+      "Filter `WHERE rnk <= 3` in the outer query.",
+      "Query: WITH company_ranks AS (SELECT emp_id, first_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk FROM employees) SELECT emp_id, first_name, salary, rnk FROM company_ranks WHERE rnk <= 3 ORDER BY rnk ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "top-3",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-30",
+    "slug": "wrk-second-highest-salary-in-department",
+    "title": "Identify Exactly Second Highest Salary in Each Department",
+    "description_markdown": "Using a CTE with `DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk` where `dept_id IS NOT NULL`, select employees with `rnk = 2`. Return `dept_id`, `first_name`, and `salary`. Order by `dept_id` ASC, `first_name` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Exactly second highest salary per department\nWITH dept_salaries AS (\n  SELECT dept_id, first_name, salary,\n    DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk\n  FROM employees\n  WHERE dept_id IS NOT NULL\n)\nSELECT dept_id, first_name, salary\nFROM dept_salaries\nWHERE rnk = 2\nORDER BY dept_id ASC, first_name ASC;",
+    "solution_query": "WITH dept_salaries AS (SELECT dept_id, first_name, salary, DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM dept_salaries WHERE rnk = 2 ORDER BY dept_id ASC, first_name ASC;",
+    "solution_explanation": "Classic 2nd highest salary problem solved per department using DENSE_RANK() and rnk = 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using rnk <= 2 instead of rnk = 2."
+    ],
+    "interview_tip": "The nth-highest value interview question is cleanly solved with DENSE_RANK in a CTE.",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk`.",
+      "Filter `WHERE rnk = 2`.",
+      "Query: WITH dept_salaries AS (SELECT dept_id, first_name, salary, DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk FROM employees WHERE dept_id IS NOT NULL) SELECT dept_id, first_name, salary FROM dept_salaries WHERE rnk = 2 ORDER BY dept_id ASC, first_name ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "second-highest",
+      "dense-rank",
+      "interview-classic"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-31",
+    "slug": "wrk-rank-staff-hours-by-role",
+    "title": "Rank Project Staff by Hours Worked Within Role Category",
+    "description_markdown": "From `assignments`, rank project team members within each `role` based on `hours_worked` descending using `RANK() OVER (PARTITION BY role ORDER BY hours_worked DESC, assignment_id ASC)` as `role_hours_rank`. Return `assignment_id`, `emp_id`, `role`, `hours_worked`, and `role_hours_rank`. Order by `role` ASC, `hours_worked` DESC, `assignment_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "role",
+        "type": "varchar"
+      },
+      {
+        "name": "hours_worked",
+        "type": "numeric"
+      },
+      {
+        "name": "role_hours_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Rank staff hours within role category\nSELECT assignment_id, emp_id, role, hours_worked,\n  RANK() OVER (PARTITION BY role ORDER BY hours_worked DESC, assignment_id ASC) AS role_hours_rank\nFROM assignments\nORDER BY role ASC, hours_worked DESC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, emp_id, role, hours_worked, RANK() OVER (PARTITION BY role ORDER BY hours_worked DESC, assignment_id ASC) AS role_hours_rank FROM assignments ORDER BY role ASC, hours_worked DESC, assignment_id ASC;",
+    "solution_explanation": "RANK() partitioned by role groups employees by job function and orders by project effort delivered.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary tie-breaker in the ORDER BY."
+    ],
+    "interview_tip": "Partitioned ranking allows performance comparisons strictly among peers in the same job classification.",
+    "hints": [
+      "Use `RANK() OVER (PARTITION BY role ORDER BY hours_worked DESC, assignment_id ASC) AS role_hours_rank`.",
+      "Sort output by `role ASC, hours_worked DESC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, emp_id, role, hours_worked, RANK() OVER (PARTITION BY role ORDER BY hours_worked DESC, assignment_id ASC) AS role_hours_rank FROM assignments ORDER BY role ASC, hours_worked DESC, assignment_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "rank",
+      "partition-by",
+      "assignments"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wrk-32",
+    "slug": "wrk-rank-payments-by-method-amount",
+    "title": "Rank Successful Payments by Amount Within Each Payment Method",
+    "description_markdown": "For successful payment transactions (`payment_status = 'success'`), rank payments within each `payment_method` by `amount` descending using `DENSE_RANK() OVER (PARTITION BY payment_method ORDER BY amount DESC, payment_id ASC)` as `method_amount_rank`. Return `payment_id`, `order_id`, `payment_method`, `amount`, and `method_amount_rank`. Order by `payment_method` ASC, `amount` DESC, `payment_id` ASC.",
+    "topic_id": "window-ranking",
+    "subtopic_id": "win-rank",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "payment_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "payment_method",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "numeric"
+      },
+      {
+        "name": "method_amount_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Rank payments by method with DENSE_RANK\nSELECT payment_id, order_id, payment_method, amount,\n  DENSE_RANK() OVER (PARTITION BY payment_method ORDER BY amount DESC, payment_id ASC) AS method_amount_rank\nFROM payments\nWHERE payment_status = 'success'\nORDER BY payment_method ASC, amount DESC, payment_id ASC;",
+    "solution_query": "SELECT payment_id, order_id, payment_method, amount, DENSE_RANK() OVER (PARTITION BY payment_method ORDER BY amount DESC, payment_id ASC) AS method_amount_rank FROM payments WHERE payment_status = 'success' ORDER BY payment_method ASC, amount DESC, payment_id ASC;",
+    "solution_explanation": "DENSE_RANK() assigns consecutive rankings to transactions within each payment channel without skipping values on ties.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter by payment_status = 'success'."
+    ],
+    "interview_tip": "Partitioning transaction records by tender channel exposes outlier payment sizes per processor.",
+    "hints": [
+      "Filter for `payment_status = 'success'`.",
+      "Partition by `payment_method` and order by `amount DESC, payment_id ASC` in DENSE_RANK.",
+      "Query: SELECT payment_id, order_id, payment_method, amount, DENSE_RANK() OVER (PARTITION BY payment_method ORDER BY amount DESC, payment_id ASC) AS method_amount_rank FROM payments WHERE payment_status = 'success' ORDER BY payment_method ASC, amount DESC, payment_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "dense-rank",
+      "payments",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wrk-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wrk-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wrk-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

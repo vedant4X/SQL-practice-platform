@@ -1,0 +1,2713 @@
+[
+  {
+    "id": "q-my-wag-01",
+    "slug": "running-total-revenue-cumulative",
+    "title": "Compute Cumulative Running Total Revenue",
+    "description_markdown": "From completed orders (`order_status = 'completed'`) in `orders`, compute a cumulative running total of revenue: `SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC)` as `running_revenue`. Return `order_id`, `order_date`, `total_amount`, and `running_revenue`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "running_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Running total with SUM() OVER (ORDER BY ...)\nSELECT order_id, order_date, total_amount,\n  SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_revenue\nFROM orders\nWHERE order_status = 'completed'\nORDER BY ...",
+    "solution_query": "SELECT order_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_revenue FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "SUM() OVER (ORDER BY ...) creates an ongoing cumulative sum row by row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_revenue`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_revenue FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-02",
+    "slug": "cumulative-department-payroll-spend",
+    "title": "Cumulative Running Payroll Within Each Department",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, calculate the cumulative running sum of salaries within each department: `SUM(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC)` as `dept_running_salary`. Return `dept_id`, `first_name`, `salary`, and `dept_running_salary`. Order by `dept_id` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_running_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Running total partitioned by department\nSELECT ...",
+    "solution_query": "SELECT dept_id, first_name, salary, SUM(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS dept_running_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Resets the cumulative tally at each new department boundary via `PARTITION BY dept_id`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Combine `PARTITION BY dept_id` with `ORDER BY salary DESC, emp_id ASC`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_id, first_name, salary, SUM(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS dept_running_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "partition-running-total"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-03",
+    "slug": "moving-average-with-rows-frame-clause",
+    "title": "Calculate 3-Period Moving Average with ROWS BETWEEN",
+    "description_markdown": "From completed orders in `orders`, compute a 3-order moving average of `total_amount` using `ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2)` as `moving_avg_3`. Return `order_id`, `order_date`, `total_amount`, and `moving_avg_3`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "moving_avg_3",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Frame clause with ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\nSELECT ...",
+    "solution_query": "SELECT order_id, order_date, total_amount, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS moving_avg_3 FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "Defines an explicit physical sliding frame window covering the current record plus the two preceding rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` inside the OVER clause.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_id, order_date, total_amount, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS moving_avg_3 FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "moving-average",
+      "frame-clause"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-04",
+    "slug": "wag-running-count-orders",
+    "title": "Calculate Cumulative Chronological Order Count",
+    "description_markdown": "Calculate a cumulative chronological count of orders placed over time using `COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC)` as `cumulative_orders`. Return `order_id`, `customer_id`, `order_date`, and `cumulative_orders`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "cumulative_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative chronological order count\nSELECT order_id, customer_id, order_date,\n  COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS cumulative_orders\nFROM orders\nORDER BY order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS cumulative_orders FROM orders ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "COUNT(*) with an ORDER BY clause creates a cumulative running count of rows evaluated up to each record.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the order_id tie-breaker in the window frame."
+    ],
+    "interview_tip": "Cumulative counts demonstrate transaction volume trajectories over calendar time.",
+    "hints": [
+      "Use `COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS cumulative_orders`.",
+      "Include secondary sort on `order_id ASC` for determinism.",
+      "Query: SELECT order_id, customer_id, order_date, COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS cumulative_orders FROM orders ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-count",
+      "ecommerce",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-05",
+    "slug": "wag-customer-running-order-count",
+    "title": "Track Cumulative Order Sequence Number Per Customer",
+    "description_markdown": "Calculate a cumulative running count of orders specifically for each customer using `COUNT(*) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `cust_order_count`. Return `order_id`, `customer_id`, `order_date`, and `cust_order_count`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "cust_order_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customer-specific cumulative order count\nSELECT order_id, customer_id, order_date,\n  COUNT(*) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_order_count\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, COUNT(*) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_order_count FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "PARTITION BY customer_id resets the cumulative count for each unique customer.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to partition by customer_id."
+    ],
+    "interview_tip": "Partitioned running counts are standard for tracking customer loyalty milestones (e.g. 1st purchase, 5th purchase).",
+    "hints": [
+      "Use `COUNT(*) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_order_count`.",
+      "Sort outer query by `customer_id ASC, order_date ASC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, COUNT(*) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_order_count FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "partition-by",
+      "cumulative-count",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-06",
+    "slug": "wag-customer-running-spend",
+    "title": "Calculate Cumulative Spend Progression Per Customer",
+    "description_markdown": "Calculate cumulative spend per customer across chronological orders using `SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `cust_running_spend`. Return `order_id`, `customer_id`, `order_date`, `total_amount`, and `cust_running_spend`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "cust_running_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative spend per customer\nSELECT order_id, customer_id, order_date, total_amount,\n  SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_running_spend\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_running_spend FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "Partitioned running sums calculate individual customer lifetime value progression order by order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out total_amount in the SELECT projection."
+    ],
+    "interview_tip": "Customer running spend is essential for determining when an account converts to high-value tier.",
+    "hints": [
+      "Use `SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_running_spend`.",
+      "Sort output by `customer_id ASC, order_date ASC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS cust_running_spend FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total",
+      "lifetime-value",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-07",
+    "slug": "wag-department-headcount-broadcast",
+    "title": "Broadcast Department Total Headcount Across Employee Rows",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, broadcast the total department headcount onto each employee row using `COUNT(*) OVER (PARTITION BY dept_id)` as `dept_headcount`. Return `emp_id`, `first_name`, `dept_id`, and `dept_headcount`. Order by `dept_id` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_headcount",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department headcount broadcast\nSELECT emp_id, first_name, dept_id,\n  COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;",
+    "solution_explanation": "COUNT(*) OVER (PARTITION BY dept_id) without an ORDER BY evaluates the entire partition and attaches the total count to every individual row without collapsing them.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Adding an ORDER BY inside the OVER clause, which would produce a running count instead of the full department total."
+    ],
+    "interview_tip": "Window functions without an ORDER BY calculate partition-wide aggregates without collapsing row details like GROUP BY does.",
+    "hints": [
+      "Use `COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount` without ORDER BY inside OVER.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, first_name, dept_id, COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "broadcast",
+      "headcount",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-08",
+    "slug": "wag-department-total-salary-broadcast",
+    "title": "Broadcast Department Total Payroll Across All Staff Rows",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, broadcast the total department salary spend across all member rows using `SUM(salary) OVER (PARTITION BY dept_id)` as `dept_total_payroll`. Return `emp_id`, `first_name`, `dept_id`, `salary`, and `dept_total_payroll`. Order by `dept_id` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_total_payroll",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department total payroll broadcast\nSELECT emp_id, first_name, dept_id, salary,\n  SUM(salary) OVER (PARTITION BY dept_id) AS dept_total_payroll\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, SUM(salary) OVER (PARTITION BY dept_id) AS dept_total_payroll FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;",
+    "solution_explanation": "SUM(salary) OVER (PARTITION BY dept_id) appends total department compensation to each individual row without GROUP BY aggregation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including ORDER BY inside OVER, which creates a cumulative running sum rather than the static department total."
+    ],
+    "interview_tip": "Broadcasting partition aggregates avoids self-joins or subquery joins against pre-grouped tables.",
+    "hints": [
+      "Use `SUM(salary) OVER (PARTITION BY dept_id) AS dept_total_payroll`.",
+      "Filter with `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, SUM(salary) OVER (PARTITION BY dept_id) AS dept_total_payroll FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "sum",
+      "broadcast",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-09",
+    "slug": "wag-department-average-salary-broadcast",
+    "title": "Broadcast Department Average Salary Alongside Employee Salary",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, compute each department's average salary using `ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2)` as `dept_avg_salary`. Return `emp_id`, `first_name`, `dept_id`, `salary`, and `dept_avg_salary`. Order by `dept_id` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_avg_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department average salary broadcast\nSELECT emp_id, first_name, dept_id, salary,\n  ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg_salary\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;",
+    "solution_explanation": "AVG(salary) OVER (PARTITION BY dept_id) computes the mean compensation of each employee's department and attaches it to every row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to round the average to 2 decimal places."
+    ],
+    "interview_tip": "Benchmarking individual figures against partition averages is one of the most common analytical patterns.",
+    "hints": [
+      "Use `ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg_salary`.",
+      "Filter out NULL departments using `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "average",
+      "broadcast",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-10",
+    "slug": "wag-department-min-max-salary-range",
+    "title": "Display Department Salary Range Extremes Alongside Individual Salary",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, broadcast both the department minimum salary (`MIN(salary) OVER (PARTITION BY dept_id)` as `dept_min_salary`) and maximum salary (`MAX(salary) OVER (PARTITION BY dept_id)` as `dept_max_salary`). Return `emp_id`, `first_name`, `dept_id`, `salary`, `dept_min_salary`, and `dept_max_salary`. Order by `dept_id` ASC, `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_min_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_max_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department min and max salary extremes\nSELECT emp_id, first_name, dept_id, salary,\n  MIN(salary) OVER (PARTITION BY dept_id) AS dept_min_salary,\n  MAX(salary) OVER (PARTITION BY dept_id) AS dept_max_salary\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, MIN(salary) OVER (PARTITION BY dept_id) AS dept_min_salary, MAX(salary) OVER (PARTITION BY dept_id) AS dept_max_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_explanation": "MIN() and MAX() over a partition broadcast boundary values across all partition members.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using GROUP BY which collapses the row details."
+    ],
+    "interview_tip": "Displaying extremes side-by-side facilitates salary band compliance checks.",
+    "hints": [
+      "Use `MIN(salary) OVER (PARTITION BY dept_id)` and `MAX(salary) OVER (PARTITION BY dept_id)`.",
+      "Sort output by `dept_id ASC, salary ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, MIN(salary) OVER (PARTITION BY dept_id) AS dept_min_salary, MAX(salary) OVER (PARTITION BY dept_id) AS dept_max_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "min",
+      "max",
+      "salary-range"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-11",
+    "slug": "wag-global-salary-running-total",
+    "title": "Calculate Chronological Company Payroll Accumulation",
+    "description_markdown": "Calculate running cumulative company payroll as employees are hired chronologically using `SUM(salary) OVER (ORDER BY hire_date ASC, emp_id ASC)` as `cumulative_company_payroll`. Return `emp_id`, `first_name`, `hire_date`, `salary`, and `cumulative_company_payroll`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "cumulative_company_payroll",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative company payroll over time\nSELECT emp_id, first_name, hire_date, salary,\n  SUM(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS cumulative_company_payroll\nFROM employees\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, salary, SUM(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS cumulative_company_payroll FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "SUM() with an ORDER BY clause defaults to the frame RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, accumulating values chronologically.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the unique tie-breaker column in the ORDER BY."
+    ],
+    "interview_tip": "Running totals over hire dates model organization wage liability growth over corporate history.",
+    "hints": [
+      "Use `SUM(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS cumulative_company_payroll`.",
+      "Order outer query by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, salary, SUM(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS cumulative_company_payroll FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total",
+      "payroll",
+      "hire-date"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-12",
+    "slug": "wag-salary-difference-from-dept-avg",
+    "title": "Calculate Employee Salary Deviation from Department Mean",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, calculate how much each employee's salary differs from their department average using `ROUND(salary - AVG(salary) OVER (PARTITION BY dept_id), 2)` as `diff_from_dept_avg`. Return `emp_id`, `first_name`, `dept_id`, `salary`, and `diff_from_dept_avg`. Order by `dept_id` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "diff_from_dept_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary variance from department average\nSELECT emp_id, first_name, dept_id, salary,\n  ROUND(salary - AVG(salary) OVER (PARTITION BY dept_id), 2) AS diff_from_dept_avg\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, ROUND(salary - AVG(salary) OVER (PARTITION BY dept_id), 2) AS diff_from_dept_avg FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;",
+    "solution_explanation": "Subtracting the windowed average directly from the row value computes individual variance without joining aggregate subqueries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting in reverse order resulting in inverted sign."
+    ],
+    "interview_tip": "Variance calculations highlight pay equity and compensation distribution across organizational divisions.",
+    "hints": [
+      "Compute `salary - AVG(salary) OVER (PARTITION BY dept_id)` and wrap in `ROUND(..., 2)`.",
+      "Filter with `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, ROUND(salary - AVG(salary) OVER (PARTITION BY dept_id), 2) AS diff_from_dept_avg FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "variance",
+      "average",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-13",
+    "slug": "wag-percent-of-dept-payroll",
+    "title": "Calculate Employee Percentage Contribution to Department Payroll",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, calculate the percentage of total department payroll earned by each employee using `ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2)` as `pct_dept_payroll`. Return `emp_id`, `first_name`, `dept_id`, `salary`, and `pct_dept_payroll`. Order by `dept_id` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "pct_dept_payroll",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Percentage contribution to department payroll\nSELECT emp_id, first_name, dept_id, salary,\n  ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS pct_dept_payroll\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS pct_dept_payroll FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Dividing the individual row salary by the partition-wide SUM(salary) gives each staff member's proportional share of the payroll.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to multiply by 100 before rounding."
+    ],
+    "interview_tip": "Calculating relative shares of partition totals is standard for portfolio allocation and compensation analysis.",
+    "hints": [
+      "Use `ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS pct_dept_payroll`.",
+      "Sort by `dept_id ASC, salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS pct_dept_payroll FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "percentage-of-total",
+      "payroll",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-14",
+    "slug": "wag-running-average-salary-by-hire-date",
+    "title": "Calculate Cumulative Running Average Salary by Hire Date",
+    "description_markdown": "Calculate running cumulative average salary across all employees ordered chronologically by hire date using `ROUND(AVG(salary) OVER (ORDER BY hire_date ASC, emp_id ASC), 2)` as `running_avg_salary`. Return `emp_id`, `first_name`, `hire_date`, `salary`, and `running_avg_salary`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "running_avg_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative running average salary\nSELECT emp_id, first_name, hire_date, salary,\n  ROUND(AVG(salary) OVER (ORDER BY hire_date ASC, emp_id ASC), 2) AS running_avg_salary\nFROM employees\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, salary, ROUND(AVG(salary) OVER (ORDER BY hire_date ASC, emp_id ASC), 2) AS running_avg_salary FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "AVG() with an ORDER BY clause computes the cumulative arithmetic mean of all rows encountered up to and including the current row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND(..., 2) on the floating average."
+    ],
+    "interview_tip": "Running averages smooth historical trends and reveal whether newly hired cohorts are shifting baseline pay upward.",
+    "hints": [
+      "Use `ROUND(AVG(salary) OVER (ORDER BY hire_date ASC, emp_id ASC), 2) AS running_avg_salary`.",
+      "Order outer query by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, salary, ROUND(AVG(salary) OVER (ORDER BY hire_date ASC, emp_id ASC), 2) AS running_avg_salary FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-average",
+      "trend",
+      "employees"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-15",
+    "slug": "wag-peak-salary-observed-so-far",
+    "title": "Track Peak Historical Salary Observed So Far",
+    "description_markdown": "Calculate the highest salary observed up to and including each employee's hire date using `MAX(salary) OVER (ORDER BY hire_date ASC, emp_id ASC)` as `peak_salary_so_far`. Return `emp_id`, `first_name`, `hire_date`, `salary`, and `peak_salary_so_far`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "peak_salary_so_far",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Peak salary observed so far\nSELECT emp_id, first_name, hire_date, salary,\n  MAX(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS peak_salary_so_far\nFROM employees\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, salary, MAX(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS peak_salary_so_far FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "MAX() OVER (ORDER BY ...) creates a high-water mark tracking the maximum value observed sequentially.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the window ORDER BY, which would return the single universal company maximum for all rows."
+    ],
+    "interview_tip": "High-water mark calculations are common in finance for tracking all-time high portfolio values or pricing ceilings.",
+    "hints": [
+      "Use `MAX(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS peak_salary_so_far`.",
+      "Sort output by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, salary, MAX(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS peak_salary_so_far FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-max",
+      "high-water-mark",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-16",
+    "slug": "wag-lowest-salary-observed-so-far",
+    "title": "Track Minimum Historical Salary Observed So Far",
+    "description_markdown": "Calculate the minimum salary observed chronologically up to each employee's hire date using `MIN(salary) OVER (ORDER BY hire_date ASC, emp_id ASC)` as `min_salary_so_far`. Return `emp_id`, `first_name`, `hire_date`, `salary`, and `min_salary_so_far`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "min_salary_so_far",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Minimum salary observed so far\nSELECT emp_id, first_name, hire_date, salary,\n  MIN(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS min_salary_so_far\nFROM employees\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, salary, MIN(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS min_salary_so_far FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "MIN() OVER (ORDER BY ...) tracks the running low-water mark across ordered records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing running MIN with partition-wide MIN."
+    ],
+    "interview_tip": "Low-water marks track drawdown floors and wage compensation minimums across onboarding eras.",
+    "hints": [
+      "Use `MIN(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS min_salary_so_far`.",
+      "Sort output by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, salary, MIN(salary) OVER (ORDER BY hire_date ASC, emp_id ASC) AS min_salary_so_far FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-min",
+      "low-water-mark",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-17",
+    "slug": "wag-two-order-centered-moving-sum",
+    "title": "Calculate 3-Order Centered Rolling Sum Using Symmetric Frame",
+    "description_markdown": "For completed orders (`order_status = 'completed'`), calculate a centered 3-row rolling sum of `total_amount` using `SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)` as `centered_rolling_sum`. Return `order_id`, `customer_id`, `order_date`, `total_amount`, and `centered_rolling_sum`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "centered_rolling_sum",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Centered rolling sum with symmetric frame\nSELECT order_id, customer_id, order_date, total_amount,\n  SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS centered_rolling_sum\nFROM orders\nWHERE order_status = 'completed'\nORDER BY order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS centered_rolling_sum FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING creates a centered window spanning the previous row, current row, and next row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the FOLLOWING clause which results in a trailing window instead of centered."
+    ],
+    "interview_tip": "Centered window frames reduce lag when smoothing time-series data compared to trailing-only windows.",
+    "hints": [
+      "Specify `ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` in the OVER clause.",
+      "Filter `WHERE order_status = 'completed'`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS centered_rolling_sum FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "rolling-sum",
+      "frame-clause",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-18",
+    "slug": "wag-remaining-future-revenue",
+    "title": "Calculate Cumulative Forward Revenue Using Unbounded Following Frame",
+    "description_markdown": "For completed orders, calculate remaining forward cumulative revenue from the current order to the end of the dataset using `SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)` as `remaining_revenue`. Return `order_id`, `order_date`, `total_amount`, and `remaining_revenue`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "remaining_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Forward remaining revenue with UNBOUNDED FOLLOWING\nSELECT order_id, order_date, total_amount,\n  SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS remaining_revenue\nFROM orders\nWHERE order_status = 'completed'\nORDER BY order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS remaining_revenue FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING sums from the current record through the last row of the partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing CURRENT ROW and UNBOUNDED FOLLOWING order in the frame definition."
+    ],
+    "interview_tip": "Unbounded following frames calculate burn-down curves and remaining contract value run-rates.",
+    "hints": [
+      "Use `ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING`.",
+      "Filter for `order_status = 'completed'`.",
+      "Query: SELECT order_id, order_date, total_amount, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS remaining_revenue FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "unbounded-following",
+      "frame-clause",
+      "revenue"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-19",
+    "slug": "wag-cumulative-course-credits-per-student",
+    "title": "Calculate Cumulative Academic Credits Earned Per Student",
+    "description_markdown": "For completed course enrollments (`status = 'completed'`), compute cumulative academic credits earned per student as courses progress by `course_id` using `SUM(c.credits) OVER (PARTITION BY e.student_id ORDER BY e.course_id ASC)` as `cumulative_credits`. Return `student_id`, `course_id`, `credits`, and `cumulative_credits`. Order by `e.student_id` ASC, `e.course_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      },
+      {
+        "name": "cumulative_credits",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative credits per student\nSELECT e.student_id, e.course_id, c.credits,\n  SUM(c.credits) OVER (PARTITION BY e.student_id ORDER BY e.course_id ASC) AS cumulative_credits\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE e.status = 'completed'\nORDER BY e.student_id ASC, e.course_id ASC;",
+    "solution_query": "SELECT e.student_id, e.course_id, c.credits, SUM(c.credits) OVER (PARTITION BY e.student_id ORDER BY e.course_id ASC) AS cumulative_credits FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE e.status = 'completed' ORDER BY e.student_id ASC, e.course_id ASC;",
+    "solution_explanation": "Joining enrollments and courses and applying SUM(c.credits) partitioned by student calculates degree progress dynamically.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter by status = 'completed'."
+    ],
+    "interview_tip": "Window functions work seamlessly across joined tables without collapsing records.",
+    "hints": [
+      "Join `enrollments e` with `courses c` on `course_id`.",
+      "Partition by `e.student_id` and order by `e.course_id ASC` in the OVER clause.",
+      "Query: SELECT e.student_id, e.course_id, c.credits, SUM(c.credits) OVER (PARTITION BY e.student_id ORDER BY e.course_id ASC) AS cumulative_credits FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE e.status = 'completed' ORDER BY e.student_id ASC, e.course_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "joins",
+      "academic-credits",
+      "college"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-20",
+    "slug": "wag-student-gpa-vs-major-average",
+    "title": "Compare Individual Student GPA with Major Academic Average",
+    "description_markdown": "From `students`, calculate each major's average GPA using `ROUND(AVG(gpa) OVER (PARTITION BY major), 2)` as `major_avg_gpa` and the student's difference from that average using `ROUND(gpa - AVG(gpa) OVER (PARTITION BY major), 2)` as `gpa_diff`. Return `student_id`, `first_name`, `major`, `gpa`, `major_avg_gpa`, and `gpa_diff`. Order by `major` ASC, `student_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "major_avg_gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "gpa_diff",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student GPA compared to major mean\nSELECT student_id, first_name, major, gpa,\n  ROUND(AVG(gpa) OVER (PARTITION BY major), 2) AS major_avg_gpa,\n  ROUND(gpa - AVG(gpa) OVER (PARTITION BY major), 2) AS gpa_diff\nFROM students\nORDER BY major ASC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa, ROUND(AVG(gpa) OVER (PARTITION BY major), 2) AS major_avg_gpa, ROUND(gpa - AVG(gpa) OVER (PARTITION BY major), 2) AS gpa_diff FROM students ORDER BY major ASC, student_id ASC;",
+    "solution_explanation": "Partitioning by major calculates the departmental GPA standard and individual variance simultaneously.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND on gpa_diff."
+    ],
+    "interview_tip": "Normalizing scores against group averages prevents grading harshness bias across different academic fields.",
+    "hints": [
+      "Use `AVG(gpa) OVER (PARTITION BY major)` for both columns.",
+      "Round both calculated fields to 2 decimal places.",
+      "Query: SELECT student_id, first_name, major, gpa, ROUND(AVG(gpa) OVER (PARTITION BY major), 2) AS major_avg_gpa, ROUND(gpa - AVG(gpa) OVER (PARTITION BY major), 2) AS gpa_diff FROM students ORDER BY major ASC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "average",
+      "difference",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-21",
+    "slug": "wag-professor-salary-vs-department-max",
+    "title": "Calculate Professor Salary Gap to Department Maximum Salary",
+    "description_markdown": "From `professors`, calculate the highest salary in each department using `MAX(salary) OVER (PARTITION BY department)` as `dept_max_salary`, and the gap between that ceiling and each professor's salary using `ROUND(MAX(salary) OVER (PARTITION BY department) - salary, 2)` as `gap_to_max`. Return `professor_id`, `first_name`, `department`, `salary`, `dept_max_salary`, and `gap_to_max`. Order by `department` ASC, `salary` DESC, `professor_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_max_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "gap_to_max",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary gap to department maximum\nSELECT professor_id, first_name, department, salary,\n  MAX(salary) OVER (PARTITION BY department) AS dept_max_salary,\n  ROUND(MAX(salary) OVER (PARTITION BY department) - salary, 2) AS gap_to_max\nFROM professors\nORDER BY department ASC, salary DESC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, department, salary, MAX(salary) OVER (PARTITION BY department) AS dept_max_salary, ROUND(MAX(salary) OVER (PARTITION BY department) - salary, 2) AS gap_to_max FROM professors ORDER BY department ASC, salary DESC, professor_id ASC;",
+    "solution_explanation": "MAX() OVER (PARTITION BY department) computes the departmental ceiling, and subtracting the individual salary finds the shortfall.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting salary from MAX in reversed order, giving negative differences."
+    ],
+    "interview_tip": "Evaluating compensation ceilings highlights progression room within pay bands.",
+    "hints": [
+      "Use `MAX(salary) OVER (PARTITION BY department)` to find the top salary.",
+      "Calculate `ROUND(MAX(...) - salary, 2) AS gap_to_max`.",
+      "Query: SELECT professor_id, first_name, department, salary, MAX(salary) OVER (PARTITION BY department) AS dept_max_salary, ROUND(MAX(salary) OVER (PARTITION BY department) - salary, 2) AS gap_to_max FROM professors ORDER BY department ASC, salary DESC, professor_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "max",
+      "salary-gap",
+      "professors"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-22",
+    "slug": "wag-category-product-price-share",
+    "title": "Calculate Product Price Share of Total Category Catalog Value",
+    "description_markdown": "For active products (`is_active = true`), calculate each product's price as a percentage of total product prices within its category using `ROUND((price / SUM(price) OVER (PARTITION BY category_id)) * 100, 2)` as `pct_category_value`. Return `product_id`, `product_name`, `category_id`, `price`, and `pct_category_value`. Order by `category_id` ASC, `price` DESC, `product_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "pct_category_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Product price share within category\nSELECT product_id, product_name, category_id, price,\n  ROUND((price / SUM(price) OVER (PARTITION BY category_id)) * 100, 2) AS pct_category_value\nFROM products\nWHERE is_active = TRUE\nORDER BY category_id ASC, price DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, category_id, price, ROUND((price / SUM(price) OVER (PARTITION BY category_id)) * 100, 2) AS pct_category_value FROM products WHERE is_active = TRUE ORDER BY category_id ASC, price DESC, product_id ASC;",
+    "solution_explanation": "SUM(price) OVER (PARTITION BY category_id) sums all product prices in each category, enabling percentage distribution calculation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the WHERE is_active filter."
+    ],
+    "interview_tip": "Share of catalog value reveals if single flagship SKUs dominate category pricing tiers.",
+    "hints": [
+      "Use `ROUND((price / SUM(price) OVER (PARTITION BY category_id)) * 100, 2)`.",
+      "Filter for `is_active = true`.",
+      "Query: SELECT product_id, product_name, category_id, price, ROUND((price / SUM(price) OVER (PARTITION BY category_id)) * 100, 2) AS pct_category_value FROM products WHERE is_active = true ORDER BY category_id ASC, price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "percentage-of-total",
+      "products",
+      "categories"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-23",
+    "slug": "wag-category-running-stock-quantity",
+    "title": "Calculate Cumulative Stock Quantity within Each Product Category",
+    "description_markdown": "For active products (`is_active = true`), calculate a cumulative running sum of inventory stock within each category ordered by `stock_quantity` DESC, `product_id` ASC using `SUM(stock_quantity) OVER (PARTITION BY category_id ORDER BY stock_quantity DESC, product_id ASC)` as `running_category_stock`. Return `product_id`, `product_name`, `category_id`, `stock_quantity`, and `running_category_stock`. Order by `category_id` ASC, `stock_quantity` DESC, `product_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      },
+      {
+        "name": "running_category_stock",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative category inventory stock\nSELECT product_id, product_name, category_id, stock_quantity,\n  SUM(stock_quantity) OVER (PARTITION BY category_id ORDER BY stock_quantity DESC, product_id ASC) AS running_category_stock\nFROM products\nWHERE is_active = TRUE\nORDER BY category_id ASC, stock_quantity DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, category_id, stock_quantity, SUM(stock_quantity) OVER (PARTITION BY category_id ORDER BY stock_quantity DESC, product_id ASC) AS running_category_stock FROM products WHERE is_active = TRUE ORDER BY category_id ASC, stock_quantity DESC, product_id ASC;",
+    "solution_explanation": "Partitioning by category and ordering by stock_quantity DESC accumulates inventory from highest-stocked to lowest-stocked SKU.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary sort key product_id inside OVER."
+    ],
+    "interview_tip": "Cumulative stock rankings support ABC inventory classification and Pareto 80/20 analyses.",
+    "hints": [
+      "Use `SUM(stock_quantity) OVER (PARTITION BY category_id ORDER BY stock_quantity DESC, product_id ASC)`.",
+      "Filter `WHERE is_active = true` (or TRUE).",
+      "Query: SELECT product_id, product_name, category_id, stock_quantity, SUM(stock_quantity) OVER (PARTITION BY category_id ORDER BY stock_quantity DESC, product_id ASC) AS running_category_stock FROM products WHERE is_active = true ORDER BY category_id ASC, stock_quantity DESC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total",
+      "inventory",
+      "stock"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-24",
+    "slug": "wag-cumulative-hours-per-project",
+    "title": "Calculate Cumulative Project Labor Hours Across Assignments",
+    "description_markdown": "From `assignments`, compute a cumulative running sum of `hours_worked` per project ordered by `assignment_id` ASC using `SUM(hours_worked) OVER (PARTITION BY project_id ORDER BY assignment_id ASC)` as `project_running_hours`. Return `assignment_id`, `project_id`, `emp_id`, `hours_worked`, and `project_running_hours`. Order by `project_id` ASC, `assignment_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "decimal"
+      },
+      {
+        "name": "project_running_hours",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative hours worked per project\nSELECT assignment_id, project_id, emp_id, hours_worked,\n  SUM(hours_worked) OVER (PARTITION BY project_id ORDER BY assignment_id ASC) AS project_running_hours\nFROM assignments\nORDER BY project_id ASC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, project_id, emp_id, hours_worked, SUM(hours_worked) OVER (PARTITION BY project_id ORDER BY assignment_id ASC) AS project_running_hours FROM assignments ORDER BY project_id ASC, assignment_id ASC;",
+    "solution_explanation": "Partitioning by project_id and ordering by assignment_id tracks labor burn-up over time for each initiative.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the PARTITION BY clause, which would sum hours across all projects combined."
+    ],
+    "interview_tip": "Cumulative labor tracking is fundamental for project milestone accounting and budget burn velocity.",
+    "hints": [
+      "Use `SUM(hours_worked) OVER (PARTITION BY project_id ORDER BY assignment_id ASC) AS project_running_hours`.",
+      "Sort output by `project_id ASC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, project_id, emp_id, hours_worked, SUM(hours_worked) OVER (PARTITION BY project_id ORDER BY assignment_id ASC) AS project_running_hours FROM assignments ORDER BY project_id ASC, assignment_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total",
+      "projects",
+      "assignments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-25",
+    "slug": "wag-filter-employees-above-dept-avg",
+    "title": "Filter Employees Earning Strictly Above Their Department Average",
+    "description_markdown": "Using a subquery or CTE, calculate each department's average salary using `ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2)` as `dept_avg`, and filter for employees who earn strictly more than their department's average (`salary > dept_avg`). Filter for employees where `dept_id IS NOT NULL`. Return `emp_id`, `first_name`, `dept_id`, `salary`, and `dept_avg`. Order by `dept_id` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employees earning above department average\nSELECT emp_id, first_name, dept_id, salary, dept_avg\nFROM (\n  SELECT emp_id, first_name, dept_id, salary,\n    ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg\n  FROM employees\n  WHERE dept_id IS NOT NULL\n) sub\nWHERE salary > dept_avg\nORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, dept_avg FROM (SELECT emp_id, first_name, dept_id, salary, ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg FROM employees WHERE dept_id IS NOT NULL) sub WHERE salary > dept_avg ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Because SQL prohibits window functions in the WHERE clause, wrapping the calculation in a subquery allows filtering on the windowed metric.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Attempting to put `WHERE salary > AVG(...) OVER (...)` in the main query block."
+    ],
+    "interview_tip": "Remember SQL order of execution: WHERE is evaluated before SELECT window functions, necessitating a subquery or CTE to filter on window outputs.",
+    "hints": [
+      "Compute `ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg` inside a FROM subquery.",
+      "Filter the outer query with `WHERE salary > dept_avg`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, dept_avg FROM (SELECT emp_id, first_name, dept_id, salary, ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg FROM employees WHERE dept_id IS NOT NULL) sub WHERE salary > dept_avg ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "subqueries",
+      "filtering",
+      "salary-comparison"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-26",
+    "slug": "wag-filter-customers-over-spend-threshold",
+    "title": "Filter Orders Once Customer Cumulative Spend Crosses 200",
+    "description_markdown": "For completed orders (`order_status = 'completed'`), compute cumulative spend per customer (`SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `running_spend`). In an outer query, filter to only return orders where `running_spend >= 200`. Return `customer_id`, `order_id`, `order_date`, `total_amount`, and `running_spend`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "running_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Orders where cumulative spend reached at least 200\nSELECT customer_id, order_id, order_date, total_amount, running_spend\nFROM (\n  SELECT customer_id, order_id, order_date, total_amount,\n    SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS running_spend\n  FROM orders\n  WHERE order_status = 'completed'\n) sub\nWHERE running_spend >= 200\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT customer_id, order_id, order_date, total_amount, running_spend FROM (SELECT customer_id, order_id, order_date, total_amount, SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS running_spend FROM orders WHERE order_status = 'completed') sub WHERE running_spend >= 200 ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "Computing cumulative spend in a subquery lets the outer query filter for transactions that met or surpassed VIP thresholds.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Applying the >= 200 filter directly to total_amount rather than running_spend."
+    ],
+    "interview_tip": "Threshold-crossing queries identify tier upgrades and qualification events in customer lifecycle funnels.",
+    "hints": [
+      "Calculate `running_spend` in a derived subquery.",
+      "Filter the derived table with `WHERE running_spend >= 200`.",
+      "Query: SELECT customer_id, order_id, order_date, total_amount, running_spend FROM (SELECT customer_id, order_id, order_date, total_amount, SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS running_spend FROM orders WHERE order_status = 'completed') sub WHERE running_spend >= 200 ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "derived-table",
+      "threshold",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-27",
+    "slug": "wag-running-count-and-sum-combined",
+    "title": "Track Multi-Metric Cumulative Order Progression Dashboard",
+    "description_markdown": "For completed orders, calculate three simultaneous running metrics ordered by `order_date ASC, order_id ASC`: cumulative count (`COUNT(*) OVER (...)` as `order_seq`), cumulative revenue (`SUM(total_amount) OVER (...)` as `running_total`), and cumulative average order value (`ROUND(AVG(total_amount) OVER (...), 2)` as `running_avg`). Return `order_id`, `order_date`, `total_amount`, `order_seq`, `running_total`, and `running_avg`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "order_seq",
+        "type": "bigint"
+      },
+      {
+        "name": "running_total",
+        "type": "decimal"
+      },
+      {
+        "name": "running_avg",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-metric cumulative dashboard\nSELECT order_id, order_date, total_amount,\n  COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS order_seq,\n  SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_total,\n  ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC), 2) AS running_avg\nFROM orders\nWHERE order_status = 'completed'\nORDER BY order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, order_date, total_amount, COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS order_seq, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_total, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC), 2) AS running_avg FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "Multiple window functions can share the exact same OVER clause specification without incurring distinct sorting passes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using different sort keys in different OVER clauses causing query optimizer churn."
+    ],
+    "interview_tip": "Databases optimize multiple window functions with identical OVER clauses into a single streaming sorting pass.",
+    "hints": [
+      "Use identical `OVER (ORDER BY order_date ASC, order_id ASC)` clauses for COUNT, SUM, and AVG.",
+      "Round the running average to 2 decimals.",
+      "Query: SELECT order_id, order_date, total_amount, COUNT(*) OVER (ORDER BY order_date ASC, order_id ASC) AS order_seq, SUM(total_amount) OVER (ORDER BY order_date ASC, order_id ASC) AS running_total, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC), 2) AS running_avg FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "multiple-windows",
+      "analytics",
+      "dashboard"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-28",
+    "slug": "wag-five-row-rolling-average",
+    "title": "Calculate 5-Period Symmetric Moving Average with ROWS Frame",
+    "description_markdown": "For completed orders, calculate a 5-period symmetric moving average of `total_amount` using `ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING), 2)` as `rolling_avg_5`. Return `order_id`, `order_date`, `total_amount`, and `rolling_avg_5`. Order by `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "rolling_avg_5",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- 5-period symmetric moving average\nSELECT order_id, order_date, total_amount,\n  ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING), 2) AS rolling_avg_5\nFROM orders\nWHERE order_status = 'completed'\nORDER BY order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, order_date, total_amount, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING), 2) AS rolling_avg_5 FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;",
+    "solution_explanation": "ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING captures a window of up to 5 rows centered on the current row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to specify ROWS, allowing default RANGE behavior."
+    ],
+    "interview_tip": "Symmetric rolling filters eliminate phase distortion in signal processing and quantitative financial analysis.",
+    "hints": [
+      "Use `ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING` in the OVER clause.",
+      "Round the calculated moving average to 2 decimal places.",
+      "Query: SELECT order_id, order_date, total_amount, ROUND(AVG(total_amount) OVER (ORDER BY order_date ASC, order_id ASC ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING), 2) AS rolling_avg_5 FROM orders WHERE order_status = 'completed' ORDER BY order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "moving-average",
+      "frame-clause",
+      "statistics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-29",
+    "slug": "wag-department-payroll-comprehensive-report",
+    "title": "Generate Comprehensive Department Budget Share Analysis",
+    "description_markdown": "For employees where `dept_id IS NOT NULL`, compute department total payroll (`SUM(salary) OVER (PARTITION BY dept_id)` as `dept_payroll`), department employee headcount (`COUNT(*) OVER (PARTITION BY dept_id)` as `dept_headcount`), and the employee's percentage share of that payroll (`ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2)` as `salary_share_pct`). Return `emp_id`, `first_name`, `dept_id`, `salary`, `dept_payroll`, `dept_headcount`, and `salary_share_pct`. Order by `dept_id` ASC, `salary_share_pct` DESC, `emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_payroll",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_headcount",
+        "type": "bigint"
+      },
+      {
+        "name": "salary_share_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Comprehensive department payroll breakdown\nSELECT emp_id, first_name, dept_id, salary,\n  SUM(salary) OVER (PARTITION BY dept_id) AS dept_payroll,\n  COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount,\n  ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS salary_share_pct\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary_share_pct DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary, SUM(salary) OVER (PARTITION BY dept_id) AS dept_payroll, COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount, ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS salary_share_pct FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary_share_pct DESC, emp_id ASC;",
+    "solution_explanation": "Broadcasting department aggregations allows granular row-level comparisons alongside organizational macro metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting the outer query by salary instead of salary_share_pct DESC."
+    ],
+    "interview_tip": "Combining aggregate metrics and relative ratios in single queries demonstrates advanced SQL proficiency.",
+    "hints": [
+      "Partition all window calculations by `dept_id`.",
+      "Order outer query by `dept_id ASC, salary_share_pct DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary, SUM(salary) OVER (PARTITION BY dept_id) AS dept_payroll, COUNT(*) OVER (PARTITION BY dept_id) AS dept_headcount, ROUND((salary / SUM(salary) OVER (PARTITION BY dept_id)) * 100, 2) AS salary_share_pct FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary_share_pct DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "reporting",
+      "headcount",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-30",
+    "slug": "wag-student-running-gpa-rank-relative",
+    "title": "Compare Individual Student Academic Performance to Global Mean",
+    "description_markdown": "From `students`, calculate the overall institution-wide average GPA across all students using `ROUND(AVG(gpa) OVER (), 2)` as `college_avg_gpa`, and each student's difference from that global benchmark using `ROUND(gpa - AVG(gpa) OVER (), 2)` as `gpa_diff_from_college`. Return `student_id`, `first_name`, `major`, `gpa`, `college_avg_gpa`, and `gpa_diff_from_college`. Order by `gpa` DESC, `student_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "college_avg_gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "gpa_diff_from_college",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Student GPA compared to institutional mean\nSELECT student_id, first_name, major, gpa,\n  ROUND(AVG(gpa) OVER (), 2) AS college_avg_gpa,\n  ROUND(gpa - AVG(gpa) OVER (), 2) AS gpa_diff_from_college\nFROM students\nORDER BY gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa, ROUND(AVG(gpa) OVER (), 2) AS college_avg_gpa, ROUND(gpa - AVG(gpa) OVER (), 2) AS gpa_diff_from_college FROM students ORDER BY gpa DESC, student_id ASC;",
+    "solution_explanation": "OVER () with empty parentheses treats the entire table as a single partition, computing the global mean without losing individual row detail.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Accidentally adding a PARTITION BY clause."
+    ],
+    "interview_tip": "Empty OVER () window clauses compute grand totals or global benchmarks across the entire dataset.",
+    "hints": [
+      "Use `AVG(gpa) OVER ()` with empty parentheses for the global mean.",
+      "Round both calculated fields to 2 decimal places.",
+      "Query: SELECT student_id, first_name, major, gpa, ROUND(AVG(gpa) OVER (), 2) AS college_avg_gpa, ROUND(gpa - AVG(gpa) OVER (), 2) AS gpa_diff_from_college FROM students ORDER BY gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "empty-over",
+      "grand-average",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-31",
+    "slug": "wag-order-items-running-revenue-per-order",
+    "title": "Track Historical High-Water Salary in Historical Compensation Records",
+    "description_markdown": "From `salaries_history`, track each employee's personal historical peak compensation as salary revisions take effect by computing `MAX(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC)` as `peak_salary_to_date`. Return `history_id`, `emp_id`, `effective_date`, `salary`, and `peak_salary_to_date`. Order by `emp_id` ASC, `effective_date` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "history_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "effective_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "peak_salary_to_date",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Peak historical salary to date per employee\nSELECT history_id, emp_id, effective_date, salary,\n  MAX(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC) AS peak_salary_to_date\nFROM salaries_history\nORDER BY emp_id ASC, effective_date ASC;",
+    "solution_query": "SELECT history_id, emp_id, effective_date, salary, MAX(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC) AS peak_salary_to_date FROM salaries_history ORDER BY emp_id ASC, effective_date ASC;",
+    "solution_explanation": "Partitioning by emp_id and ordering by effective_date ASC builds an employee-specific historical ceiling progression.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY emp_id."
+    ],
+    "interview_tip": "Historical high-water metrics are critical in audit logging and claw-back compensation policies.",
+    "hints": [
+      "Use `MAX(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC) AS peak_salary_to_date`.",
+      "Sort output by `emp_id ASC, effective_date ASC`.",
+      "Query: SELECT history_id, emp_id, effective_date, salary, MAX(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC) AS peak_salary_to_date FROM salaries_history ORDER BY emp_id ASC, effective_date ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-max",
+      "history",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-wag-32",
+    "slug": "wag-cumulative-department-spend-ratio",
+    "title": "Analyze Cumulative Department Payroll Progression Against Total Budget",
+    "description_markdown": "Join `employees` and `departments` on `dept_id`. Compute cumulative department payroll ordered by salary descending (`SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC)` as `running_dept_salary`), and calculate what percentage of the department's total `budget` has been consumed up to each employee using `ROUND((SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) / d.budget) * 100, 2)` as `pct_budget_spent`. Return `e.emp_id`, `e.first_name`, `e.dept_id`, `e.salary`, `running_dept_salary`, `d.budget`, and `pct_budget_spent`. Order by `e.dept_id` ASC, `e.salary` DESC, `e.emp_id` ASC.",
+    "topic_id": "window-aggregates",
+    "subtopic_id": "win-frames",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "running_dept_salary",
+        "type": "decimal"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      },
+      {
+        "name": "pct_budget_spent",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cumulative department payroll against total budget\nSELECT e.emp_id, e.first_name, e.dept_id, e.salary,\n  SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) AS running_dept_salary,\n  d.budget,\n  ROUND((SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) / d.budget) * 100, 2) AS pct_budget_spent\nFROM employees e\nJOIN departments d ON e.dept_id = d.dept_id\nORDER BY e.dept_id ASC, e.salary DESC, e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.dept_id, e.salary, SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) AS running_dept_salary, d.budget, ROUND((SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) / d.budget) * 100, 2) AS pct_budget_spent FROM employees e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.dept_id ASC, e.salary DESC, e.emp_id ASC;",
+    "solution_explanation": "Joining the department budget and comparing it to the cumulative salary burn reveals at what salary tier the departmental budget is exhausted.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Dividing running salary by employee salary instead of department budget."
+    ],
+    "interview_tip": "Correlating running spend to static budget ceilings is a cornerstone of corporate financial planning and FP&A models.",
+    "hints": [
+      "Join `employees e` with `departments d` on `dept_id`.",
+      "Divide `SUM(e.salary) OVER (...)` by `d.budget`, multiply by 100, and round to 2 decimals.",
+      "Query: SELECT e.emp_id, e.first_name, e.dept_id, e.salary, SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) AS running_dept_salary, d.budget, ROUND((SUM(e.salary) OVER (PARTITION BY e.dept_id ORDER BY e.salary DESC, e.emp_id ASC) / d.budget) * 100, 2) AS pct_budget_spent FROM employees e JOIN departments d ON e.dept_id = d.dept_id ORDER BY e.dept_id ASC, e.salary DESC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "running-total",
+      "budget",
+      "burn-rate"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-wag-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-wag-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-wag-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

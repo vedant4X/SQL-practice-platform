@@ -1,0 +1,2405 @@
+[
+  {
+    "id": "q-my-sc-air-01",
+    "slug": "airline-delayed-flights-analysis",
+    "title": "Enumerate Delayed Commercial Flights",
+    "description_markdown": "Flight operations request: Find all flights that had a status of 'delayed' or 'cancelled'. Return `flight_number`, `origin`, `destination`, `base_price`, and `status`. Order by `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Delayed flights\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price, status FROM flights WHERE status IN ('delayed', 'cancelled') ORDER BY flight_number ASC;",
+    "solution_explanation": "Filters flight operations logs for non-nominal service states.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE status IN ('delayed', 'cancelled')`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT flight_number, origin, destination, base_price, status FROM flights WHERE status IN ('delayed', 'cancelled') ORDER BY flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "flight-status"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-air-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-air-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-air-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-02",
+    "slug": "airline-popular-travel-routes",
+    "title": "Route Popularity and Ticket Sales Volume",
+    "description_markdown": "Route profitability request: For each origin and destination city pair, join `flights` and `tickets`. Count total passengers flown as `ticket_count`. Return `f.origin`, `f.destination`, and `ticket_count`. Order by `ticket_count` DESC, `f.origin` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "ticket_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Route volume summary\nSELECT ...",
+    "solution_query": "SELECT f.origin, f.destination, COUNT(t.ticket_id) AS ticket_count FROM flights f JOIN tickets t ON f.flight_id = t.flight_id GROUP BY f.origin, f.destination ORDER BY ticket_count DESC, f.origin ASC, f.destination ASC;",
+    "solution_explanation": "Measures passenger volumes across route nodes.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join flights to tickets on `f.flight_id = t.flight_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT f.origin, f.destination, COUNT(t.ticket_id) AS ticket_count FROM flights f JOIN tickets t ON f.flight_id = t.flight_id GROUP BY f.origin, f.destination ORDER BY ticket_count DESC, f.origin ASC, f.destination ASC;"
+    ],
+    "tags": [
+      "airline",
+      "routes"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-air-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-air-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-air-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-03",
+    "slug": "airline-vip-flyers-business-class",
+    "title": "Top Mileage Travelers Flying Premium Cabins",
+    "description_markdown": "Loyalty audit: Find passengers who have booked tickets in 'business' or 'first' class who possess at least 80,000 frequent flyer miles. Return distinct `p.first_name`, `p.last_name`, and `p.frequent_flyer_miles`. Order by `p.frequent_flyer_miles` DESC, `p.last_name` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "frequent_flyer_miles",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- VIP flyer analysis\nSELECT ...",
+    "solution_query": "SELECT DISTINCT p.first_name, p.last_name, p.frequent_flyer_miles FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id WHERE t.travel_class IN ('business', 'first') AND p.frequent_flyer_miles >= 80000 ORDER BY p.frequent_flyer_miles DESC, p.last_name ASC;",
+    "solution_explanation": "Joins passenger tiering to ticket class records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join passengers -> bookings -> tickets.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT DISTINCT p.first_name, p.last_name, p.frequent_flyer_miles FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id WHERE t.travel_class IN ('business', 'first') AND p.frequent_flyer_miles >= 80000 ORDER BY p.frequent_flyer_miles DESC, p.last_name ASC;"
+    ],
+    "tags": [
+      "airline",
+      "loyalty"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-air-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-air-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-air-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-04",
+    "slug": "air-airports-in-united-states",
+    "title": "Filter Commercial Airports Located in the United States",
+    "description_markdown": "List all airports located in the United States (`country = 'USA'`). Return `airport_code`, `name`, and `city`. Order by `airport_code` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports"
+    ],
+    "expected_columns": [
+      {
+        "name": "airport_code",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT airport_code, name, city FROM airports WHERE country = 'USA' ORDER BY airport_code ASC;",
+    "solution_explanation": "Filters airports where country = 'USA'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE country = 'USA'`.",
+      "Order by `airport_code` ASC.",
+      "Query: SELECT airport_code, name, city FROM airports WHERE country = 'USA' ORDER BY airport_code ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-05",
+    "slug": "air-elite-frequent-flyer-passengers",
+    "title": "Identify Elite Frequent Flyer Loyalty Members",
+    "description_markdown": "Retrieve passengers holding at least 100,000 frequent flyer miles. Return `passenger_id`, `first_name`, `last_name`, and `frequent_flyer_miles`. Order by `frequent_flyer_miles` DESC, `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "frequent_flyer_miles",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT passenger_id, first_name, last_name, frequent_flyer_miles FROM passengers WHERE frequent_flyer_miles >= 100000 ORDER BY frequent_flyer_miles DESC, passenger_id ASC;",
+    "solution_explanation": "Filters passengers with frequent_flyer_miles >= 100000.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE frequent_flyer_miles >= 100000`.",
+      "Order by `frequent_flyer_miles` DESC, `passenger_id` ASC.",
+      "Query: SELECT passenger_id, first_name, last_name, frequent_flyer_miles FROM passengers WHERE frequent_flyer_miles >= 100000 ORDER BY frequent_flyer_miles DESC, passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-06",
+    "slug": "air-flight-status-dispatch-breakdown",
+    "title": "Aggregate Flight Dispatch Schedule by Status",
+    "description_markdown": "Count total scheduled flights grouped by `status` as `flight_count`. Order by `flight_count` DESC, `status` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "flight_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT status, COUNT(*) AS flight_count FROM flights GROUP BY status ORDER BY flight_count DESC, status ASC;",
+    "solution_explanation": "Groups flights by status and counts records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `GROUP BY status`.",
+      "Count records with `COUNT(*) AS flight_count`.",
+      "Query: SELECT status, COUNT(*) AS flight_count FROM flights GROUP BY status ORDER BY flight_count DESC, status ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-07",
+    "slug": "air-outbound-flights-from-jfk",
+    "title": "Filter Outbound Flight Departures Originating at JFK",
+    "description_markdown": "List all flights departing from JFK (`origin = 'JFK'`). Return `flight_number`, `origin`, `destination`, and `base_price`. Order by `base_price` DESC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price FROM flights WHERE origin = 'JFK' ORDER BY base_price DESC, flight_number ASC;",
+    "solution_explanation": "Filters flights originating at JFK.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE origin = 'JFK'`.",
+      "Order by `base_price` DESC, `flight_number` ASC.",
+      "Query: SELECT flight_number, origin, destination, base_price FROM flights WHERE origin = 'JFK' ORDER BY base_price DESC, flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-08",
+    "slug": "air-booking-confirmation-breakdown",
+    "title": "Aggregate Ticket Bookings by Confirmation Status",
+    "description_markdown": "Aggregate total bookings (`booking_count`) and sum of booking amounts (`total_amount_sum`) grouped by `booking_status`. Order by `total_amount_sum` DESC, `booking_status` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "booking_status",
+        "type": "varchar"
+      },
+      {
+        "name": "booking_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_amount_sum",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT booking_status, COUNT(*) AS booking_count, SUM(total_amount) AS total_amount_sum FROM bookings GROUP BY booking_status ORDER BY total_amount_sum DESC, booking_status ASC;",
+    "solution_explanation": "Groups bookings by booking_status and calculates count and sum.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `GROUP BY booking_status`.",
+      "Aggregate with `COUNT(*)` and `SUM(total_amount)`.",
+      "Query: SELECT booking_status, COUNT(*) AS booking_count, SUM(total_amount) AS total_amount_sum FROM bookings GROUP BY booking_status ORDER BY total_amount_sum DESC, booking_status ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-09",
+    "slug": "air-premium-business-class-tickets",
+    "title": "Filter Premium Business Class Issued Tickets",
+    "description_markdown": "Retrieve all tickets issued in 'business' class. Return `ticket_id`, `booking_id`, `seat_number`, and `travel_class`. Order by `ticket_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "ticket_id",
+        "type": "integer"
+      },
+      {
+        "name": "booking_id",
+        "type": "integer"
+      },
+      {
+        "name": "seat_number",
+        "type": "varchar"
+      },
+      {
+        "name": "travel_class",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT ticket_id, booking_id, seat_number, travel_class FROM tickets WHERE travel_class = 'business' ORDER BY ticket_id ASC;",
+    "solution_explanation": "Filters tickets where travel_class = 'business'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE travel_class = 'business'`.",
+      "Order by `ticket_id` ASC.",
+      "Query: SELECT ticket_id, booking_id, seat_number, travel_class FROM tickets WHERE travel_class = 'business' ORDER BY ticket_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-10",
+    "slug": "air-tickets-issued-per-flight",
+    "title": "Count Passenger Tickets Issued per Flight",
+    "description_markdown": "For each flight in `flights`, count the total tickets issued as `tickets_issued`. Include flights with 0 tickets issued. Return `flight_number` and `tickets_issued`. Order by `tickets_issued` DESC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "tickets_issued",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT f.flight_number, COUNT(t.ticket_id) AS tickets_issued FROM flights f LEFT JOIN tickets t ON f.flight_id = t.flight_id GROUP BY f.flight_id, f.flight_number ORDER BY tickets_issued DESC, f.flight_number ASC;",
+    "solution_explanation": "Uses LEFT JOIN between flights and tickets, grouping by flight.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `flights f` and `tickets t` on `f.flight_id = t.flight_id`.",
+      "Count tickets with `COUNT(t.ticket_id)`.",
+      "Query: SELECT f.flight_number, COUNT(t.ticket_id) AS tickets_issued FROM flights f LEFT JOIN tickets t ON f.flight_id = t.flight_id GROUP BY f.flight_id, f.flight_number ORDER BY tickets_issued DESC, f.flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-11",
+    "slug": "air-passengers-with-no-confirmed-bookings",
+    "title": "Audit Passengers with Zero Confirmed Bookings",
+    "description_markdown": "Find passengers who do not have any confirmed flight bookings. Return `passenger_id`, `first_name`, and `last_name`. Order by `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.passenger_id, p.first_name, p.last_name FROM passengers p WHERE NOT EXISTS (SELECT 1 FROM bookings b WHERE b.passenger_id = p.passenger_id AND b.booking_status = 'confirmed') ORDER BY p.passenger_id ASC;",
+    "solution_explanation": "Uses NOT EXISTS to find passengers lacking confirmed booking records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `NOT EXISTS (SELECT 1 FROM bookings b WHERE b.passenger_id = p.passenger_id AND b.booking_status = 'confirmed')`.",
+      "Order by `passenger_id` ASC.",
+      "Query: SELECT p.passenger_id, p.first_name, p.last_name FROM passengers p WHERE NOT EXISTS (SELECT 1 FROM bookings b WHERE b.passenger_id = p.passenger_id AND b.booking_status = 'confirmed') ORDER BY p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-12",
+    "slug": "air-rank-flights-by-base-fare",
+    "title": "Rank Scheduled Flights by Base Ticket Fare",
+    "description_markdown": "Rank all flights from highest base fare to lowest base fare using `DENSE_RANK()` as `fare_rank`. Return `flight_number`, `origin`, `destination`, `base_price`, and `fare_rank`. Order by `fare_rank` ASC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      },
+      {
+        "name": "fare_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price, DENSE_RANK() OVER (ORDER BY base_price DESC) AS fare_rank FROM flights ORDER BY fare_rank ASC, flight_number ASC;",
+    "solution_explanation": "Applies DENSE_RANK() OVER (ORDER BY base_price DESC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY base_price DESC) AS fare_rank`.",
+      "Order by `fare_rank` ASC, `flight_number` ASC.",
+      "Query: SELECT flight_number, origin, destination, base_price, DENSE_RANK() OVER (ORDER BY base_price DESC) AS fare_rank FROM flights ORDER BY fare_rank ASC, flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-13",
+    "slug": "air-flights-above-average-base-fare",
+    "title": "Identify Flights Priced Above Airline Average Fare",
+    "description_markdown": "Find flights whose base price strictly exceeds the average base price across all flights. Return `flight_number` and `base_price`. Order by `base_price` DESC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, base_price FROM flights WHERE base_price > (SELECT AVG(base_price) FROM flights) ORDER BY base_price DESC, flight_number ASC;",
+    "solution_explanation": "Uses a scalar subquery to compare base_price with average base_price.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE base_price > (SELECT AVG(base_price) FROM flights)`.",
+      "Order by `base_price` DESC, `flight_number` ASC.",
+      "Query: SELECT flight_number, base_price FROM flights WHERE base_price > (SELECT AVG(base_price) FROM flights) ORDER BY base_price DESC, flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-14",
+    "slug": "air-total-passenger-confirmed-spend",
+    "title": "Calculate Total Confirmed Booking Value per Passenger",
+    "description_markdown": "For each passenger with confirmed bookings, compute their concatenated full name and total spend as `total_spend`. Order by `total_spend` DESC, `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.passenger_id, CONCAT(p.first_name, ' ', p.last_name) AS full_name, SUM(b.total_amount) AS total_spend FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id WHERE b.booking_status = 'confirmed' GROUP BY p.passenger_id, p.first_name, p.last_name ORDER BY total_spend DESC, p.passenger_id ASC;",
+    "solution_explanation": "Concatenates name, joins bookings on confirmed status, and sums total_amount.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "In Postgres use `p.first_name || ' ' || p.last_name`, in MySQL use `CONCAT(p.first_name, ' ', p.last_name)`.",
+      "Filter with `WHERE b.booking_status = 'confirmed'`.",
+      "Query: SELECT p.passenger_id, (p.first_name || ' ' || p.last_name) AS full_name, SUM(b.total_amount) AS total_spend FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id WHERE b.booking_status = 'confirmed' GROUP BY p.passenger_id, p.first_name, p.last_name ORDER BY total_spend DESC, p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-15",
+    "slug": "air-average-fare-by-departure-airport",
+    "title": "Calculate Average Base Fare by Departure Hub",
+    "description_markdown": "Calculate the average `base_price` of flights departing from each `origin` airport, rounded to 2 decimal places as `avg_fare`. Order by `avg_fare` DESC, `origin` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_fare",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT origin, ROUND(AVG(base_price), 2) AS avg_fare FROM flights GROUP BY origin ORDER BY avg_fare DESC, origin ASC;",
+    "solution_explanation": "Groups flights by origin and computes ROUND(AVG(base_price), 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `origin`.",
+      "Use `ROUND(AVG(base_price), 2) AS avg_fare`.",
+      "Query: SELECT origin, ROUND(AVG(base_price), 2) AS avg_fare FROM flights GROUP BY origin ORDER BY avg_fare DESC, origin ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-16",
+    "slug": "air-loyalty-tier-classification",
+    "title": "Classify Passengers into Loyalty Program Tiers",
+    "description_markdown": "Classify passengers using CASE: 'Platinum' for miles >= 150,000, 'Gold' for miles >= 80,000, and 'Silver' otherwise as `loyalty_tier`. Return `first_name`, `last_name`, `frequent_flyer_miles`, and `loyalty_tier`. Order by `frequent_flyer_miles` DESC, `first_name` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "frequent_flyer_miles",
+        "type": "integer"
+      },
+      {
+        "name": "loyalty_tier",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, frequent_flyer_miles, CASE WHEN frequent_flyer_miles >= 150000 THEN 'Platinum' WHEN frequent_flyer_miles >= 80000 THEN 'Gold' ELSE 'Silver' END AS loyalty_tier FROM passengers ORDER BY frequent_flyer_miles DESC, first_name ASC;",
+    "solution_explanation": "Uses CASE expression to map miles into loyalty tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN frequent_flyer_miles >= 150000 THEN 'Platinum' ... END`.",
+      "Order by `frequent_flyer_miles` DESC, `first_name` ASC.",
+      "Query: SELECT first_name, last_name, frequent_flyer_miles, CASE WHEN frequent_flyer_miles >= 150000 THEN 'Platinum' WHEN frequent_flyer_miles >= 80000 THEN 'Gold' ELSE 'Silver' END AS loyalty_tier FROM passengers ORDER BY frequent_flyer_miles DESC, first_name ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-17",
+    "slug": "air-cumulative-confirmed-booking-revenue",
+    "title": "Compute Cumulative Confirmed Booking Revenue Over Time",
+    "description_markdown": "Calculate the running total of confirmed booking revenue over time as `cumulative_revenue`. Return `booking_id`, `booking_date`, `total_amount`, and `cumulative_revenue`. Order by `booking_date` ASC, `booking_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "booking_id",
+        "type": "integer"
+      },
+      {
+        "name": "booking_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "cumulative_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT booking_id, booking_date, total_amount, SUM(total_amount) OVER (ORDER BY booking_date ASC, booking_id ASC) AS cumulative_revenue FROM bookings WHERE booking_status = 'confirmed' ORDER BY booking_date ASC, booking_id ASC;",
+    "solution_explanation": "Uses window SUM(total_amount) OVER (ORDER BY booking_date ASC, booking_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE booking_status = 'confirmed'`.",
+      "Use `SUM(total_amount) OVER (ORDER BY booking_date ASC, booking_id ASC)`.",
+      "Query: SELECT booking_id, booking_date, total_amount, SUM(total_amount) OVER (ORDER BY booking_date ASC, booking_id ASC) AS cumulative_revenue FROM bookings WHERE booking_status = 'confirmed' ORDER BY booking_date ASC, booking_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-18",
+    "slug": "air-international-flights-destination-not-usa",
+    "title": "Filter Flights Arriving Outside the United States",
+    "description_markdown": "Find flights whose destination airport is located outside the USA (`country != 'USA'`). Return `flight_number`, `destination`, destination `country`, and `base_price`. Order by `base_price` DESC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights",
+      "airports"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT f.flight_number, f.destination, a.country, f.base_price FROM flights f JOIN airports a ON f.destination = a.airport_code WHERE a.country != 'USA' ORDER BY f.base_price DESC, f.flight_number ASC;",
+    "solution_explanation": "Joins flights with destination airports and filters where country != 'USA'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `flights f` and `airports a` on `f.destination = a.airport_code`.",
+      "Filter with `WHERE a.country != 'USA'`.",
+      "Query: SELECT f.flight_number, f.destination, a.country, f.base_price FROM flights f JOIN airports a ON f.destination = a.airport_code WHERE a.country != 'USA' ORDER BY f.base_price DESC, f.flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-19",
+    "slug": "air-passengers-with-multiple-flight-legs",
+    "title": "Identify Passengers Holding Multiple Travel Tickets",
+    "description_markdown": "Find passengers who hold at least 2 flight tickets across their bookings. Return `passenger_id`, `first_name`, `last_name`, and `ticket_count`. Order by `ticket_count` DESC, `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "ticket_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.passenger_id, p.first_name, p.last_name, COUNT(t.ticket_id) AS ticket_count FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id GROUP BY p.passenger_id, p.first_name, p.last_name HAVING COUNT(t.ticket_id) >= 2 ORDER BY ticket_count DESC, p.passenger_id ASC;",
+    "solution_explanation": "Joins passengers, bookings, and tickets, filtering with HAVING COUNT(t.ticket_id) >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `passengers`, `bookings`, and `tickets`.",
+      "Group by passenger and filter with `HAVING COUNT(t.ticket_id) >= 2`.",
+      "Query: SELECT p.passenger_id, p.first_name, p.last_name, COUNT(t.ticket_id) AS ticket_count FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id GROUP BY p.passenger_id, p.first_name, p.last_name HAVING COUNT(t.ticket_id) >= 2 ORDER BY ticket_count DESC, p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-20",
+    "slug": "air-travel-class-ticket-census",
+    "title": "Aggregate Ticket Inventory by Travel Cabin Class",
+    "description_markdown": "Count total tickets issued grouped by cabin `travel_class` as `total_tickets`. Order by `total_tickets` DESC, `travel_class` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "travel_class",
+        "type": "varchar"
+      },
+      {
+        "name": "total_tickets",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT travel_class, COUNT(*) AS total_tickets FROM tickets GROUP BY travel_class ORDER BY total_tickets DESC, travel_class ASC;",
+    "solution_explanation": "Groups tickets by travel_class and counts totals.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `travel_class`.",
+      "Count tickets with `COUNT(*) AS total_tickets`.",
+      "Query: SELECT travel_class, COUNT(*) AS total_tickets FROM tickets GROUP BY travel_class ORDER BY total_tickets DESC, travel_class ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-21",
+    "slug": "air-lead-flight-departure-time",
+    "title": "Track Successive Flight Departures per Origin Hub Using LEAD",
+    "description_markdown": "For each flight, determine the departure time of the next flight leaving the same origin airport as `next_departure_time` using `LEAD()`. Return `flight_id`, `flight_number`, `origin`, `departure_time`, and `next_departure_time`. Order by `origin` ASC, `departure_time` ASC, `flight_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "departure_time",
+        "type": "timestamp"
+      },
+      {
+        "name": "next_departure_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_id, flight_number, origin, departure_time, LEAD(departure_time, 1) OVER (PARTITION BY origin ORDER BY departure_time ASC, flight_id ASC) AS next_departure_time FROM flights ORDER BY origin ASC, departure_time ASC, flight_id ASC;",
+    "solution_explanation": "Applies LEAD(departure_time, 1) partitioned by origin ordered chronologically.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(departure_time, 1) OVER (PARTITION BY origin ORDER BY departure_time ASC, flight_id ASC)`.",
+      "Order by `origin` ASC, `departure_time` ASC, `flight_id` ASC.",
+      "Query: SELECT flight_id, flight_number, origin, departure_time, LEAD(departure_time, 1) OVER (PARTITION BY origin ORDER BY departure_time ASC, flight_id ASC) AS next_departure_time FROM flights ORDER BY origin ASC, departure_time ASC, flight_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-22",
+    "slug": "air-flights-with-zero-ticket-sales",
+    "title": "Audit Flights Operating with Zero Ticket Bookings",
+    "description_markdown": "Identify flights for which no tickets have been booked. Return `flight_id`, `flight_number`, and `status`. Order by `flight_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT f.flight_id, f.flight_number, f.status FROM flights f LEFT JOIN tickets t ON f.flight_id = t.flight_id WHERE t.ticket_id IS NULL ORDER BY f.flight_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE t.ticket_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `tickets t` on `f.flight_id = t.flight_id`.",
+      "Filter with `WHERE t.ticket_id IS NULL`.",
+      "Query: SELECT f.flight_id, f.flight_number, f.status FROM flights f LEFT JOIN tickets t ON f.flight_id = t.flight_id WHERE t.ticket_id IS NULL ORDER BY f.flight_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-23",
+    "slug": "air-passengers-traveling-in-business-class",
+    "title": "Identify Passengers Flying Premium Business Class",
+    "description_markdown": "Find distinct passengers who have booked tickets in 'business' class. Return `passenger_id`, `first_name`, and `last_name`. Order by `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings",
+      "tickets"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT p.passenger_id, p.first_name, p.last_name FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id WHERE t.travel_class = 'business' ORDER BY p.passenger_id ASC;",
+    "solution_explanation": "Joins passengers, bookings, and tickets, filtering on business travel_class.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `passengers`, `bookings`, and `tickets`.",
+      "Filter with `WHERE t.travel_class = 'business'` and select `DISTINCT`.",
+      "Query: SELECT DISTINCT p.passenger_id, p.first_name, p.last_name FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id JOIN tickets t ON b.booking_id = t.booking_id WHERE t.travel_class = 'business' ORDER BY p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-24",
+    "slug": "air-passenger-ticket-manifest-roster",
+    "title": "Compile Flight Passenger Manifest and Seat Assignments",
+    "description_markdown": "Generate a flight passenger manifest listing `flight_number`, `passenger_name` (first and last concatenated), `seat_number`, and `travel_class`. Order by `flight_number` ASC, `seat_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights",
+      "tickets",
+      "bookings",
+      "passengers"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "passenger_name",
+        "type": "varchar"
+      },
+      {
+        "name": "seat_number",
+        "type": "varchar"
+      },
+      {
+        "name": "travel_class",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT f.flight_number, CONCAT(p.first_name, ' ', p.last_name) AS passenger_name, t.seat_number, t.travel_class FROM tickets t JOIN flights f ON t.flight_id = f.flight_id JOIN bookings b ON t.booking_id = b.booking_id JOIN passengers p ON b.passenger_id = p.passenger_id ORDER BY f.flight_number ASC, t.seat_number ASC;",
+    "solution_explanation": "Joins tickets, flights, bookings, and passengers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `tickets`, `flights`, `bookings`, and `passengers`.",
+      "Order by `f.flight_number` ASC, `t.seat_number` ASC.",
+      "Query: SELECT f.flight_number, (p.first_name || ' ' || p.last_name) AS passenger_name, t.seat_number, t.travel_class FROM tickets t JOIN flights f ON t.flight_id = f.flight_id JOIN bookings b ON t.booking_id = b.booking_id JOIN passengers p ON b.passenger_id = p.passenger_id ORDER BY f.flight_number ASC, t.seat_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-25",
+    "slug": "air-disrupted-flights-roster",
+    "title": "Filter Delayed or Cancelled Flight Departures",
+    "description_markdown": "List flights that experienced operational disruptions (`status IN ('delayed', 'cancelled')`). Return `flight_number`, `origin`, `destination`, and `status`. Order by `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, status FROM flights WHERE status IN ('delayed', 'cancelled') ORDER BY flight_number ASC;",
+    "solution_explanation": "Filters flights where status IN ('delayed', 'cancelled').",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE status IN ('delayed', 'cancelled')`.",
+      "Order by `flight_number` ASC.",
+      "Query: SELECT flight_number, origin, destination, status FROM flights WHERE status IN ('delayed', 'cancelled') ORDER BY flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-26",
+    "slug": "air-distinct-commercial-flight-routes",
+    "title": "Extract Distinct Flight Route Segments",
+    "description_markdown": "Identify all unique city-pair flight route segments operated. Return `origin` and `destination`. Order by `origin` ASC, `destination` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT origin, destination FROM flights ORDER BY origin ASC, destination ASC;",
+    "solution_explanation": "Selects distinct origin and destination pairs.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SELECT DISTINCT origin, destination FROM flights`.",
+      "Order by `origin` ASC, `destination` ASC.",
+      "Query: SELECT DISTINCT origin, destination FROM flights ORDER BY origin ASC, destination ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-27",
+    "slug": "air-fare-deviation-from-fleet-average",
+    "title": "Calculate Base Fare Deviation Across Fleet",
+    "description_markdown": "For each flight, display `flight_number`, `base_price`, and the overall fleet average base fare rounded to 2 decimals as `fleet_avg_price` using window functions. Order by `base_price` DESC, `flight_number` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      },
+      {
+        "name": "fleet_avg_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, base_price, ROUND(AVG(base_price) OVER (), 2) AS fleet_avg_price FROM flights ORDER BY base_price DESC, flight_number ASC;",
+    "solution_explanation": "Computes ROUND(AVG(base_price) OVER (), 2) across all flights.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(AVG(base_price) OVER (), 2) AS fleet_avg_price`.",
+      "Order by `base_price` DESC, `flight_number` ASC.",
+      "Query: SELECT flight_number, base_price, ROUND(AVG(base_price) OVER (), 2) AS fleet_avg_price FROM flights ORDER BY base_price DESC, flight_number ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-28",
+    "slug": "air-passengers-with-confirmed-bookings-above-thousand",
+    "title": "Filter Passengers with High-Value Confirmed Bookings",
+    "description_markdown": "List passengers who have confirmed bookings of at least $1,000.00. Return `passenger_id`, `first_name`, and `total_amount`. Order by `total_amount` DESC, `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.passenger_id, p.first_name, b.total_amount FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id WHERE b.booking_status = 'confirmed' AND b.total_amount >= 1000.00 ORDER BY b.total_amount DESC, p.passenger_id ASC;",
+    "solution_explanation": "Joins passengers and bookings where status = 'confirmed' and total_amount >= 1000.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `passengers` and `bookings`.",
+      "Filter with `b.booking_status = 'confirmed' AND b.total_amount >= 1000.00`.",
+      "Query: SELECT p.passenger_id, p.first_name, b.total_amount FROM passengers p JOIN bookings b ON p.passenger_id = b.passenger_id WHERE b.booking_status = 'confirmed' AND b.total_amount >= 1000.00 ORDER BY b.total_amount DESC, p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-29",
+    "slug": "air-longest-flight-by-scheduled-duration",
+    "title": "Find Longest Scheduled Flight Duration",
+    "description_markdown": "Identify the single flight with the longest duration between departure and arrival. Return `flight_number`, `origin`, `destination`, and `base_price`.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, base_price FROM flights ORDER BY TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) DESC, flight_number ASC LIMIT 1;",
+    "solution_explanation": "Orders flights by time difference between arrival and departure descending.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "In Postgres use `ORDER BY (arrival_time - departure_time) DESC`, in MySQL use `TIMESTAMPDIFF(MINUTE, departure_time, arrival_time) DESC`.",
+      "Limit results to 1 row.",
+      "Query: SELECT flight_number, origin, destination, base_price FROM flights ORDER BY (arrival_time - departure_time) DESC, flight_number ASC LIMIT 1;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-30",
+    "slug": "air-airports-without-departing-flights",
+    "title": "Identify Destination-Only Hubs Without Departures",
+    "description_markdown": "Find airports that currently have zero originating flights departing from them. Return `airport_code`, `name`, and `city`. Order by `airport_code` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports",
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "airport_code",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.airport_code, a.name, a.city FROM airports a LEFT JOIN flights f ON a.airport_code = f.origin WHERE f.flight_id IS NULL ORDER BY a.airport_code ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE f.flight_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `flights f` on `a.airport_code = f.origin`.",
+      "Filter with `WHERE f.flight_id IS NULL`.",
+      "Query: SELECT a.airport_code, a.name, a.city FROM airports a LEFT JOIN flights f ON a.airport_code = f.origin WHERE f.flight_id IS NULL ORDER BY a.airport_code ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-31",
+    "slug": "air-passenger-complete-travel-summary",
+    "title": "Compile Passenger Global Booking History Summary",
+    "description_markdown": "For each passenger, compute `full_name`, `frequent_flyer_miles`, `total_bookings`, and `confirmed_spend` (sum of confirmed bookings, defaulting to 0.0). Order by `confirmed_spend` DESC, `total_bookings` DESC, `passenger_id` ASC.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers",
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "frequent_flyer_miles",
+        "type": "integer"
+      },
+      {
+        "name": "total_bookings",
+        "type": "bigint"
+      },
+      {
+        "name": "confirmed_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.passenger_id, CONCAT(p.first_name, ' ', p.last_name) AS full_name, p.frequent_flyer_miles, COUNT(b.booking_id) AS total_bookings, COALESCE(SUM(CASE WHEN b.booking_status = 'confirmed' THEN b.total_amount ELSE 0 END), 0.0) AS confirmed_spend FROM passengers p LEFT JOIN bookings b ON p.passenger_id = b.passenger_id GROUP BY p.passenger_id, p.first_name, p.last_name, p.frequent_flyer_miles ORDER BY confirmed_spend DESC, total_bookings DESC, p.passenger_id ASC;",
+    "solution_explanation": "Joins passengers with bookings, computing conditional confirmed spend and booking count.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `bookings b` on `p.passenger_id = b.passenger_id`.",
+      "Use `COALESCE(SUM(CASE WHEN b.booking_status = 'confirmed' THEN b.total_amount ELSE 0 END), 0.0) AS confirmed_spend`.",
+      "Query: SELECT p.passenger_id, (p.first_name || ' ' || p.last_name) AS full_name, p.frequent_flyer_miles, COUNT(b.booking_id) AS total_bookings, COALESCE(SUM(CASE WHEN b.booking_status = 'confirmed' THEN b.total_amount ELSE 0 END), 0.0) AS confirmed_spend FROM passengers p LEFT JOIN bookings b ON p.passenger_id = b.passenger_id GROUP BY p.passenger_id, p.first_name, p.last_name, p.frequent_flyer_miles ORDER BY confirmed_spend DESC, total_bookings DESC, p.passenger_id ASC;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-air-32",
+    "slug": "air-airline-operations-executive-kpi-summary",
+    "title": "Compile Airline Global Operations Executive KPI Scorecard",
+    "description_markdown": "Calculate single-row executive airline KPI metrics: `total_airports`, `total_passengers`, `total_flights`, and `confirmed_revenue`.",
+    "topic_id": "scenario-airline",
+    "subtopic_id": "sc-air",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports",
+      "passengers",
+      "flights",
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_airports",
+        "type": "bigint"
+      },
+      {
+        "name": "total_passengers",
+        "type": "bigint"
+      },
+      {
+        "name": "total_flights",
+        "type": "bigint"
+      },
+      {
+        "name": "confirmed_revenue",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM airports) AS total_airports, (SELECT COUNT(*) FROM passengers) AS total_passengers, (SELECT COUNT(*) FROM flights) AS total_flights, (SELECT SUM(total_amount) FROM bookings WHERE booking_status = 'confirmed') AS confirmed_revenue;",
+    "solution_explanation": "Uses scalar subqueries in SELECT to compile an airline operations KPI scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each entity metric.",
+      "Filter confirmed bookings for `confirmed_revenue`.",
+      "Query: SELECT (SELECT COUNT(*) FROM airports) AS total_airports, (SELECT COUNT(*) FROM passengers) AS total_passengers, (SELECT COUNT(*) FROM flights) AS total_flights, (SELECT SUM(total_amount) FROM bookings WHERE booking_status = 'confirmed') AS confirmed_revenue;"
+    ],
+    "tags": [
+      "airline",
+      "sc-air"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-air-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-air-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-air-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2354 @@
+[
+  {
+    "id": "q-out-01",
+    "slug": "all-departments-with-optional-employees",
+    "title": "Include Empty Departments with LEFT JOIN",
+    "description_markdown": "Use a LEFT JOIN from `departments` to `employees` so that departments without employees are preserved. Return `d.dept_name` and `e.first_name`. Order by `d.dept_name` ASC, `e.first_name` ASC NULLS LAST.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN from departments\nSELECT d.dept_name, e.first_name\nFROM departments d\nLEFT JOIN employees e ON ...",
+    "solution_query": "SELECT d.dept_name, e.first_name FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id ORDER BY d.dept_name ASC, e.first_name ASC NULLS LAST;",
+    "solution_explanation": "LEFT JOIN retains all rows from the left table (`departments`), inserting NULL where no matching row exists in `employees`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.dept_name, e.first_name FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id ORDER BY d.dept_name ASC, e.first_name ASC NULLS LAST;"
+    ],
+    "tags": [
+      "joins",
+      "left-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-02",
+    "slug": "customer-order-counts-including-zero",
+    "title": "Customer Order Counts Including Zero Orders",
+    "description_markdown": "Using a LEFT JOIN from `customers` to `orders`, count how many orders each customer has placed as `total_orders`. Return `c.customer_id`, `c.first_name`, and `COUNT(o.order_id) AS total_orders`. Group by `c.customer_id`, `c.first_name`. Order by `total_orders` DESC, `c.customer_id` ASC.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- LEFT JOIN and COUNT(o.order_id)\nSELECT ...",
+    "solution_query": "SELECT c.customer_id, c.first_name, COUNT(o.order_id) AS total_orders FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name ORDER BY total_orders DESC, c.customer_id ASC;",
+    "solution_explanation": "Using `COUNT(o.order_id)` instead of `COUNT(*)` correctly counts 0 for customers with no orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Crucial: use `COUNT(o.order_id)` so non-matching rows return 0 instead of 1.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.customer_id, c.first_name, COUNT(o.order_id) AS total_orders FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name ORDER BY total_orders DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "count-zero"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-03",
+    "slug": "full-outer-join-faculty-and-courses",
+    "title": "Complete Reconciliation with FULL OUTER JOIN",
+    "description_markdown": "Perform a FULL OUTER JOIN between `professors` and `courses` on `professor_id`. Return `COALESCE(p.last_name, 'No Professor') AS faculty_member`, and `COALESCE(c.course_name, 'No Course Assigned') AS assigned_course`. Order by `faculty_member` ASC, `assigned_course` ASC.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-full",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "faculty_member",
+        "type": "varchar"
+      },
+      {
+        "name": "assigned_course",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- FULL OUTER JOIN with COALESCE\nSELECT ...",
+    "solution_query": "SELECT COALESCE(p.last_name, 'No Professor') AS faculty_member, COALESCE(c.course_name, 'No Course Assigned') AS assigned_course FROM professors p FULL OUTER JOIN courses c ON p.professor_id = c.professor_id ORDER BY faculty_member ASC, assigned_course ASC;",
+    "solution_explanation": "FULL OUTER JOIN yields both unassigned courses and professors without assigned courses.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `FULL OUTER JOIN courses c ON p.professor_id = c.professor_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT COALESCE(p.last_name, 'No Professor') AS faculty_member, COALESCE(c.course_name, 'No Course Assigned') AS assigned_course FROM professors p FULL OUTER JOIN courses c ON p.professor_id = c.professor_id ORDER BY faculty_member ASC, assigned_course ASC;"
+    ],
+    "tags": [
+      "joins",
+      "full-outer-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-04",
+    "slug": "all-customers-with-orders",
+    "title": "Include Inactive Customers with LEFT JOIN",
+    "description_markdown": "Perform a `LEFT JOIN` from `customers` to `orders` on `customer_id`. Return `c.customer_id`, `c.first_name`, and `o.order_id`. Order results by `c.customer_id` ascending, then `o.order_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN customers and orders\nSELECT c.customer_id, c.first_name, o.order_id\nFROM customers c\nLEFT JOIN orders o ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, o.order_id FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id ORDER BY c.customer_id ASC, o.order_id ASC;",
+    "solution_explanation": "LEFT JOIN retains every customer record from the left table, displaying NULL for order_id if the customer has placed no orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN, which accidentally eliminates customers without purchase history."
+    ],
+    "interview_tip": "When user engagement or churn analysis is needed, LEFT JOIN ensures the denominator includes the full cohort.",
+    "hints": [
+      "Use `FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id`.",
+      "Order by `c.customer_id ASC, o.order_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, o.order_id FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id ORDER BY c.customer_id ASC, o.order_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "e-commerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-05",
+    "slug": "all-employees-with-assignments",
+    "title": "Preserve Unassigned Staff via LEFT JOIN",
+    "description_markdown": "Perform a `LEFT JOIN` from `employees` to `assignments` on `emp_id`. Return `e.emp_id`, `e.first_name`, and `a.project_id`. Order results by `e.emp_id` ascending, then `a.project_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN employees to assignments\nSELECT e.emp_id, e.first_name, a.project_id\nFROM employees e\nLEFT JOIN assignments a ON ...\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, a.project_id FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id ORDER BY e.emp_id ASC, a.project_id ASC;",
+    "solution_explanation": "Employees without current project assignments appear in the output with a NULL project_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using an INNER JOIN which drops bench/unassigned employees."
+    ],
+    "interview_tip": "In resource allocation dashboards, outer joins ensure unallocated capacity is visible.",
+    "hints": [
+      "Join condition: `e.emp_id = a.emp_id`.",
+      "Order by `e.emp_id ASC, a.project_id ASC`.",
+      "Query: SELECT e.emp_id, e.first_name, a.project_id FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id ORDER BY e.emp_id ASC, a.project_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "staffing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-06",
+    "slug": "all-students-with-enrollments",
+    "title": "Display Complete Student Body with Optional Course IDs",
+    "description_markdown": "Perform a `LEFT JOIN` from `students` to `enrollments` on `student_id`. Return `s.student_id`, `s.first_name`, and `e.course_id`. Order by `s.student_id` ascending, then `e.course_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN students to enrollments\nSELECT s.student_id, s.first_name, e.course_id\nFROM students s\nLEFT JOIN enrollments e ON ...\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, e.course_id FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id ORDER BY s.student_id ASC, e.course_id ASC;",
+    "solution_explanation": "Guarantees new or non-enrolled students are retained in institutional reporting.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering on e.course_id IS NOT NULL in WHERE, inadvertently turning it into an INNER JOIN."
+    ],
+    "interview_tip": "Never place WHERE conditions on the right table in a LEFT JOIN unless you are writing an anti-join.",
+    "hints": [
+      "Join on `s.student_id = e.student_id`.",
+      "Order by `s.student_id ASC, e.course_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, e.course_id FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id ORDER BY s.student_id ASC, e.course_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "education"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-07",
+    "slug": "all-products-with-order-items",
+    "title": "Inspect Product Catalog with Optional Sales Activity",
+    "description_markdown": "Perform a `LEFT JOIN` from `products` to `order_items` on `product_id`. Return `p.product_id`, `p.product_name`, and `oi.quantity`. Order by `p.product_id` ascending, then `oi.order_item_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN products to order_items\nSELECT p.product_id, p.product_name, oi.quantity\nFROM products p\nLEFT JOIN order_items oi ON ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, oi.quantity FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id ORDER BY p.product_id ASC, oi.order_item_id ASC;",
+    "solution_explanation": "Shows all catalog items, retaining unsold inventory with NULL quantity values.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining order_items to products as a LEFT JOIN instead of starting from products."
+    ],
+    "interview_tip": "The table that must preserve all rows goes on the left side of a LEFT JOIN.",
+    "hints": [
+      "Join condition: `p.product_id = oi.product_id`.",
+      "Order by `p.product_id ASC, oi.order_item_id ASC`.",
+      "Query: SELECT p.product_id, p.product_name, oi.quantity FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id ORDER BY p.product_id ASC, oi.order_item_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-08",
+    "slug": "all-departments-with-projects",
+    "title": "Display Departments with Associated Projects",
+    "description_markdown": "Perform a `LEFT JOIN` from `departments` to `projects` on `dept_id`. Return `d.dept_id`, `d.dept_name`, and `p.project_name`. Order by `d.dept_id` ascending, then `p.project_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN departments and projects\nSELECT d.dept_id, d.dept_name, p.project_name\nFROM departments d\nLEFT JOIN projects p ON ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, p.project_name FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id ORDER BY d.dept_id ASC, p.project_id ASC;",
+    "solution_explanation": "Includes departments like Legal and HR that may not currently have any active development projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering by project_name which places nulls at unpredictable positions."
+    ],
+    "interview_tip": "Sorting by primary keys guarantees stable ordering across database engines.",
+    "hints": [
+      "Join on `d.dept_id = p.dept_id`.",
+      "Order by `d.dept_id ASC, p.project_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name, p.project_name FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id ORDER BY d.dept_id ASC, p.project_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "organization"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-09",
+    "slug": "all-courses-with-assigned-professors",
+    "title": "Catalog All Courses with Optional Instructor Names",
+    "description_markdown": "Perform a `LEFT JOIN` from `courses` to `professors` on `professor_id`. Return `c.course_code`, `c.course_name`, and `p.last_name`. Order by `c.course_code` ascending, then `p.last_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN courses to professors\nSELECT c.course_code, c.course_name, p.last_name\nFROM courses c\nLEFT JOIN professors p ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.course_code, c.course_name, p.last_name FROM courses c LEFT JOIN professors p ON c.professor_id = p.professor_id ORDER BY c.course_code ASC, p.last_name ASC;",
+    "solution_explanation": "Retains courses that have not yet had a primary professor assigned (e.g. independent research courses).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using RIGHT JOIN without swapping the table order."
+    ],
+    "interview_tip": "LEFT JOIN is universally preferred over RIGHT JOIN for cognitive readability.",
+    "hints": [
+      "Join on `c.professor_id = p.professor_id`.",
+      "Order by `c.course_code ASC, p.last_name ASC`.",
+      "Query: SELECT c.course_code, c.course_name, p.last_name FROM courses c LEFT JOIN professors p ON c.professor_id = p.professor_id ORDER BY c.course_code ASC, p.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "curriculum"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-10",
+    "slug": "right-join-projects-and-departments",
+    "title": "Preserve All Departments Using RIGHT JOIN",
+    "description_markdown": "Perform a `RIGHT JOIN` from `projects` to `departments` on `p.dept_id = d.dept_id`. Return `d.dept_name` and `p.project_name`. Order by `d.dept_name` ascending, then `p.project_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-right",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- RIGHT JOIN projects to departments\nSELECT d.dept_name, p.project_name\nFROM projects p\nRIGHT JOIN departments d ON ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, p.project_name FROM projects p RIGHT JOIN departments d ON p.dept_id = d.dept_id ORDER BY d.dept_name ASC, p.project_name ASC;",
+    "solution_explanation": "A RIGHT JOIN preserves every department from the right table `departments`, even if no projects match on `p.dept_id`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing the preserved side of the join."
+    ],
+    "interview_tip": "RIGHT JOIN keeps all rows from the table following the RIGHT JOIN keyword.",
+    "hints": [
+      "Syntax: `FROM projects p RIGHT JOIN departments d ON p.dept_id = d.dept_id`.",
+      "Order by `d.dept_name ASC, p.project_name ASC`.",
+      "Query: SELECT d.dept_name, p.project_name FROM projects p RIGHT JOIN departments d ON p.dept_id = d.dept_id ORDER BY d.dept_name ASC, p.project_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "right-join",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-11",
+    "slug": "all-categories-with-products",
+    "title": "List Categories with Optional Catalog Products",
+    "description_markdown": "Perform a `LEFT JOIN` from `categories` to `products` on `category_id`. Return `c.category_name` and `p.product_name`. Order by `c.category_name` ascending, then `p.product_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN categories to products\nSELECT c.category_name, p.product_name\nFROM categories c\nLEFT JOIN products p ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.category_name, p.product_name FROM categories c LEFT JOIN products p ON c.category_id = p.category_id ORDER BY c.category_name ASC, p.product_name ASC;",
+    "solution_explanation": "Displays categories regardless of whether products have been uploaded to them yet.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering products in WHERE, which discards empty categories."
+    ],
+    "interview_tip": "Any category structure needs outer joins to report on unpopulated taxonomic nodes.",
+    "hints": [
+      "Join on `c.category_id = p.category_id`.",
+      "Order by `c.category_name ASC, p.product_name ASC`.",
+      "Query: SELECT c.category_name, p.product_name FROM categories c LEFT JOIN products p ON c.category_id = p.category_id ORDER BY c.category_name ASC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "taxonomy"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-12",
+    "slug": "all-professors-with-courses",
+    "title": "List All Faculty with Optional Course Assignments",
+    "description_markdown": "Perform a `LEFT JOIN` from `professors` to `courses` on `professor_id`. Return `p.professor_id`, `p.last_name`, and `c.course_code`. Order by `p.professor_id` ascending, then `c.course_code` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN professors to courses\nSELECT p.professor_id, p.last_name, c.course_code\nFROM professors p\nLEFT JOIN courses c ON ...\nORDER BY ...;",
+    "solution_query": "SELECT p.professor_id, p.last_name, c.course_code FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id ORDER BY p.professor_id ASC, c.course_code ASC;",
+    "solution_explanation": "Ensures research-only or sabbatical professors without teaching assignments are accounted for.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which hides unassigned faculty."
+    ],
+    "interview_tip": "When auditing teaching workloads, outer joins surface professors with zero teaching load.",
+    "hints": [
+      "Join condition: `p.professor_id = c.professor_id`.",
+      "Order by `p.professor_id ASC, c.course_code ASC`.",
+      "Query: SELECT p.professor_id, p.last_name, c.course_code FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id ORDER BY p.professor_id ASC, c.course_code ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "faculty"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-13",
+    "slug": "all-orders-with-payments",
+    "title": "Inspect Order Transactions with Payment Status",
+    "description_markdown": "Perform a `LEFT JOIN` from `orders` to `payments` on `order_id`. Return `o.order_id`, `o.total_amount`, and `pay.payment_status`. Order by `o.order_id` ascending, then `pay.payment_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "payment_status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- LEFT JOIN orders and payments\nSELECT o.order_id, o.total_amount, pay.payment_status\nFROM orders o\nLEFT JOIN payments pay ON ...\nORDER BY ...;",
+    "solution_query": "SELECT o.order_id, o.total_amount, pay.payment_status FROM orders o LEFT JOIN payments pay ON o.order_id = pay.order_id ORDER BY o.order_id ASC, pay.payment_id ASC;",
+    "solution_explanation": "Surfaces pending orders that have not yet generated a payment processing attempt.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inner joining payments which hides unpaid carts."
+    ],
+    "interview_tip": "Payment gateway reconciliations rely heavily on outer joins to track checkout abandons.",
+    "hints": [
+      "Join condition: `o.order_id = pay.order_id`.",
+      "Order by `o.order_id ASC, pay.payment_id ASC`.",
+      "Query: SELECT o.order_id, o.total_amount, pay.payment_status FROM orders o LEFT JOIN payments pay ON o.order_id = pay.order_id ORDER BY o.order_id ASC, pay.payment_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "payments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-14",
+    "slug": "coalesce-customer-order-status",
+    "title": "Default Missing Order Status via COALESCE",
+    "description_markdown": "Perform a `LEFT JOIN` from `customers` to `orders` on `customer_id`. Return `c.customer_id`, `c.first_name`, and `COALESCE(o.order_status, 'No Orders') AS status_label`. Order results by `c.customer_id` ascending, then `status_label` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "status_label",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- LEFT JOIN with COALESCE fallback label\nSELECT c.customer_id, c.first_name, COALESCE(o.order_status, 'No Orders') AS status_label\nFROM customers c\nLEFT JOIN orders o ON ...\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, COALESCE(o.order_status, 'No Orders') AS status_label FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id ORDER BY c.customer_id ASC, status_label ASC;",
+    "solution_explanation": "Replaces missing outer-joined order statuses with an informative string constant using standard ANSI COALESCE.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using IFNULL which is MySQL-specific and violates cross-dialect ANSI standards."
+    ],
+    "interview_tip": "COALESCE is standard ANSI SQL and supported universally across PostgreSQL and MySQL.",
+    "hints": [
+      "Join condition: `c.customer_id = o.customer_id`.",
+      "Use `COALESCE(o.order_status, 'No Orders') AS status_label`.",
+      "Query: SELECT c.customer_id, c.first_name, COALESCE(o.order_status, 'No Orders') AS status_label FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id ORDER BY c.customer_id ASC, status_label ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "coalesce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-15",
+    "slug": "count-projects-per-department-outer",
+    "title": "Count Active Projects per Department (Including Zero)",
+    "description_markdown": "Perform a `LEFT JOIN` from `departments` to `projects` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Return `d.dept_name` and `COUNT(p.project_id) AS project_count`. Order by `project_count` descending, then `d.dept_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- LEFT JOIN and aggregate project count\nSELECT d.dept_name, COUNT(p.project_id) AS project_count\nFROM departments d\nLEFT JOIN projects p ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, COUNT(p.project_id) AS project_count FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY project_count DESC, d.dept_name ASC;",
+    "solution_explanation": "COUNT(p.project_id) evaluates to 0 when project_id is NULL, correctly recording departments without projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) which incorrectly returns 1 for departments with no projects."
+    ],
+    "interview_tip": "Never use COUNT(*) after an outer join; always count a primary key column from the nullable table.",
+    "hints": [
+      "Join condition: `d.dept_id = p.dept_id`.",
+      "Use `COUNT(p.project_id) AS project_count`.",
+      "Query: SELECT d.dept_name, COUNT(p.project_id) AS project_count FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY project_count DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "group-by",
+      "analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-16",
+    "slug": "customer-order-count-left-join",
+    "title": "Count Orders per Customer Including Inactive Accounts",
+    "description_markdown": "Perform a `LEFT JOIN` from `customers` to `orders` on `customer_id`. Group by `c.customer_id` and `c.first_name`. Return `c.first_name` and `COUNT(o.order_id) AS order_count`. Order by `order_count` descending, then `c.first_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "order_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count orders per customer including zero\nSELECT c.first_name, COUNT(o.order_id) AS order_count\nFROM customers c\nLEFT JOIN orders o ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, COUNT(o.order_id) AS order_count FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name ORDER BY order_count DESC, c.first_name ASC;",
+    "solution_explanation": "Counts orders per customer while preserving customers with 0 orders via COUNT(o.order_id).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) which turns 0 into 1 for customers without orders."
+    ],
+    "interview_tip": "This is one of the classic SQL interview traps: COUNT(*) vs COUNT(column) on outer joins.",
+    "hints": [
+      "Join on `c.customer_id = o.customer_id`.",
+      "Use `COUNT(o.order_id) AS order_count`.",
+      "Query: SELECT c.first_name, COUNT(o.order_id) AS order_count FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name ORDER BY order_count DESC, c.first_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "group-by"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-17",
+    "slug": "student-enrollment-count-left-join",
+    "title": "Tally Student Course Enrollments with Non-Enrolled Preserved",
+    "description_markdown": "Perform a `LEFT JOIN` from `students` to `enrollments` on `student_id`. Group by `s.student_id` and `s.first_name`. Return `s.first_name` and `COUNT(e.enrollment_id) AS enrollment_count`. Order by `enrollment_count` descending, then `s.first_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count enrollments per student\nSELECT s.first_name, COUNT(e.enrollment_id) AS enrollment_count\nFROM students s\nLEFT JOIN enrollments e ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT s.first_name, COUNT(e.enrollment_id) AS enrollment_count FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id GROUP BY s.student_id, s.first_name ORDER BY enrollment_count DESC, s.first_name ASC;",
+    "solution_explanation": "Counts enrollments per student while accurately reporting 0 for freshmen or undeclared students who have not enrolled yet.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) instead of COUNT(e.enrollment_id)."
+    ],
+    "interview_tip": "When evaluating course load distributions, outer joins prevent enrollment-blind bias.",
+    "hints": [
+      "Join on `s.student_id = e.student_id`.",
+      "Use `COUNT(e.enrollment_id) AS enrollment_count`.",
+      "Query: SELECT s.first_name, COUNT(e.enrollment_id) AS enrollment_count FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id GROUP BY s.student_id, s.first_name ORDER BY enrollment_count DESC, s.first_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "group-by"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-18",
+    "slug": "employee-total-assigned-hours",
+    "title": "Sum Work Hours per Employee with Default Zero",
+    "description_markdown": "Perform a `LEFT JOIN` from `employees` to `assignments` on `emp_id`. Group by `e.emp_id`, `e.first_name`, and `e.last_name`. Return `e.first_name`, `e.last_name`, and `COALESCE(SUM(a.hours_worked), 0) AS total_hours`. Order by `total_hours` descending, then `e.last_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_hours",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Sum hours per employee with COALESCE\nSELECT e.first_name, e.last_name, COALESCE(SUM(a.hours_worked), 0) AS total_hours\nFROM employees e\nLEFT JOIN assignments a ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT e.first_name, e.last_name, COALESCE(SUM(a.hours_worked), 0) AS total_hours FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id GROUP BY e.emp_id, e.first_name, e.last_name ORDER BY total_hours DESC, e.last_name ASC;",
+    "solution_explanation": "SUM(a.hours_worked) yields NULL for unassigned staff; COALESCE converts those NULLs into clean 0 values.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving SUM(a.hours_worked) uncoalesced, resulting in NULLs."
+    ],
+    "interview_tip": "Always coalesce numeric aggregates from outer joins when representing totals or balances.",
+    "hints": [
+      "Join condition: `e.emp_id = a.emp_id`.",
+      "Use `COALESCE(SUM(a.hours_worked), 0) AS total_hours`.",
+      "Query: SELECT e.first_name, e.last_name, COALESCE(SUM(a.hours_worked), 0) AS total_hours FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id GROUP BY e.emp_id, e.first_name, e.last_name ORDER BY total_hours DESC, e.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "group-by",
+      "coalesce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-19",
+    "slug": "product-units-sold-left-join",
+    "title": "Calculate Total Units Sold per Product Including Zero",
+    "description_markdown": "Perform a `LEFT JOIN` from `products` to `order_items` on `product_id`. Group by `p.product_id` and `p.product_name`. Return `p.product_name` and `COALESCE(SUM(oi.quantity), 0) AS units_sold`. Order by `units_sold` descending, then `p.product_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "units_sold",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join products to order_items and sum quantity\nSELECT p.product_name, COALESCE(SUM(oi.quantity), 0) AS units_sold\nFROM products p\nLEFT JOIN order_items oi ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, COALESCE(SUM(oi.quantity), 0) AS units_sold FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY units_sold DESC, p.product_name ASC;",
+    "solution_explanation": "Aggregates total sold volume while preserving unpurchased inventory with 0 units sold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which hides items that have never sold."
+    ],
+    "interview_tip": "Inventory analysis requires knowing what doesn't sell just as much as knowing what does.",
+    "hints": [
+      "Join on `p.product_id = oi.product_id`.",
+      "Use `COALESCE(SUM(oi.quantity), 0) AS units_sold`.",
+      "Query: SELECT p.product_name, COALESCE(SUM(oi.quantity), 0) AS units_sold FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.product_id, p.product_name ORDER BY units_sold DESC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "aggregation",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-20",
+    "slug": "department-headcount-outer-aggregation",
+    "title": "Calculate Complete Department Headcounts",
+    "description_markdown": "Perform a `LEFT JOIN` from `departments` to `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Return `d.dept_name` and `COUNT(e.emp_id) AS total_employees`. Order by `total_employees` descending, then `d.dept_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_employees",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join departments to employees and count\nSELECT d.dept_name, COUNT(e.emp_id) AS total_employees\nFROM departments d\nLEFT JOIN employees e ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, COUNT(e.emp_id) AS total_employees FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY total_employees DESC, d.dept_name ASC;",
+    "solution_explanation": "Includes empty departments with 0 headcounts by counting the non-null employee ID.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) which would report 1 for an empty department."
+    ],
+    "interview_tip": "COUNT(column) evaluates to 0 on NULLs, which makes it safe for outer join counting.",
+    "hints": [
+      "Join condition: `d.dept_id = e.dept_id`.",
+      "Use `COUNT(e.emp_id) AS total_employees`.",
+      "Query: SELECT d.dept_name, COUNT(e.emp_id) AS total_employees FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY total_employees DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "headcount"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-21",
+    "slug": "professor-course-count-left-join",
+    "title": "Count Courses Taught per Professor Including Sabbatical",
+    "description_markdown": "Perform a `LEFT JOIN` from `professors` to `courses` on `professor_id`. Group by `p.professor_id` and `p.last_name`. Return `p.last_name` and `COUNT(c.course_id) AS course_count`. Order by `course_count` descending, then `p.last_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "course_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join professors to courses and count\nSELECT p.last_name, COUNT(c.course_id) AS course_count\nFROM professors p\nLEFT JOIN courses c ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.last_name, COUNT(c.course_id) AS course_count FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id GROUP BY p.professor_id, p.last_name ORDER BY course_count DESC, p.last_name ASC;",
+    "solution_explanation": "Counts assigned courses per professor while including non-teaching faculty with a count of 0.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(*) which falsely counts 1 for unassigned faculty."
+    ],
+    "interview_tip": "Group by the primary key p.professor_id along with display columns.",
+    "hints": [
+      "Join on `p.professor_id = c.professor_id`.",
+      "Use `COUNT(c.course_id) AS course_count`.",
+      "Query: SELECT p.last_name, COUNT(c.course_id) AS course_count FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id GROUP BY p.professor_id, p.last_name ORDER BY course_count DESC, p.last_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-22",
+    "slug": "category-product-count-left-join",
+    "title": "Count Products per Category Including Empty Categories",
+    "description_markdown": "Perform a `LEFT JOIN` from `categories` to `products` on `category_id`. Group by `c.category_id` and `c.category_name`. Return `c.category_name` and `COUNT(p.product_id) AS product_count`. Order by `product_count` descending, then `c.category_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "product_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join categories and products\nSELECT c.category_name, COUNT(p.product_id) AS product_count\nFROM categories c\nLEFT JOIN products p ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.category_name, COUNT(p.product_id) AS product_count FROM categories c LEFT JOIN products p ON c.category_id = p.category_id GROUP BY c.category_id, c.category_name ORDER BY product_count DESC, c.category_name ASC;",
+    "solution_explanation": "Counts active merchandise per category, presenting 0 for unused or empty categories.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Counting category_id instead of p.product_id."
+    ],
+    "interview_tip": "To count child records in an outer join, always pass the child primary key to COUNT.",
+    "hints": [
+      "Join condition: `c.category_id = p.category_id`.",
+      "Use `COUNT(p.product_id) AS product_count`.",
+      "Query: SELECT c.category_name, COUNT(p.product_id) AS product_count FROM categories c LEFT JOIN products p ON c.category_id = p.category_id GROUP BY c.category_id, c.category_name ORDER BY product_count DESC, c.category_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "taxonomy"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-23",
+    "slug": "customer-lifetime-spend-left-join",
+    "title": "Calculate Lifetime Customer Spend with Predicate in ON Clause",
+    "description_markdown": "Perform a `LEFT JOIN` from `customers` to `orders` on `c.customer_id = o.customer_id AND o.order_status = 'completed'`. Group by `c.customer_id` and `c.first_name`. Return `c.first_name` and `COALESCE(SUM(o.total_amount), 0) AS total_spent`. Order by `total_spent` descending, then `c.first_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join with predicate in ON clause\nSELECT c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed'\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.first_name ASC;",
+    "solution_explanation": "Placing `o.order_status = 'completed'` in the ON clause preserves customers with only cancelled/refunded orders (or no orders), correctly listing them with 0 total spend.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the order_status filter in the WHERE clause, which turns the LEFT JOIN into an INNER JOIN."
+    ],
+    "interview_tip": "This is a quintessential senior SQL interview pattern: filtering a right table in the ON clause vs the WHERE clause.",
+    "hints": [
+      "Keep `AND o.order_status = 'completed'` inside the `ON` clause, NOT in `WHERE`.",
+      "Use `COALESCE(SUM(o.total_amount), 0) AS total_spent`.",
+      "Query: SELECT c.first_name, COALESCE(SUM(o.total_amount), 0) AS total_spent FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' GROUP BY c.customer_id, c.first_name ORDER BY total_spent DESC, c.first_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "advanced-joins",
+      "coalesce"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-24",
+    "slug": "department-payroll-left-join",
+    "title": "Aggregate Department Salary Budgets Including Vacant Units",
+    "description_markdown": "Perform a `LEFT JOIN` from `departments` to `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Return `d.dept_name` and `COALESCE(SUM(e.salary), 0) AS total_salary`. Order by `total_salary` descending, then `d.dept_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join departments to employees and sum salary\nSELECT d.dept_name, COALESCE(SUM(e.salary), 0) AS total_salary\nFROM departments d\nLEFT JOIN employees e ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, COALESCE(SUM(e.salary), 0) AS total_salary FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY total_salary DESC, d.dept_name ASC;",
+    "solution_explanation": "Calculates total compensation expenditure per department, returning 0 for departments with zero personnel.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving empty departments without a 0 default."
+    ],
+    "interview_tip": "Executive reporting requires complete departmental representation, even for unstaffed corporate entities.",
+    "hints": [
+      "Join condition: `d.dept_id = e.dept_id`.",
+      "Use `COALESCE(SUM(e.salary), 0) AS total_salary`.",
+      "Query: SELECT d.dept_name, COALESCE(SUM(e.salary), 0) AS total_salary FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name ORDER BY total_salary DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-25",
+    "slug": "all-products-with-reviews",
+    "title": "Inspect Product Catalog with Optional Customer Reviews",
+    "description_markdown": "Perform a `LEFT JOIN` from `products` to `reviews` on `product_id`. Return `p.product_id`, `p.product_name`, and `r.rating`. Order by `p.product_id` ascending, then `r.review_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Left join products to reviews\nSELECT p.product_id, p.product_name, r.rating\nFROM products p\nLEFT JOIN reviews r ON ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, r.rating FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id ORDER BY p.product_id ASC, r.review_id ASC;",
+    "solution_explanation": "Surfaces all products alongside customer ratings, identifying items that have received no feedback yet.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which conceals unreviewed products."
+    ],
+    "interview_tip": "Unreviewed inventory is a major merchandising focus in e-commerce merchandising pipelines.",
+    "hints": [
+      "Join on `p.product_id = r.product_id`.",
+      "Order by `p.product_id ASC, r.review_id ASC`.",
+      "Query: SELECT p.product_name FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id ORDER BY p.product_id ASC, r.review_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "customer-feedback"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-26",
+    "slug": "product-average-rating-left-join",
+    "title": "Calculate Product Average Rating Defaulting to Zero",
+    "description_markdown": "Perform a `LEFT JOIN` from `products` to `reviews` on `product_id`. Group by `p.product_id` and `p.product_name`. Return `p.product_name` and `COALESCE(ROUND(AVG(r.rating), 2), 0) AS avg_rating`. Order by `avg_rating` descending, then `p.product_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate average review rating with 0 fallback\nSELECT p.product_name, COALESCE(ROUND(AVG(r.rating), 2), 0) AS avg_rating\nFROM products p\nLEFT JOIN reviews r ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT p.product_name, COALESCE(ROUND(AVG(r.rating), 2), 0) AS avg_rating FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id GROUP BY p.product_id, p.product_name ORDER BY avg_rating DESC, p.product_name ASC;",
+    "solution_explanation": "Computes average star ratings for products, substituting 0 for products with zero customer reviews.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Applying COALESCE inside AVG rather than wrapping AVG."
+    ],
+    "interview_tip": "COALESCE around the entire aggregate ensures that an empty set (which yields NULL) is transformed to 0.",
+    "hints": [
+      "Join on `p.product_id = r.product_id`.",
+      "Use `COALESCE(ROUND(AVG(r.rating), 2), 0) AS avg_rating`.",
+      "Query: SELECT p.product_name, COALESCE(ROUND(AVG(r.rating), 2), 0) AS avg_rating FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id GROUP BY p.product_id, p.product_name ORDER BY avg_rating DESC, p.product_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "group-by",
+      "ratings"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-27",
+    "slug": "students-with-optional-marks",
+    "title": "Calculate Student Enrollment Marks with Zero Fallback",
+    "description_markdown": "Perform a `LEFT JOIN` from `enrollments` to `marks` on `enrollment_id`. Group by `e.enrollment_id`, `e.student_id`, and `e.course_id`. Return `e.student_id`, `e.course_id`, and `COALESCE(ROUND(AVG(m.score), 2), 0) AS avg_mark`. Order by `e.student_id` ascending, then `e.course_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "avg_mark",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Left join enrollments to marks\nSELECT e.student_id, e.course_id, COALESCE(ROUND(AVG(m.score), 2), 0) AS avg_mark\nFROM enrollments e\nLEFT JOIN marks m ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT e.student_id, e.course_id, COALESCE(ROUND(AVG(m.score), 2), 0) AS avg_mark FROM enrollments e LEFT JOIN marks m ON e.enrollment_id = m.enrollment_id GROUP BY e.enrollment_id, e.student_id, e.course_id ORDER BY e.student_id ASC, e.course_id ASC;",
+    "solution_explanation": "Retains newly enrolled students who have not yet taken any exams, displaying 0 as their mark average.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting enrollment_id from the GROUP BY clause."
+    ],
+    "interview_tip": "Outer joins are critical in grading portals where courses currently in progress have no graded items yet.",
+    "hints": [
+      "Join on `e.enrollment_id = m.enrollment_id`.",
+      "Use `COALESCE(ROUND(AVG(m.score), 2), 0) AS avg_mark`.",
+      "Query: SELECT e.student_id, e.course_id, COALESCE(ROUND(AVG(m.score), 2), 0) AS avg_mark FROM enrollments e LEFT JOIN marks m ON e.enrollment_id = m.enrollment_id GROUP BY e.enrollment_id, e.student_id, e.course_id ORDER BY e.student_id ASC, e.course_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-28",
+    "slug": "left-join-with-multiple-conditions",
+    "title": "Filter Outer Join on High Hours in the ON Clause",
+    "description_markdown": "Perform a `LEFT JOIN` from `employees` to `assignments` on `e.emp_id = a.emp_id AND a.hours_worked > 400`. Return `e.emp_id`, `e.first_name`, `a.project_id`, and `a.hours_worked`. Order by `e.emp_id` ascending, then `a.project_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Left join with condition in ON clause\nSELECT e.emp_id, e.first_name, a.project_id, a.hours_worked\nFROM employees e\nLEFT JOIN assignments a ON e.emp_id = a.emp_id AND a.hours_worked > 400\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, a.project_id, a.hours_worked FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id AND a.hours_worked > 400 ORDER BY e.emp_id ASC, a.project_id ASC;",
+    "solution_explanation": "Because the filter `a.hours_worked > 400` is in the ON clause, all employees remain in the result set, showing NULL project values if they have not logged > 400 hours.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Putting the filter in WHERE, which strips out employees with <= 400 hours."
+    ],
+    "interview_tip": "In SQL, predicates in the ON clause filter the right table before the join, while WHERE filters after the join.",
+    "hints": [
+      "Keep `AND a.hours_worked > 400` inside the `ON` clause.",
+      "Order by `e.emp_id ASC, a.project_id ASC`.",
+      "Query: SELECT e.emp_id, e.first_name, a.project_id, a.hours_worked FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id AND a.hours_worked > 400 ORDER BY e.emp_id ASC, a.project_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "advanced-joins"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-29",
+    "slug": "full-outer-join-departments-projects",
+    "title": "Reconcile Departments and Projects via Full Outer Join",
+    "description_markdown": "Reconcile `departments` and `projects` on `dept_id` using a FULL OUTER JOIN (emulated via UNION in MySQL). Return `COALESCE(d.dept_name, 'No Dept') AS dept_name` and `COALESCE(p.project_name, 'No Project') AS project_name`. Order by `dept_name` ascending, then `project_name` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-full",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- FULL OUTER JOIN in PostgreSQL\nSELECT COALESCE(d.dept_name, 'No Dept') AS dept_name, COALESCE(p.project_name, 'No Project') AS project_name\nFROM departments d\nFULL OUTER JOIN projects p ON d.dept_id = p.dept_id\nORDER BY dept_name ASC, project_name ASC;",
+    "solution_query": "SELECT COALESCE(d.dept_name, 'No Dept') AS dept_name, COALESCE(p.project_name, 'No Project') AS project_name FROM departments d FULL OUTER JOIN projects p ON d.dept_id = p.dept_id ORDER BY dept_name ASC, project_name ASC;",
+    "solution_explanation": "PostgreSQL natively supports FULL OUTER JOIN. In MySQL, FULL OUTER JOIN is emulated by combining a LEFT JOIN and a RIGHT JOIN with UNION.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using FULL OUTER JOIN in MySQL, which produces a syntax error."
+    ],
+    "interview_tip": "MySQL lacks native FULL OUTER JOIN support. Knowing how to emulate it with UNION is a critical interview test.",
+    "dialect_notes": "PostgreSQL supports native FULL OUTER JOIN. MySQL does not support FULL OUTER JOIN syntax; emulate it by combining LEFT JOIN and RIGHT JOIN using UNION.",
+    "hints": [
+      "In PostgreSQL, use `FROM departments d FULL OUTER JOIN projects p ON d.dept_id = p.dept_id`.",
+      "In MySQL, combine `LEFT JOIN` and `RIGHT JOIN` queries using `UNION`.",
+      "PostgreSQL Query: SELECT COALESCE(d.dept_name, 'No Dept') AS dept_name, COALESCE(p.project_name, 'No Project') AS project_name FROM departments d FULL OUTER JOIN projects p ON d.dept_id = p.dept_id ORDER BY dept_name ASC, project_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "full-outer-join",
+      "dialects"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-30",
+    "slug": "full-outer-join-products-reviews",
+    "title": "Complete Reconciliation of Products and Reviews",
+    "description_markdown": "Reconcile `products` and `reviews` on `product_id` using a FULL OUTER JOIN (emulated via UNION in MySQL). Return `COALESCE(p.product_name, 'Uncatalogued Product') AS product_name` and `COALESCE(r.rating, 0) AS review_rating`. Order by `product_name` ascending, then `review_rating` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-full",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "review_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- FULL OUTER JOIN in PostgreSQL\nSELECT COALESCE(p.product_name, 'Uncatalogued Product') AS product_name, COALESCE(r.rating, 0) AS review_rating\nFROM products p\nFULL OUTER JOIN reviews r ON p.product_id = r.product_id\nORDER BY product_name ASC, review_rating ASC;",
+    "solution_query": "SELECT COALESCE(p.product_name, 'Uncatalogued Product') AS product_name, COALESCE(r.rating, 0) AS review_rating FROM products p FULL OUTER JOIN reviews r ON p.product_id = r.product_id ORDER BY product_name ASC, review_rating ASC;",
+    "solution_explanation": "Ensures catalog products without reviews and any orphaned reviews are both retained.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION ALL instead of UNION, which would duplicate matching rows."
+    ],
+    "interview_tip": "UNION de-duplicates the overlapping inner join rows produced by LEFT JOIN and RIGHT JOIN.",
+    "dialect_notes": "PostgreSQL implements native FULL OUTER JOIN syntax. In MySQL, combine LEFT JOIN and RIGHT JOIN queries with UNION to eliminate duplicates.",
+    "hints": [
+      "In PostgreSQL: `FULL OUTER JOIN`.",
+      "In MySQL: `LEFT JOIN ... UNION ... RIGHT JOIN`.",
+      "PostgreSQL Query: SELECT COALESCE(p.product_name, 'Uncatalogued Product') AS product_name, COALESCE(r.rating, 0) AS review_rating FROM products p FULL OUTER JOIN reviews r ON p.product_id = r.product_id ORDER BY product_name ASC, review_rating ASC;"
+    ],
+    "tags": [
+      "joins",
+      "full-outer-join",
+      "dialects"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-31",
+    "slug": "zero-order-customers-detection",
+    "title": "Detect Customers with Zero Orders via Outer Join and HAVING",
+    "description_markdown": "Perform a `LEFT JOIN` from `customers` to `orders` on `customer_id`. Group by `c.customer_id` and `c.first_name`. Filter using `HAVING COUNT(o.order_id) = 0`. Return `c.customer_id` and `c.first_name`. Order by `c.customer_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Left join and HAVING count = 0\nSELECT c.customer_id, c.first_name\nFROM customers c\nLEFT JOIN orders o ON ...\nGROUP BY ...\nHAVING ...\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name HAVING COUNT(o.order_id) = 0 ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Grouping after a LEFT JOIN and filtering with HAVING COUNT(o.order_id) = 0 identifies customers who have placed exactly zero orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using HAVING COUNT(*) = 0, which never evaluates to true because the left table row always exists."
+    ],
+    "interview_tip": "COUNT(*) counts rows in the grouped result (at least 1 for the left row), whereas COUNT(o.order_id) counts non-null order IDs (0 when unmatched).",
+    "hints": [
+      "Join on `c.customer_id = o.customer_id`.",
+      "Filter with `HAVING COUNT(o.order_id) = 0`.",
+      "Query: SELECT c.customer_id, c.first_name FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.first_name HAVING COUNT(o.order_id) = 0 ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "having",
+      "churn"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-out-32",
+    "slug": "unstaffed-departments-detection",
+    "title": "Detect Unstaffed Departments via Outer Join and HAVING",
+    "description_markdown": "Perform a `LEFT JOIN` from `departments` to `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Filter using `HAVING COUNT(e.emp_id) = 0`. Return `d.dept_id` and `d.dept_name`. Order by `d.dept_id` ascending.",
+    "topic_id": "left-right-outer-join",
+    "subtopic_id": "join-left",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Left join and HAVING count = 0\nSELECT d.dept_id, d.dept_name\nFROM departments d\nLEFT JOIN employees e ON ...\nGROUP BY ...\nHAVING ...\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name HAVING COUNT(e.emp_id) = 0 ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Identifies organizational departments with 0 assigned staff by checking HAVING COUNT(e.emp_id) = 0 on an outer join.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN or COUNT(*)."
+    ],
+    "interview_tip": "This is the group-by alternative to an anti-join, frequently used when reporting on aggregates alongside exclusions.",
+    "hints": [
+      "Join on `d.dept_id = e.dept_id`.",
+      "Use `HAVING COUNT(e.emp_id) = 0`.",
+      "Query: SELECT d.dept_id, d.dept_name FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name HAVING COUNT(e.emp_id) = 0 ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "left-join",
+      "having",
+      "organization"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-out-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-out-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-out-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

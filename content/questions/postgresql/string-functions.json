@@ -1,0 +1,2361 @@
+[
+  {
+    "id": "q-str-01",
+    "slug": "format-full-employee-names",
+    "title": "Concatenate Formatted Employee Full Names",
+    "description_markdown": "Create a single formatted string combining `first_name` and `last_name` separated by a space as `full_name`. Also include `email` in lowercase as `clean_email`. Order by `emp_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "clean_email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use CONCAT or || operator\nSELECT CONCAT(first_name, ' ', last_name) AS full_name, ...",
+    "solution_query": "SELECT CONCAT(first_name, ' ', last_name) AS full_name, LOWER(email) AS clean_email FROM employees ORDER BY emp_id ASC;",
+    "solution_explanation": "Uses CONCAT to merge strings with a delimiter and LOWER to standardize email casing.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "CONCAT(first_name, ' ', last_name) AS full_name",
+      "LOWER(email) AS clean_email",
+      "Query: SELECT CONCAT(first_name, ' ', last_name) AS full_name, LOWER(email) AS clean_email FROM employees ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "strings",
+      "concat"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-02",
+    "slug": "extract-email-domain-names",
+    "title": "Extract Email Domains Using Substring & Position",
+    "description_markdown": "Extract the domain part of each employee's email (everything following the '@' character) as `email_domain`. Return `first_name` and `email_domain`. Order by `emp_id`.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email_domain",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract substring after '@'\nSELECT ...",
+    "solution_query": "SELECT first_name, SUBSTRING(email FROM POSITION('@' IN email) + 1) AS email_domain FROM employees ORDER BY emp_id ASC;",
+    "solution_explanation": "Uses POSITION('@' IN email) to find the delimiter and SUBSTRING to extract trailing text.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Find the '@' position using `POSITION('@' IN email)`.",
+      "Extract remainder with `SUBSTRING(email FROM POSITION('@' IN email) + 1)`.",
+      "Query: SELECT first_name, SUBSTRING(email FROM POSITION('@' IN email) + 1) AS email_domain FROM employees ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "strings",
+      "substring",
+      "position"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-03",
+    "slug": "product-sku-standardization",
+    "title": "Standardize Course Department Prefix",
+    "description_markdown": "From `courses`, extract the first 4 characters of `course_name` in UPPERCASE as `short_code`, along with the character length of `course_name` as `name_length`. Return `course_code`, `short_code`, and `name_length`. Order by `course_id`.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "short_code",
+        "type": "varchar"
+      },
+      {
+        "name": "name_length",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use UPPER, SUBSTRING, LENGTH\nSELECT ...",
+    "solution_query": "SELECT course_code, UPPER(SUBSTRING(course_name FROM 1 FOR 4)) AS short_code, LENGTH(course_name) AS name_length FROM courses ORDER BY course_id ASC;",
+    "solution_explanation": "Combines string slicing via SUBSTRING(str FROM 1 FOR 4), UPPER, and LENGTH.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `UPPER(SUBSTRING(course_name FROM 1 FOR 4)) AS short_code`.",
+      "Use `LENGTH(course_name) AS name_length`.",
+      "Query: SELECT course_code, UPPER(SUBSTRING(course_name FROM 1 FOR 4)) AS short_code, LENGTH(course_name) AS name_length FROM courses ORDER BY course_id ASC;"
+    ],
+    "tags": [
+      "strings",
+      "length"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-04",
+    "slug": "employeedb-employees-upper-title-length",
+    "title": "Format Job Titles to Uppercase with Length",
+    "description_markdown": "Retrieve `emp_id`, `job_title` in uppercase as `upper_title`, and the character length of `job_title` as `title_length` from `employees`. Order by `emp_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "upper_title",
+        "type": "varchar"
+      },
+      {
+        "name": "title_length",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Upper case title and character length\nSELECT emp_id, UPPER(job_title) AS upper_title, ...\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT emp_id, UPPER(job_title) AS upper_title, LENGTH(job_title) AS title_length FROM employees ORDER BY emp_id ASC;",
+    "solution_explanation": "UPPER converts strings to uppercase letters, and LENGTH measures string character count.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the alias upper_title or title_length.",
+      "Forgetting ORDER BY emp_id."
+    ],
+    "hints": [
+      "Use UPPER(job_title) AS upper_title.",
+      "Use LENGTH(job_title) AS title_length.",
+      "Query: SELECT emp_id, UPPER(job_title) AS upper_title, LENGTH(job_title) AS title_length FROM employees ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "upper",
+      "length",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-05",
+    "slug": "ecommercedb-customers-formatted-name-city",
+    "title": "Format Customer Last-First Names and Uppercase Cities",
+    "description_markdown": "From `customers`, return `customer_id`, the full name formatted as 'Last, First' (`CONCAT(last_name, ', ', first_name)` as `formatted_name`), and `city` in uppercase as `city_upper`. Order by `customer_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "formatted_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city_upper",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Concatenate last and first name, uppercase city\nSELECT customer_id, CONCAT(last_name, ', ', first_name) AS formatted_name, ...\nFROM customers\nORDER BY ...",
+    "solution_query": "SELECT customer_id, CONCAT(last_name, ', ', first_name) AS formatted_name, UPPER(city) AS city_upper FROM customers ORDER BY customer_id ASC;",
+    "solution_explanation": "CONCAT joins string columns with a literal delimiter comma-space, and UPPER standardizes city casing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using 'First, Last' order instead of 'Last, First'.",
+      "Missing spaces in concatenation."
+    ],
+    "hints": [
+      "Combine names with CONCAT(last_name, ', ', first_name) AS formatted_name.",
+      "Use UPPER(city) AS city_upper.",
+      "Query: SELECT customer_id, CONCAT(last_name, ', ', first_name) AS formatted_name, UPPER(city) AS city_upper FROM customers ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-06",
+    "slug": "collegedb-courses-dept-prefix-upper-title",
+    "title": "Extract Course Subject Prefix and Capitalize Title",
+    "description_markdown": "From `courses`, extract the first 4 characters of `course_code` using `LEFT(course_code, 4)` as `dept_code`, and convert `course_name` to uppercase as `upper_course_name`. Return `course_id`, `dept_code`, and `upper_course_name`, ordered by `course_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_code",
+        "type": "varchar"
+      },
+      {
+        "name": "upper_course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract subject code prefix with LEFT\nSELECT course_id, LEFT(course_code, 4) AS dept_code, ...\nFROM courses\nORDER BY ...",
+    "solution_query": "SELECT course_id, LEFT(course_code, 4) AS dept_code, UPPER(course_name) AS upper_course_name FROM courses ORDER BY course_id ASC;",
+    "solution_explanation": "LEFT extracts leading characters from a string, and UPPER converts titles to uppercase.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using SUBSTRING with 0-based indexing.",
+      "Omitting the alias names."
+    ],
+    "hints": [
+      "Use LEFT(course_code, 4) AS dept_code.",
+      "Use UPPER(course_name) AS upper_course_name.",
+      "Query: SELECT course_id, LEFT(course_code, 4) AS dept_code, UPPER(course_name) AS upper_course_name FROM courses ORDER BY course_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "left",
+      "upper",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-07",
+    "slug": "banking-customers-clean-name-and-email",
+    "title": "Standardize Customer Name Casing and Lowercase Email",
+    "description_markdown": "From `bank_customers`, retrieve `customer_id`, the customer `name` in uppercase as `clean_name`, and `email` converted to lowercase as `clean_email`. Order by `customer_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "clean_name",
+        "type": "varchar"
+      },
+      {
+        "name": "clean_email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Standardize customer casing\nSELECT customer_id, UPPER(name) AS clean_name, LOWER(...) AS clean_email\nFROM bank_customers\nORDER BY ...",
+    "solution_query": "SELECT customer_id, UPPER(name) AS clean_name, LOWER(email) AS clean_email FROM bank_customers ORDER BY customer_id ASC;",
+    "solution_explanation": "Normalizes identity text attributes into consistent uppercase and lowercase representations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping UPPER and LOWER."
+    ],
+    "hints": [
+      "Select customer_id, UPPER(name) AS clean_name, LOWER(email) AS clean_email.",
+      "Order by customer_id ASC.",
+      "Query: SELECT customer_id, UPPER(name) AS clean_name, LOWER(email) AS clean_email FROM bank_customers ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "upper",
+      "lower",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-08",
+    "slug": "hospital-patients-blood-group-badge-and-length",
+    "title": "Generate Patient Blood Group Label and Name Length",
+    "description_markdown": "Query `patients` to return `patient_id`, a formatted badge combining name and blood group (e.g., 'Alice Smith (O+)') aliased as `patient_label`, and character length of `name` as `name_len`. Order by `patient_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_label",
+        "type": "varchar"
+      },
+      {
+        "name": "name_len",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Patient blood group label and name length\nSELECT patient_id, CONCAT(name, ' (', blood_group, ')') AS patient_label, ...\nFROM patients\nORDER BY ...",
+    "solution_query": "SELECT patient_id, CONCAT(name, ' (', blood_group, ')') AS patient_label, LENGTH(name) AS name_len FROM patients ORDER BY patient_id ASC;",
+    "solution_explanation": "CONCAT constructs medical labels with parenthesized clinical attributes alongside LENGTH.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing parentheses formatting around blood_group."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' (', blood_group, ')') AS patient_label.",
+      "Use LENGTH(name) AS name_len.",
+      "Query: SELECT patient_id, CONCAT(name, ' (', blood_group, ')') AS patient_label, LENGTH(name) AS name_len FROM patients ORDER BY patient_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "length",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-09",
+    "slug": "hotel-guests-capitalized-name-and-email",
+    "title": "Generate Capitalized Guest Names and Lowercase Emails",
+    "description_markdown": "From `hotel_guests`, return `guest_id`, the full name in uppercase as `guest_full_name` (`UPPER(CONCAT(first_name, ' ', last_name))`), and the lowercase email as `clean_email`. Order by `guest_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "clean_email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Guest full name in uppercase and lowercase email\nSELECT guest_id, UPPER(CONCAT(first_name, ' ', last_name)) AS guest_full_name, ...\nFROM hotel_guests\nORDER BY ...",
+    "solution_query": "SELECT guest_id, UPPER(CONCAT(first_name, ' ', last_name)) AS guest_full_name, LOWER(email) AS clean_email FROM hotel_guests ORDER BY guest_id ASC;",
+    "solution_explanation": "Nests CONCAT inside UPPER to generate standardized capitalized full names.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing the space between first_name and last_name."
+    ],
+    "hints": [
+      "Use UPPER(CONCAT(first_name, ' ', last_name)) AS guest_full_name.",
+      "Use LOWER(email) AS clean_email.",
+      "Query: SELECT guest_id, UPPER(CONCAT(first_name, ' ', last_name)) AS guest_full_name, LOWER(email) AS clean_email FROM hotel_guests ORDER BY guest_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "lower",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-10",
+    "slug": "library-books-shortened-title-and-length",
+    "title": "Generate Shortened Title Preview and Original Length",
+    "description_markdown": "For each book in `books`, retrieve `book_id`, the first 15 characters of `title` using `SUBSTRING(title, 1, 15)` as `short_title`, and the total length of `title` as `title_len`. Order by `book_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "short_title",
+        "type": "varchar"
+      },
+      {
+        "name": "title_len",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Short title snippet and full title length\nSELECT book_id, SUBSTRING(title, 1, 15) AS short_title, ...\nFROM books\nORDER BY ...",
+    "solution_query": "SELECT book_id, SUBSTRING(title, 1, 15) AS short_title, LENGTH(title) AS title_len FROM books ORDER BY book_id ASC;",
+    "solution_explanation": "SUBSTRING slices the initial 15 characters of book titles for truncated display previews.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using index 0 instead of index 1 (SQL is 1-indexed)."
+    ],
+    "hints": [
+      "Use SUBSTRING(title, 1, 15) AS short_title.",
+      "Use LENGTH(title) AS title_len.",
+      "Query: SELECT book_id, SUBSTRING(title, 1, 15) AS short_title, LENGTH(title) AS title_len FROM books ORDER BY book_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "substring",
+      "length",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-11",
+    "slug": "movie-streaming-users-handle-country-tag",
+    "title": "Format Social User Tag and Country Identifier",
+    "description_markdown": "From `streaming_users`, return `user_id`, a prefixed handle (`CONCAT('@', username)` as `user_tag`), and `country` in uppercase as `country_code`. Order by `user_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "streaming_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_tag",
+        "type": "varchar"
+      },
+      {
+        "name": "country_code",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- User handle with '@' prefix and uppercase country\nSELECT user_id, CONCAT('@', username) AS user_tag, ...\nFROM streaming_users\nORDER BY ...",
+    "solution_query": "SELECT user_id, CONCAT('@', username) AS user_tag, UPPER(country) AS country_code FROM streaming_users ORDER BY user_id ASC;",
+    "solution_explanation": "Prepends '@' symbol to usernames and normalizes country strings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing the '@' literal prefix."
+    ],
+    "hints": [
+      "Use CONCAT('@', username) AS user_tag.",
+      "Use UPPER(country) AS country_code.",
+      "Query: SELECT user_id, CONCAT('@', username) AS user_tag, UPPER(country) AS country_code FROM streaming_users ORDER BY user_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-12",
+    "slug": "sales-reps-badge-and-territory",
+    "title": "Construct Sales Representative Identifier Badge",
+    "description_markdown": "Query `sales_reps` to return `rep_id` and a combined badge formatting name and uppercase territory (e.g. 'Sarah Connor - WEST') as `rep_badge`. Order by `rep_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "rep_badge",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Rep name and territory badge\nSELECT rep_id, CONCAT(name, ' - ', UPPER(territory)) AS rep_badge\nFROM sales_reps\nORDER BY ...",
+    "solution_query": "SELECT rep_id, CONCAT(name, ' - ', UPPER(territory)) AS rep_badge FROM sales_reps ORDER BY rep_id ASC;",
+    "solution_explanation": "Concatenates rep name with hyphen delimiter and capitalized territory tag.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting UPPER on territory or missing spacing in the separator."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' - ', UPPER(territory)) AS rep_badge.",
+      "Query: SELECT rep_id, CONCAT(name, ' - ', UPPER(territory)) AS rep_badge FROM sales_reps ORDER BY rep_id ASC;",
+      "The expected query is: SELECT rep_id, CONCAT(name, ' - ', UPPER(territory)) AS rep_badge FROM sales_reps ORDER BY rep_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-13",
+    "slug": "food-delivery-restaurants-cuisine-tag",
+    "title": "Generate Restaurant Brand and Cuisine Bracket Tag",
+    "description_markdown": "From `restaurants`, return `restaurant_id` and a concatenated label combining name and uppercase cuisine inside brackets (e.g., 'Pasta Palace [ITALIAN]') as `restaurant_tag`. Order by `restaurant_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "restaurant_tag",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Restaurant tag with bracketed cuisine\nSELECT restaurant_id, CONCAT(name, ' [', UPPER(cuisine), ']') AS restaurant_tag\nFROM restaurants\nORDER BY ...",
+    "solution_query": "SELECT restaurant_id, CONCAT(name, ' [', UPPER(cuisine), ']') AS restaurant_tag FROM restaurants ORDER BY restaurant_id ASC;",
+    "solution_explanation": "Uses CONCAT to merge restaurant name and formatted uppercase cuisine in square brackets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using parentheses instead of square brackets."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' [', UPPER(cuisine), ']') AS restaurant_tag.",
+      "Query: SELECT restaurant_id, CONCAT(name, ' [', UPPER(cuisine), ']') AS restaurant_tag FROM restaurants ORDER BY restaurant_id ASC;",
+      "The expected query is: SELECT restaurant_id, CONCAT(name, ' [', UPPER(cuisine), ']') AS restaurant_tag FROM restaurants ORDER BY restaurant_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-14",
+    "slug": "airline-airports-full-directory-label",
+    "title": "Format Comprehensive Airport Directory Listing",
+    "description_markdown": "From `airports`, return `airport_code` and a directory string formatted as 'CODE - Name (City)' (e.g. 'JFK - John F. Kennedy (New York)') as `airport_full_info`. Order by `airport_code` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "airports"
+    ],
+    "expected_columns": [
+      {
+        "name": "airport_code",
+        "type": "varchar"
+      },
+      {
+        "name": "airport_full_info",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Full airport directory listing\nSELECT airport_code, CONCAT(airport_code, ' - ', name, ' (', city, ')') AS airport_full_info\nFROM airports\nORDER BY ...",
+    "solution_query": "SELECT airport_code, CONCAT(airport_code, ' - ', name, ' (', city, ')') AS airport_full_info FROM airports ORDER BY airport_code ASC;",
+    "solution_explanation": "Assembles multi-attribute directory strings with delimiters and city brackets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing spaces around hyphens or parentheses."
+    ],
+    "hints": [
+      "Use CONCAT(airport_code, ' - ', name, ' (', city, ')') AS airport_full_info.",
+      "Query: SELECT airport_code, CONCAT(airport_code, ' - ', name, ' (', city, ')') AS airport_full_info FROM airports ORDER BY airport_code ASC;",
+      "The expected query is: SELECT airport_code, CONCAT(airport_code, ' - ', name, ' (', city, ')') AS airport_full_info FROM airports ORDER BY airport_code ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-15",
+    "slug": "inventory-stock-items-sku-prefix-name-caps",
+    "title": "Extract SKU Category Code and Capitalize Inventory Names",
+    "description_markdown": "Query `stock_items` to return `item_id`, the first 3 characters of `sku` (`LEFT(sku, 3)` as `sku_category`), and `name` in uppercase as `item_name_caps`. Order by `item_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku_category",
+        "type": "varchar"
+      },
+      {
+        "name": "item_name_caps",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Extract SKU category prefix and uppercase item name\nSELECT item_id, LEFT(sku, 3) AS sku_category, UPPER(name) AS item_name_caps\nFROM stock_items\nORDER BY ...",
+    "solution_query": "SELECT item_id, LEFT(sku, 3) AS sku_category, UPPER(name) AS item_name_caps FROM stock_items ORDER BY item_id ASC;",
+    "solution_explanation": "LEFT extracts leading warehouse product prefixes and UPPER capitalizes item names.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using 4 characters instead of 3."
+    ],
+    "hints": [
+      "Use LEFT(sku, 3) AS sku_category.",
+      "Use UPPER(name) AS item_name_caps.",
+      "Query: SELECT item_id, LEFT(sku, 3) AS sku_category, UPPER(name) AS item_name_caps FROM stock_items ORDER BY item_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "left",
+      "upper",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-16",
+    "slug": "finance-stocks-ticker-listing-header",
+    "title": "Create Stock Ticker and Company Listing Header",
+    "description_markdown": "From `stocks`, return `symbol` and a concatenated string of ticker and corporate name separated by colon and space (`CONCAT(symbol, ': ', company_name)` as `stock_listing`). Order by `symbol` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_listing",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Ticker and company name listing\nSELECT symbol, CONCAT(symbol, ': ', company_name) AS stock_listing\nFROM stocks\nORDER BY ...",
+    "solution_query": "SELECT symbol, CONCAT(symbol, ': ', company_name) AS stock_listing FROM stocks ORDER BY symbol ASC;",
+    "solution_explanation": "Combines stock ticker symbol with company name for display boards.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing space after colon."
+    ],
+    "hints": [
+      "Use CONCAT(symbol, ': ', company_name) AS stock_listing.",
+      "Query: SELECT symbol, CONCAT(symbol, ': ', company_name) AS stock_listing FROM stocks ORDER BY symbol ASC;",
+      "The expected query is: SELECT symbol, CONCAT(symbol, ': ', company_name) AS stock_listing FROM stocks ORDER BY symbol ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-17",
+    "slug": "hr-applicants-full-name-and-email-address",
+    "title": "Assemble Applicant Full Names and Standardized Email",
+    "description_markdown": "From `applicants`, return `applicant_id`, full name (`CONCAT(first_name, ' ', last_name)` as `full_name`), and lowercase `email` as `email_address`. Order by `applicant_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email_address",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Applicant full name and lowercase email\nSELECT applicant_id, CONCAT(first_name, ' ', last_name) AS full_name, LOWER(...) AS email_address\nFROM applicants\nORDER BY ...",
+    "solution_query": "SELECT applicant_id, CONCAT(first_name, ' ', last_name) AS full_name, LOWER(email) AS email_address FROM applicants ORDER BY applicant_id ASC;",
+    "solution_explanation": "Concatenates first and last name separated by a space and lowers candidate email address.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting space between names."
+    ],
+    "hints": [
+      "Use CONCAT(first_name, ' ', last_name) AS full_name.",
+      "Use LOWER(email) AS email_address.",
+      "Query: SELECT applicant_id, CONCAT(first_name, ' ', last_name) AS full_name, LOWER(email) AS email_address FROM applicants ORDER BY applicant_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "lower",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-18",
+    "slug": "social-media-users-formatted-handle-and-name",
+    "title": "Format Social Media Handles with Lowercase and At-Prefix",
+    "description_markdown": "From `social_users`, return `user_id`, handle formatted with '@' prefix and lowercase (`CONCAT('@', LOWER(handle))` as `formatted_handle`), and `full_name` in uppercase as `upper_name`. Order by `user_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "formatted_handle",
+        "type": "varchar"
+      },
+      {
+        "name": "upper_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lowercase @handle and uppercase name\nSELECT user_id, CONCAT('@', LOWER(handle)) AS formatted_handle, UPPER(...) AS upper_name\nFROM social_users\nORDER BY ...",
+    "solution_query": "SELECT user_id, CONCAT('@', LOWER(handle)) AS formatted_handle, UPPER(full_name) AS upper_name FROM social_users ORDER BY user_id ASC;",
+    "solution_explanation": "Prepares canonical social profile identifiers using LOWER, UPPER, and CONCAT.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the '@' character."
+    ],
+    "hints": [
+      "Use CONCAT('@', LOWER(handle)) AS formatted_handle.",
+      "Use UPPER(full_name) AS upper_name.",
+      "Query: SELECT user_id, CONCAT('@', LOWER(handle)) AS formatted_handle, UPPER(full_name) AS upper_name FROM social_users ORDER BY user_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "lower",
+      "upper",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-19",
+    "slug": "employeedb-employees-initials-and-last-name",
+    "title": "Generate Two-Letter Employee Initials",
+    "description_markdown": "From `employees`, generate two-letter initials by taking the first letter of `first_name` and first letter of `last_name` (`CONCAT(LEFT(first_name, 1), LEFT(last_name, 1))` as `initials`). Return `emp_id`, `initials`, and `last_name`, ordered by `emp_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "initials",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Two-letter initials\nSELECT emp_id, CONCAT(LEFT(first_name, 1), LEFT(last_name, 1)) AS initials, last_name\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT emp_id, CONCAT(LEFT(first_name, 1), LEFT(last_name, 1)) AS initials, last_name FROM employees ORDER BY emp_id ASC;",
+    "solution_explanation": "Combines LEFT(col, 1) expressions inside CONCAT to extract monogram initials.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Adding a space between the initials."
+    ],
+    "hints": [
+      "Use CONCAT(LEFT(first_name, 1), LEFT(last_name, 1)) AS initials.",
+      "Query: SELECT emp_id, CONCAT(LEFT(first_name, 1), LEFT(last_name, 1)) AS initials, last_name FROM employees ORDER BY emp_id ASC;",
+      "The expected query is: SELECT emp_id, CONCAT(LEFT(first_name, 1), LEFT(last_name, 1)) AS initials, last_name FROM employees ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "left",
+      "concat",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-20",
+    "slug": "ecommercedb-products-replace-pro-brand",
+    "title": "Replace Substrings in Catalog Product Titles",
+    "description_markdown": "From `products`, replace any occurrence of 'Pro' in `product_name` with 'Professional' using `REPLACE(product_name, 'Pro', 'Professional')` aliased as `expanded_name`. Return `product_id` and `expanded_name`, ordered by `product_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "expanded_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Replace substring using REPLACE\nSELECT product_id, REPLACE(product_name, 'Pro', 'Professional') AS expanded_name\nFROM products\nORDER BY ...",
+    "solution_query": "SELECT product_id, REPLACE(product_name, 'Pro', 'Professional') AS expanded_name FROM products ORDER BY product_id ASC;",
+    "solution_explanation": "REPLACE searches for target substrings and substitutes the replacement string.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inverting the search and replacement string parameters."
+    ],
+    "hints": [
+      "Use REPLACE(product_name, 'Pro', 'Professional') AS expanded_name.",
+      "Query: SELECT product_id, REPLACE(product_name, 'Pro', 'Professional') AS expanded_name FROM products ORDER BY product_id ASC;",
+      "The expected query is: SELECT product_id, REPLACE(product_name, 'Pro', 'Professional') AS expanded_name FROM products ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "replace",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-21",
+    "slug": "collegedb-professors-salutation-dept",
+    "title": "Construct Formal Faculty Salutations and Department Code",
+    "description_markdown": "Query `professors` to return `professor_id`, formal title and name (`CONCAT(title, ' ', first_name, ' ', last_name)` as `formal_name`), and `department` in uppercase as `dept_upper`. Order by `professor_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "formal_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_upper",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Formal professor salutation\nSELECT professor_id, CONCAT(title, ' ', first_name, ' ', last_name) AS formal_name, ...\nFROM professors\nORDER BY ...",
+    "solution_query": "SELECT professor_id, CONCAT(title, ' ', first_name, ' ', last_name) AS formal_name, UPPER(department) AS dept_upper FROM professors ORDER BY professor_id ASC;",
+    "solution_explanation": "Joins academic title, first name, and last name with spaces and standardizes department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing space separators between parts."
+    ],
+    "hints": [
+      "Use CONCAT(title, ' ', first_name, ' ', last_name) AS formal_name.",
+      "Use UPPER(department) AS dept_upper.",
+      "Query: SELECT professor_id, CONCAT(title, ' ', first_name, ' ', last_name) AS formal_name, UPPER(department) AS dept_upper FROM professors ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-22",
+    "slug": "banking-branches-location-label",
+    "title": "Format Bank Branch Location Identifier",
+    "description_markdown": "From `branches`, return `branch_id` and a combined location string (`CONCAT(branch_name, ' (', city, ')')` as `branch_info`). Order by `branch_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_id",
+        "type": "integer"
+      },
+      {
+        "name": "branch_info",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Branch location info\nSELECT branch_id, CONCAT(branch_name, ' (', city, ')') AS branch_info\nFROM branches\nORDER BY ...",
+    "solution_query": "SELECT branch_id, CONCAT(branch_name, ' (', city, ')') AS branch_info FROM branches ORDER BY branch_id ASC;",
+    "solution_explanation": "Creates formatted location badges using CONCAT.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting parentheses around city."
+    ],
+    "hints": [
+      "Use CONCAT(branch_name, ' (', city, ')') AS branch_info.",
+      "Query: SELECT branch_id, CONCAT(branch_name, ' (', city, ')') AS branch_info FROM branches ORDER BY branch_id ASC;",
+      "The expected query is: SELECT branch_id, CONCAT(branch_name, ' (', city, ')') AS branch_info FROM branches ORDER BY branch_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-23",
+    "slug": "hospital-doctors-formal-display-title",
+    "title": "Format Doctor Clinical Display Title",
+    "description_markdown": "From `doctors`, return `doctor_id` and a formatted string formatted as 'Dr. [name] - [specialization]' (e.g., 'Dr. Robert Lang - Cardiology') as `doctor_display`. Order by `doctor_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "doctor_display",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Doctor display title\nSELECT doctor_id, CONCAT('Dr. ', name, ' - ', specialization) AS doctor_display\nFROM doctors\nORDER BY ...",
+    "solution_query": "SELECT doctor_id, CONCAT('Dr. ', name, ' - ', specialization) AS doctor_display FROM doctors ORDER BY doctor_id ASC;",
+    "solution_explanation": "Prepends honorific and links clinical specialization using CONCAT.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing the space after 'Dr. ' or around the hyphen."
+    ],
+    "hints": [
+      "Use CONCAT('Dr. ', name, ' - ', specialization) AS doctor_display.",
+      "Query: SELECT doctor_id, CONCAT('Dr. ', name, ' - ', specialization) AS doctor_display FROM doctors ORDER BY doctor_id ASC;",
+      "The expected query is: SELECT doctor_id, CONCAT('Dr. ', name, ' - ', specialization) AS doctor_display FROM doctors ORDER BY doctor_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-24",
+    "slug": "hotel-rooms-type-and-room-number-label",
+    "title": "Construct Room Type and Number Label",
+    "description_markdown": "Query `rooms` to return `room_id` and a formatted room label combining room type and room number (e.g. 'deluxe #101') using `CONCAT(room_type, ' #', room_number)` as `room_label`. Order by `room_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_label",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Room type and number label\nSELECT room_id, CONCAT(room_type, ' #', room_number) AS room_label\nFROM rooms\nORDER BY ...",
+    "solution_query": "SELECT room_id, CONCAT(room_type, ' #', room_number) AS room_label FROM rooms ORDER BY room_id ASC;",
+    "solution_explanation": "Formats room identity for hotel management dashboards.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing the '#' hash prefix before room number."
+    ],
+    "hints": [
+      "Use CONCAT(room_type, ' #', room_number) AS room_label.",
+      "Query: SELECT room_id, CONCAT(room_type, ' #', room_number) AS room_label FROM rooms ORDER BY room_id ASC;",
+      "The expected query is: SELECT room_id, CONCAT(room_type, ' #', room_number) AS room_label FROM rooms ORDER BY room_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-25",
+    "slug": "library-authors-nationality-tag",
+    "title": "Format Author Nationality Tag",
+    "description_markdown": "From `authors`, return `author_id` and a combined tag with author name and capitalized nationality inside parentheses (e.g., 'George Orwell (BRITISH)') as `author_bio_tag`. Order by `author_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_id",
+        "type": "integer"
+      },
+      {
+        "name": "author_bio_tag",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Author name and uppercase nationality\nSELECT author_id, CONCAT(name, ' (', UPPER(nationality), ')') AS author_bio_tag\nFROM authors\nORDER BY ...",
+    "solution_query": "SELECT author_id, CONCAT(name, ' (', UPPER(nationality), ')') AS author_bio_tag FROM authors ORDER BY author_id ASC;",
+    "solution_explanation": "Concatenates author name with parenthesized uppercase nationality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving nationality in lowercase."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' (', UPPER(nationality), ')') AS author_bio_tag.",
+      "Query: SELECT author_id, CONCAT(name, ' (', UPPER(nationality), ')') AS author_bio_tag FROM authors ORDER BY author_id ASC;",
+      "The expected query is: SELECT author_id, CONCAT(name, ' (', UPPER(nationality), ')') AS author_bio_tag FROM authors ORDER BY author_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-26",
+    "slug": "movie-streaming-movies-release-headline",
+    "title": "Construct Movie Release Headline with Year",
+    "description_markdown": "Query `movies` to return `movie_id` and a headline string combining title and release year in parentheses (e.g. 'Inception (2010)') as `movie_headline`. Order by `movie_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "movie_headline",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Movie title and release year headline\nSELECT movie_id, CONCAT(title, ' (', release_year, ')') AS movie_headline\nFROM movies\nORDER BY ...",
+    "solution_query": "SELECT movie_id, CONCAT(title, ' (', release_year, ')') AS movie_headline FROM movies ORDER BY movie_id ASC;",
+    "solution_explanation": "Combines text title and integer year into a unified entertainment marquee headline.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing parentheses around release_year."
+    ],
+    "hints": [
+      "Use CONCAT(title, ' (', release_year, ')') AS movie_headline.",
+      "Query: SELECT movie_id, CONCAT(title, ' (', release_year, ')') AS movie_headline FROM movies ORDER BY movie_id ASC;",
+      "The expected query is: SELECT movie_id, CONCAT(title, ' (', release_year, ')') AS movie_headline FROM movies ORDER BY movie_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-27",
+    "slug": "sales-leads-company-industry-tag",
+    "title": "Generate Lead Organization and Industry Bracket Tag",
+    "description_markdown": "From `leads`, return `lead_id` and a summary combining `company_name` and uppercase `industry` in brackets (e.g. 'Acme Corp [TECHNOLOGY]') as `lead_summary`. Order by `lead_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_summary",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lead company and industry tag\nSELECT lead_id, CONCAT(company_name, ' [', UPPER(industry), ']') AS lead_summary\nFROM leads\nORDER BY ...",
+    "solution_query": "SELECT lead_id, CONCAT(company_name, ' [', UPPER(industry), ']') AS lead_summary FROM leads ORDER BY lead_id ASC;",
+    "solution_explanation": "Formats enterprise lead information for CRM views.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using parentheses instead of brackets."
+    ],
+    "hints": [
+      "Use CONCAT(company_name, ' [', UPPER(industry), ']') AS lead_summary.",
+      "Query: SELECT lead_id, CONCAT(company_name, ' [', UPPER(industry), ']') AS lead_summary FROM leads ORDER BY lead_id ASC;",
+      "The expected query is: SELECT lead_id, CONCAT(company_name, ' [', UPPER(industry), ']') AS lead_summary FROM leads ORDER BY lead_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-28",
+    "slug": "food-delivery-drivers-vehicle-badge",
+    "title": "Assemble Driver Identity and Vehicle Type Badge",
+    "description_markdown": "From `delivery_drivers`, return `driver_id` and a driver badge combining name and uppercase vehicle type in parentheses (e.g., 'Sam Fox (BIKE)') as `driver_badge`. Order by `driver_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_drivers"
+    ],
+    "expected_columns": [
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "driver_badge",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Driver badge with vehicle type\nSELECT driver_id, CONCAT(name, ' (', UPPER(vehicle_type), ')') AS driver_badge\nFROM delivery_drivers\nORDER BY ...",
+    "solution_query": "SELECT driver_id, CONCAT(name, ' (', UPPER(vehicle_type), ')') AS driver_badge FROM delivery_drivers ORDER BY driver_id ASC;",
+    "solution_explanation": "Formats courier identity tags combining name and capitalized vehicle class.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving vehicle_type in lowercase."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' (', UPPER(vehicle_type), ')') AS driver_badge.",
+      "Query: SELECT driver_id, CONCAT(name, ' (', UPPER(vehicle_type), ')') AS driver_badge FROM delivery_drivers ORDER BY driver_id ASC;",
+      "The expected query is: SELECT driver_id, CONCAT(name, ' (', UPPER(vehicle_type), ')') AS driver_badge FROM delivery_drivers ORDER BY driver_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-29",
+    "slug": "airline-passengers-manifest-and-passport-last4",
+    "title": "Generate Flight Manifest Name and Masked Passport Last 4",
+    "description_markdown": "From `passengers`, return `passenger_id`, the full name in uppercase 'LAST, FIRST' format (`UPPER(CONCAT(last_name, ', ', first_name))` as `manifest_name`), and the last 4 characters of `passport_number` (`RIGHT(passport_number, 4)` as `passport_last4`). Order by `passenger_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "passengers"
+    ],
+    "expected_columns": [
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "manifest_name",
+        "type": "varchar"
+      },
+      {
+        "name": "passport_last4",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Flight manifest formatting and passport last 4\nSELECT passenger_id, UPPER(CONCAT(last_name, ', ', first_name)) AS manifest_name, RIGHT(...) AS passport_last4\nFROM passengers\nORDER BY ...",
+    "solution_query": "SELECT passenger_id, UPPER(CONCAT(last_name, ', ', first_name)) AS manifest_name, RIGHT(passport_number, 4) AS passport_last4 FROM passengers ORDER BY passenger_id ASC;",
+    "solution_explanation": "Combines UPPER(CONCAT(...)) for manifest standardization with RIGHT(...) for secure passport masking.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT instead of RIGHT for passport last 4 digits."
+    ],
+    "hints": [
+      "Use UPPER(CONCAT(last_name, ', ', first_name)) AS manifest_name.",
+      "Use RIGHT(passport_number, 4) AS passport_last4.",
+      "Query: SELECT passenger_id, UPPER(CONCAT(last_name, ', ', first_name)) AS manifest_name, RIGHT(passport_number, 4) AS passport_last4 FROM passengers ORDER BY passenger_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "right",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-30",
+    "slug": "inventory-suppliers-email-address-card",
+    "title": "Format Supplier Contact Address Card",
+    "description_markdown": "From `suppliers`, return `supplier_id` and a contact string formatted as 'Name <email>' (e.g. 'Apex Global <apex@global.com>') using `CONCAT(name, ' <', LOWER(contact_email), '>')` as `supplier_contact`. Order by `supplier_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "supplier_contact",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Supplier contact line\nSELECT supplier_id, CONCAT(name, ' <', LOWER(contact_email), '>') AS supplier_contact\nFROM suppliers\nORDER BY ...",
+    "solution_query": "SELECT supplier_id, CONCAT(name, ' <', LOWER(contact_email), '>') AS supplier_contact FROM suppliers ORDER BY supplier_id ASC;",
+    "solution_explanation": "Formats email sender tags using angled brackets and LOWER.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing angle brackets or space before email."
+    ],
+    "hints": [
+      "Use CONCAT(name, ' <', LOWER(contact_email), '>') AS supplier_contact.",
+      "Query: SELECT supplier_id, CONCAT(name, ' <', LOWER(contact_email), '>') AS supplier_contact FROM suppliers ORDER BY supplier_id ASC;",
+      "The expected query is: SELECT supplier_id, CONCAT(name, ' <', LOWER(contact_email), '>') AS supplier_contact FROM suppliers ORDER BY supplier_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "lower",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-31",
+    "slug": "hr-job-postings-header-display",
+    "title": "Construct Department and Role Header Display",
+    "description_markdown": "From `job_postings`, return `posting_id` and a header combining uppercase department and title (e.g., 'ENGINEERING: Backend Developer') using `CONCAT(UPPER(department), ': ', title)` as `posting_header`. Order by `posting_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-transform",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "posting_header",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Job posting header\nSELECT posting_id, CONCAT(UPPER(department), ': ', title) AS posting_header\nFROM job_postings\nORDER BY ...",
+    "solution_query": "SELECT posting_id, CONCAT(UPPER(department), ': ', title) AS posting_header FROM job_postings ORDER BY posting_id ASC;",
+    "solution_explanation": "Formats recruitment board headers using UPPER and CONCAT.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing space after colon."
+    ],
+    "hints": [
+      "Use CONCAT(UPPER(department), ': ', title) AS posting_header.",
+      "Query: SELECT posting_id, CONCAT(UPPER(department), ': ', title) AS posting_header FROM job_postings ORDER BY posting_id ASC;",
+      "The expected query is: SELECT posting_id, CONCAT(UPPER(department), ': ', title) AS posting_header FROM job_postings ORDER BY posting_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "concat",
+      "upper",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-str-32",
+    "slug": "social-media-posts-snippet-character-count",
+    "title": "Generate Post Preview Snippet and Character Count",
+    "description_markdown": "From `posts`, return `post_id`, the first 30 characters of `content` using `SUBSTRING(content, 1, 30)` as `preview_snippet`, and total character count `LENGTH(content)` as `char_count`. Order by `post_id` ascending.",
+    "topic_id": "string-functions",
+    "subtopic_id": "str-extract",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "preview_snippet",
+        "type": "varchar"
+      },
+      {
+        "name": "char_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Post snippet preview and total character count\nSELECT post_id, SUBSTRING(content, 1, 30) AS preview_snippet, LENGTH(content) AS char_count\nFROM posts\nORDER BY ...",
+    "solution_query": "SELECT post_id, SUBSTRING(content, 1, 30) AS preview_snippet, LENGTH(content) AS char_count FROM posts ORDER BY post_id ASC;",
+    "solution_explanation": "Creates post teaser snippets with SUBSTRING and checks character lengths with LENGTH.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using index 0 in SUBSTRING."
+    ],
+    "hints": [
+      "Use SUBSTRING(content, 1, 30) AS preview_snippet.",
+      "Use LENGTH(content) AS char_count.",
+      "Query: SELECT post_id, SUBSTRING(content, 1, 30) AS preview_snippet, LENGTH(content) AS char_count FROM posts ORDER BY post_id ASC;"
+    ],
+    "tags": [
+      "string-functions",
+      "substring",
+      "length",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-str-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-str-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-str-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

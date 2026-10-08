@@ -1,0 +1,2252 @@
+[
+  {
+    "id": "q-my-rct-01",
+    "slug": "generate-integer-sequence-recursive-cte",
+    "title": "Generate Numeric Range via Recursive CTE",
+    "description_markdown": "Use a recursive CTE named `numbers` to generate a series of integers from 1 to 5. Return `num`. Order by `num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Recursive CTE syntax\nWITH RECURSIVE numbers AS (\n  SELECT 1 AS num -- anchor\n  UNION ALL\n  SELECT num + 1 FROM numbers WHERE num < 5 -- recursive\n)\nSELECT num FROM numbers ORDER BY num ASC;",
+    "solution_query": "WITH RECURSIVE numbers AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM numbers WHERE num < 5) SELECT num FROM numbers ORDER BY num ASC;",
+    "solution_explanation": "A recursive CTE consists of an anchor member, UNION ALL, and a recursive term referencing the CTE name.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WITH RECURSIVE numbers AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM numbers WHERE num < 5)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: WITH RECURSIVE numbers AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM numbers WHERE num < 5) SELECT num FROM numbers ORDER BY num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sequence"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-02",
+    "slug": "category-hierarchy-path-traversal",
+    "title": "Traverse Category Tree and Build Breadcrumb Paths",
+    "description_markdown": "From `categories`, use a recursive CTE `category_path` to traverse from top-level root categories (`parent_category_id IS NULL`) down to sub-categories. Calculate `level` (starting at 1) and concatenate `path` as `TEXT` (`category_name` for root, and `path || ' > ' || category_name` for children). Return `category_id`, `category_name`, and `level`. Order by `level` ASC, `category_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Recursive hierarchy traversal\nWITH RECURSIVE category_tree AS (\n  ...\n)\nSELECT ...",
+    "solution_query": "WITH RECURSIVE category_tree AS (SELECT category_id, category_name, parent_category_id, 1 AS level FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, ct.level + 1 FROM categories c JOIN category_tree ct ON c.parent_category_id = ct.category_id) SELECT category_id, category_name, level FROM category_tree ORDER BY level ASC, category_id ASC;",
+    "solution_explanation": "Traverses self-referential tree relations by connecting recursive terms to parents.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Anchor: `SELECT category_id, category_name, parent_category_id, 1 AS level FROM categories WHERE parent_category_id IS NULL`.",
+      "Recursive member: `JOIN category_tree ct ON c.parent_category_id = ct.category_id`.",
+      "Query: WITH RECURSIVE category_tree AS (SELECT category_id, category_name, parent_category_id, 1 AS level FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, ct.level + 1 FROM categories c JOIN category_tree ct ON c.parent_category_id = ct.category_id) SELECT category_id, category_name, level FROM category_tree ORDER BY level ASC, category_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "tree-traversal"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-03",
+    "slug": "organizational-reporting-hierarchy-depth",
+    "title": "Traverse Corporate Management Levels from CEO",
+    "description_markdown": "Using a recursive CTE starting at the CEO (`manager_id IS NULL` at level 1), traverse the organizational chart to assign an organizational `org_depth` integer to every employee. Return `emp_id`, `first_name`, `job_title`, and `org_depth`. Order by `org_depth` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "org_depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive management depth\nWITH RECURSIVE org_chart AS (\n  ...\n)\nSELECT ...",
+    "solution_query": "WITH RECURSIVE org_chart AS (SELECT emp_id, first_name, job_title, 1 AS org_depth FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, e.first_name, e.job_title, oc.org_depth + 1 FROM employees e JOIN org_chart oc ON e.manager_id = oc.emp_id) SELECT emp_id, first_name, job_title, org_depth FROM org_chart ORDER BY org_depth ASC, emp_id ASC;",
+    "solution_explanation": "Models corporate hierarchy depth from CEO (level 1) through VPs (level 2), directors, and senior individual contributors.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Anchor on `WHERE manager_id IS NULL` with `1 AS org_depth`.",
+      "Join recursive member on `e.manager_id = oc.emp_id`.",
+      "Query: WITH RECURSIVE org_chart AS (SELECT emp_id, first_name, job_title, 1 AS org_depth FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, e.first_name, e.job_title, oc.org_depth + 1 FROM employees e JOIN org_chart oc ON e.manager_id = oc.emp_id) SELECT emp_id, first_name, job_title, org_depth FROM org_chart ORDER BY org_depth ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "org-chart"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-04",
+    "slug": "rct-sequence-one-to-ten",
+    "title": "Generate Sequence from 1 to 10",
+    "description_markdown": "Use a recursive CTE named `seq` to generate numbers from 1 to 10 inclusive. Return `num`. Order by `num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Generate 1 to 10 using recursive CTE\nWITH RECURSIVE seq AS (\n  SELECT 1 AS num\n  UNION ALL\n  SELECT num + 1 FROM seq WHERE num < 10\n)\nSELECT num FROM seq ORDER BY num ASC;",
+    "solution_query": "WITH RECURSIVE seq AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM seq WHERE num < 10) SELECT num FROM seq ORDER BY num ASC;",
+    "solution_explanation": "Anchor query sets num = 1; recursive query adds 1 until num is 10.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting terminating WHERE condition causing infinite recursion."
+    ],
+    "interview_tip": "Recursive CTEs are the standard ANSI SQL method for generating number rows without helper tables.",
+    "hints": [
+      "Anchor with `SELECT 1 AS num`.",
+      "Recursive member: `SELECT num + 1 FROM seq WHERE num < 10`.",
+      "Query: WITH RECURSIVE seq AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM seq WHERE num < 10) SELECT num FROM seq ORDER BY num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sequence",
+      "numbers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-05",
+    "slug": "rct-even-numbers-up-to-twenty",
+    "title": "Generate Even Numbers Up to 20",
+    "description_markdown": "Use a recursive CTE named `even_nums` starting at 2 that increments by 2 up to 20 inclusive. Return `even_num`. Order by `even_num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "even_num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Even numbers up to 20\nWITH RECURSIVE even_nums AS (\n  SELECT 2 AS even_num\n  UNION ALL\n  SELECT even_num + 2 FROM even_nums WHERE even_num < 20\n)\nSELECT even_num FROM even_nums ORDER BY even_num ASC;",
+    "solution_query": "WITH RECURSIVE even_nums AS (SELECT 2 AS even_num UNION ALL SELECT even_num + 2 FROM even_nums WHERE even_num < 20) SELECT even_num FROM even_nums ORDER BY even_num ASC;",
+    "solution_explanation": "Anchor query starts at 2 and recursion steps by +2 until 20.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using num <= 20 inside WHERE which would produce 22."
+    ],
+    "interview_tip": "Adjusting step size in recursive CTEs allows generating arithmetic progressions easily.",
+    "hints": [
+      "Anchor with `SELECT 2 AS even_num`.",
+      "Add 2 in the recursive step with `WHERE even_num < 20`.",
+      "Query: WITH RECURSIVE even_nums AS (SELECT 2 AS even_num UNION ALL SELECT even_num + 2 FROM even_nums WHERE even_num < 20) SELECT even_num FROM even_nums ORDER BY even_num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sequence",
+      "even-numbers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-06",
+    "slug": "rct-odd-numbers-series",
+    "title": "Generate Series of Odd Numbers",
+    "description_markdown": "Use a recursive CTE named `odd_nums` starting at 1 that increments by 2 up to 19 inclusive. Return `odd_num`. Order by `odd_num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "odd_num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Odd numbers up to 19\nWITH RECURSIVE odd_nums AS (\n  SELECT 1 AS odd_num\n  UNION ALL\n  SELECT odd_num + 2 FROM odd_nums WHERE odd_num < 19\n)\nSELECT odd_num FROM odd_nums ORDER BY odd_num ASC;",
+    "solution_query": "WITH RECURSIVE odd_nums AS (SELECT 1 AS odd_num UNION ALL SELECT odd_num + 2 FROM odd_nums WHERE odd_num < 19) SELECT odd_num FROM odd_nums ORDER BY odd_num ASC;",
+    "solution_explanation": "Anchor query starts at 1 and each recursive step adds 2 up to 19.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Stopping early or late due to incorrect inequality condition."
+    ],
+    "interview_tip": "Recursive CTE boundary checks are evaluated before the next row is added.",
+    "hints": [
+      "Anchor with `SELECT 1 AS odd_num`.",
+      "Filter with `WHERE odd_num < 19`.",
+      "Query: WITH RECURSIVE odd_nums AS (SELECT 1 AS odd_num UNION ALL SELECT odd_num + 2 FROM odd_nums WHERE odd_num < 19) SELECT odd_num FROM odd_nums ORDER BY odd_num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sequence",
+      "odd-numbers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-07",
+    "slug": "rct-countdown-ten-to-one",
+    "title": "Recursive Countdown from 10 to 1",
+    "description_markdown": "Use a recursive CTE named `countdown` starting at 10 that decrements by 1 down to 1. Return `val`. Order by `val` DESC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Countdown from 10 to 1\nWITH RECURSIVE countdown AS (\n  SELECT 10 AS val\n  UNION ALL\n  SELECT val - 1 FROM countdown WHERE val > 1\n)\nSELECT val FROM countdown ORDER BY val DESC;",
+    "solution_query": "WITH RECURSIVE countdown AS (SELECT 10 AS val UNION ALL SELECT val - 1 FROM countdown WHERE val > 1) SELECT val FROM countdown ORDER BY val DESC;",
+    "solution_explanation": "Starting from 10, the recursive query decrements by 1 while val > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using val >= 1 which produces 0 in the sequence."
+    ],
+    "interview_tip": "Recursive queries can decrement values as easily as incrementing them.",
+    "hints": [
+      "Anchor with `SELECT 10 AS val`.",
+      "Subtract 1 while `val > 1`.",
+      "Query: WITH RECURSIVE countdown AS (SELECT 10 AS val UNION ALL SELECT val - 1 FROM countdown WHERE val > 1) SELECT val FROM countdown ORDER BY val DESC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "countdown",
+      "decrement"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-08",
+    "slug": "rct-multiples-of-five",
+    "title": "Generate Multiples of 5 Up to 50",
+    "description_markdown": "Use a recursive CTE named `mult_five` starting at 5 that increments by 5 up to 50 inclusive. Return `val`. Order by `val` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multiples of 5\nWITH RECURSIVE mult_five AS (\n  SELECT 5 AS val\n  UNION ALL\n  SELECT val + 5 FROM mult_five WHERE val < 50\n)\nSELECT val FROM mult_five ORDER BY val ASC;",
+    "solution_query": "WITH RECURSIVE mult_five AS (SELECT 5 AS val UNION ALL SELECT val + 5 FROM mult_five WHERE val < 50) SELECT val FROM mult_five ORDER BY val ASC;",
+    "solution_explanation": "Produces 5, 10, 15, ..., 50 via recursive addition.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Miscalculating stopping bound."
+    ],
+    "interview_tip": "Sequences generated with recursive CTEs can be used to perform calendar or tier bucket lookups.",
+    "hints": [
+      "Anchor starts at 5.",
+      "Step condition `val < 50`.",
+      "Query: WITH RECURSIVE mult_five AS (SELECT 5 AS val UNION ALL SELECT val + 5 FROM mult_five WHERE val < 50) SELECT val FROM mult_five ORDER BY val ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "multiples",
+      "arithmetic"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-09",
+    "slug": "rct-powers-of-two",
+    "title": "Generate Powers of 2 from 1 to 64",
+    "description_markdown": "Use a recursive CTE named `powers_two` starting at 1 where each term multiplies the previous by 2, stopping at 64. Return `power_val`. Order by `power_val` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "power_val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Powers of 2\nWITH RECURSIVE powers_two AS (\n  SELECT 1 AS power_val\n  UNION ALL\n  SELECT power_val * 2 FROM powers_two WHERE power_val < 64\n)\nSELECT power_val FROM powers_two ORDER BY power_val ASC;",
+    "solution_query": "WITH RECURSIVE powers_two AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 2 FROM powers_two WHERE power_val < 64) SELECT power_val FROM powers_two ORDER BY power_val ASC;",
+    "solution_explanation": "Multiplies each previous term by 2 (1, 2, 4, 8, 16, 32, 64).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using power_val <= 64 which generates 128 as the next row."
+    ],
+    "interview_tip": "Geometric sequences are easily generated by applying multiplication in the recursive term.",
+    "hints": [
+      "Anchor with `1 AS power_val`.",
+      "Multiply `power_val * 2` while `power_val < 64`.",
+      "Query: WITH RECURSIVE powers_two AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 2 FROM powers_two WHERE power_val < 64) SELECT power_val FROM powers_two ORDER BY power_val ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "powers",
+      "geometric"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-10",
+    "slug": "rct-powers-of-three",
+    "title": "Generate Powers of 3 from 1 to 81",
+    "description_markdown": "Use a recursive CTE named `powers_three` starting at 1 where each term multiplies the previous by 3, stopping at 81. Return `power_val`. Order by `power_val` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "power_val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Powers of 3\nWITH RECURSIVE powers_three AS (\n  SELECT 1 AS power_val\n  UNION ALL\n  SELECT power_val * 3 FROM powers_three WHERE power_val < 81\n)\nSELECT power_val FROM powers_three ORDER BY power_val ASC;",
+    "solution_query": "WITH RECURSIVE powers_three AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 3 FROM powers_three WHERE power_val < 81) SELECT power_val FROM powers_three ORDER BY power_val ASC;",
+    "solution_explanation": "Multiplies by 3 recursively yielding 1, 3, 9, 27, 81.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Stopping before 81."
+    ],
+    "interview_tip": "Ensure the WHERE clause tests the current term before producing the next term.",
+    "hints": [
+      "Anchor: `SELECT 1 AS power_val`.",
+      "Recursive query: `SELECT power_val * 3 FROM powers_three WHERE power_val < 81`.",
+      "Query: WITH RECURSIVE powers_three AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 3 FROM powers_three WHERE power_val < 81) SELECT power_val FROM powers_three ORDER BY power_val ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "geometric",
+      "powers"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-11",
+    "slug": "rct-triangular-numbers-running-sum",
+    "title": "Compute Running Triangular Sums",
+    "description_markdown": "Use a recursive CTE named `triangular` starting with `step = 1` and `running_sum = 1`. In each recursive step, increase `step` by 1 and add the new step to `running_sum` up to `step = 5`. Return `step` and `running_sum`. Order by `step` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "step",
+        "type": "integer"
+      },
+      {
+        "name": "running_sum",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Triangular numbers running sum\nWITH RECURSIVE triangular AS (\n  SELECT 1 AS step, 1 AS running_sum\n  UNION ALL\n  SELECT step + 1, running_sum + (step + 1) FROM triangular WHERE step < 5\n)\nSELECT step, running_sum FROM triangular ORDER BY step ASC;",
+    "solution_query": "WITH RECURSIVE triangular AS (SELECT 1 AS step, 1 AS running_sum UNION ALL SELECT step + 1, running_sum + (step + 1) FROM triangular WHERE step < 5) SELECT step, running_sum FROM triangular ORDER BY step ASC;",
+    "solution_explanation": "Accumulates triangular numbers: (1, 1), (2, 3), (3, 6), (4, 10), (5, 15).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Adding old step instead of new step."
+    ],
+    "interview_tip": "Maintaining multiple state columns in recursive CTEs allows calculating accumulators without window functions.",
+    "hints": [
+      "Anchor: `SELECT 1 AS step, 1 AS running_sum`.",
+      "Recursion: `SELECT step + 1, running_sum + (step + 1) FROM triangular WHERE step < 5`.",
+      "Query: WITH RECURSIVE triangular AS (SELECT 1 AS step, 1 AS running_sum UNION ALL SELECT step + 1, running_sum + (step + 1) FROM triangular WHERE step < 5) SELECT step, running_sum FROM triangular ORDER BY step ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "running-sum",
+      "triangular"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-12",
+    "slug": "rct-factorial-sequence",
+    "title": "Generate Factorial Sequence up to 5 Factorial",
+    "description_markdown": "Use a recursive CTE named `factorials` starting at `n = 1` and `fact = 1`. In each recursive step, increase `n` by 1 and multiply `fact` by the new `n` up to `n = 5`. Return `n` and `fact`. Order by `n` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "n",
+        "type": "integer"
+      },
+      {
+        "name": "fact",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Factorial generation\nWITH RECURSIVE factorials AS (\n  SELECT 1 AS n, 1 AS fact\n  UNION ALL\n  SELECT n + 1, fact * (n + 1) FROM factorials WHERE n < 5\n)\nSELECT n, fact FROM factorials ORDER BY n ASC;",
+    "solution_query": "WITH RECURSIVE factorials AS (SELECT 1 AS n, 1 AS fact UNION ALL SELECT n + 1, fact * (n + 1) FROM factorials WHERE n < 5) SELECT n, fact FROM factorials ORDER BY n ASC;",
+    "solution_explanation": "Recursively computes factorials 1! = 1, 2! = 2, 3! = 6, 4! = 24, 5! = 120.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplication overflow if sequence is allowed to grow unbounded."
+    ],
+    "interview_tip": "Simulating recursion for mathematical sequences is a classic SQL interview technique.",
+    "hints": [
+      "Anchor: `SELECT 1 AS n, 1 AS fact`.",
+      "Recursive part: `SELECT n + 1, fact * (n + 1) FROM factorials WHERE n < 5`.",
+      "Query: WITH RECURSIVE factorials AS (SELECT 1 AS n, 1 AS fact UNION ALL SELECT n + 1, fact * (n + 1) FROM factorials WHERE n < 5) SELECT n, fact FROM factorials ORDER BY n ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "factorial",
+      "math"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-13",
+    "slug": "rct-fibonacci-first-seven-terms",
+    "title": "Generate First 7 Fibonacci Terms",
+    "description_markdown": "Use a recursive CTE named `fib` with anchor `n = 1`, `a = 0`, `b = 1` (where `b` is the current Fibonacci value). In each recursive step up to `n < 7`, set `n = n + 1`, new `a = b`, and new `b = a + b`. Return `n` as `term` and `b` as `fib_val`. Order by `term` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "term",
+        "type": "integer"
+      },
+      {
+        "name": "fib_val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Fibonacci series\nWITH RECURSIVE fib AS (\n  SELECT 1 AS n, 0 AS a, 1 AS b\n  UNION ALL\n  SELECT n + 1, b, a + b FROM fib WHERE n < 7\n)\nSELECT n AS term, b AS fib_val FROM fib ORDER BY term ASC;",
+    "solution_query": "WITH RECURSIVE fib AS (SELECT 1 AS n, 0 AS a, 1 AS b UNION ALL SELECT n + 1, b, a + b FROM fib WHERE n < 7) SELECT n AS term, b AS fib_val FROM fib ORDER BY term ASC;",
+    "solution_explanation": "Two state variables a and b track previous two Fibonacci numbers across iterations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Failing to advance both state variables simultaneously in the projection."
+    ],
+    "interview_tip": "State tuple passing (a, b) -> (b, a + b) is the standard recurrence relation pattern in SQL.",
+    "hints": [
+      "Anchor: `SELECT 1 AS n, 0 AS a, 1 AS b`.",
+      "Recursive step: `SELECT n + 1, b, a + b FROM fib WHERE n < 7`.",
+      "Query: WITH RECURSIVE fib AS (SELECT 1 AS n, 0 AS a, 1 AS b UNION ALL SELECT n + 1, b, a + b FROM fib WHERE n < 7) SELECT n AS term, b AS fib_val FROM fib ORDER BY term ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "fibonacci",
+      "recurrence"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-14",
+    "slug": "rct-subordinates-of-vp-engineering",
+    "title": "Traverse Subordinates of Engineering VP",
+    "description_markdown": "Using a recursive CTE `subordinates`, anchor on the employee where `job_title = 'VP of Engineering'` at `level = 1`. Recursively find all employees reporting directly or indirectly to them (`e.manager_id = s.emp_id`), incrementing `level` by 1. Return `emp_id`, `first_name`, and `level`. Order by `level` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subordinates of VP of Engineering\nWITH RECURSIVE subordinates AS (\n  SELECT emp_id, first_name, manager_id, 1 AS level\n  FROM employees\n  WHERE job_title = 'VP of Engineering'\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.manager_id, s.level + 1\n  FROM employees e\n  JOIN subordinates s ON e.manager_id = s.emp_id\n)\nSELECT emp_id, first_name, level\nFROM subordinates\nORDER BY level ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE subordinates AS (SELECT emp_id, first_name, manager_id, 1 AS level FROM employees WHERE job_title = 'VP of Engineering' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, s.level + 1 FROM employees e JOIN subordinates s ON e.manager_id = s.emp_id) SELECT emp_id, first_name, level FROM subordinates ORDER BY level ASC, emp_id ASC;",
+    "solution_explanation": "Anchors on the VP of Engineering and traverses all downward subordinate relationships in the hierarchy.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on e.emp_id = s.manager_id which traverses upwards instead of downwards."
+    ],
+    "interview_tip": "To traverse downward: JOIN on employee.manager_id = recursive_result.emp_id.",
+    "hints": [
+      "Anchor: `SELECT emp_id, first_name, manager_id, 1 AS level FROM employees WHERE job_title = 'VP of Engineering'`.",
+      "Recursive join: `JOIN subordinates s ON e.manager_id = s.emp_id`.",
+      "Query: WITH RECURSIVE subordinates AS (SELECT emp_id, first_name, manager_id, 1 AS level FROM employees WHERE job_title = 'VP of Engineering' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, s.level + 1 FROM employees e JOIN subordinates s ON e.manager_id = s.emp_id) SELECT emp_id, first_name, level FROM subordinates ORDER BY level ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "org-chart",
+      "subordinates",
+      "hierarchy"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-15",
+    "slug": "rct-subordinates-of-vp-product",
+    "title": "Traverse Subordinates of Product VP",
+    "description_markdown": "Using a recursive CTE `prod_reports`, anchor on the employee where `job_title = 'VP of Product'` at `depth = 1`. Recursively join employees who report to them (`e.manager_id = p.emp_id`), incrementing `depth` by 1. Return `emp_id`, `first_name`, and `depth`. Order by `depth` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subordinates of VP of Product\nWITH RECURSIVE prod_reports AS (\n  SELECT emp_id, first_name, manager_id, 1 AS depth\n  FROM employees\n  WHERE job_title = 'VP of Product'\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.manager_id, p.depth + 1\n  FROM employees e\n  JOIN prod_reports p ON e.manager_id = p.emp_id\n)\nSELECT emp_id, first_name, depth\nFROM prod_reports\nORDER BY depth ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE prod_reports AS (SELECT emp_id, first_name, manager_id, 1 AS depth FROM employees WHERE job_title = 'VP of Product' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, p.depth + 1 FROM employees e JOIN prod_reports p ON e.manager_id = p.emp_id) SELECT emp_id, first_name, depth FROM prod_reports ORDER BY depth ASC, emp_id ASC;",
+    "solution_explanation": "Walks down the product reporting subtree from the VP of Product.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting from the CTE inside the CTE without joining employees."
+    ],
+    "interview_tip": "Tree traversal queries form the core of organization directory applications.",
+    "hints": [
+      "Filter anchor by `job_title = 'VP of Product'`.",
+      "Recursive join on `e.manager_id = p.emp_id`.",
+      "Query: WITH RECURSIVE prod_reports AS (SELECT emp_id, first_name, manager_id, 1 AS depth FROM employees WHERE job_title = 'VP of Product' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, p.depth + 1 FROM employees e JOIN prod_reports p ON e.manager_id = p.emp_id) SELECT emp_id, first_name, depth FROM prod_reports ORDER BY depth ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "product-team",
+      "hierarchy",
+      "tree"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-16",
+    "slug": "rct-subordinates-of-vp-sales",
+    "title": "Traverse Subordinates of Sales VP",
+    "description_markdown": "Using a recursive CTE `sales_reports`, anchor on the employee with `job_title = 'VP of Sales'` at `org_level = 1`. Recursively find all reports (`e.manager_id = s.emp_id`), incrementing `org_level` by 1. Return `emp_id`, `first_name`, and `org_level`. Order by `org_level` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "org_level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subordinates of VP of Sales\nWITH RECURSIVE sales_reports AS (\n  SELECT emp_id, first_name, manager_id, 1 AS org_level\n  FROM employees\n  WHERE job_title = 'VP of Sales'\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.manager_id, s.org_level + 1\n  FROM employees e\n  JOIN sales_reports s ON e.manager_id = s.emp_id\n)\nSELECT emp_id, first_name, org_level\nFROM sales_reports\nORDER BY org_level ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE sales_reports AS (SELECT emp_id, first_name, manager_id, 1 AS org_level FROM employees WHERE job_title = 'VP of Sales' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, s.org_level + 1 FROM employees e JOIN sales_reports s ON e.manager_id = s.emp_id) SELECT emp_id, first_name, org_level FROM sales_reports ORDER BY org_level ASC, emp_id ASC;",
+    "solution_explanation": "Builds the sales organization subtree starting at the VP of Sales.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Not carrying the org_level accumulator through the recursive term."
+    ],
+    "interview_tip": "Recursive queries calculate subtree levels in $O(N)$ operations.",
+    "hints": [
+      "Filter by `job_title = 'VP of Sales'`.",
+      "Increment `s.org_level + 1` in recursive term.",
+      "Query: WITH RECURSIVE sales_reports AS (SELECT emp_id, first_name, manager_id, 1 AS org_level FROM employees WHERE job_title = 'VP of Sales' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, s.org_level + 1 FROM employees e JOIN sales_reports s ON e.manager_id = s.emp_id) SELECT emp_id, first_name, org_level FROM sales_reports ORDER BY org_level ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "sales-hierarchy",
+      "tree-search"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-17",
+    "slug": "rct-category-descendants-electronics",
+    "title": "Traverse Category Tree from Electronics Root",
+    "description_markdown": "Using a recursive CTE `subcategories`, anchor on the category where `category_name = 'Electronics'` at `depth = 1`. Recursively traverse child categories (`c.parent_category_id = s.category_id`), incrementing `depth` by 1. Return `category_id`, `category_name`, and `depth`. Order by `depth` ASC, `category_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Descendants of Electronics\nWITH RECURSIVE subcategories AS (\n  SELECT category_id, category_name, parent_category_id, 1 AS depth\n  FROM categories\n  WHERE category_name = 'Electronics'\n  UNION ALL\n  SELECT c.category_id, c.category_name, c.parent_category_id, s.depth + 1\n  FROM categories c\n  JOIN subcategories s ON c.parent_category_id = s.category_id\n)\nSELECT category_id, category_name, depth\nFROM subcategories\nORDER BY depth ASC, category_id ASC;",
+    "solution_query": "WITH RECURSIVE subcategories AS (SELECT category_id, category_name, parent_category_id, 1 AS depth FROM categories WHERE category_name = 'Electronics' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, s.depth + 1 FROM categories c JOIN subcategories s ON c.parent_category_id = s.category_id) SELECT category_id, category_name, depth FROM subcategories ORDER BY depth ASC, category_id ASC;",
+    "solution_explanation": "Selects Electronics as root and identifies all child and grandchild category nodes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Failing to join on parent_category_id = s.category_id."
+    ],
+    "interview_tip": "Category taxomomy trees are universally modeled via self-referencing parent foreign keys.",
+    "hints": [
+      "Anchor: `SELECT category_id, category_name, parent_category_id, 1 AS depth FROM categories WHERE category_name = 'Electronics'`.",
+      "Recursive join on `c.parent_category_id = s.category_id`.",
+      "Query: WITH RECURSIVE subcategories AS (SELECT category_id, category_name, parent_category_id, 1 AS depth FROM categories WHERE category_name = 'Electronics' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, s.depth + 1 FROM categories c JOIN subcategories s ON c.parent_category_id = s.category_id) SELECT category_id, category_name, depth FROM subcategories ORDER BY depth ASC, category_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "categories",
+      "ecommerce",
+      "taxonomy"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-18",
+    "slug": "rct-category-descendants-home-kitchen",
+    "title": "Traverse Category Tree from Home and Kitchen",
+    "description_markdown": "Using a recursive CTE `kitchen_tree`, anchor on the category where `category_name = 'Home & Kitchen'` at `tree_level = 1`. Recursively find subcategories (`c.parent_category_id = k.category_id`), incrementing `tree_level` by 1. Return `category_id`, `category_name`, and `tree_level`. Order by `tree_level` ASC, `category_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "tree_level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Home & Kitchen category tree\nWITH RECURSIVE kitchen_tree AS (\n  SELECT category_id, category_name, parent_category_id, 1 AS tree_level\n  FROM categories\n  WHERE category_name = 'Home & Kitchen'\n  UNION ALL\n  SELECT c.category_id, c.category_name, c.parent_category_id, k.tree_level + 1\n  FROM categories c\n  JOIN kitchen_tree k ON c.parent_category_id = k.category_id\n)\nSELECT category_id, category_name, tree_level\nFROM kitchen_tree\nORDER BY tree_level ASC, category_id ASC;",
+    "solution_query": "WITH RECURSIVE kitchen_tree AS (SELECT category_id, category_name, parent_category_id, 1 AS tree_level FROM categories WHERE category_name = 'Home & Kitchen' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, k.tree_level + 1 FROM categories c JOIN kitchen_tree k ON c.parent_category_id = k.category_id) SELECT category_id, category_name, tree_level FROM kitchen_tree ORDER BY tree_level ASC, category_id ASC;",
+    "solution_explanation": "Extracts the Home & Kitchen sub-tree branches.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Typo in 'Home & Kitchen' string literal."
+    ],
+    "interview_tip": "Scoping recursive queries to specific root entities prevents full table scans on large forest graphs.",
+    "hints": [
+      "Anchor by `category_name = 'Home & Kitchen'`.",
+      "Recursive join `c.parent_category_id = k.category_id`.",
+      "Query: WITH RECURSIVE kitchen_tree AS (SELECT category_id, category_name, parent_category_id, 1 AS tree_level FROM categories WHERE category_name = 'Home & Kitchen' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, k.tree_level + 1 FROM categories c JOIN kitchen_tree k ON c.parent_category_id = k.category_id) SELECT category_id, category_name, tree_level FROM kitchen_tree ORDER BY tree_level ASC, category_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "categories",
+      "tree",
+      "sub-hierarchy"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-19",
+    "slug": "rct-chain-of-command-upward-principal",
+    "title": "Trace Upward Chain of Command from Principal Engineer",
+    "description_markdown": "Using a recursive CTE `chain_up`, anchor on the employee with `job_title = 'Principal Engineer'` at `step = 1`. Recursively join their manager (`e.emp_id = c.manager_id`), incrementing `step` by 1 until the top manager is reached. Return `emp_id`, `first_name`, and `step`. Order by `step` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "step",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Upward chain of command\nWITH RECURSIVE chain_up AS (\n  SELECT emp_id, first_name, manager_id, 1 AS step\n  FROM employees\n  WHERE job_title = 'Principal Engineer'\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.manager_id, c.step + 1\n  FROM employees e\n  JOIN chain_up c ON e.emp_id = c.manager_id\n)\nSELECT emp_id, first_name, step\nFROM chain_up\nORDER BY step ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE chain_up AS (SELECT emp_id, first_name, manager_id, 1 AS step FROM employees WHERE job_title = 'Principal Engineer' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, c.step + 1 FROM employees e JOIN chain_up c ON e.emp_id = c.manager_id) SELECT emp_id, first_name, step FROM chain_up ORDER BY step ASC, emp_id ASC;",
+    "solution_explanation": "Traces upward from individual contributor to VP and finally to CEO.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining manager_id to manager_id instead of e.emp_id = c.manager_id."
+    ],
+    "interview_tip": "To traverse upward: JOIN on employee.emp_id = recursive_result.manager_id.",
+    "hints": [
+      "Anchor on `job_title = 'Principal Engineer'`.",
+      "Recursive step: `JOIN chain_up c ON e.emp_id = c.manager_id`.",
+      "Query: WITH RECURSIVE chain_up AS (SELECT emp_id, first_name, manager_id, 1 AS step FROM employees WHERE job_title = 'Principal Engineer' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, c.step + 1 FROM employees e JOIN chain_up c ON e.emp_id = c.manager_id) SELECT emp_id, first_name, step FROM chain_up ORDER BY step ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "upward-traversal",
+      "chain-of-command"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-20",
+    "slug": "rct-chain-of-command-upward-growth-marketer",
+    "title": "Trace Management Chain for Marketing Staff",
+    "description_markdown": "Using a recursive CTE `mgmt_path`, anchor on the employee where `job_title = 'Growth Marketer'` at `step = 1`. Recursively ascend to their manager (`e.emp_id = m.manager_id`), incrementing `step` by 1. Return `emp_id`, `first_name`, and `step`. Order by `step` ASC, `emp_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "step",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Upward marketing chain\nWITH RECURSIVE mgmt_path AS (\n  SELECT emp_id, first_name, manager_id, 1 AS step\n  FROM employees\n  WHERE job_title = 'Growth Marketer'\n  UNION ALL\n  SELECT e.emp_id, e.first_name, e.manager_id, m.step + 1\n  FROM employees e\n  JOIN mgmt_path m ON e.emp_id = m.manager_id\n)\nSELECT emp_id, first_name, step\nFROM mgmt_path\nORDER BY step ASC, emp_id ASC;",
+    "solution_query": "WITH RECURSIVE mgmt_path AS (SELECT emp_id, first_name, manager_id, 1 AS step FROM employees WHERE job_title = 'Growth Marketer' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, m.step + 1 FROM employees e JOIN mgmt_path m ON e.emp_id = m.manager_id) SELECT emp_id, first_name, step FROM mgmt_path ORDER BY step ASC, emp_id ASC;",
+    "solution_explanation": "Ascends upward from Growth Marketer through Head of Marketing to CEO.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the direction of the join."
+    ],
+    "interview_tip": "Upward tree traversals terminate naturally when manager_id is NULL.",
+    "hints": [
+      "Anchor on `job_title = 'Growth Marketer'`.",
+      "Recursive join: `JOIN mgmt_path m ON e.emp_id = m.manager_id`.",
+      "Query: WITH RECURSIVE mgmt_path AS (SELECT emp_id, first_name, manager_id, 1 AS step FROM employees WHERE job_title = 'Growth Marketer' UNION ALL SELECT e.emp_id, e.first_name, e.manager_id, m.step + 1 FROM employees e JOIN mgmt_path m ON e.emp_id = m.manager_id) SELECT emp_id, first_name, step FROM mgmt_path ORDER BY step ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "upward",
+      "marketing-hierarchy"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-21",
+    "slug": "rct-category-ascendant-from-sub",
+    "title": "Trace Category Ancestry to Root",
+    "description_markdown": "Using a recursive CTE `category_ancestors`, anchor on the category where `category_name = 'Computers'` at `step = 1`. Recursively join its parent category (`c.category_id = a.parent_category_id`), incrementing `step` by 1. Return `category_id`, `category_name`, and `step`. Order by `step` ASC, `category_id` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "step",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Trace category ancestors\nWITH RECURSIVE category_ancestors AS (\n  SELECT category_id, category_name, parent_category_id, 1 AS step\n  FROM categories\n  WHERE category_name = 'Computers'\n  UNION ALL\n  SELECT c.category_id, c.category_name, c.parent_category_id, a.step + 1\n  FROM categories c\n  JOIN category_ancestors a ON c.category_id = a.parent_category_id\n)\nSELECT category_id, category_name, step\nFROM category_ancestors\nORDER BY step ASC, category_id ASC;",
+    "solution_query": "WITH RECURSIVE category_ancestors AS (SELECT category_id, category_name, parent_category_id, 1 AS step FROM categories WHERE category_name = 'Computers' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, a.step + 1 FROM categories c JOIN category_ancestors a ON c.category_id = a.parent_category_id) SELECT category_id, category_name, step FROM category_ancestors ORDER BY step ASC, category_id ASC;",
+    "solution_explanation": "Walks from leaf category upward to parent categories until parent_category_id is NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining on c.parent_category_id instead of c.category_id."
+    ],
+    "interview_tip": "Breadcrumb navigation paths in e-commerce applications are constructed using upward recursive CTEs.",
+    "hints": [
+      "Anchor on `category_name = 'Computers'`.",
+      "Recursive join on `c.category_id = a.parent_category_id`.",
+      "Query: WITH RECURSIVE category_ancestors AS (SELECT category_id, category_name, parent_category_id, 1 AS step FROM categories WHERE category_name = 'Computers' UNION ALL SELECT c.category_id, c.category_name, c.parent_category_id, a.step + 1 FROM categories c JOIN category_ancestors a ON c.category_id = a.parent_category_id) SELECT category_id, category_name, step FROM category_ancestors ORDER BY step ASC, category_id ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "breadcrumbs",
+      "ancestry",
+      "categories"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-22",
+    "slug": "rct-year-sequence-generator",
+    "title": "Generate Calendar Year Sequence",
+    "description_markdown": "Use a recursive CTE named `years` starting at 2020 that increments by 1 up to 2025 inclusive. Return `cal_year`. Order by `cal_year` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "cal_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calendar year range\nWITH RECURSIVE years AS (\n  SELECT 2020 AS cal_year\n  UNION ALL\n  SELECT cal_year + 1 FROM years WHERE cal_year < 2025\n)\nSELECT cal_year FROM years ORDER BY cal_year ASC;",
+    "solution_query": "WITH RECURSIVE years AS (SELECT 2020 AS cal_year UNION ALL SELECT cal_year + 1 FROM years WHERE cal_year < 2025) SELECT cal_year FROM years ORDER BY cal_year ASC;",
+    "solution_explanation": "Generates consecutive years 2020 through 2025.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using cal_year <= 2025 in WHERE which produces 2026."
+    ],
+    "interview_tip": "Date and year sequences are frequently left-joined to transaction logs to ensure zero-revenue periods are retained.",
+    "hints": [
+      "Anchor with `SELECT 2020 AS cal_year`.",
+      "Filter with `WHERE cal_year < 2025`.",
+      "Query: WITH RECURSIVE years AS (SELECT 2020 AS cal_year UNION ALL SELECT cal_year + 1 FROM years WHERE cal_year < 2025) SELECT cal_year FROM years ORDER BY cal_year ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "date-range",
+      "calendar",
+      "years"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-23",
+    "slug": "rct-month-numbers-series",
+    "title": "Generate All Twelve Calendar Months",
+    "description_markdown": "Use a recursive CTE named `months` starting at 1 that increments by 1 up to 12 inclusive. Return `month_num`. Order by `month_num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "month_num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- 12 Calendar months\nWITH RECURSIVE months AS (\n  SELECT 1 AS month_num\n  UNION ALL\n  SELECT month_num + 1 FROM months WHERE month_num < 12\n)\nSELECT month_num FROM months ORDER BY month_num ASC;",
+    "solution_query": "WITH RECURSIVE months AS (SELECT 1 AS month_num UNION ALL SELECT month_num + 1 FROM months WHERE month_num < 12) SELECT month_num FROM months ORDER BY month_num ASC;",
+    "solution_explanation": "Generates month numbers 1 through 12.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Incorrect termination resulting in 13 months."
+    ],
+    "interview_tip": "Generating months in SQL is necessary when building annual matrix reports with PIVOT or CASE.",
+    "hints": [
+      "Anchor with `SELECT 1 AS month_num`.",
+      "Filter with `WHERE month_num < 12`.",
+      "Query: WITH RECURSIVE months AS (SELECT 1 AS month_num UNION ALL SELECT month_num + 1 FROM months WHERE month_num < 12) SELECT month_num FROM months ORDER BY month_num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "months",
+      "calendar"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-24",
+    "slug": "rct-multiples-of-ten",
+    "title": "Generate Multiples of 10 Up to 100",
+    "description_markdown": "Use a recursive CTE named `tens` starting at 10 that increments by 10 up to 100 inclusive. Return `val`. Order by `val` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multiples of 10\nWITH RECURSIVE tens AS (\n  SELECT 10 AS val\n  UNION ALL\n  SELECT val + 10 FROM tens WHERE val < 100\n)\nSELECT val FROM tens ORDER BY val ASC;",
+    "solution_query": "WITH RECURSIVE tens AS (SELECT 10 AS val UNION ALL SELECT val + 10 FROM tens WHERE val < 100) SELECT val FROM tens ORDER BY val ASC;",
+    "solution_explanation": "Generates decimal round numbers 10, 20, ..., 100.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misconfiguring step size."
+    ],
+    "interview_tip": "Bucketing continuous values into deciles or bins can start with a recursive sequence generator.",
+    "hints": [
+      "Anchor: `SELECT 10 AS val`.",
+      "Recursive increment: `val + 10 WHERE val < 100`.",
+      "Query: WITH RECURSIVE tens AS (SELECT 10 AS val UNION ALL SELECT val + 10 FROM tens WHERE val < 100) SELECT val FROM tens ORDER BY val ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "multiples",
+      "deciles"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-25",
+    "slug": "rct-budget-depletion-simulation",
+    "title": "Simulate Stepwise Budget Depletion",
+    "description_markdown": "Use a recursive CTE named `drawdown` starting at `step = 1` and `balance = 500`. In each step, increment `step` by 1 and decrease `balance` by 100, continuing while `balance > 100`. Return `step` and `balance`. Order by `step` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "step",
+        "type": "integer"
+      },
+      {
+        "name": "balance",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Budget drawdown simulation\nWITH RECURSIVE drawdown AS (\n  SELECT 1 AS step, 500 AS balance\n  UNION ALL\n  SELECT step + 1, balance - 100 FROM drawdown WHERE balance > 100\n)\nSELECT step, balance FROM drawdown ORDER BY step ASC;",
+    "solution_query": "WITH RECURSIVE drawdown AS (SELECT 1 AS step, 500 AS balance UNION ALL SELECT step + 1, balance - 100 FROM drawdown WHERE balance > 100) SELECT step, balance FROM drawdown ORDER BY step ASC;",
+    "solution_explanation": "Simulates financial cash burn step-by-step: 500, 400, 300, 200, 100.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Terminating on step instead of remaining balance."
+    ],
+    "interview_tip": "Iterative calculations that depend on previous balance state are naturally modeled using recursive CTEs.",
+    "hints": [
+      "Anchor with `SELECT 1 AS step, 500 AS balance`.",
+      "Recursive condition: `WHERE balance > 100`.",
+      "Query: WITH RECURSIVE drawdown AS (SELECT 1 AS step, 500 AS balance UNION ALL SELECT step + 1, balance - 100 FROM drawdown WHERE balance > 100) SELECT step, balance FROM drawdown ORDER BY step ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "simulation",
+      "finance",
+      "drawdown"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-26",
+    "slug": "rct-compound-doubling-growth",
+    "title": "Simulate Compound Doubling Steps",
+    "description_markdown": "Use a recursive CTE named `growth` starting at `step = 1` and `amount = 50`. In each step, increment `step` by 1 and double `amount` (`amount * 2`) while `amount < 800`. Return `step` and `amount`. Order by `step` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "step",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Compound doubling simulation\nWITH RECURSIVE growth AS (\n  SELECT 1 AS step, 50 AS amount\n  UNION ALL\n  SELECT step + 1, amount * 2 FROM growth WHERE amount < 800\n)\nSELECT step, amount FROM growth ORDER BY step ASC;",
+    "solution_query": "WITH RECURSIVE growth AS (SELECT 1 AS step, 50 AS amount UNION ALL SELECT step + 1, amount * 2 FROM growth WHERE amount < 800) SELECT step, amount FROM growth ORDER BY step ASC;",
+    "solution_explanation": "Models compound doubling: 50, 100, 200, 400, 800.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using amount <= 800 which produces 1600."
+    ],
+    "interview_tip": "Exponential curves can be modeled in SQL using recursive queries.",
+    "hints": [
+      "Anchor: `SELECT 1 AS step, 50 AS amount`.",
+      "Recursive query: `SELECT step + 1, amount * 2 FROM growth WHERE amount < 800`.",
+      "Query: WITH RECURSIVE growth AS (SELECT 1 AS step, 50 AS amount UNION ALL SELECT step + 1, amount * 2 FROM growth WHERE amount < 800) SELECT step, amount FROM growth ORDER BY step ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "exponential",
+      "growth-model"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-27",
+    "slug": "rct-sequence-joined-departments",
+    "title": "Join Recursive Number Range with Department IDs",
+    "description_markdown": "Using a recursive CTE `tier_seq` that generates numbers from 1 to 3, join with `departments` on `dept_id = tier_seq.tier_num`. Return `dept_id`, `dept_name`, and `tier_num`. Order by `tier_num` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "tier_num",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Recursive sequence joined with departments\nWITH RECURSIVE tier_seq AS (\n  SELECT 1 AS tier_num\n  UNION ALL\n  SELECT tier_num + 1 FROM tier_seq WHERE tier_num < 3\n)\nSELECT d.dept_id, d.dept_name, t.tier_num\nFROM departments d\nJOIN tier_seq t ON d.dept_id = t.tier_num\nORDER BY t.tier_num ASC;",
+    "solution_query": "WITH RECURSIVE tier_seq AS (SELECT 1 AS tier_num UNION ALL SELECT tier_num + 1 FROM tier_seq WHERE tier_num < 3) SELECT d.dept_id, d.dept_name, t.tier_num FROM departments d JOIN tier_seq t ON d.dept_id = t.tier_num ORDER BY t.tier_num ASC;",
+    "solution_explanation": "Demonstrates joining a dynamically generated recursive sequence against existing relational tables.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing join condition on dept_id = tier_num."
+    ],
+    "interview_tip": "Joining a generated series against database records is standard for bucket allocation and time-series fill.",
+    "hints": [
+      "Generate 1 to 3 in `tier_seq`.",
+      "Join `departments d ON d.dept_id = t.tier_num`.",
+      "Query: WITH RECURSIVE tier_seq AS (SELECT 1 AS tier_num UNION ALL SELECT tier_num + 1 FROM tier_seq WHERE tier_num < 3) SELECT d.dept_id, d.dept_name, t.tier_num FROM departments d JOIN tier_seq t ON d.dept_id = t.tier_num ORDER BY t.tier_num ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "join",
+      "series-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-28",
+    "slug": "rct-powers-of-four",
+    "title": "Generate Powers of 4 Up to 256",
+    "description_markdown": "Use a recursive CTE named `powers_four` starting at 1 where each term multiplies by 4 up to 256 inclusive. Return `power_val`. Order by `power_val` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "power_val",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Powers of 4\nWITH RECURSIVE powers_four AS (\n  SELECT 1 AS power_val\n  UNION ALL\n  SELECT power_val * 4 FROM powers_four WHERE power_val < 256\n)\nSELECT power_val FROM powers_four ORDER BY power_val ASC;",
+    "solution_query": "WITH RECURSIVE powers_four AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 4 FROM powers_four WHERE power_val < 256) SELECT power_val FROM powers_four ORDER BY power_val ASC;",
+    "solution_explanation": "Multiplies by 4 generating 1, 4, 16, 64, 256.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Condition power_val <= 256 produces 1024."
+    ],
+    "interview_tip": "Keep recursion termination guards strict to avoid runaway queries.",
+    "hints": [
+      "Anchor: `SELECT 1 AS power_val`.",
+      "Recursive WHERE: `WHERE power_val < 256`.",
+      "Query: WITH RECURSIVE powers_four AS (SELECT 1 AS power_val UNION ALL SELECT power_val * 4 FROM powers_four WHERE power_val < 256) SELECT power_val FROM powers_four ORDER BY power_val ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "geometric",
+      "powers-four"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-29",
+    "slug": "rct-multiples-of-twenty-five",
+    "title": "Generate Multiples of 25 Up to 150",
+    "description_markdown": "Use a recursive CTE named `tiers` starting at 25 that increments by 25 up to 150 inclusive. Return `tier_value`. Order by `tier_value` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "tier_value",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multiples of 25\nWITH RECURSIVE tiers AS (\n  SELECT 25 AS tier_value\n  UNION ALL\n  SELECT tier_value + 25 FROM tiers WHERE tier_value < 150\n)\nSELECT tier_value FROM tiers ORDER BY tier_value ASC;",
+    "solution_query": "WITH RECURSIVE tiers AS (SELECT 25 AS tier_value UNION ALL SELECT tier_value + 25 FROM tiers WHERE tier_value < 150) SELECT tier_value FROM tiers ORDER BY tier_value ASC;",
+    "solution_explanation": "Produces tier thresholds: 25, 50, 75, 100, 125, 150.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Off-by-one tier boundaries."
+    ],
+    "interview_tip": "Tier generators produce synthetic buckets for histogram reporting.",
+    "hints": [
+      "Anchor starts at 25.",
+      "Increment by 25 while `tier_value < 150`.",
+      "Query: WITH RECURSIVE tiers AS (SELECT 25 AS tier_value UNION ALL SELECT tier_value + 25 FROM tiers WHERE tier_value < 150) SELECT tier_value FROM tiers ORDER BY tier_value ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "tiers",
+      "percentiles"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-30",
+    "slug": "rct-cumulative-addition-ten-steps",
+    "title": "Calculate Cumulative Arithmetic Progressions",
+    "description_markdown": "Use a recursive CTE named `progression` starting at `idx = 1` and `accum = 10`. Increment `idx` by 1 and add 10 to `accum` (`accum + 10`) while `idx < 5`. Return `idx` and `accum`. Order by `idx` ASC.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [],
+    "expected_columns": [
+      {
+        "name": "idx",
+        "type": "integer"
+      },
+      {
+        "name": "accum",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Progression sequence\nWITH RECURSIVE progression AS (\n  SELECT 1 AS idx, 10 AS accum\n  UNION ALL\n  SELECT idx + 1, accum + 10 FROM progression WHERE idx < 5\n)\nSELECT idx, accum FROM progression ORDER BY idx ASC;",
+    "solution_query": "WITH RECURSIVE progression AS (SELECT 1 AS idx, 10 AS accum UNION ALL SELECT idx + 1, accum + 10 FROM progression WHERE idx < 5) SELECT idx, accum FROM progression ORDER BY idx ASC;",
+    "solution_explanation": "Produces pairs (1, 10), (2, 20), (3, 30), (4, 40), (5, 50).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatching the step loop condition."
+    ],
+    "interview_tip": "Index-accumulator pairs model sequential state machines inside SQL.",
+    "hints": [
+      "Anchor: `SELECT 1 AS idx, 10 AS accum`.",
+      "Add 10 to accum in each step while `idx < 5`.",
+      "Query: WITH RECURSIVE progression AS (SELECT 1 AS idx, 10 AS accum UNION ALL SELECT idx + 1, accum + 10 FROM progression WHERE idx < 5) SELECT idx, accum FROM progression ORDER BY idx ASC;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "accumulator",
+      "progression"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-31",
+    "slug": "rct-maximum-hierarchy-depth",
+    "title": "Find Maximum Depth of Corporate Hierarchy",
+    "description_markdown": "Using a recursive CTE `org_levels` starting with the CEO (`manager_id IS NULL` at `level = 1`) and joining subordinates incrementing `level` by 1, write an outer query that returns the maximum organizational depth as `max_depth`.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "max_depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Maximum organizational depth\nWITH RECURSIVE org_levels AS (\n  SELECT emp_id, 1 AS level\n  FROM employees\n  WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.emp_id, o.level + 1\n  FROM employees e\n  JOIN org_levels o ON e.manager_id = o.emp_id\n)\nSELECT MAX(level) AS max_depth\nFROM org_levels;",
+    "solution_query": "WITH RECURSIVE org_levels AS (SELECT emp_id, 1 AS level FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, o.level + 1 FROM employees e JOIN org_levels o ON e.manager_id = o.emp_id) SELECT MAX(level) AS max_depth FROM org_levels;",
+    "solution_explanation": "Computes the height of the organizational hierarchy tree using MAX() over the recursive level column.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to aggregate with MAX() in the outer query."
+    ],
+    "interview_tip": "Aggregating over a recursive CTE computes graph properties such as graph diameter and maximum tree depth.",
+    "hints": [
+      "Build recursive org_levels with `1 AS level` for CEO.",
+      "Outer query: `SELECT MAX(level) AS max_depth FROM org_levels`.",
+      "Query: WITH RECURSIVE org_levels AS (SELECT emp_id, 1 AS level FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.emp_id, o.level + 1 FROM employees e JOIN org_levels o ON e.manager_id = o.emp_id) SELECT MAX(level) AS max_depth FROM org_levels;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "tree-height",
+      "max-depth",
+      "graph-metrics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-rct-32",
+    "slug": "rct-category-maximum-depth-tree",
+    "title": "Determine Maximum Depth of Category Tree",
+    "description_markdown": "Using a recursive CTE `tree_depth` starting from root categories (`parent_category_id IS NULL` at `depth = 1`) and joining subcategories incrementing `depth` by 1, write an outer query that returns the maximum category depth as `max_category_depth`.",
+    "topic_id": "recursive-ctes",
+    "subtopic_id": "cte-recurse",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "max_category_depth",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Maximum category tree depth\nWITH RECURSIVE tree_depth AS (\n  SELECT category_id, 1 AS depth\n  FROM categories\n  WHERE parent_category_id IS NULL\n  UNION ALL\n  SELECT c.category_id, td.depth + 1\n  FROM categories c\n  JOIN tree_depth td ON c.parent_category_id = td.category_id\n)\nSELECT MAX(depth) AS max_category_depth\nFROM tree_depth;",
+    "solution_query": "WITH RECURSIVE tree_depth AS (SELECT category_id, 1 AS depth FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, td.depth + 1 FROM categories c JOIN tree_depth td ON c.parent_category_id = td.category_id) SELECT MAX(depth) AS max_category_depth FROM tree_depth;",
+    "solution_explanation": "Traverses all category tree branches and calculates the maximum depth.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering on the wrong parent_category_id."
+    ],
+    "interview_tip": "Determining taxonomy depth helps validate user interface navigation levels and breadcrumb limits.",
+    "hints": [
+      "Anchor on `parent_category_id IS NULL`.",
+      "Outer query aggregates with `MAX(depth) AS max_category_depth`.",
+      "Query: WITH RECURSIVE tree_depth AS (SELECT category_id, 1 AS depth FROM categories WHERE parent_category_id IS NULL UNION ALL SELECT c.category_id, td.depth + 1 FROM categories c JOIN tree_depth td ON c.parent_category_id = td.category_id) SELECT MAX(depth) AS max_category_depth FROM tree_depth;"
+    ],
+    "tags": [
+      "recursive-cte",
+      "categories",
+      "tree-height",
+      "aggregate"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-rct-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-rct-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-rct-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

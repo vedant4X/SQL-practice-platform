@@ -1,0 +1,2364 @@
+[
+  {
+    "id": "q-my-sel-01",
+    "slug": "view-all-departments",
+    "title": "Browse All Corporate Departments",
+    "description_markdown": "Write a query to retrieve all columns and rows from the `departments` table to examine corporate divisions.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-all",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "location",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select all columns from departments\nSELECT * FROM ...",
+    "solution_query": "SELECT dept_id, dept_name, location, budget FROM departments;",
+    "solution_explanation": "The SELECT statement specifies which columns to retrieve from the `departments` table.",
+    "alternative_solutions": [
+      "SELECT * FROM departments;"
+    ],
+    "common_mistakes": [
+      "Misspelling the table name as 'department' instead of 'departments'."
+    ],
+    "interview_tip": "In production APIs, prefer explicit column names over SELECT * to prevent schema coupling.",
+    "dialect_notes": "",
+    "hints": [
+      "Use the SELECT keyword followed by the table columns or asterisk.",
+      "Specify FROM departments to identify the source table.",
+      "The full statement is: SELECT dept_id, dept_name, location, budget FROM departments;"
+    ],
+    "tags": [
+      "basics",
+      "select"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-02",
+    "slug": "select-employee-roster",
+    "title": "Project Employee Roster Names and Roles",
+    "description_markdown": "Retrieve the `first_name`, `last_name`, and `job_title` of every employee in the company.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select first_name, last_name, and job_title\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, job_title FROM employees;",
+    "solution_explanation": "Listing specific column identifiers separated by commas projects only the requested fields.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "List the three column names separated by commas.",
+      "Specify FROM employees.",
+      "Query: SELECT first_name, last_name, job_title FROM employees;"
+    ],
+    "tags": [
+      "basics",
+      "projection"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-03",
+    "slug": "customer-country-directory",
+    "title": "E-Commerce Customer Geographic Roster",
+    "description_markdown": "Extract `first_name`, `last_name`, `email`, and `country` for all registered store customers.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select customer fields\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, email, country FROM customers;",
+    "solution_explanation": "Query projects the four customer fields directly from the customers table.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Check the schema explorer on the left for the exact column names.",
+      "Target the `customers` table.",
+      "Write: SELECT first_name, last_name, email, country FROM customers;"
+    ],
+    "tags": [
+      "basics",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-04",
+    "slug": "course-catalog-overview",
+    "title": "Browse Academic Course Catalog",
+    "description_markdown": "Retrieve `course_code`, `course_name`, and `credits` from the `courses` table to display curriculum offerings.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select course columns\nSELECT ...",
+    "solution_query": "SELECT course_code, course_name, credits FROM courses;",
+    "solution_explanation": "Projects the three specified columns directly from the courses table without row filtering.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting credits or misspelling course_code."
+    ],
+    "hints": [
+      "Specify course_code, course_name, credits separated by commas.",
+      "Select FROM courses.",
+      "Query: SELECT course_code, course_name, credits FROM courses;"
+    ],
+    "tags": [
+      "basics",
+      "collegedb",
+      "projection"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-05",
+    "slug": "student-directory-projection",
+    "title": "Project Registered Student Academic Roster",
+    "description_markdown": "Query the `students` table to select `first_name`, `last_name`, `major`, and `gpa` for all enrolled students.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Project student columns\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, major, gpa FROM students;",
+    "solution_explanation": "Extracts personal and academic attributes from students table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting student_id which was not requested."
+    ],
+    "hints": [
+      "List first_name, last_name, major, gpa.",
+      "Source from students table.",
+      "Query: SELECT first_name, last_name, major, gpa FROM students;"
+    ],
+    "tags": [
+      "basics",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-06",
+    "slug": "faculty-roster-projection",
+    "title": "Retrieve Faculty Professor Directory",
+    "description_markdown": "Extract `first_name`, `last_name`, and `department` for all academic professors from the `professors` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Select professor details\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, department FROM professors;",
+    "solution_explanation": "Retrieves faculty directory academic affiliation information.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting professor_id or title when not requested."
+    ],
+    "hints": [
+      "Specify first_name, last_name, department.",
+      "FROM professors.",
+      "Query: SELECT first_name, last_name, department FROM professors;"
+    ],
+    "tags": [
+      "basics",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-07",
+    "slug": "product-pricing-overview",
+    "title": "List Catalog Products and Inventory Stock",
+    "description_markdown": "From the `products` table, retrieve `product_name`, `price`, and `stock_quantity`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Project product inventory fields\nSELECT ...",
+    "solution_query": "SELECT product_name, price, stock_quantity FROM products;",
+    "solution_explanation": "Projects name, unit price, and on-hand stock from the product catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting cost instead of price."
+    ],
+    "hints": [
+      "Include product_name, price, stock_quantity.",
+      "FROM products.",
+      "Query: SELECT product_name, price, stock_quantity FROM products;"
+    ],
+    "tags": [
+      "basics",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-08",
+    "slug": "order-summary-projection",
+    "title": "Display E-Commerce Order Records",
+    "description_markdown": "Query the `orders` table to retrieve `order_id`, `order_date`, and `total_amount`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Project order summary\nSELECT ...",
+    "solution_query": "SELECT order_id, order_date, total_amount FROM orders;",
+    "solution_explanation": "Retrieves basic transactional metadata from the orders table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting total_amount."
+    ],
+    "hints": [
+      "Select order_id, order_date, total_amount.",
+      "Specify FROM orders.",
+      "Query: SELECT order_id, order_date, total_amount FROM orders;"
+    ],
+    "tags": [
+      "basics",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-09",
+    "slug": "project-budget-roster",
+    "title": "Corporate Initiative Timeline and Budgets",
+    "description_markdown": "Retrieve `project_name`, `start_date`, and `budget` from the `projects` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "start_date",
+        "type": "date"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Project details\nSELECT ...",
+    "solution_query": "SELECT project_name, start_date, budget FROM projects;",
+    "solution_explanation": "Projects strategic planning columns from the corporate projects table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting end_date instead of start_date."
+    ],
+    "hints": [
+      "Include project_name, start_date, budget.",
+      "FROM projects.",
+      "Query: SELECT project_name, start_date, budget FROM projects;"
+    ],
+    "tags": [
+      "basics",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-10",
+    "slug": "account-balance-inquiry",
+    "title": "Inspect Bank Account Portfolios",
+    "description_markdown": "Retrieve `account_id`, `account_type`, and `balance` from the `accounts` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Banking accounts inquiry\nSELECT ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts;",
+    "solution_explanation": "Retrieves core account status fields.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting branch_id instead of account_type."
+    ],
+    "hints": [
+      "Project account_id, account_type, balance.",
+      "FROM accounts.",
+      "Query: SELECT account_id, account_type, balance FROM accounts;"
+    ],
+    "tags": [
+      "basics",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-11",
+    "slug": "patient-vitals-roster",
+    "title": "Healthcare Patient Demographic Index",
+    "description_markdown": "Query the `patients` table to return `patient_id`, `name`, and `blood_group`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Patient roster\nSELECT ...",
+    "solution_query": "SELECT patient_id, name, blood_group FROM patients;",
+    "solution_explanation": "Selects medical identification fields.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting dob instead of blood_group."
+    ],
+    "hints": [
+      "List patient_id, name, blood_group.",
+      "FROM patients.",
+      "Query: SELECT patient_id, name, blood_group FROM patients;"
+    ],
+    "tags": [
+      "basics",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-12",
+    "slug": "flight-schedule-roster",
+    "title": "Airport Flight Schedule Monitor",
+    "description_markdown": "Select `flight_number`, `origin`, `destination`, and `status` from the `flights` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Flight monitor\nSELECT ...",
+    "solution_query": "SELECT flight_number, origin, destination, status FROM flights;",
+    "solution_explanation": "Projects route scheduling columns.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting flight_id instead of flight_number."
+    ],
+    "hints": [
+      "Include flight_number, origin, destination, status.",
+      "FROM flights.",
+      "Query: SELECT flight_number, origin, destination, status FROM flights;"
+    ],
+    "tags": [
+      "basics",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-13",
+    "slug": "hotel-room-inventory",
+    "title": "Hotel Room Inventory and Tariff Roster",
+    "description_markdown": "Retrieve `room_number`, `room_type`, and `price_per_night` from the `rooms` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Hotel rooms\nSELECT ...",
+    "solution_query": "SELECT room_number, room_type, price_per_night FROM rooms;",
+    "solution_explanation": "Returns room pricing and configuration attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting hotel_id instead of room_number."
+    ],
+    "hints": [
+      "Select room_number, room_type, price_per_night.",
+      "FROM rooms.",
+      "Query: SELECT room_number, room_type, price_per_night FROM rooms;"
+    ],
+    "tags": [
+      "basics",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-14",
+    "slug": "warehouse-capacity-directory",
+    "title": "Supply Chain Warehouse Distribution Hubs",
+    "description_markdown": "From the `warehouses` table, select `name`, `location`, and `capacity`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "location",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Warehouse hubs\nSELECT ...",
+    "solution_query": "SELECT name, location, capacity FROM warehouses;",
+    "solution_explanation": "Projects facility distribution metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting warehouse_id when not requested."
+    ],
+    "hints": [
+      "Specify name, location, capacity.",
+      "FROM warehouses.",
+      "Query: SELECT name, location, capacity FROM warehouses;"
+    ],
+    "tags": [
+      "basics",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-15",
+    "slug": "movie-catalog-runtimes",
+    "title": "Streaming Platform Film Catalog Attributes",
+    "description_markdown": "Retrieve `title`, `genre`, `release_year`, and `duration_minutes` from the `movies` table.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "genre",
+        "type": "varchar"
+      },
+      {
+        "name": "release_year",
+        "type": "integer"
+      },
+      {
+        "name": "duration_minutes",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Movie catalog\nSELECT ...",
+    "solution_query": "SELECT title, genre, release_year, duration_minutes FROM movies;",
+    "solution_explanation": "Projects media attributes from the movies table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting imdb_rating instead of duration_minutes."
+    ],
+    "hints": [
+      "List title, genre, release_year, duration_minutes.",
+      "FROM movies.",
+      "Query: SELECT title, genre, release_year, duration_minutes FROM movies;"
+    ],
+    "tags": [
+      "basics",
+      "entertainment"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-16",
+    "slug": "restaurant-cuisine-ratings",
+    "title": "Food Delivery Partner Profiles",
+    "description_markdown": "From the `restaurants` table, query `name`, `cuisine`, `rating`, and `city`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Restaurants roster\nSELECT ...",
+    "solution_query": "SELECT name, cuisine, rating, city FROM restaurants;",
+    "solution_explanation": "Retrieves restaurant profile metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting restaurant_id."
+    ],
+    "hints": [
+      "Select name, cuisine, rating, city.",
+      "FROM restaurants.",
+      "Query: SELECT name, cuisine, rating, city FROM restaurants;"
+    ],
+    "tags": [
+      "basics",
+      "food-delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-17",
+    "slug": "product-margin-calculation",
+    "title": "Calculate Unit Profit Margins on Merchandise",
+    "description_markdown": "Calculate the gross unit profit for every product by subtracting `cost` from `price` as `unit_profit`. Return `product_name`, `price`, `cost`, and `unit_profit`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "cost",
+        "type": "decimal"
+      },
+      {
+        "name": "unit_profit",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Arithmetic projection\nSELECT product_name, price, cost, ... AS unit_profit\nFROM products;",
+    "solution_query": "SELECT product_name, price, cost, (price - cost) AS unit_profit FROM products;",
+    "solution_explanation": "Applies column subtraction arithmetic in the SELECT projection list to compute unit profit.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting price from cost instead of cost from price."
+    ],
+    "interview_tip": "Arithmetic in SELECT evaluates row-by-row on the fly without altering stored table values.",
+    "hints": [
+      "Use `(price - cost) AS unit_profit`.",
+      "Select product_name, price, cost as well.",
+      "Query: SELECT product_name, price, cost, (price - cost) AS unit_profit FROM products;"
+    ],
+    "tags": [
+      "basics",
+      "arithmetic",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-18",
+    "slug": "employee-projected-raise",
+    "title": "Model Five Percent Compensation Merit Increase",
+    "description_markdown": "For each employee in `employees`, project a 5% salary increase (`salary * 1.05`) as `projected_salary`. Return `first_name`, `last_name`, `salary`, and `projected_salary`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "projected_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Project merit raise\nSELECT first_name, last_name, salary, ... AS projected_salary\nFROM employees;",
+    "solution_query": "SELECT first_name, last_name, salary, (salary * 1.05) AS projected_salary FROM employees;",
+    "solution_explanation": "Multiplies current salary by 1.05 to calculate the increased total compensation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplying by 0.05 which gives only the raise increment rather than the full projected salary."
+    ],
+    "hints": [
+      "Multiply salary by 1.05 to get the new total: `(salary * 1.05) AS projected_salary`.",
+      "Include first_name, last_name, salary.",
+      "Query: SELECT first_name, last_name, salary, (salary * 1.05) AS projected_salary FROM employees;"
+    ],
+    "tags": [
+      "basics",
+      "arithmetic",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-19",
+    "slug": "student-gpa-scaled-score",
+    "title": "Scale Student GPA to Percentage Score",
+    "description_markdown": "From `students`, scale each student's 4.0 `gpa` to a 100-point scale by multiplying by 25.0 as `scaled_points`. Return `first_name`, `last_name`, `gpa`, and `scaled_points`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "scaled_points",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Scale GPA\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, gpa, (gpa * 25.0) AS scaled_points FROM students;",
+    "solution_explanation": "Multiplies GPA by 25.0 in the column list to map 4.0 scale to 100.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplying by 25 as integer which may cause unexpected rounding in some dialects."
+    ],
+    "hints": [
+      "Use `(gpa * 25.0) AS scaled_points`.",
+      "Include first_name, last_name, gpa.",
+      "Query: SELECT first_name, last_name, gpa, (gpa * 25.0) AS scaled_points FROM students;"
+    ],
+    "tags": [
+      "basics",
+      "arithmetic",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-20",
+    "slug": "banking-annual-interest-estimate",
+    "title": "Forecast Annual Savings Account Yield",
+    "description_markdown": "Calculate estimated annual interest at 2% (`balance * 0.02`) as `estimated_yield` for all records in `accounts`. Return `account_id`, `balance`, and `estimated_yield`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      },
+      {
+        "name": "estimated_yield",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Interest yield calculation\nSELECT ...",
+    "solution_query": "SELECT account_id, balance, (balance * 0.02) AS estimated_yield FROM accounts;",
+    "solution_explanation": "Multiplies balance by 0.02 to compute estimated annual interest.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using balance * 0.2 which represents 20% instead of 2%."
+    ],
+    "hints": [
+      "Use `(balance * 0.02) AS estimated_yield`.",
+      "Include account_id and balance.",
+      "Query: SELECT account_id, balance, (balance * 0.02) AS estimated_yield FROM accounts;"
+    ],
+    "tags": [
+      "basics",
+      "banking",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-21",
+    "slug": "hotel-weekly-rate-calculation",
+    "title": "Calculate Extended Stay Weekly Room Tariff",
+    "description_markdown": "Calculate the 7-day rate (`price_per_night * 7.0`) as `weekly_rate` for each room in `rooms`. Return `room_number`, `room_type`, `price_per_night`, and `weekly_rate`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "decimal"
+      },
+      {
+        "name": "weekly_rate",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Weekly tariff projection\nSELECT ...",
+    "solution_query": "SELECT room_number, room_type, price_per_night, (price_per_night * 7.0) AS weekly_rate FROM rooms;",
+    "solution_explanation": "Multiplies the nightly rate by 7.0 to calculate weekly extended stay charges.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplying by 5 (weekdays) instead of 7."
+    ],
+    "hints": [
+      "Use `(price_per_night * 7.0) AS weekly_rate`.",
+      "Include room_number, room_type, price_per_night.",
+      "Query: SELECT room_number, room_type, price_per_night, (price_per_night * 7.0) AS weekly_rate FROM rooms;"
+    ],
+    "tags": [
+      "basics",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-22",
+    "slug": "inventory-stock-valuation",
+    "title": "Compute Total Asset Valuation per SKU",
+    "description_markdown": "From `stock_items`, calculate the total inventory asset value by multiplying `quantity_on_hand * unit_cost` as `total_stock_value`. Return `sku`, `name`, `quantity_on_hand`, `unit_cost`, and `total_stock_value`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "unit_cost",
+        "type": "decimal"
+      },
+      {
+        "name": "total_stock_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Inventory valuation\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, unit_cost, (quantity_on_hand * unit_cost) AS total_stock_value FROM stock_items;",
+    "solution_explanation": "Multiplies on-hand quantity by item unit cost.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing reorder_level with quantity_on_hand."
+    ],
+    "hints": [
+      "Use `(quantity_on_hand * unit_cost) AS total_stock_value`.",
+      "Select sku, name, quantity_on_hand, unit_cost.",
+      "Query: SELECT sku, name, quantity_on_hand, unit_cost, (quantity_on_hand * unit_cost) AS total_stock_value FROM stock_items;"
+    ],
+    "tags": [
+      "basics",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-23",
+    "slug": "movie-hours-conversion",
+    "title": "Convert Movie Runtimes from Minutes to Hours",
+    "description_markdown": "Convert film runtime `duration_minutes` into decimal hours (`duration_minutes / 60.0`) as `duration_hours`. Return `title`, `duration_minutes`, and `duration_hours`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "duration_minutes",
+        "type": "integer"
+      },
+      {
+        "name": "duration_hours",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Convert minutes to hours\nSELECT ...",
+    "solution_query": "SELECT title, duration_minutes, (duration_minutes / 60.0) AS duration_hours FROM movies;",
+    "solution_explanation": "Divides duration by 60.0 to generate a floating point hour representation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Dividing by integer 60 which truncates in some SQL engines."
+    ],
+    "hints": [
+      "Divide by `60.0` instead of `60`: `(duration_minutes / 60.0) AS duration_hours`.",
+      "Include title and duration_minutes.",
+      "Query: SELECT title, duration_minutes, (duration_minutes / 60.0) AS duration_hours FROM movies;"
+    ],
+    "tags": [
+      "basics",
+      "math"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-24",
+    "slug": "doctor-experience-scoring",
+    "title": "Calculate Physician Seniority Index",
+    "description_markdown": "Calculate a doctor seniority score (`experience_years * 10`) as `seniority_score`. Return `name`, `specialization`, `experience_years`, and `seniority_score`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "seniority_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Seniority score\nSELECT ...",
+    "solution_query": "SELECT name, specialization, experience_years, (experience_years * 10) AS seniority_score FROM doctors;",
+    "solution_explanation": "Multiplies integer experience by a scaling factor of 10.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting specialization."
+    ],
+    "hints": [
+      "Use `(experience_years * 10) AS seniority_score`.",
+      "Select name, specialization, experience_years.",
+      "Query: SELECT name, specialization, experience_years, (experience_years * 10) AS seniority_score FROM doctors;"
+    ],
+    "tags": [
+      "basics",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-25",
+    "slug": "flight-estimated-revenue",
+    "title": "Estimate Full-Capacity Flight Ticket Revenue",
+    "description_markdown": "Assuming an aircraft capacity of 150 passengers, calculate estimated gross revenue (`base_price * 150`) as `estimated_flight_gross`. Return `flight_number`, `base_price`, and `estimated_flight_gross`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      },
+      {
+        "name": "estimated_flight_gross",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Gross revenue projection\nSELECT ...",
+    "solution_query": "SELECT flight_number, base_price, (base_price * 150) AS estimated_flight_gross FROM flights;",
+    "solution_explanation": "Multiplies ticket base price by capacity constant 150.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting flight_id instead of flight_number."
+    ],
+    "hints": [
+      "Multiply base_price by 150: `(base_price * 150) AS estimated_flight_gross`.",
+      "Include flight_number and base_price.",
+      "Query: SELECT flight_number, base_price, (base_price * 150) AS estimated_flight_gross FROM flights;"
+    ],
+    "tags": [
+      "basics",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-26",
+    "slug": "sales-rep-commission-potential",
+    "title": "Compute Sales Rep Quota Commission Target",
+    "description_markdown": "For each sales rep in `sales_reps`, calculate target commission (`quota * commission_rate`) as `target_commission`. Return `name`, `territory`, `quota`, and `target_commission`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "target_commission",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Target commission\nSELECT ...",
+    "solution_query": "SELECT name, territory, quota, (quota * commission_rate) AS target_commission FROM sales_reps;",
+    "solution_explanation": "Multiplies annual quota by variable commission rate.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting territory."
+    ],
+    "hints": [
+      "Use `(quota * commission_rate) AS target_commission`.",
+      "Select name, territory, quota.",
+      "Query: SELECT name, territory, quota, (quota * commission_rate) AS target_commission FROM sales_reps;"
+    ],
+    "tags": [
+      "basics",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-27",
+    "slug": "food-delivery-tax-pricing",
+    "title": "Compute Menu Dish Final Price with Sales Tax",
+    "description_markdown": "Calculate item price with 10% sales tax (`price * 1.10`) as `price_with_tax` from `menu_items`. Return `item_name`, `price`, and `price_with_tax`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "menu_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "price_with_tax",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Sales tax pricing\nSELECT ...",
+    "solution_query": "SELECT item_name, price, (price * 1.10) AS price_with_tax FROM menu_items;",
+    "solution_explanation": "Multiplies menu price by 1.10 to apply local sales tax.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using price * 0.10 which gives only the tax portion instead of total price."
+    ],
+    "hints": [
+      "Use `(price * 1.10) AS price_with_tax`.",
+      "Include item_name and price.",
+      "Query: SELECT item_name, price, (price * 1.10) AS price_with_tax FROM menu_items;"
+    ],
+    "tags": [
+      "basics",
+      "food-delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-28",
+    "slug": "hr-salary-band-spread",
+    "title": "Inspect Job Posting Base Salary Caps",
+    "description_markdown": "From `job_postings`, select `title`, `department`, `min_experience_years`, and `base_salary_max`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "min_experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Job postings\nSELECT ...",
+    "solution_query": "SELECT title, department, min_experience_years, base_salary_max FROM job_postings;",
+    "solution_explanation": "Retrieves compensation and qualification limits from HR job postings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting posting_id."
+    ],
+    "hints": [
+      "Select title, department, min_experience_years, base_salary_max.",
+      "FROM job_postings.",
+      "Query: SELECT title, department, min_experience_years, base_salary_max FROM job_postings;"
+    ],
+    "tags": [
+      "basics",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-29",
+    "slug": "ecommercedb-order-tax-breakdown",
+    "title": "Order Invoice Financial Breakdown Calculation",
+    "description_markdown": "From `orders`, calculate estimated 8% tax (`total_amount * 0.08`) as `sales_tax`, and the gross order cost (`total_amount * 1.08`) as `total_with_tax`. Return `order_id`, `total_amount`, `sales_tax`, and `total_with_tax`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "sales_tax",
+        "type": "decimal"
+      },
+      {
+        "name": "total_with_tax",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Tax and gross invoice\nSELECT ...",
+    "solution_query": "SELECT order_id, total_amount, (total_amount * 0.08) AS sales_tax, (total_amount * 1.08) AS total_with_tax FROM orders;",
+    "solution_explanation": "Calculates multiple derived columns in a single SELECT projection.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting total_amount from the projection."
+    ],
+    "hints": [
+      "Use `(total_amount * 0.08) AS sales_tax`.",
+      "Use `(total_amount * 1.08) AS total_with_tax`.",
+      "Query: SELECT order_id, total_amount, (total_amount * 0.08) AS sales_tax, (total_amount * 1.08) AS total_with_tax FROM orders;"
+    ],
+    "tags": [
+      "basics",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-30",
+    "slug": "employeedb-monthly-pay-allocation",
+    "title": "Calculate Monthly Prorated Salary Allocation",
+    "description_markdown": "Calculate each employee's monthly pay (`salary / 12.0`) as `monthly_salary`. Return `emp_id`, `first_name`, `salary`, and `monthly_salary`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "monthly_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Monthly compensation\nSELECT ...",
+    "solution_query": "SELECT emp_id, first_name, salary, (salary / 12.0) AS monthly_salary FROM employees;",
+    "solution_explanation": "Divides annual salary by 12.0 to calculate monthly payout.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Dividing by 12 as integer instead of 12.0."
+    ],
+    "hints": [
+      "Use `(salary / 12.0) AS monthly_salary`.",
+      "Include emp_id, first_name, salary.",
+      "Query: SELECT emp_id, first_name, salary, (salary / 12.0) AS monthly_salary FROM employees;"
+    ],
+    "tags": [
+      "basics",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-31",
+    "slug": "banking-tier-flag-projection",
+    "title": "Project Account Maintenance Surcharge",
+    "description_markdown": "For every bank account, project a flat standard annual maintenance charge of `25.00` as `annual_fee`. Return `account_id`, `account_type`, `balance`, and `annual_fee`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "expert",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      },
+      {
+        "name": "annual_fee",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Constant literal projection\nSELECT account_id, account_type, balance, ... AS annual_fee\nFROM accounts;",
+    "solution_query": "SELECT account_id, account_type, balance, 25.00 AS annual_fee FROM accounts;",
+    "solution_explanation": "Projects a constant literal value across every row in the result set.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Enclosing 25.00 in quotes which makes it a string."
+    ],
+    "interview_tip": "Literal constants in SELECT are frequently used in reporting queries to supply static contract charges or status flags.",
+    "hints": [
+      "Project constant `25.00 AS annual_fee`.",
+      "Include account_id, account_type, balance.",
+      "Query: SELECT account_id, account_type, balance, 25.00 AS annual_fee FROM accounts;"
+    ],
+    "tags": [
+      "basics",
+      "literal-constant",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 10,
+    "xp": 400,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sel-32",
+    "slug": "inventory-reorder-urgency-index",
+    "title": "Calculate Inventory Reorder Threshold Gap",
+    "description_markdown": "Calculate the stock deficit gap (`reorder_level - quantity_on_hand`) as `reorder_gap` for every stock item. Return `sku`, `name`, `quantity_on_hand`, `reorder_level`, and `reorder_gap`.",
+    "topic_id": "select-basics",
+    "subtopic_id": "select-cols",
+    "difficulty": "expert",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_gap",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Stock gap projection\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, reorder_level, (reorder_level - quantity_on_hand) AS reorder_gap FROM stock_items;",
+    "solution_explanation": "Subtracts current quantity from threshold level to determine reorder urgency gap.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting reorder_level from quantity_on_hand instead."
+    ],
+    "hints": [
+      "Use `(reorder_level - quantity_on_hand) AS reorder_gap`.",
+      "Select sku, name, quantity_on_hand, reorder_level.",
+      "Query: SELECT sku, name, quantity_on_hand, reorder_level, (reorder_level - quantity_on_hand) AS reorder_gap FROM stock_items;"
+    ],
+    "tags": [
+      "basics",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 10,
+    "xp": 400,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sel-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sel-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sel-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

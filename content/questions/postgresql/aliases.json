@@ -1,0 +1,2331 @@
+[
+  {
+    "id": "q-ali-01",
+    "slug": "friendly-payroll-column-aliases",
+    "title": "Assign Professional Column Aliases",
+    "description_markdown": "Retrieve employee details with renamed headers: `first_name` as `given_name`, `last_name` as `family_name`, and `salary` as `annual_compensation`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "given_name",
+        "type": "varchar"
+      },
+      {
+        "name": "family_name",
+        "type": "varchar"
+      },
+      {
+        "name": "annual_compensation",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use AS to rename columns\nSELECT first_name AS given_name, ...",
+    "solution_query": "SELECT first_name AS given_name, last_name AS family_name, salary AS annual_compensation FROM employees;",
+    "solution_explanation": "The `AS` keyword establishes user-friendly column header labels in the output relation.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `first_name AS given_name`.",
+      "Repeat for family_name and annual_compensation.",
+      "Query: SELECT first_name AS given_name, last_name AS family_name, salary AS annual_compensation FROM employees;"
+    ],
+    "tags": [
+      "aliases",
+      "headers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-02",
+    "slug": "table-aliases-inventory-pricing",
+    "title": "Table Prefixes for Product Profitability",
+    "description_markdown": "Using a table alias `p` for `products`, calculate the gross profit (`p.price - p.cost`) as `unit_profit`. Return `p.product_name` and `(p.price - p.cost) AS unit_profit`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-tbl",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_profit",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use table alias p and column alias unit_profit\nSELECT ...",
+    "solution_query": "SELECT p.product_name, (p.price - p.cost) AS unit_profit FROM products p;",
+    "solution_explanation": "Qualifies columns using the concise table alias `p` and names the arithmetic expression `unit_profit`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Write `FROM products p`.",
+      "Calculate `(p.price - p.cost) AS unit_profit`.",
+      "Query: SELECT p.product_name, (p.price - p.cost) AS unit_profit FROM products p;"
+    ],
+    "tags": [
+      "aliases",
+      "calculated-column"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-03",
+    "slug": "monthly-projected-cost-aliases",
+    "title": "Annual to Monthly Departmental Budget Estimation",
+    "description_markdown": "From `departments`, calculate the monthly budget by dividing `budget` by 12.0. Return `dept_name` as `department`, and `ROUND(budget / 12.0, 2)` as `monthly_budget`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "monthly_budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate monthly budget with ROUND\nSELECT ...",
+    "solution_query": "SELECT dept_name AS department, ROUND(budget / 12.0, 2) AS monthly_budget FROM departments;",
+    "solution_explanation": "Divides budget by 12.0, rounds to 2 decimal places, and aliases the expressions as specified.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(budget / 12.0, 2) AS monthly_budget`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_name AS department, ROUND(budget / 12.0, 2) AS monthly_budget FROM departments;"
+    ],
+    "tags": [
+      "aliases",
+      "math"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-04",
+    "slug": "product-display-labels",
+    "title": "E-Commerce Catalog Display Column Headers",
+    "description_markdown": "Query `products` projecting `product_name` aliased as `item_title` and `price` aliased as `retail_price`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_title",
+        "type": "varchar"
+      },
+      {
+        "name": "retail_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Column aliases with AS\nSELECT product_name AS item_title, ...\nFROM products;",
+    "solution_query": "SELECT product_name AS item_title, price AS retail_price FROM products;",
+    "solution_explanation": "Applies user-friendly column header aliases using the AS keyword.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling the alias identifiers."
+    ],
+    "hints": [
+      "Use `product_name AS item_title`.",
+      "Use `price AS retail_price`.",
+      "Query: SELECT product_name AS item_title, price AS retail_price FROM products;"
+    ],
+    "tags": [
+      "aliases",
+      "headers",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-05",
+    "slug": "student-profile-headers",
+    "title": "Student Academic Directory Column Headers",
+    "description_markdown": "Select `first_name` as `fname`, `last_name` as `lname`, and `gpa` as `grade_average` from `students`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "fname",
+        "type": "varchar"
+      },
+      {
+        "name": "lname",
+        "type": "varchar"
+      },
+      {
+        "name": "grade_average",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Alias student columns\nSELECT first_name AS fname, ...\nFROM students;",
+    "solution_query": "SELECT first_name AS fname, last_name AS lname, gpa AS grade_average FROM students;",
+    "solution_explanation": "Renames output attributes to concise column identifiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the AS keyword."
+    ],
+    "hints": [
+      "Use `first_name AS fname, last_name AS lname, gpa AS grade_average`.",
+      "Query: SELECT first_name AS fname, last_name AS lname, gpa AS grade_average FROM students;",
+      "The expected query is: SELECT first_name AS fname, last_name AS lname, gpa AS grade_average FROM students;"
+    ],
+    "tags": [
+      "aliases",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-06",
+    "slug": "flight-schedule-headers",
+    "title": "Flight Schedule Presentation Attributes",
+    "description_markdown": "Query `flights` projecting `flight_number` as `flight_code`, `origin` as `departure_city`, and `destination` as `arrival_city`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_code",
+        "type": "varchar"
+      },
+      {
+        "name": "departure_city",
+        "type": "varchar"
+      },
+      {
+        "name": "arrival_city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Alias flight columns\nSELECT flight_number AS flight_code, ...\nFROM flights;",
+    "solution_query": "SELECT flight_number AS flight_code, origin AS departure_city, destination AS arrival_city FROM flights;",
+    "solution_explanation": "Clarifies route attributes for customer passenger itineraries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Swapping departure and arrival aliases."
+    ],
+    "hints": [
+      "Origin is departure_city, destination is arrival_city.",
+      "Query: SELECT flight_number AS flight_code, origin AS departure_city, destination AS arrival_city FROM flights;",
+      "The expected query is: SELECT flight_number AS flight_code, origin AS departure_city, destination AS arrival_city FROM flights;"
+    ],
+    "tags": [
+      "aliases",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-07",
+    "slug": "banking-account-summary-headers",
+    "title": "Banking Ledger Summary Column Aliases",
+    "description_markdown": "Select `account_id` as `acct_no` and `balance` as `current_balance` from `accounts`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "acct_no",
+        "type": "integer"
+      },
+      {
+        "name": "current_balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Alias account headers\nSELECT account_id AS acct_no, ...\nFROM accounts;",
+    "solution_query": "SELECT account_id AS acct_no, balance AS current_balance FROM accounts;",
+    "solution_explanation": "Applies financial banking nomenclature aliases.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting account_type which was not requested."
+    ],
+    "hints": [
+      "Use `account_id AS acct_no, balance AS current_balance`.",
+      "Query: SELECT account_id AS acct_no, balance AS current_balance FROM accounts;",
+      "The expected query is: SELECT account_id AS acct_no, balance AS current_balance FROM accounts;"
+    ],
+    "tags": [
+      "aliases",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-08",
+    "slug": "stocks-ticker-alias",
+    "title": "Equities Market Quotation Aliases",
+    "description_markdown": "Query `stocks` returning `symbol` as `ticker`, `company_name` as `corporation`, and `current_price` as `market_quote`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "ticker",
+        "type": "varchar"
+      },
+      {
+        "name": "corporation",
+        "type": "varchar"
+      },
+      {
+        "name": "market_quote",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stock aliases\nSELECT symbol AS ticker, ...\nFROM stocks;",
+    "solution_query": "SELECT symbol AS ticker, company_name AS corporation, current_price AS market_quote FROM stocks;",
+    "solution_explanation": "Provides industry-standard terminology for market data output.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling 'market_quote'."
+    ],
+    "hints": [
+      "Use `symbol AS ticker, company_name AS corporation, current_price AS market_quote`.",
+      "Query: SELECT symbol AS ticker, company_name AS corporation, current_price AS market_quote FROM stocks;",
+      "The expected query is: SELECT symbol AS ticker, company_name AS corporation, current_price AS market_quote FROM stocks;"
+    ],
+    "tags": [
+      "aliases",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-09",
+    "slug": "restaurant-presentation-headers",
+    "title": "Food Delivery App Presentation Headers",
+    "description_markdown": "Query `restaurants` selecting `name` as `restaurant_name`, `cuisine` as `food_type`, and `rating` as `stars`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_name",
+        "type": "varchar"
+      },
+      {
+        "name": "food_type",
+        "type": "varchar"
+      },
+      {
+        "name": "stars",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Restaurant aliases\nSELECT name AS restaurant_name, ...\nFROM restaurants;",
+    "solution_query": "SELECT name AS restaurant_name, cuisine AS food_type, rating AS stars FROM restaurants;",
+    "solution_explanation": "Rebrands internal column labels into client-facing app titles.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting stars alias."
+    ],
+    "hints": [
+      "Map: name -> restaurant_name, cuisine -> food_type, rating -> stars.",
+      "Query: SELECT name AS restaurant_name, cuisine AS food_type, rating AS stars FROM restaurants;",
+      "The expected query is: SELECT name AS restaurant_name, cuisine AS food_type, rating AS stars FROM restaurants;"
+    ],
+    "tags": [
+      "aliases",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-10",
+    "slug": "doctor-credentials-alias",
+    "title": "Clinical Staff Credentials Output Labels",
+    "description_markdown": "From `doctors`, select `name` as `practitioner`, `specialization` as `specialty`, and `experience_years` as `years_in_practice`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "practitioner",
+        "type": "varchar"
+      },
+      {
+        "name": "specialty",
+        "type": "varchar"
+      },
+      {
+        "name": "years_in_practice",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Doctor aliases\nSELECT name AS practitioner, ...\nFROM doctors;",
+    "solution_query": "SELECT name AS practitioner, specialization AS specialty, experience_years AS years_in_practice FROM doctors;",
+    "solution_explanation": "Customizes physician profile headers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting department instead of specialization."
+    ],
+    "hints": [
+      "Use `name AS practitioner, specialization AS specialty, experience_years AS years_in_practice`.",
+      "Query: SELECT name AS practitioner, specialization AS specialty, experience_years AS years_in_practice FROM doctors;",
+      "The expected query is: SELECT name AS practitioner, specialization AS specialty, experience_years AS years_in_practice FROM doctors;"
+    ],
+    "tags": [
+      "aliases",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-11",
+    "slug": "hotel-inventory-headers",
+    "title": "Hospitality Management Inventory Labels",
+    "description_markdown": "Query `hotels` returning `name` as `property_name`, `city` as `location_city`, and `star_rating` as `luxury_tier`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "property_name",
+        "type": "varchar"
+      },
+      {
+        "name": "location_city",
+        "type": "varchar"
+      },
+      {
+        "name": "luxury_tier",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Hotel aliases\nSELECT name AS property_name, ...\nFROM hotels;",
+    "solution_query": "SELECT name AS property_name, city AS location_city, star_rating AS luxury_tier FROM hotels;",
+    "solution_explanation": "Formats accommodation attributes with hospitality terminology.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling luxury_tier."
+    ],
+    "hints": [
+      "Use `name AS property_name, city AS location_city, star_rating AS luxury_tier`.",
+      "Query: SELECT name AS property_name, city AS location_city, star_rating AS luxury_tier FROM hotels;",
+      "The expected query is: SELECT name AS property_name, city AS location_city, star_rating AS luxury_tier FROM hotels;"
+    ],
+    "tags": [
+      "aliases",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-12",
+    "slug": "applicant-summary-labels",
+    "title": "HR Talent Acquisition Candidate Attributes",
+    "description_markdown": "Select `first_name` as `candidate_first`, `last_name` as `candidate_last`, and `years_experience` as `experience` from `applicants`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "candidate_first",
+        "type": "varchar"
+      },
+      {
+        "name": "candidate_last",
+        "type": "varchar"
+      },
+      {
+        "name": "experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Applicant aliases\nSELECT first_name AS candidate_first, ...\nFROM applicants;",
+    "solution_query": "SELECT first_name AS candidate_first, last_name AS candidate_last, years_experience AS experience FROM applicants;",
+    "solution_explanation": "Structures candidate resumes for recruiting portal reporting.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting experience alias."
+    ],
+    "hints": [
+      "Use `first_name AS candidate_first, last_name AS candidate_last, years_experience AS experience`.",
+      "Query: SELECT first_name AS candidate_first, last_name AS candidate_last, years_experience AS experience FROM applicants;",
+      "The expected query is: SELECT first_name AS candidate_first, last_name AS candidate_last, years_experience AS experience FROM applicants;"
+    ],
+    "tags": [
+      "aliases",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-13",
+    "slug": "inventory-sku-labels",
+    "title": "Warehouse Distribution Stock Attributes",
+    "description_markdown": "Query `stock_items` returning `sku` as `product_code`, `name` as `item_description`, and `quantity_on_hand` as `units_in_stock`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_code",
+        "type": "varchar"
+      },
+      {
+        "name": "item_description",
+        "type": "varchar"
+      },
+      {
+        "name": "units_in_stock",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Inventory aliases\nSELECT sku AS product_code, ...\nFROM stock_items;",
+    "solution_query": "SELECT sku AS product_code, name AS item_description, quantity_on_hand AS units_in_stock FROM stock_items;",
+    "solution_explanation": "Standardizes inventory columns into ERP warehouse management headers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling units_in_stock."
+    ],
+    "hints": [
+      "Use `sku AS product_code, name AS item_description, quantity_on_hand AS units_in_stock`.",
+      "Query: SELECT sku AS product_code, name AS item_description, quantity_on_hand AS units_in_stock FROM stock_items;",
+      "The expected query is: SELECT sku AS product_code, name AS item_description, quantity_on_hand AS units_in_stock FROM stock_items;"
+    ],
+    "tags": [
+      "aliases",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-14",
+    "slug": "library-book-headers",
+    "title": "Library Catalog Literary Work Labels",
+    "description_markdown": "Select `title` as `book_title`, `publication_year` as `release_year`, and `copies_available` as `available_units` from `books`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_title",
+        "type": "varchar"
+      },
+      {
+        "name": "release_year",
+        "type": "integer"
+      },
+      {
+        "name": "available_units",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Book aliases\nSELECT title AS book_title, ...\nFROM books;",
+    "solution_query": "SELECT title AS book_title, publication_year AS release_year, copies_available AS available_units FROM books;",
+    "solution_explanation": "Creates clear column labels for library lending patrons.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting release_year."
+    ],
+    "hints": [
+      "Use `title AS book_title, publication_year AS release_year, copies_available AS available_units`.",
+      "Query: SELECT title AS book_title, publication_year AS release_year, copies_available AS available_units FROM books;",
+      "The expected query is: SELECT title AS book_title, publication_year AS release_year, copies_available AS available_units FROM books;"
+    ],
+    "tags": [
+      "aliases",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-15",
+    "slug": "movie-catalog-headers",
+    "title": "Streaming Platform Film Attribute Labels",
+    "description_markdown": "Query `movies` returning `title` as `film_title`, `genre` as `category`, and `imdb_rating` as `score`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "film_title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Movie aliases\nSELECT title AS film_title, ...\nFROM movies;",
+    "solution_query": "SELECT title AS film_title, genre AS category, imdb_rating AS score FROM movies;",
+    "solution_explanation": "Customizes media library attributes for user interface rendering.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting score alias."
+    ],
+    "hints": [
+      "Use `title AS film_title, genre AS category, imdb_rating AS score`.",
+      "Query: SELECT title AS film_title, genre AS category, imdb_rating AS score FROM movies;",
+      "The expected query is: SELECT title AS film_title, genre AS category, imdb_rating AS score FROM movies;"
+    ],
+    "tags": [
+      "aliases",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-16",
+    "slug": "sales-lead-headers",
+    "title": "CRM Prospect Inbound Lead Labels",
+    "description_markdown": "From `leads`, select `company_name` as `client_name`, `industry` as `market_sector`, and `status` as `lead_stage`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "client_name",
+        "type": "varchar"
+      },
+      {
+        "name": "market_sector",
+        "type": "varchar"
+      },
+      {
+        "name": "lead_stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Lead aliases\nSELECT company_name AS client_name, ...\nFROM leads;",
+    "solution_query": "SELECT company_name AS client_name, industry AS market_sector, status AS lead_stage FROM leads;",
+    "solution_explanation": "Formats enterprise prospect fields for CRM pipeline summaries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting lead_id."
+    ],
+    "hints": [
+      "Use `company_name AS client_name, industry AS market_sector, status AS lead_stage`.",
+      "Query: SELECT company_name AS client_name, industry AS market_sector, status AS lead_stage FROM leads;",
+      "The expected query is: SELECT company_name AS client_name, industry AS market_sector, status AS lead_stage FROM leads;"
+    ],
+    "tags": [
+      "aliases",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-17",
+    "slug": "faculty-directory-headers",
+    "title": "Academic Faculty Compensation Directory Headers",
+    "description_markdown": "Query `professors` selecting `first_name` as `given_name`, `last_name` as `surname`, and `salary` as `base_pay`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "given_name",
+        "type": "varchar"
+      },
+      {
+        "name": "surname",
+        "type": "varchar"
+      },
+      {
+        "name": "base_pay",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Professor aliases\nSELECT first_name AS given_name, ...\nFROM professors;",
+    "solution_query": "SELECT first_name AS given_name, last_name AS surname, salary AS base_pay FROM professors;",
+    "solution_explanation": "Applies standard HR payroll naming conventions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling base_pay."
+    ],
+    "hints": [
+      "Use `first_name AS given_name, last_name AS surname, salary AS base_pay`.",
+      "Query: SELECT first_name AS given_name, last_name AS surname, salary AS base_pay FROM professors;",
+      "The expected query is: SELECT first_name AS given_name, last_name AS surname, salary AS base_pay FROM professors;"
+    ],
+    "tags": [
+      "aliases",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-18",
+    "slug": "order-summary-labels",
+    "title": "E-Commerce Order Receipt Field Labels",
+    "description_markdown": "From `orders`, select `order_id` as `confirmation_number` and `total_amount` as `total_billed`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "confirmation_number",
+        "type": "integer"
+      },
+      {
+        "name": "total_billed",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Order aliases\nSELECT order_id AS confirmation_number, ...\nFROM orders;",
+    "solution_query": "SELECT order_id AS confirmation_number, total_amount AS total_billed FROM orders;",
+    "solution_explanation": "Produces customer invoice receipt headers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting customer_id."
+    ],
+    "hints": [
+      "Use `order_id AS confirmation_number, total_amount AS total_billed`.",
+      "Query: SELECT order_id AS confirmation_number, total_amount AS total_billed FROM orders;",
+      "The expected query is: SELECT order_id AS confirmation_number, total_amount AS total_billed FROM orders;"
+    ],
+    "tags": [
+      "aliases",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-19",
+    "slug": "table-alias-employee-self",
+    "title": "Qualifying Columns Using Table Alias e",
+    "description_markdown": "Query `employees` aliasing the table as `e`. Qualify and project `e.first_name`, `e.last_name`, and `e.job_title`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias e\nSELECT e.first_name, e.last_name, e.job_title\nFROM employees AS e;",
+    "solution_query": "SELECT e.first_name, e.last_name, e.job_title FROM employees AS e;",
+    "solution_explanation": "Table aliases reduce syntax verbosity and clarify column origins in queries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to qualify columns with alias e."
+    ],
+    "hints": [
+      "Define FROM employees AS e.",
+      "Project e.first_name, e.last_name, e.job_title.",
+      "Query: SELECT e.first_name, e.last_name, e.job_title FROM employees AS e;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-20",
+    "slug": "table-alias-products-p",
+    "title": "Qualifying Product Columns with Table Alias p",
+    "description_markdown": "Query `products` aliasing the table as `p`. Select `p.product_id`, `p.product_name`, and `p.price`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias p\nSELECT p.product_id, p.product_name, p.price\nFROM products AS p;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products AS p;",
+    "solution_explanation": "Qualifies product attributes using concise table alias p.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling product_name."
+    ],
+    "hints": [
+      "Use `FROM products AS p`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products AS p;",
+      "The expected query is: SELECT p.product_id, p.product_name, p.price FROM products AS p;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-21",
+    "slug": "table-alias-students-s",
+    "title": "Qualifying Student Columns with Table Alias s",
+    "description_markdown": "Select `s.student_id`, `s.first_name`, and `s.gpa` from `students AS s`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias s\nSELECT s.student_id, s.first_name, s.gpa\nFROM students AS s;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.gpa FROM students AS s;",
+    "solution_explanation": "Applies table alias s to qualify attributes from the students relation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting AS s in FROM clause."
+    ],
+    "hints": [
+      "Specify `FROM students AS s`.",
+      "Query: SELECT s.student_id, s.first_name, s.gpa FROM students AS s;",
+      "The expected query is: SELECT s.student_id, s.first_name, s.gpa FROM students AS s;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-22",
+    "slug": "table-alias-flights-f",
+    "title": "Qualifying Airline Flight Attributes with Table Alias f",
+    "description_markdown": "Query `flights` with table alias `f`. Return `f.flight_number`, `f.origin`, and `f.destination`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "destination",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias f\nSELECT f.flight_number, f.origin, f.destination\nFROM flights AS f;",
+    "solution_query": "SELECT f.flight_number, f.origin, f.destination FROM flights AS f;",
+    "solution_explanation": "Uses table alias f to qualify route schedule attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting flight_id."
+    ],
+    "hints": [
+      "Use `FROM flights AS f`.",
+      "Query: SELECT f.flight_number, f.origin, f.destination FROM flights AS f;",
+      "The expected query is: SELECT f.flight_number, f.origin, f.destination FROM flights AS f;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-23",
+    "slug": "table-alias-accounts-a",
+    "title": "Qualifying Bank Ledger Accounts with Table Alias a",
+    "description_markdown": "From `accounts AS a`, select `a.account_id`, `a.account_type`, and `a.balance`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias a\nSELECT a.account_id, a.account_type, a.balance\nFROM accounts AS a;",
+    "solution_query": "SELECT a.account_id, a.account_type, a.balance FROM accounts AS a;",
+    "solution_explanation": "Demonstrates table aliasing on financial account ledger queries.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting table qualification."
+    ],
+    "hints": [
+      "Specify `FROM accounts AS a`.",
+      "Query: SELECT a.account_id, a.account_type, a.balance FROM accounts AS a;",
+      "The expected query is: SELECT a.account_id, a.account_type, a.balance FROM accounts AS a;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-24",
+    "slug": "table-alias-stocks-stk",
+    "title": "Qualifying Securities Attributes with Table Alias stk",
+    "description_markdown": "Query `stocks` aliased as `stk`. Select `stk.symbol`, `stk.company_name`, and `stk.current_price`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias stk\nSELECT stk.symbol, stk.company_name, stk.current_price\nFROM stocks AS stk;",
+    "solution_query": "SELECT stk.symbol, stk.company_name, stk.current_price FROM stocks AS stk;",
+    "solution_explanation": "Demonstrates multi-character table alias stk.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using alias s instead of stk."
+    ],
+    "hints": [
+      "Use `FROM stocks AS stk`.",
+      "Query: SELECT stk.symbol, stk.company_name, stk.current_price FROM stocks AS stk;",
+      "The expected query is: SELECT stk.symbol, stk.company_name, stk.current_price FROM stocks AS stk;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-25",
+    "slug": "table-alias-restaurants-r",
+    "title": "Qualifying Restaurant Directory with Table Alias r",
+    "description_markdown": "From `restaurants AS r`, select `r.name`, `r.cuisine`, and `r.rating`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias r\nSELECT r.name, r.cuisine, r.rating\nFROM restaurants AS r;",
+    "solution_query": "SELECT r.name, r.cuisine, r.rating FROM restaurants AS r;",
+    "solution_explanation": "Qualifies culinary partner columns using alias r.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting restaurant_id."
+    ],
+    "hints": [
+      "Specify `FROM restaurants AS r`.",
+      "Query: SELECT r.name, r.cuisine, r.rating FROM restaurants AS r;",
+      "The expected query is: SELECT r.name, r.cuisine, r.rating FROM restaurants AS r;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-26",
+    "slug": "table-alias-doctors-doc",
+    "title": "Qualifying Clinical Physician Attributes with Table Alias doc",
+    "description_markdown": "Query `doctors` aliased as `doc`. Return `doc.doctor_id`, `doc.name`, and `doc.department`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-table",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Table alias doc\nSELECT doc.doctor_id, doc.name, doc.department\nFROM doctors AS doc;",
+    "solution_query": "SELECT doc.doctor_id, doc.name, doc.department FROM doctors AS doc;",
+    "solution_explanation": "Applies readable semantic table alias doc.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting department."
+    ],
+    "hints": [
+      "Use `FROM doctors AS doc`.",
+      "Query: SELECT doc.doctor_id, doc.name, doc.department FROM doctors AS doc;",
+      "The expected query is: SELECT doc.doctor_id, doc.name, doc.department FROM doctors AS doc;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-27",
+    "slug": "combined-table-and-column-aliases-hotel",
+    "title": "Combined Table and Column Aliases for Hotels",
+    "description_markdown": "Query `hotels AS h` selecting `h.name` as `establishment`, `h.city` as `metro_area`, and `h.star_rating` as `stars`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "establishment",
+        "type": "varchar"
+      },
+      {
+        "name": "metro_area",
+        "type": "varchar"
+      },
+      {
+        "name": "stars",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT h.name AS establishment, ...\nFROM hotels AS h;",
+    "solution_query": "SELECT h.name AS establishment, h.city AS metro_area, h.star_rating AS stars FROM hotels AS h;",
+    "solution_explanation": "Simultaneously applies table alias qualification and column header renaming.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Not combining table alias h with column aliases."
+    ],
+    "hints": [
+      "Use `h.name AS establishment, h.city AS metro_area, h.star_rating AS stars FROM hotels AS h`.",
+      "Query: SELECT h.name AS establishment, h.city AS metro_area, h.star_rating AS stars FROM hotels AS h;",
+      "The expected query is: SELECT h.name AS establishment, h.city AS metro_area, h.star_rating AS stars FROM hotels AS h;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "headers",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-28",
+    "slug": "combined-aliases-books",
+    "title": "Combined Table and Column Aliases for Library Books",
+    "description_markdown": "Query `books AS b` returning `b.title` as `work_title` and `b.publication_year` as `pub_year`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "work_title",
+        "type": "varchar"
+      },
+      {
+        "name": "pub_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT b.title AS work_title, ...\nFROM books AS b;",
+    "solution_query": "SELECT b.title AS work_title, b.publication_year AS pub_year FROM books AS b;",
+    "solution_explanation": "Applies table alias b alongside column aliases.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling pub_year."
+    ],
+    "hints": [
+      "Use `b.title AS work_title, b.publication_year AS pub_year FROM books AS b`.",
+      "Query: SELECT b.title AS work_title, b.publication_year AS pub_year FROM books AS b;",
+      "The expected query is: SELECT b.title AS work_title, b.publication_year AS pub_year FROM books AS b;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-29",
+    "slug": "combined-aliases-movies",
+    "title": "Combined Table and Column Aliases for Cinema Titles",
+    "description_markdown": "Query `movies AS m` selecting `m.title` as `film` and `m.duration_minutes` as `runtime`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "film",
+        "type": "varchar"
+      },
+      {
+        "name": "runtime",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT m.title AS film, ...\nFROM movies AS m;",
+    "solution_query": "SELECT m.title AS film, m.duration_minutes AS runtime FROM movies AS m;",
+    "solution_explanation": "Renames cinematic media attributes while using table alias m.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting runtime."
+    ],
+    "hints": [
+      "Use `m.title AS film, m.duration_minutes AS runtime FROM movies AS m`.",
+      "Query: SELECT m.title AS film, m.duration_minutes AS runtime FROM movies AS m;",
+      "The expected query is: SELECT m.title AS film, m.duration_minutes AS runtime FROM movies AS m;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-30",
+    "slug": "combined-aliases-applicants",
+    "title": "Combined Table and Column Aliases for Job Candidates",
+    "description_markdown": "Query `applicants AS a` selecting `a.first_name` as `given_name`, `a.last_name` as `surname`, and `a.current_company` as `employer`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "given_name",
+        "type": "varchar"
+      },
+      {
+        "name": "surname",
+        "type": "varchar"
+      },
+      {
+        "name": "employer",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT a.first_name AS given_name, ...\nFROM applicants AS a;",
+    "solution_query": "SELECT a.first_name AS given_name, a.last_name AS surname, a.current_company AS employer FROM applicants AS a;",
+    "solution_explanation": "Combines candidate identity renaming with table alias a.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling employer."
+    ],
+    "hints": [
+      "Use `a.first_name AS given_name, a.last_name AS surname, a.current_company AS employer FROM applicants AS a`.",
+      "Query: SELECT a.first_name AS given_name, a.last_name AS surname, a.current_company AS employer FROM applicants AS a;",
+      "The expected query is: SELECT a.first_name AS given_name, a.last_name AS surname, a.current_company AS employer FROM applicants AS a;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-31",
+    "slug": "combined-aliases-inventory",
+    "title": "Combined Table and Column Aliases for Stock Inventory",
+    "description_markdown": "Query `stock_items AS s` returning `s.sku` as `barcode`, `s.quantity_on_hand` as `qty`, and `s.unit_cost` as `cost`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "barcode",
+        "type": "varchar"
+      },
+      {
+        "name": "qty",
+        "type": "integer"
+      },
+      {
+        "name": "cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT s.sku AS barcode, ...\nFROM stock_items AS s;",
+    "solution_query": "SELECT s.sku AS barcode, s.quantity_on_hand AS qty, s.unit_cost AS cost FROM stock_items AS s;",
+    "solution_explanation": "Replaces long technical column names with short abbreviations using table alias s.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using amount instead of cost."
+    ],
+    "hints": [
+      "Use `s.sku AS barcode, s.quantity_on_hand AS qty, s.unit_cost AS cost FROM stock_items AS s`.",
+      "Query: SELECT s.sku AS barcode, s.quantity_on_hand AS qty, s.unit_cost AS cost FROM stock_items AS s;",
+      "The expected query is: SELECT s.sku AS barcode, s.quantity_on_hand AS qty, s.unit_cost AS cost FROM stock_items AS s;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ali-32",
+    "slug": "combined-aliases-sales-reps",
+    "title": "Combined Table and Column Aliases for Sales Personnel",
+    "description_markdown": "Query `sales_reps AS rep` returning `rep.name` as `representative`, `rep.territory` as `region`, and `rep.quota` as `sales_target`.",
+    "topic_id": "aliases",
+    "subtopic_id": "alias-col",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "representative",
+        "type": "varchar"
+      },
+      {
+        "name": "region",
+        "type": "varchar"
+      },
+      {
+        "name": "sales_target",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combined aliases\nSELECT rep.name AS representative, ...\nFROM sales_reps AS rep;",
+    "solution_query": "SELECT rep.name AS representative, rep.territory AS region, rep.quota AS sales_target FROM sales_reps AS rep;",
+    "solution_explanation": "Applies business management aliases to sales representative territories and quotas.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Misspelling sales_target."
+    ],
+    "hints": [
+      "Use `rep.name AS representative, rep.territory AS region, rep.quota AS sales_target FROM sales_reps AS rep`.",
+      "Query: SELECT rep.name AS representative, rep.territory AS region, rep.quota AS sales_target FROM sales_reps AS rep;",
+      "The expected query is: SELECT rep.name AS representative, rep.territory AS region, rep.quota AS sales_target FROM sales_reps AS rep;"
+    ],
+    "tags": [
+      "aliases",
+      "table-alias",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ali-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ali-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ali-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

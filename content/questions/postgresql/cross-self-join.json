@@ -1,0 +1,2409 @@
+[
+  {
+    "id": "q-csj-01",
+    "slug": "self-join-employee-and-manager-names",
+    "title": "Pair Employees with Their Direct Managers",
+    "description_markdown": "Perform a SELF JOIN on `employees` to find each employee's direct manager. Return `e.first_name AS employee_name` and `m.first_name AS manager_name`. Order by `e.emp_id` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "employee_name",
+        "type": "varchar"
+      },
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join employees e and employees m\nSELECT e.first_name AS employee_name, m.first_name AS manager_name\nFROM employees e\nJOIN employees m ON ...",
+    "solution_query": "SELECT e.first_name AS employee_name, m.first_name AS manager_name FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Self-joining aliases the table twice: `e` as employee and `m` as manager on `e.manager_id = m.emp_id`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join condition: `e.manager_id = m.emp_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT e.first_name AS employee_name, m.first_name AS manager_name FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-02",
+    "slug": "employees-earning-more-than-managers",
+    "title": "Find Employees Who Earn More Than Their Manager",
+    "description_markdown": "Find all employees whose salary is strictly higher than their manager's salary. Return `e.first_name AS employee`, `e.salary AS emp_salary`, `m.first_name AS manager`, and `m.salary AS mgr_salary`. Order by `e.emp_id`.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "employee",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "manager",
+        "type": "varchar"
+      },
+      {
+        "name": "mgr_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self-join comparing salaries\nSELECT ...",
+    "solution_query": "SELECT e.first_name AS employee, e.salary AS emp_salary, m.first_name AS manager, m.salary AS mgr_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Compares compensation between connected subordinate and supervisor records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `e.manager_id = m.emp_id` and filter with `WHERE e.salary > m.salary`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT e.first_name AS employee, e.salary AS emp_salary, m.first_name AS manager, m.salary AS mgr_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "interview-classic"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-03",
+    "slug": "cross-join-category-and-shipping-regions",
+    "title": "Generate Matrix of Categories and Target Countries",
+    "description_markdown": "Generate all possible pairs of category names from `categories` and distinct customer countries from `customers` using a CROSS JOIN. Return `c.category_name` and `u.country`. Order by `c.category_name` ASC, `u.country` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- CROSS JOIN categories and distinct countries\nSELECT ...",
+    "solution_query": "SELECT c.category_name, u.country FROM categories c CROSS JOIN (SELECT DISTINCT country FROM customers) u ORDER BY c.category_name ASC, u.country ASC;",
+    "solution_explanation": "A CROSS JOIN produces a Cartesian product matching every left row with every right row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CROSS JOIN (SELECT DISTINCT country FROM customers) u`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.category_name, u.country FROM categories c CROSS JOIN (SELECT DISTINCT country FROM customers) u ORDER BY c.category_name ASC, u.country ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-04",
+    "slug": "peer-coworkers-same-manager",
+    "title": "Find Coworker Pairs Reporting to the Same Manager",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to find distinct pairs of coworkers who report to the same manager (`e1.manager_id = e2.manager_id`). Use `e1.emp_id < e2.emp_id` to eliminate reflexive self-pairs and duplicates. Return `e1.first_name AS emp_1`, `e2.first_name AS emp_2`, and `e1.manager_id`. Order by `manager_id` ascending, `emp_1` ascending, `emp_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_1",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_2",
+        "type": "varchar"
+      },
+      {
+        "name": "manager_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join to find coworker peers\nSELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.manager_id\nFROM employees e1\nJOIN employees e2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.manager_id FROM employees e1 JOIN employees e2 ON e1.manager_id = e2.manager_id AND e1.emp_id < e2.emp_id ORDER BY e1.manager_id ASC, emp_1 ASC, emp_2 ASC;",
+    "solution_explanation": "Self-joining with condition `e1.emp_id < e2.emp_id` pairs distinct coworkers sharing a supervisor without mirroring results (A-B and B-A).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using `!=` instead of `<` which causes inverted duplicate rows."
+    ],
+    "interview_tip": "To generate unique undirected pairs in SQL, always use `<` on the primary key.",
+    "hints": [
+      "Join on `e1.manager_id = e2.manager_id`.",
+      "Filter with `AND e1.emp_id < e2.emp_id`.",
+      "Query: SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.manager_id FROM employees e1 JOIN employees e2 ON e1.manager_id = e2.manager_id AND e1.emp_id < e2.emp_id ORDER BY e1.manager_id ASC, emp_1 ASC, emp_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "pairs"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-05",
+    "slug": "parent-child-product-categories",
+    "title": "Map Subcategories to Parent Categories",
+    "description_markdown": "Perform a `SELF JOIN` on `categories` to map each subcategory to its parent category on `sub.parent_category_id = parent.category_id`. Return `sub.category_name AS sub_category` and `parent.category_name AS parent_category`. Order by `parent_category` ascending, then `sub_category` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "sub_category",
+        "type": "varchar"
+      },
+      {
+        "name": "parent_category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on categories hierarchy\nSELECT sub.category_name AS sub_category, parent.category_name AS parent_category\nFROM categories sub\nJOIN categories parent ON ...\nORDER BY ...;",
+    "solution_query": "SELECT sub.category_name AS sub_category, parent.category_name AS parent_category FROM categories sub JOIN categories parent ON sub.parent_category_id = parent.category_id ORDER BY parent_category ASC, sub_category ASC;",
+    "solution_explanation": "Resolves the adjacency list hierarchy by self-joining on `parent_category_id = category_id`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the parent and child alias logic."
+    ],
+    "interview_tip": "Adjacency lists are the simplest way to store trees in relational databases; traversing 1 level is a simple self-join.",
+    "hints": [
+      "Join on `sub.parent_category_id = parent.category_id`.",
+      "Order by `parent_category ASC, sub_category ASC`.",
+      "Query: SELECT sub.category_name AS sub_category, parent.category_name AS parent_category FROM categories sub JOIN categories parent ON sub.parent_category_id = parent.category_id ORDER BY parent_category ASC, sub_category ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "hierarchies"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-06",
+    "slug": "students-sharing-same-major",
+    "title": "Find Pairs of Classmates in the Same Major",
+    "description_markdown": "Perform a `SELF JOIN` on `students` to pair students enrolled in the same major (`s1.major = s2.major`). Filter with `s1.student_id < s2.student_id`. Return `s1.first_name AS student_1`, `s2.first_name AS student_2`, and `s1.major`. Order by `s1.major` ascending, `student_1` ascending, `student_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_1",
+        "type": "varchar"
+      },
+      {
+        "name": "student_2",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on major\nSELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.major\nFROM students s1\nJOIN students s2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.major FROM students s1 JOIN students s2 ON s1.major = s2.major AND s1.student_id < s2.student_id ORDER BY s1.major ASC, student_1 ASC, student_2 ASC;",
+    "solution_explanation": "Forms cohort classmate pairings by matching equal majors while deduplicating pairs via student ID inequality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting student_id < student_id, leading to self-matching (Alice with Alice)."
+    ],
+    "interview_tip": "Self-matches occur whenever an equality join is performed on the same table without primary key exclusion.",
+    "hints": [
+      "Join on `s1.major = s2.major`.",
+      "Filter `AND s1.student_id < s2.student_id`.",
+      "Query: SELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.major FROM students s1 JOIN students s2 ON s1.major = s2.major AND s1.student_id < s2.student_id ORDER BY s1.major ASC, student_1 ASC, student_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-07",
+    "slug": "coworkers-in-same-department",
+    "title": "Pair Employees Working in the Same Department",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to pair staff working in the same department (`e1.dept_id = e2.dept_id`). Restrict to `e1.emp_id < e2.emp_id`. Return `e1.first_name AS emp_1`, `e2.first_name AS emp_2`, and `e1.dept_id`. Order by `e1.dept_id` ascending, `emp_1` ascending, `emp_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_1",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_2",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on dept_id\nSELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.dept_id\nFROM employees e1\nJOIN employees e2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.dept_id FROM employees e1 JOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id ORDER BY e1.dept_id ASC, emp_1 ASC, emp_2 ASC;",
+    "solution_explanation": "Matches departmental colleagues without pairing employees with themselves or generating duplicate permutations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the table alias qualifier in the SELECT list."
+    ],
+    "interview_tip": "Always verify whether the interviewer wants ordered pairs (permutations) or unordered pairs (combinations with `<`).",
+    "hints": [
+      "Join on `e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id`.",
+      "Order by `e1.dept_id ASC, emp_1 ASC, emp_2 ASC`.",
+      "Query: SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.dept_id FROM employees e1 JOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id ORDER BY e1.dept_id ASC, emp_1 ASC, emp_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "organization"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-08",
+    "slug": "identical-salary-peers",
+    "title": "Find Coworkers with Identical Compensation",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to find distinct pairs of employees earning the exact same salary (`e1.salary = e2.salary`). Use `e1.emp_id < e2.emp_id`. Return `e1.first_name AS emp_1`, `e2.first_name AS emp_2`, and `e1.salary`. Order by `e1.salary` descending, `emp_1` ascending, `emp_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_1",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_2",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on salary match\nSELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.salary\nFROM employees e1\nJOIN employees e2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.salary FROM employees e1 JOIN employees e2 ON e1.salary = e2.salary AND e1.emp_id < e2.emp_id ORDER BY e1.salary DESC, emp_1 ASC, emp_2 ASC;",
+    "solution_explanation": "Surfaces pay parity matches across the company roster.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting salary ascending instead of descending."
+    ],
+    "interview_tip": "Self-joins are ideal for identifying value ties or duplicates without needing an aggregate GROUP BY.",
+    "hints": [
+      "Join on `e1.salary = e2.salary AND e1.emp_id < e2.emp_id`.",
+      "Order by `e1.salary DESC, emp_1 ASC, emp_2 ASC`.",
+      "Query: SELECT e1.first_name AS emp_1, e2.first_name AS emp_2, e1.salary FROM employees e1 JOIN employees e2 ON e1.salary = e2.salary AND e1.emp_id < e2.emp_id ORDER BY e1.salary DESC, emp_1 ASC, emp_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-09",
+    "slug": "same-city-customers-pairing",
+    "title": "Find Pairs of Customers Residing in the Same City",
+    "description_markdown": "Perform a `SELF JOIN` on `customers` to find pairs residing in the same city (`c1.city = c2.city`). Filter with `c1.customer_id < c2.customer_id`. Return `c1.first_name AS cust_1`, `c2.first_name AS cust_2`, and `c1.city`. Order by `c1.city` ascending, `cust_1` ascending, `cust_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "cust_1",
+        "type": "varchar"
+      },
+      {
+        "name": "cust_2",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on city\nSELECT c1.first_name AS cust_1, c2.first_name AS cust_2, c1.city\nFROM customers c1\nJOIN customers c2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c1.first_name AS cust_1, c2.first_name AS cust_2, c1.city FROM customers c1 JOIN customers c2 ON c1.city = c2.city AND c1.customer_id < c2.customer_id ORDER BY c1.city ASC, cust_1 ASC, cust_2 ASC;",
+    "solution_explanation": "Groups distinct customer neighbors who live in the same geographic municipality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Matching customers against themselves."
+    ],
+    "interview_tip": "Always enforce primary key inequality to prevent self-matches.",
+    "hints": [
+      "Join on `c1.city = c2.city AND c1.customer_id < c2.customer_id`.",
+      "Order by `c1.city ASC, cust_1 ASC, cust_2 ASC`.",
+      "Query: SELECT c1.first_name AS cust_1, c2.first_name AS cust_2, c1.city FROM customers c1 JOIN customers c2 ON c1.city = c2.city AND c1.customer_id < c2.customer_id ORDER BY c1.city ASC, cust_1 ASC, cust_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "geography"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-10",
+    "slug": "cross-join-departments-and-job-titles",
+    "title": "Generate Matrix of Departments and Distinct Job Titles",
+    "description_markdown": "Generate all potential staffing roles per department by performing a `CROSS JOIN` between `departments` and the distinct `job_title` values from `employees`. Return `d.dept_name` and `jobs.job_title`. Order by `d.dept_name` ascending, then `jobs.job_title` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- CROSS JOIN departments and distinct job titles\nSELECT d.dept_name, jobs.job_title\nFROM departments d\nCROSS JOIN (SELECT DISTINCT job_title FROM employees) jobs\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, jobs.job_title FROM departments d CROSS JOIN (SELECT DISTINCT job_title FROM employees) jobs ORDER BY d.dept_name ASC, jobs.job_title ASC;",
+    "solution_explanation": "CROSS JOIN creates the Cartesian product between every active department and every unique corporate job designation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Crossing the raw employees table instead of the distinct derived subquery, causing duplicate job title rows."
+    ],
+    "interview_tip": "CROSS JOINs with distinct subqueries are commonly used in data modeling to generate full reporting grids.",
+    "hints": [
+      "Use `CROSS JOIN (SELECT DISTINCT job_title FROM employees) jobs`.",
+      "Order by `d.dept_name ASC, jobs.job_title ASC`.",
+      "Query: SELECT d.dept_name, jobs.job_title FROM departments d CROSS JOIN (SELECT DISTINCT job_title FROM employees) jobs ORDER BY d.dept_name ASC, jobs.job_title ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "cartesian"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-11",
+    "slug": "cross-join-order-status-and-payment-methods",
+    "title": "Generate Matrix of Order Statuses and Payment Methods",
+    "description_markdown": "Generate all possible combinations of order statuses and payment methods by performing a `CROSS JOIN` between distinct `order_status` from `orders` and distinct `payment_method` from `payments`. Return `os.order_status` and `pm.payment_method`. Order by `os.order_status` ascending, then `pm.payment_method` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "payment_method",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- CROSS JOIN distinct statuses and methods\nSELECT os.order_status, pm.payment_method\nFROM (SELECT DISTINCT order_status FROM orders) os\nCROSS JOIN (SELECT DISTINCT payment_method FROM payments) pm\nORDER BY ...;",
+    "solution_query": "SELECT os.order_status, pm.payment_method FROM (SELECT DISTINCT order_status FROM orders) os CROSS JOIN (SELECT DISTINCT payment_method FROM payments) pm ORDER BY os.order_status ASC, pm.payment_method ASC;",
+    "solution_explanation": "Forms the complete Cartesian matrix across operational order lifecycle states and transaction gateways.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off DISTINCT in the derived tables."
+    ],
+    "interview_tip": "Cartesian grids are essential when building data cubes or checking for sparse data combinations.",
+    "hints": [
+      "Wrap distinct selections in subqueries before cross joining.",
+      "Order by `os.order_status ASC, pm.payment_method ASC`.",
+      "Query: SELECT os.order_status, pm.payment_method FROM (SELECT DISTINCT order_status FROM orders) os CROSS JOIN (SELECT DISTINCT payment_method FROM payments) pm ORDER BY os.order_status ASC, pm.payment_method ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-12",
+    "slug": "cross-join-majors-and-semesters",
+    "title": "Generate Academic Matrix of Majors and Active Semesters",
+    "description_markdown": "Perform a `CROSS JOIN` between distinct `major` values from `students` and distinct `semester` values from `enrollments`. Return `m.major` and `s.semester`. Order by `m.major` ascending, then `s.semester` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "semester",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Cross join distinct majors and semesters\nSELECT m.major, s.semester\nFROM (SELECT DISTINCT major FROM students) m\nCROSS JOIN (SELECT DISTINCT semester FROM enrollments) s\nORDER BY ...;",
+    "solution_query": "SELECT m.major, s.semester FROM (SELECT DISTINCT major FROM students) m CROSS JOIN (SELECT DISTINCT semester FROM enrollments) s ORDER BY m.major ASC, s.semester ASC;",
+    "solution_explanation": "Produces all theoretical major and semester pairings for academic curriculum planning.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Crossing tables directly without deduping."
+    ],
+    "interview_tip": "A Cartesian product of N rows and M rows produces exactly N * M rows.",
+    "hints": [
+      "Cross join two derived distinct tables.",
+      "Order by `m.major ASC, s.semester ASC`.",
+      "Query: SELECT m.major, s.semester FROM (SELECT DISTINCT major FROM students) m CROSS JOIN (SELECT DISTINCT semester FROM enrollments) s ORDER BY m.major ASC, s.semester ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "education"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-13",
+    "slug": "employees-hired-before-their-manager",
+    "title": "Identify Staff Hired Before Their Manager",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to find employees whose `hire_date` is strictly earlier than their manager's `hire_date`. Return `e.first_name AS employee_name`, `e.hire_date AS emp_hire_date`, `m.first_name AS manager_name`, and `m.hire_date AS mgr_hire_date`. Order by `e.emp_id` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "employee_name",
+        "type": "varchar"
+      },
+      {
+        "name": "emp_hire_date",
+        "type": "date"
+      },
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "mgr_hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Find employees hired before manager\nSELECT e.first_name AS employee_name, e.hire_date AS emp_hire_date, m.first_name AS manager_name, m.hire_date AS mgr_hire_date\nFROM employees e\nJOIN employees m ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT e.first_name AS employee_name, e.hire_date AS emp_hire_date, m.first_name AS manager_name, m.hire_date AS mgr_hire_date FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.hire_date < m.hire_date ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Finds tenured team members who pre-date their current direct supervisor at the firm.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing the manager and employee hire dates."
+    ],
+    "interview_tip": "This is a frequent SQL interview question testing hierarchical self-joins combined with temporal comparisons.",
+    "hints": [
+      "Join condition: `e.manager_id = m.emp_id`.",
+      "Filter condition: `WHERE e.hire_date < m.hire_date`.",
+      "Query: SELECT e.first_name AS employee_name, e.hire_date AS emp_hire_date, m.first_name AS manager_name, m.hire_date AS mgr_hire_date FROM employees e JOIN employees m ON e.manager_id = m.emp_id WHERE e.hire_date < m.hire_date ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-14",
+    "slug": "direct-reports-count-per-manager",
+    "title": "Count Direct Reports per Manager Using Self Join",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to count direct subordinates per manager (`e.manager_id = m.emp_id`). Group by `m.emp_id` and `m.first_name`. Return `m.first_name AS manager_name` and `COUNT(e.emp_id) AS direct_reports_count`. Order by `direct_reports_count` descending, then `manager_name` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "direct_reports_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join and count direct reports\nSELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count\nFROM employees e\nJOIN employees m ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY direct_reports_count DESC, manager_name ASC;",
+    "solution_explanation": "Counts subordinate employees linked to each supervisor ID in the employee table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Grouping by e.emp_id instead of m.emp_id."
+    ],
+    "interview_tip": "Remember that the manager record is m, and the subordinate record is e.",
+    "hints": [
+      "Join condition: `e.manager_id = m.emp_id`.",
+      "Group by `m.emp_id, m.first_name`.",
+      "Query: SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY direct_reports_count DESC, manager_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "hierarchy",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-15",
+    "slug": "managers-with-multiple-direct-reports",
+    "title": "Filter Managers with at Least 3 Direct Reports",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to identify managers with at least 3 direct reports. Group by `m.emp_id` and `m.first_name`. Filter with `HAVING COUNT(e.emp_id) >= 3`. Return `m.first_name AS manager_name` and `COUNT(e.emp_id) AS direct_reports_count`. Order by `direct_reports_count` descending, then `manager_name` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "direct_reports_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join with HAVING threshold\nSELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count\nFROM employees e\nJOIN employees m ON ...\nGROUP BY ...\nHAVING ...\nORDER BY ...;",
+    "solution_query": "SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name HAVING COUNT(e.emp_id) >= 3 ORDER BY direct_reports_count DESC, manager_name ASC;",
+    "solution_explanation": "Filters managers by team size using aggregate HAVING on the self-join.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the count filter in WHERE."
+    ],
+    "interview_tip": "Combining self-joins with HAVING is an intermediate-level query pattern favored by engineering interviewers.",
+    "hints": [
+      "Join on `e.manager_id = m.emp_id`.",
+      "Filter with `HAVING COUNT(e.emp_id) >= 3`.",
+      "Query: SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS direct_reports_count FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name HAVING COUNT(e.emp_id) >= 3 ORDER BY direct_reports_count DESC, manager_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "having",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-16",
+    "slug": "team-payroll-per-manager",
+    "title": "Calculate Total Subordinate Payroll per Manager",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to compute the total salary earned by each manager's direct reports. Group by `m.emp_id` and `m.first_name`. Return `m.first_name AS manager_name` and `SUM(e.salary) AS team_payroll`. Order by `team_payroll` descending, then `manager_name` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "team_payroll",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate team payroll per manager\nSELECT m.first_name AS manager_name, SUM(e.salary) AS team_payroll\nFROM employees e\nJOIN employees m ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT m.first_name AS manager_name, SUM(e.salary) AS team_payroll FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY team_payroll DESC, manager_name ASC;",
+    "solution_explanation": "Sums subordinate salaries per supervisor record.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Summing the manager's own salary instead of the subordinates'."
+    ],
+    "interview_tip": "Ensure e.salary is summed rather than m.salary.",
+    "hints": [
+      "Join condition: `e.manager_id = m.emp_id`.",
+      "Use `SUM(e.salary) AS team_payroll`.",
+      "Query: SELECT m.first_name AS manager_name, SUM(e.salary) AS team_payroll FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY team_payroll DESC, manager_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-17",
+    "slug": "average-team-salary-per-manager",
+    "title": "Calculate Average Subordinate Compensation per Manager",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to compute the average compensation of direct subordinates per manager. Group by `m.emp_id` and `m.first_name`. Return `m.first_name AS manager_name` and `ROUND(AVG(e.salary), 2) AS avg_team_salary`. Order by `avg_team_salary` descending, then `manager_name` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_team_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average team salary per manager\nSELECT m.first_name AS manager_name, ROUND(AVG(e.salary), 2) AS avg_team_salary\nFROM employees e\nJOIN employees m ON ...\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT m.first_name AS manager_name, ROUND(AVG(e.salary), 2) AS avg_team_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY avg_team_salary DESC, manager_name ASC;",
+    "solution_explanation": "Computes the mean direct subordinate salary per manager.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding without two decimal places."
+    ],
+    "interview_tip": "Reporting metrics per manager helps HR monitor team compensation equity.",
+    "hints": [
+      "Join on `e.manager_id = m.emp_id`.",
+      "Use `ROUND(AVG(e.salary), 2) AS avg_team_salary`.",
+      "Query: SELECT m.first_name AS manager_name, ROUND(AVG(e.salary), 2) AS avg_team_salary FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY avg_team_salary DESC, manager_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-18",
+    "slug": "same-gpa-different-majors",
+    "title": "Find Students with Identical GPA in Different Majors",
+    "description_markdown": "Perform a `SELF JOIN` on `students` to identify pairs of students who have the exact same GPA (`s1.gpa = s2.gpa`) but belong to different majors (`s1.major != s2.major`). Enforce `s1.student_id < s2.student_id`. Return `s1.first_name AS student_1`, `s1.major AS major_1`, `s2.first_name AS student_2`, `s2.major AS major_2`, and `s1.gpa`. Order by `s1.gpa` descending, `student_1` ascending, `student_2` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_1",
+        "type": "varchar"
+      },
+      {
+        "name": "major_1",
+        "type": "varchar"
+      },
+      {
+        "name": "student_2",
+        "type": "varchar"
+      },
+      {
+        "name": "major_2",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join matching GPA across different majors\nSELECT s1.first_name AS student_1, s1.major AS major_1, s2.first_name AS student_2, s2.major AS major_2, s1.gpa\nFROM students s1\nJOIN students s2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT s1.first_name AS student_1, s1.major AS major_1, s2.first_name AS student_2, s2.major AS major_2, s1.gpa FROM students s1 JOIN students s2 ON s1.gpa = s2.gpa AND s1.major != s2.major AND s1.student_id < s2.student_id ORDER BY s1.gpa DESC, student_1 ASC, student_2 ASC;",
+    "solution_explanation": "Compares academic achievement metrics across distinct collegiate departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting s1.student_id < s2.student_id."
+    ],
+    "interview_tip": "Combining equality on one column and inequality on another in a self-join is a powerful analytical query pattern.",
+    "hints": [
+      "Conditions: `s1.gpa = s2.gpa AND s1.major != s2.major AND s1.student_id < s2.student_id`.",
+      "Order by `s1.gpa DESC, student_1 ASC, student_2 ASC`.",
+      "Query: SELECT s1.first_name AS student_1, s1.major AS major_1, s2.first_name AS student_2, s2.major AS major_2, s1.gpa FROM students s1 JOIN students s2 ON s1.gpa = s2.gpa AND s1.major != s2.major AND s1.student_id < s2.student_id ORDER BY s1.gpa DESC, student_1 ASC, student_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-19",
+    "slug": "same-category-close-price-products",
+    "title": "Find Similar Category Products with Price Spread Under 50",
+    "description_markdown": "Perform a `SELF JOIN` on `products` to find product pairs in the same category (`p1.category_id = p2.category_id`) where `p1.product_id < p2.product_id` and the absolute price difference `ABS(p1.price - p2.price) <= 50.00`. Return `p1.product_name AS product_1`, `p1.price AS price_1`, `p2.product_name AS product_2`, `p2.price AS price_2`, and `ROUND(ABS(p1.price - p2.price), 2) AS price_diff`. Order by `price_diff` ASC, `product_1` ASC, `product_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_1",
+        "type": "varchar"
+      },
+      {
+        "name": "price_1",
+        "type": "numeric"
+      },
+      {
+        "name": "product_2",
+        "type": "varchar"
+      },
+      {
+        "name": "price_2",
+        "type": "numeric"
+      },
+      {
+        "name": "price_diff",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on products with close prices\nSELECT p1.product_name AS product_1, p1.price AS price_1, p2.product_name AS product_2, p2.price AS price_2, ROUND(ABS(p1.price - p2.price), 2) AS price_diff\nFROM products p1\nJOIN products p2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p1.product_name AS product_1, p1.price AS price_1, p2.product_name AS product_2, p2.price AS price_2, ROUND(ABS(p1.price - p2.price), 2) AS price_diff FROM products p1 JOIN products p2 ON p1.category_id = p2.category_id AND p1.product_id < p2.product_id WHERE ABS(p1.price - p2.price) <= 50.00 ORDER BY price_diff ASC, product_1 ASC, product_2 ASC;",
+    "solution_explanation": "Identifies competitive substitute goods in the same product category with closely matched pricing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting ABS() which would cause negative difference logic errors."
+    ],
+    "interview_tip": "ABS(a - b) <= threshold is the standard method for finding proximate values in numerical columns.",
+    "hints": [
+      "Join on `p1.category_id = p2.category_id AND p1.product_id < p2.product_id`.",
+      "Filter with `WHERE ABS(p1.price - p2.price) <= 50.00`.",
+      "Query: SELECT p1.product_name AS product_1, p1.price AS price_1, p2.product_name AS product_2, p2.price AS price_2, ROUND(ABS(p1.price - p2.price), 2) AS price_diff FROM products p1 JOIN products p2 ON p1.category_id = p2.category_id AND p1.product_id < p2.product_id WHERE ABS(p1.price - p2.price) <= 50.00 ORDER BY price_diff ASC, product_1 ASC, product_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "pricing",
+      "analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-20",
+    "slug": "same-date-orders-different-customers",
+    "title": "Find Orders Placed on the Same Date by Different Customers",
+    "description_markdown": "Perform a `SELF JOIN` on `orders` to find pairs of orders placed on the exact same date (`o1.order_date = o2.order_date`) by different customers (`o1.customer_id != o2.customer_id`). Use `o1.order_id < o2.order_id`. Return `o1.order_id AS order_1`, `o1.customer_id AS cust_1`, `o2.order_id AS order_2`, `o2.customer_id AS cust_2`, and `o1.order_date`. Order by `o1.order_date` ASC, `order_1` ASC, `order_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_1",
+        "type": "integer"
+      },
+      {
+        "name": "cust_1",
+        "type": "integer"
+      },
+      {
+        "name": "order_2",
+        "type": "integer"
+      },
+      {
+        "name": "cust_2",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on order_date\nSELECT o1.order_id AS order_1, o1.customer_id AS cust_1, o2.order_id AS order_2, o2.customer_id AS cust_2, o1.order_date\nFROM orders o1\nJOIN orders o2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT o1.order_id AS order_1, o1.customer_id AS cust_1, o2.order_id AS order_2, o2.customer_id AS cust_2, o1.order_date FROM orders o1 JOIN orders o2 ON o1.order_date = o2.order_date AND o1.customer_id != o2.customer_id AND o1.order_id < o2.order_id ORDER BY o1.order_date ASC, order_1 ASC, order_2 ASC;",
+    "solution_explanation": "Detects concurrent order activity from separate consumer accounts on a common calendar date.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Allowing the same customer to match their own multiple orders on that date."
+    ],
+    "interview_tip": "Filtering customer_id != customer_id isolates cross-customer behaviors.",
+    "hints": [
+      "Join condition: `o1.order_date = o2.order_date AND o1.customer_id != o2.customer_id AND o1.order_id < o2.order_id`.",
+      "Order by `o1.order_date ASC, order_1 ASC, order_2 ASC`.",
+      "Query: SELECT o1.order_id AS order_1, o1.customer_id AS cust_1, o2.order_id AS order_2, o2.customer_id AS cust_2, o1.order_date FROM orders o1 JOIN orders o2 ON o1.order_date = o2.order_date AND o1.customer_id != o2.customer_id AND o1.order_id < o2.order_id ORDER BY o1.order_date ASC, order_1 ASC, order_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "timestamps"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-21",
+    "slug": "two-level-management-chain",
+    "title": "Traverse Two-Level Management Reporting Chains",
+    "description_markdown": "Perform a double `SELF JOIN` on `employees` to trace employee `e`, their direct manager `m` (`e.manager_id = m.emp_id`), and their skip-level manager `sm` (`m.manager_id = sm.emp_id`). Return `e.first_name AS employee`, `m.first_name AS manager`, and `sm.first_name AS skip_manager`. Order by `e.emp_id` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "employee",
+        "type": "varchar"
+      },
+      {
+        "name": "manager",
+        "type": "varchar"
+      },
+      {
+        "name": "skip_manager",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Double self-join to traverse 2 tiers\nSELECT e.first_name AS employee, m.first_name AS manager, sm.first_name AS skip_manager\nFROM employees e\nJOIN employees m ON ...\nJOIN employees sm ON ...\nORDER BY ...;",
+    "solution_query": "SELECT e.first_name AS employee, m.first_name AS manager, sm.first_name AS skip_manager FROM employees e JOIN employees m ON e.manager_id = m.emp_id JOIN employees sm ON m.manager_id = sm.emp_id ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Chains two self-joins along the supervisor hierarchy to reveal two full tiers of managerial governance.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining sm directly to e instead of m."
+    ],
+    "interview_tip": "Before recursive CTEs were widely supported, self-joining multiple times was the standard pattern for fixed-depth tree traversal.",
+    "hints": [
+      "Join `m` on `e.manager_id = m.emp_id`.",
+      "Join `sm` on `m.manager_id = sm.emp_id`.",
+      "Query: SELECT e.first_name AS employee, m.first_name AS manager, sm.first_name AS skip_manager FROM employees e JOIN employees m ON e.manager_id = m.emp_id JOIN employees sm ON m.manager_id = sm.emp_id ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "hierarchies",
+      "skip-level"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-22",
+    "slug": "cross-join-products-and-customers",
+    "title": "Generate Marketing Targeting Matrix via CROSS JOIN",
+    "description_markdown": "Perform a `CROSS JOIN` between `customers` and `products` where `c.country = 'USA'` and `p.price > 500`. Return `c.customer_id` and `p.product_id`. Order by `c.customer_id` ascending, then `p.product_id` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- CROSS JOIN filtered customers and products\nSELECT c.customer_id, p.product_id\nFROM customers c\nCROSS JOIN products p\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, p.product_id FROM customers c CROSS JOIN products p WHERE c.country = 'USA' AND p.price > 500 ORDER BY c.customer_id ASC, p.product_id ASC;",
+    "solution_explanation": "Constructs all prospective pairing candidates for premium marketing ad targeting in the US.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the country or price filter in the WHERE clause."
+    ],
+    "interview_tip": "Filtering before or during cross-joins controls the Cartesian product size and prevents memory overflows.",
+    "hints": [
+      "Use `FROM customers c CROSS JOIN products p`.",
+      "Filter `WHERE c.country = 'USA' AND p.price > 500`.",
+      "Query: SELECT c.customer_id, p.product_id FROM customers c CROSS JOIN products p WHERE c.country = 'USA' AND p.price > 500 ORDER BY c.customer_id ASC, p.product_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "marketing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-23",
+    "slug": "courses-with-same-credits-same-department",
+    "title": "Find Course Pairs Sharing Dept and Credit Count",
+    "description_markdown": "Perform a `SELF JOIN` on `courses` to find pairs of courses in the same department with the same credit count (`c1.department = c2.department AND c1.credits = c2.credits`). Restrict to `c1.course_id < c2.course_id`. Return `c1.course_code AS course_1`, `c2.course_code AS course_2`, `c1.department`, and `c1.credits`. Order by `c1.department` ASC, `course_1` ASC, `course_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_1",
+        "type": "varchar"
+      },
+      {
+        "name": "course_2",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on courses department and credits\nSELECT c1.course_code AS course_1, c2.course_code AS course_2, c1.department, c1.credits\nFROM courses c1\nJOIN courses c2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c1.course_code AS course_1, c2.course_code AS course_2, c1.department, c1.credits FROM courses c1 JOIN courses c2 ON c1.department = c2.department AND c1.credits = c2.credits AND c1.course_id < c2.course_id ORDER BY c1.department ASC, course_1 ASC, course_2 ASC;",
+    "solution_explanation": "Pairs curricular equivalents offering identical unit credits in the same academic field.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Failing to enforce course_id inequality."
+    ],
+    "interview_tip": "Multi-column joins with primary key inequality produce clean, non-redundant match lists.",
+    "hints": [
+      "Join on `c1.department = c2.department AND c1.credits = c2.credits AND c1.course_id < c2.course_id`.",
+      "Order by `c1.department ASC, course_1 ASC, course_2 ASC`.",
+      "Query: SELECT c1.course_code AS course_1, c2.course_code AS course_2, c1.department, c1.credits FROM courses c1 JOIN courses c2 ON c1.department = c2.department AND c1.credits = c2.credits AND c1.course_id < c2.course_id ORDER BY c1.department ASC, course_1 ASC, course_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "curriculum"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-24",
+    "slug": "professors-same-department-pairing",
+    "title": "Pair Faculty Colleagues in the Same Department",
+    "description_markdown": "Perform a `SELF JOIN` on `professors` to find pairs of colleagues within the same department (`p1.department = p2.department`). Enforce `p1.professor_id < p2.professor_id`. Return `p1.last_name AS prof_1`, `p2.last_name AS prof_2`, and `p1.department`. Order by `p1.department` ASC, `prof_1` ASC, `prof_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "prof_1",
+        "type": "varchar"
+      },
+      {
+        "name": "prof_2",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on professors department\nSELECT p1.last_name AS prof_1, p2.last_name AS prof_2, p1.department\nFROM professors p1\nJOIN professors p2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT p1.last_name AS prof_1, p2.last_name AS prof_2, p1.department FROM professors p1 JOIN professors p2 ON p1.department = p2.department AND p1.professor_id < p2.professor_id ORDER BY p1.department ASC, prof_1 ASC, prof_2 ASC;",
+    "solution_explanation": "Forms faculty peer committees within university departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using `!=` which returns duplicate reversed rows."
+    ],
+    "interview_tip": "Using `<` ensures each pair is emitted exactly once in canonical alphabetical/numerical sequence.",
+    "hints": [
+      "Join on `p1.department = p2.department AND p1.professor_id < p2.professor_id`.",
+      "Order by `p1.department ASC, prof_1 ASC, prof_2 ASC`.",
+      "Query: SELECT p1.last_name AS prof_1, p2.last_name AS prof_2, p1.department FROM professors p1 JOIN professors p2 ON p1.department = p2.department AND p1.professor_id < p2.professor_id ORDER BY p1.department ASC, prof_1 ASC, prof_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "faculty"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-25",
+    "slug": "successive-salary-raises-audit",
+    "title": "Calculate Consecutive Pay Raises via Self Join",
+    "description_markdown": "Perform a `SELF JOIN` on `salaries_history` to compare compensation records for the same employee where `sh1.emp_id = sh2.emp_id` and `sh1.effective_date < sh2.effective_date`. Return `sh1.emp_id`, `sh1.effective_date AS prior_date`, `sh1.salary AS prior_salary`, `sh2.effective_date AS new_date`, and `sh2.salary AS new_salary`. Order by `sh1.emp_id` ASC, `prior_date` ASC, `new_date` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "prior_date",
+        "type": "date"
+      },
+      {
+        "name": "prior_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "new_date",
+        "type": "date"
+      },
+      {
+        "name": "new_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on salary history dates\nSELECT sh1.emp_id, sh1.effective_date AS prior_date, sh1.salary AS prior_salary, sh2.effective_date AS new_date, sh2.salary AS new_salary\nFROM salaries_history sh1\nJOIN salaries_history sh2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT sh1.emp_id, sh1.effective_date AS prior_date, sh1.salary AS prior_salary, sh2.effective_date AS new_date, sh2.salary AS new_salary FROM salaries_history sh1 JOIN salaries_history sh2 ON sh1.emp_id = sh2.emp_id AND sh1.effective_date < sh2.effective_date ORDER BY sh1.emp_id ASC, prior_date ASC, new_date ASC;",
+    "solution_explanation": "Tracks progression intervals across employee compensation history using temporal self-join.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining without matching emp_id."
+    ],
+    "interview_tip": "Temporal self-joins were standard before window functions (LAG/LEAD) were introduced, and remain a classic technical question.",
+    "hints": [
+      "Join on `sh1.emp_id = sh2.emp_id AND sh1.effective_date < sh2.effective_date`.",
+      "Order by `sh1.emp_id ASC, prior_date ASC, new_date ASC`.",
+      "Query: SELECT sh1.emp_id, sh1.effective_date AS prior_date, sh1.salary AS prior_salary, sh2.effective_date AS new_date, sh2.salary AS new_salary FROM salaries_history sh1 JOIN salaries_history sh2 ON sh1.emp_id = sh2.emp_id AND sh1.effective_date < sh2.effective_date ORDER BY sh1.emp_id ASC, prior_date ASC, new_date ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "temporal",
+      "audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-26",
+    "slug": "manager-subordinate-salary-gap",
+    "title": "Calculate Compensation Gap Between Manager and Staff",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` (`e.manager_id = m.emp_id`) to calculate the compensation premium `(m.salary - e.salary) AS salary_difference`. Return `e.first_name AS employee`, `m.first_name AS manager`, and `(m.salary - e.salary) AS salary_difference`. Order by `salary_difference` DESC, `employee` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "employee",
+        "type": "varchar"
+      },
+      {
+        "name": "manager",
+        "type": "varchar"
+      },
+      {
+        "name": "salary_difference",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Manager vs subordinate salary spread\nSELECT e.first_name AS employee, m.first_name AS manager, (m.salary - e.salary) AS salary_difference\nFROM employees e\nJOIN employees m ON ...\nORDER BY ...;",
+    "solution_query": "SELECT e.first_name AS employee, m.first_name AS manager, (m.salary - e.salary) AS salary_difference FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY salary_difference DESC, employee ASC;",
+    "solution_explanation": "Quantifies the compensation differential between direct reports and their immediate team supervisors.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting employee salary from manager salary in reverse order."
+    ],
+    "interview_tip": "Self-joining hierarchical data allows arithmetic difference calculations across org chart tiers.",
+    "hints": [
+      "Join on `e.manager_id = m.emp_id`.",
+      "Calculate `(m.salary - e.salary) AS salary_difference`.",
+      "Query: SELECT e.first_name AS employee, m.first_name AS manager, (m.salary - e.salary) AS salary_difference FROM employees e JOIN employees m ON e.manager_id = m.emp_id ORDER BY salary_difference DESC, employee ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "compensation",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-27",
+    "slug": "cross-join-departments-and-projects",
+    "title": "Generate Theoretical Dept-Project Planning Matrix",
+    "description_markdown": "Perform a `CROSS JOIN` between `departments` and `projects`. Return `d.dept_name` and `p.project_name`. Order by `d.dept_name` ascending, then `p.project_name` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Full cross join\nSELECT d.dept_name, p.project_name\nFROM departments d\nCROSS JOIN projects p\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, p.project_name FROM departments d CROSS JOIN projects p ORDER BY d.dept_name ASC, p.project_name ASC;",
+    "solution_explanation": "Forms every possible permutation between business departments and ongoing technology projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Adding an ON clause to a CROSS JOIN."
+    ],
+    "interview_tip": "CROSS JOIN takes no ON clause in standard ANSI SQL.",
+    "hints": [
+      "Use `FROM departments d CROSS JOIN projects p`.",
+      "Order by `d.dept_name ASC, p.project_name ASC`.",
+      "Query: SELECT d.dept_name, p.project_name FROM departments d CROSS JOIN projects p ORDER BY d.dept_name ASC, p.project_name ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "matrix"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-28",
+    "slug": "customers-with-earlier-and-later-signups",
+    "title": "Pair Customers with Successive Registration Timestamps",
+    "description_markdown": "Perform a `SELF JOIN` on `customers` to pair each customer with subsequent registrants who registered later (`c1.created_at < c2.created_at`) from the same country (`c1.country = c2.country`). Return `c1.first_name AS cust_1`, `c1.created_at AS created_at_1`, `c2.first_name AS cust_2`, and `c2.created_at AS created_at_2`. Order by `c1.country` ASC, `created_at_1` ASC, `created_at_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "cust_1",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at_1",
+        "type": "timestamp"
+      },
+      {
+        "name": "cust_2",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at_2",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on country and chronological order\nSELECT c1.first_name AS cust_1, c1.created_at AS created_at_1, c2.first_name AS cust_2, c2.created_at AS created_at_2\nFROM customers c1\nJOIN customers c2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT c1.first_name AS cust_1, c1.created_at AS created_at_1, c2.first_name AS cust_2, c2.created_at AS created_at_2 FROM customers c1 JOIN customers c2 ON c1.country = c2.country AND c1.created_at < c2.created_at ORDER BY c1.country ASC, created_at_1 ASC, created_at_2 ASC;",
+    "solution_explanation": "Chronologically orders user registrations within the same regional territory.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the country equality filter."
+    ],
+    "interview_tip": "Temporal joins partition chronological streams by categorical dimensions like country.",
+    "hints": [
+      "Join condition: `c1.country = c2.country AND c1.created_at < c2.created_at`.",
+      "Order by `c1.country ASC, created_at_1 ASC, created_at_2 ASC`.",
+      "Query: SELECT c1.first_name AS cust_1, c1.created_at AS created_at_1, c2.first_name AS cust_2, c2.created_at AS created_at_2 FROM customers c1 JOIN customers c2 ON c1.country = c2.country AND c1.created_at < c2.created_at ORDER BY c1.country ASC, created_at_1 ASC, created_at_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "timestamps",
+      "cohorts"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-29",
+    "slug": "top-manager-by-direct-reports",
+    "title": "Find Manager Leading the Highest Headcount",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to find the single manager who oversees the greatest number of direct reports. Group by `m.emp_id` and `m.first_name`. Return `m.first_name AS manager_name` and `COUNT(e.emp_id) AS team_size`. Order by `team_size` descending, then `manager_name` ascending. Limit to 1 row.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "manager_name",
+        "type": "varchar"
+      },
+      {
+        "name": "team_size",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Top manager by team size\nSELECT m.first_name AS manager_name, COUNT(e.emp_id) AS team_size\nFROM employees e\nJOIN employees m ON ...\nGROUP BY ...\nORDER BY ...\nLIMIT 1;",
+    "solution_query": "SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS team_size FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY team_size DESC, manager_name ASC LIMIT 1;",
+    "solution_explanation": "Identifies the supervisor with the widest span of control using self-join aggregation and top-1 ranking.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out LIMIT 1."
+    ],
+    "interview_tip": "ORDER BY ... DESC LIMIT 1 is the most efficient ANSI SQL pattern to fetch top-1 records.",
+    "hints": [
+      "Join condition: `e.manager_id = m.emp_id`.",
+      "Order by `team_size DESC, manager_name ASC LIMIT 1`.",
+      "Query: SELECT m.first_name AS manager_name, COUNT(e.emp_id) AS team_size FROM employees e JOIN employees m ON e.manager_id = m.emp_id GROUP BY m.emp_id, m.first_name ORDER BY team_size DESC, manager_name ASC LIMIT 1;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "aggregation",
+      "top-1"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-30",
+    "slug": "students-same-enrollment-year-different-major",
+    "title": "Pair Classmates Matriculating in the Same Year",
+    "description_markdown": "Perform a `SELF JOIN` on `students` to pair students entering in the same `enrollment_year` (`s1.enrollment_year = s2.enrollment_year`) but in different majors (`s1.major != s2.major`). Restrict with `s1.student_id < s2.student_id`. Return `s1.first_name AS student_1`, `s2.first_name AS student_2`, and `s1.enrollment_year`. Order by `s1.enrollment_year` ASC, `student_1` ASC, `student_2` ASC.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_1",
+        "type": "varchar"
+      },
+      {
+        "name": "student_2",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Self join on cohort year and different major\nSELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.enrollment_year\nFROM students s1\nJOIN students s2 ON ...\nWHERE ...\nORDER BY ...;",
+    "solution_query": "SELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.enrollment_year FROM students s1 JOIN students s2 ON s1.enrollment_year = s2.enrollment_year AND s1.major != s2.major AND s1.student_id < s2.student_id ORDER BY s1.enrollment_year ASC, student_1 ASC, student_2 ASC;",
+    "solution_explanation": "Pairs interdisciplinary classmates from the same entering college cohort.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Allowing students with identical majors into the result."
+    ],
+    "interview_tip": "Carefully combine equality and inequality predicates to isolate cohort sub-segments.",
+    "hints": [
+      "Join on `s1.enrollment_year = s2.enrollment_year AND s1.major != s2.major AND s1.student_id < s2.student_id`.",
+      "Order by `s1.enrollment_year ASC, student_1 ASC, student_2 ASC`.",
+      "Query: SELECT s1.first_name AS student_1, s2.first_name AS student_2, s1.enrollment_year FROM students s1 JOIN students s2 ON s1.enrollment_year = s2.enrollment_year AND s1.major != s2.major AND s1.student_id < s2.student_id ORDER BY s1.enrollment_year ASC, student_1 ASC, student_2 ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-31",
+    "slug": "cross-join-categories-and-active-ratings",
+    "title": "Generate Evaluation Grid of Categories and Star Ratings",
+    "description_markdown": "Perform a `CROSS JOIN` between `categories` and distinct `rating` values from `reviews`. Return `c.category_name` and `r.rating`. Order by `c.category_name` ascending, then `r.rating` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-cross",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Cross join categories and distinct ratings\nSELECT c.category_name, r.rating\nFROM categories c\nCROSS JOIN (SELECT DISTINCT rating FROM reviews) r\nORDER BY ...;",
+    "solution_query": "SELECT c.category_name, r.rating FROM categories c CROSS JOIN (SELECT DISTINCT rating FROM reviews) r ORDER BY c.category_name ASC, r.rating ASC;",
+    "solution_explanation": "Generates an exhaustive matrix of feedback scores per retail catalog department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting DISTINCT from the rating subquery, causing duplicate rows."
+    ],
+    "interview_tip": "Always distinct derived dimension tables when generating analytical scoring grids.",
+    "hints": [
+      "Use `CROSS JOIN (SELECT DISTINCT rating FROM reviews) r`.",
+      "Order by `c.category_name ASC, r.rating ASC`.",
+      "Query: SELECT c.category_name, r.rating FROM categories c CROSS JOIN (SELECT DISTINCT rating FROM reviews) r ORDER BY c.category_name ASC, r.rating ASC;"
+    ],
+    "tags": [
+      "joins",
+      "cross-join",
+      "reporting-grid"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-csj-32",
+    "slug": "departments-with-most-internal-pairs",
+    "title": "Rank Departments by Volume of Coworker Combinations",
+    "description_markdown": "Perform a `SELF JOIN` on `employees` to count the total number of distinct coworker pairs within each department (`e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id`). Group by `e1.dept_id`. Return `e1.dept_id` and `COUNT(*) AS coworker_pairs`. Order by `coworker_pairs` descending, then `dept_id` ascending.",
+    "topic_id": "cross-self-join",
+    "subtopic_id": "join-self",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "coworker_pairs",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Count coworker combinations per department\nSELECT e1.dept_id, COUNT(*) AS coworker_pairs\nFROM employees e1\nJOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT e1.dept_id, COUNT(*) AS coworker_pairs FROM employees e1 JOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id GROUP BY e1.dept_id ORDER BY coworker_pairs DESC, dept_id ASC;",
+    "solution_explanation": "Computes the combination count n*(n-1)/2 of unique coworker pairings per organizational unit.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using e1.emp_id != e2.emp_id which counts permutations n*(n-1) instead of combinations."
+    ],
+    "interview_tip": "The formula n*(n-1)/2 is matched in SQL by self-joining on `<` rather than `!=`.",
+    "hints": [
+      "Join on `e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id`.",
+      "Group by `e1.dept_id` and count rows with `COUNT(*)`.",
+      "Query: SELECT e1.dept_id, COUNT(*) AS coworker_pairs FROM employees e1 JOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.emp_id < e2.emp_id GROUP BY e1.dept_id ORDER BY coworker_pairs DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "joins",
+      "self-join",
+      "combinatorics",
+      "group-by"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-csj-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-csj-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-csj-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

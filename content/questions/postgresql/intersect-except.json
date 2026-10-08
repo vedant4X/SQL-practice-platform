@@ -1,0 +1,2214 @@
+[
+  {
+    "id": "q-inex-01",
+    "slug": "courses-taken-by-both-cohorts",
+    "title": "Find Overlapping Courses via INTERSECT",
+    "description_markdown": "Find `course_id` of courses completed by student 1 that were ALSO completed by student 2 using `INTERSECT`. Order by `course_id` ASC.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Find common course_id values with INTERSECT\nSELECT course_id FROM enrollments WHERE student_id = 1 AND status = 'completed'\nINTERSECT\nSELECT course_id FROM enrollments WHERE student_id = 2 AND status = 'completed'\nORDER BY ...",
+    "solution_query": "SELECT course_id FROM enrollments WHERE student_id = 1 AND status = 'completed' INTERSECT SELECT course_id FROM enrollments WHERE student_id = 2 AND status = 'completed' ORDER BY course_id ASC;",
+    "solution_explanation": "INTERSECT returns the mathematical set intersection—only rows present in both queries.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use INTERSECT between the two queries.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT course_id FROM enrollments WHERE student_id = 1 AND status = 'completed' INTERSECT SELECT course_id FROM enrollments WHERE student_id = 2 AND status = 'completed' ORDER BY course_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "set-operators"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-02",
+    "slug": "products-viewed-or-reviewed-diff",
+    "title": "Find Products Ordered But Never Reviewed via EXCEPT",
+    "description_markdown": "Find `product_id` of products that appear in `order_items` but do NOT appear in `reviews` using the `EXCEPT` operator. Order by `product_id` ASC.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Find products in order_items EXCEPT reviews\nSELECT product_id FROM order_items\nEXCEPT\nSELECT ...",
+    "solution_query": "SELECT product_id FROM order_items EXCEPT SELECT product_id FROM reviews ORDER BY product_id ASC;",
+    "solution_explanation": "EXCEPT returns rows from the first query that do not exist in the second query.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `EXCEPT SELECT product_id FROM reviews`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT product_id FROM order_items EXCEPT SELECT product_id FROM reviews ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "set-difference"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-03",
+    "slug": "departments-without-active-assignments",
+    "title": "Departments Missing Project Assignments via EXCEPT",
+    "description_markdown": "Find all `dept_id` values present in `departments` EXCEPT those assigned to any current employee participating in `assignments` (`SELECT dept_id FROM employees WHERE emp_id IN (SELECT emp_id FROM assignments)`). Order by `dept_id` ASC.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Set difference between departments and active employees\nSELECT dept_id FROM departments\nEXCEPT\nSELECT ...",
+    "solution_query": "SELECT dept_id FROM departments EXCEPT SELECT dept_id FROM employees WHERE emp_id IN (SELECT emp_id FROM assignments) ORDER BY dept_id ASC;",
+    "solution_explanation": "Isolates departmental divisions whose personnel have zero logged project assignments.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Select dept_id from departments, then EXCEPT the active employee dept_ids.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_id FROM departments EXCEPT SELECT dept_id FROM employees WHERE emp_id IN (SELECT emp_id FROM assignments) ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "multi-step"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-04",
+    "slug": "intersect-products-in-orders-and-reviews",
+    "title": "Find Overlapping Products in Orders and Reviews via INTERSECT",
+    "description_markdown": "Using the `INTERSECT` set operator, find all distinct `product_id` values that appear in BOTH the `order_items` table and the `reviews` table. Order by `product_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Find product IDs present in both order_items and reviews\nSELECT product_id FROM order_items\nINTERSECT\nSELECT product_id FROM reviews\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM order_items INTERSECT SELECT product_id FROM reviews ORDER BY product_id ASC;",
+    "solution_explanation": "INTERSECT computes the set intersection of distinct product keys found across both sales line items and customer review records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN when explicitly instructed to use the set operator INTERSECT."
+    ],
+    "interview_tip": "INTERSECT operates on complete row sets and automatically deduplicates results across both queries.",
+    "hints": [
+      "Select `product_id` from `order_items`.",
+      "Use `INTERSECT` with `SELECT product_id FROM reviews`.",
+      "Query: SELECT product_id FROM order_items INTERSECT SELECT product_id FROM reviews ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "set-operators",
+      "products",
+      "overlap"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-05",
+    "slug": "except-departments-without-employees",
+    "title": "Isolate Unstaffed Departments via EXCEPT",
+    "description_markdown": "Using the `EXCEPT` set operator, find all `dept_id` values in `departments` that have no employees assigned in `employees`. Order by `dept_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Set difference: all departments EXCEPT staffed departments\nSELECT dept_id FROM departments\nEXCEPT\nSELECT dept_id FROM employees WHERE dept_id IS NOT NULL\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id FROM departments EXCEPT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;",
+    "solution_explanation": "EXCEPT returns rows from the first query that do not exist in the second query, identifying unstaffed department IDs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the WHERE dept_id IS NOT NULL filter in the second query."
+    ],
+    "interview_tip": "EXCEPT (or MINUS in Oracle) is the set-theoretic formulation of an anti-join.",
+    "hints": [
+      "Select `dept_id` from `departments`.",
+      "EXCEPT with `SELECT dept_id FROM employees WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT dept_id FROM departments EXCEPT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "set-difference",
+      "departments",
+      "anti-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-06",
+    "slug": "intersect-customers-ordering-in-both-months",
+    "title": "Identify Repeat Customers Across Consecutive Months via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, identify all `customer_id` values for customers who placed at least one order in January 2023 (`order_date >= '2023-01-01' AND order_date <= '2023-01-31'`) AND also placed at least one order in February 2023 (`order_date >= '2023-02-01' AND order_date <= '2023-02-28'`). Order by `customer_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Repeat customers across consecutive months via INTERSECT\nSELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-01-31'\nINTERSECT\nSELECT customer_id FROM orders WHERE order_date >= '2023-02-01' AND order_date <= '2023-02-28'\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-01-31' INTERSECT SELECT customer_id FROM orders WHERE order_date >= '2023-02-01' AND order_date <= '2023-02-28' ORDER BY customer_id ASC;",
+    "solution_explanation": "Calculates the intersection of monthly customer cohorts, uncovering sticky customer retention across months.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR logic instead of INTERSECT to test for dual presence."
+    ],
+    "interview_tip": "Cohort retention analysis can be formulated cleanly using INTERSECT across monthly partitions.",
+    "hints": [
+      "Branch 1 selects customer_id for January 2023 orders.",
+      "Branch 2 selects customer_id for February 2023 orders.",
+      "Query: SELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-01-31' INTERSECT SELECT customer_id FROM orders WHERE order_date >= '2023-02-01' AND order_date <= '2023-02-28' ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "retention",
+      "cohorts",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-07",
+    "slug": "except-customers-who-never-placed-an-order",
+    "title": "Find Inactive Registered Customers via EXCEPT",
+    "description_markdown": "Using the `EXCEPT` operator, find all `customer_id` numbers of customers in `customers` who have never placed an order in the `orders` table. Order by `customer_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Registered customers who have never placed an order\nSELECT customer_id FROM customers\nEXCEPT\nSELECT customer_id FROM orders\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id FROM customers EXCEPT SELECT customer_id FROM orders ORDER BY customer_id ASC;",
+    "solution_explanation": "Subtracts the set of all active purchasers from the universal customer registry using set difference.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Putting orders first and customers second, which inverts the set difference."
+    ],
+    "interview_tip": "Order matters in EXCEPT: (A EXCEPT B) produces elements in A that are not in B.",
+    "hints": [
+      "Select `customer_id` from customers first.",
+      "Subtract `SELECT customer_id FROM orders` with `EXCEPT`.",
+      "Query: SELECT customer_id FROM customers EXCEPT SELECT customer_id FROM orders ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "set-difference",
+      "churn",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-08",
+    "slug": "intersect-students-enrolled-in-both-cs-and-math",
+    "title": "Find Students Enrolled in Both CS and Math Courses",
+    "description_markdown": "Using `INTERSECT`, find all `student_id` numbers of students who are enrolled in at least one Computer Science course (`c.department = 'Computer Science'`) AND in at least one Mathematics course (`c.department = 'Mathematics'`). Order by `student_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Cross-department scholars via INTERSECT\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Computer Science'\nINTERSECT\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Mathematics'\nORDER BY student_id ASC;",
+    "solution_query": "SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Computer Science' INTERSECT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' ORDER BY student_id ASC;",
+    "solution_explanation": "Joins enrollments with courses inside each branch, then intersects the two student sets to find interdisciplinary scholars.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Attempting WHERE department = 'CS' AND department = 'Math' on a single row, which is impossible."
+    ],
+    "interview_tip": "INTERSECT is a classic solution when asking for entities that satisfy two mutually exclusive attribute states.",
+    "hints": [
+      "Branch 1 joins courses for Computer Science.",
+      "Branch 2 joins courses for Mathematics.",
+      "Query: SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Computer Science' INTERSECT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "academic",
+      "enrollments",
+      "interdisciplinary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-09",
+    "slug": "except-students-without-any-enrollments",
+    "title": "Find Students Without Any Course Enrollments via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `student_id` numbers in `students` that do not exist in the `enrollments` table. Order by `student_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unenrolled students via EXCEPT\nSELECT student_id FROM students\nEXCEPT\nSELECT student_id FROM enrollments\nORDER BY student_id ASC;",
+    "solution_query": "SELECT student_id FROM students EXCEPT SELECT student_id FROM enrollments ORDER BY student_id ASC;",
+    "solution_explanation": "Subtracts the student IDs with registered courses from the general student directory.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the two queries."
+    ],
+    "interview_tip": "EXCEPT provides an elegant, expressive syntax for finding orphan parent records.",
+    "hints": [
+      "Select `student_id` from students.",
+      "Subtract with `EXCEPT SELECT student_id FROM enrollments`.",
+      "Query: SELECT student_id FROM students EXCEPT SELECT student_id FROM enrollments ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "academic",
+      "enrollments",
+      "orphans"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-10",
+    "slug": "intersect-employees-assigned-to-multiple-projects",
+    "title": "Find Cross-Staffed Personnel Across Projects via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, identify all `emp_id` values of employees who are assigned to Project 101 (`project_id = 101`) AND are also assigned to Project 102 (`project_id = 102`). Order by `emp_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Personnel shared across projects 101 and 102\nSELECT emp_id FROM assignments WHERE project_id = 101\nINTERSECT\nSELECT emp_id FROM assignments WHERE project_id = 102\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id FROM assignments WHERE project_id = 101 INTERSECT SELECT emp_id FROM assignments WHERE project_id = 102 ORDER BY emp_id ASC;",
+    "solution_explanation": "Finds the set intersection of employees staffed on both key strategic projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing project_id = 101 AND project_id = 102 in a single query filter."
+    ],
+    "interview_tip": "Entities participating in multiple distinct relationship records are naturally discovered with INTERSECT.",
+    "hints": [
+      "Select emp_id where project_id = 101.",
+      "INTERSECT with emp_id where project_id = 102.",
+      "Query: SELECT emp_id FROM assignments WHERE project_id = 101 INTERSECT SELECT emp_id FROM assignments WHERE project_id = 102 ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "projects",
+      "assignments",
+      "cross-staffing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-11",
+    "slug": "except-employees-without-any-assignments",
+    "title": "Find Unassigned Employees via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `emp_id` values in `employees` that have never been assigned to any project in `assignments`. Order by `emp_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unassigned employees via EXCEPT\nSELECT emp_id FROM employees\nEXCEPT\nSELECT emp_id FROM assignments\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id FROM employees EXCEPT SELECT emp_id FROM assignments ORDER BY emp_id ASC;",
+    "solution_explanation": "Identifies employees with zero project allocations using set difference.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the order of tables in the query."
+    ],
+    "interview_tip": "EXCEPT identifies elements belonging to set A that do not belong to set B cleanly without outer joins.",
+    "hints": [
+      "Select `emp_id` from employees first.",
+      "EXCEPT with `SELECT emp_id FROM assignments`.",
+      "Query: SELECT emp_id FROM employees EXCEPT SELECT emp_id FROM assignments ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "workforce",
+      "bench",
+      "allocations"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-12",
+    "slug": "except-active-products-with-zero-sales",
+    "title": "Find Active Catalog Products with Zero Orders via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `product_id` numbers for active products (`is_active = TRUE` in `products`) that do not appear in `order_items`. Order by `product_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Active products with zero sales volume\nSELECT product_id FROM products WHERE is_active = TRUE\nEXCEPT\nSELECT product_id FROM order_items\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM products WHERE is_active = TRUE EXCEPT SELECT product_id FROM order_items ORDER BY product_id ASC;",
+    "solution_explanation": "Subtracts purchased product IDs from currently active catalog listings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the is_active = TRUE filter."
+    ],
+    "interview_tip": "Isolating slow-moving or unpurchased active inventory is an essential merchandising metric.",
+    "hints": [
+      "Filter `is_active = TRUE` on products in the first query.",
+      "Subtract with `EXCEPT SELECT product_id FROM order_items`.",
+      "Query: SELECT product_id FROM products WHERE is_active = TRUE EXCEPT SELECT product_id FROM order_items ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "merchandising",
+      "zero-sales",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-13",
+    "slug": "intersect-professors-teaching-and-earning-high-salary",
+    "title": "High-Earning Assigned Faculty via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, find all `professor_id` values of professors who earn at least 130,000 (`salary >= 130000.00` in `professors`) AND who are currently assigned to teach at least one course (`professor_id` in `courses` where `professor_id IS NOT NULL`). Order by `professor_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- High-earning faculty with teaching assignments\nSELECT professor_id FROM professors WHERE salary >= 130000.00\nINTERSECT\nSELECT professor_id FROM courses WHERE professor_id IS NOT NULL\nORDER BY professor_id ASC;",
+    "solution_query": "SELECT professor_id FROM professors WHERE salary >= 130000.00 INTERSECT SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;",
+    "solution_explanation": "Intersects senior faculty compensation criteria with active classroom teaching assignments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the NOT NULL check on courses.professor_id."
+    ],
+    "interview_tip": "INTERSECT provides a concise alternative to EXISTS subqueries.",
+    "hints": [
+      "Select professor_id where `salary >= 130000.00`.",
+      "INTERSECT with professor_id from courses where `professor_id IS NOT NULL`.",
+      "Query: SELECT professor_id FROM professors WHERE salary >= 130000.00 INTERSECT SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "faculty",
+      "academic",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-14",
+    "slug": "except-courses-without-enrolled-students",
+    "title": "Find Courses with Zero Enrolled Students via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `course_id` values from `courses` that have zero student registrations in the `enrollments` table. Order by `course_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Courses with zero student registrations\nSELECT course_id FROM courses\nEXCEPT\nSELECT course_id FROM enrollments\nORDER BY course_id ASC;",
+    "solution_query": "SELECT course_id FROM courses EXCEPT SELECT course_id FROM enrollments ORDER BY course_id ASC;",
+    "solution_explanation": "Subtracts course IDs having enrollment records from the complete academic course catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting from enrollments first instead of courses."
+    ],
+    "interview_tip": "EXCEPT guarantees finding elements strictly in the minuend set.",
+    "hints": [
+      "Select `course_id` from courses.",
+      "EXCEPT with `SELECT course_id FROM enrollments`.",
+      "Query: SELECT course_id FROM courses EXCEPT SELECT course_id FROM enrollments ORDER BY course_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "academic",
+      "curriculum",
+      "unfilled-courses"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-15",
+    "slug": "intersect-customers-who-paid-and-reviewed",
+    "title": "Find Engaged Customers Who Purchased and Reviewed",
+    "description_markdown": "Using `INTERSECT`, identify all `customer_id` values for customers who have completed an order (`order_status = 'completed'` in `orders`) AND have also written at least one product review in `reviews`. Order by `customer_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Customers who both purchased and reviewed\nSELECT customer_id FROM orders WHERE order_status = 'completed'\nINTERSECT\nSELECT customer_id FROM reviews\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id FROM orders WHERE order_status = 'completed' INTERSECT SELECT customer_id FROM reviews ORDER BY customer_id ASC;",
+    "solution_explanation": "Discovers high-engagement customers by intersecting the set of purchasing customers with the set of reviewing customers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the order_status = 'completed' condition."
+    ],
+    "interview_tip": "Cross-domain user engagement sets are cleanly intersected with INTERSECT.",
+    "hints": [
+      "Select customer_id from orders where `order_status = 'completed'`.",
+      "INTERSECT with customer_id from reviews.",
+      "Query: SELECT customer_id FROM orders WHERE order_status = 'completed' INTERSECT SELECT customer_id FROM reviews ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "ecommerce",
+      "reviews",
+      "engagement"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-16",
+    "slug": "except-orders-without-payments",
+    "title": "Detect Orders Missing Payment Records via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `order_id` values in `orders` that have no matching records in the `payments` table. Order by `order_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Orders with zero payment logs\nSELECT order_id FROM orders\nEXCEPT\nSELECT order_id FROM payments\nORDER BY order_id ASC;",
+    "solution_query": "SELECT order_id FROM orders EXCEPT SELECT order_id FROM payments ORDER BY order_id ASC;",
+    "solution_explanation": "Audits for orphaned orders with no payment processor transaction logs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inverting the query to subtract orders from payments."
+    ],
+    "interview_tip": "Audit pipelines use EXCEPT to verify relational integrity between transaction and billing systems.",
+    "hints": [
+      "Select `order_id` from orders.",
+      "EXCEPT with `SELECT order_id FROM payments`.",
+      "Query: SELECT order_id FROM orders EXCEPT SELECT order_id FROM payments ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "audit",
+      "payments",
+      "reconciliation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-17",
+    "slug": "intersect-employees-with-merit-and-promotion-raises",
+    "title": "Identify Employees with Multiple Specific Raise Types",
+    "description_markdown": "Using `INTERSECT`, identify all `emp_id` values for employees who have received an `'Annual Merit Raise'` AND have also received a `'Promotion to Senior'` recorded in `salaries_history`. Order by `emp_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Employees with both merit and promotion raises\nSELECT emp_id FROM salaries_history WHERE change_reason = 'Annual Merit Raise'\nINTERSECT\nSELECT emp_id FROM salaries_history WHERE change_reason = 'Promotion to Senior'\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT emp_id FROM salaries_history WHERE change_reason = 'Annual Merit Raise' INTERSECT SELECT emp_id FROM salaries_history WHERE change_reason = 'Promotion to Senior' ORDER BY emp_id ASC;",
+    "solution_explanation": "Intersects historical salary records to find employees who experienced both career milestone types.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for both strings on the same row with AND."
+    ],
+    "interview_tip": "Querying across multiple rows for the same entity is a hallmark application for INTERSECT.",
+    "hints": [
+      "Branch 1 matches `change_reason = 'Annual Merit Raise'`.",
+      "Branch 2 matches `change_reason = 'Promotion to Senior'`.",
+      "Query: SELECT emp_id FROM salaries_history WHERE change_reason = 'Annual Merit Raise' INTERSECT SELECT emp_id FROM salaries_history WHERE change_reason = 'Promotion to Senior' ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "compensation",
+      "hr",
+      "promotions"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-18",
+    "slug": "except-professors-without-assigned-courses",
+    "title": "Find Research Faculty Without Assigned Courses via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `professor_id` values from `professors` that do not appear as an assigned instructor in `courses`. Order by `professor_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Faculty without teaching assignments\nSELECT professor_id FROM professors\nEXCEPT\nSELECT professor_id FROM courses WHERE professor_id IS NOT NULL\nORDER BY professor_id ASC;",
+    "solution_query": "SELECT professor_id FROM professors EXCEPT SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;",
+    "solution_explanation": "Identifies non-teaching faculty members by subtracting assigned professors from the full faculty roster.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter out NULL values in courses.professor_id."
+    ],
+    "interview_tip": "EXCEPT handles exclusions cleanly while remaining readable and declarative.",
+    "hints": [
+      "Select professor_id from professors.",
+      "EXCEPT with professor_id from courses where `professor_id IS NOT NULL`.",
+      "Query: SELECT professor_id FROM professors EXCEPT SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "faculty",
+      "academic",
+      "workload"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-19",
+    "slug": "except-customers-who-ordered-in-q1-but-not-q2",
+    "title": "Detect Churned Buyers Between Q1 and Q2 via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find `customer_id` values for customers who placed an order in Q1 2023 (`order_date >= '2023-01-01' AND order_date <= '2023-03-31'`) but did NOT place any order in Q2 2023 (`order_date >= '2023-04-01' AND order_date <= '2023-06-30'`). Order by `customer_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Q1 buyers who did not purchase in Q2\nSELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-03-31'\nEXCEPT\nSELECT customer_id FROM orders WHERE order_date >= '2023-04-01' AND order_date <= '2023-06-30'\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-03-31' EXCEPT SELECT customer_id FROM orders WHERE order_date >= '2023-04-01' AND order_date <= '2023-06-30' ORDER BY customer_id ASC;",
+    "solution_explanation": "Computes the set difference between Q1 customers and Q2 customers to identify lapse churn.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR logic instead of set difference."
+    ],
+    "interview_tip": "Customer drop-off and churn cohorts are standard business metrics evaluated using EXCEPT.",
+    "hints": [
+      "Select customer_id for Q1 date range.",
+      "EXCEPT with customer_id for Q2 date range.",
+      "Query: SELECT customer_id FROM orders WHERE order_date >= '2023-01-01' AND order_date <= '2023-03-31' EXCEPT SELECT customer_id FROM orders WHERE order_date >= '2023-04-01' AND order_date <= '2023-06-30' ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "churn",
+      "retention",
+      "quarterly"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-20",
+    "slug": "intersect-products-in-audio-and-sold",
+    "title": "Confirm Audio Catalog Products with Recorded Sales",
+    "description_markdown": "Using `INTERSECT`, find all `product_id` numbers of products that belong to the Audio category (`category_id = 4` in `products`) AND have been purchased in at least one order line in `order_items`. Order by `product_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Audio products that have recorded sales\nSELECT product_id FROM products WHERE category_id = 4\nINTERSECT\nSELECT product_id FROM order_items\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM products WHERE category_id = 4 INTERSECT SELECT product_id FROM order_items ORDER BY product_id ASC;",
+    "solution_explanation": "Intersects category catalog listings with transaction order item rows to find verified sold audio gear.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering order_items without referencing product category."
+    ],
+    "interview_tip": "INTERSECT guarantees distinct product IDs across category and sales tables.",
+    "hints": [
+      "Select product_id from products where `category_id = 4`.",
+      "INTERSECT with product_id from order_items.",
+      "Query: SELECT product_id FROM products WHERE category_id = 4 INTERSECT SELECT product_id FROM order_items ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "catalog",
+      "audio",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-21",
+    "slug": "except-completed-enrollments-without-marks",
+    "title": "Audit Completed Enrollments Missing Marks via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `enrollment_id` numbers from `enrollments` marked `'completed'` (`status = 'completed'`) that have no recorded scores in the `marks` table. Order by `enrollment_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Completed enrollments lacking grade records\nSELECT enrollment_id FROM enrollments WHERE status = 'completed'\nEXCEPT\nSELECT enrollment_id FROM marks\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id FROM enrollments WHERE status = 'completed' EXCEPT SELECT enrollment_id FROM marks ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Audits for academic compliance issues where a course enrollment is marked completed but has no grade records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the status = 'completed' condition."
+    ],
+    "interview_tip": "EXCEPT is an essential tool in database integrity audits and data migration verifications.",
+    "hints": [
+      "Select enrollment_id where `status = 'completed'`.",
+      "EXCEPT with enrollment_id from marks.",
+      "Query: SELECT enrollment_id FROM enrollments WHERE status = 'completed' EXCEPT SELECT enrollment_id FROM marks ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "academic",
+      "marks",
+      "compliance-audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-22",
+    "slug": "intersect-departments-with-both-employees-and-projects",
+    "title": "Identify Departments with Both Staff and Projects",
+    "description_markdown": "Using `INTERSECT`, find all `dept_id` values that have at least one active employee assigned in `employees` AND at least one project defined in `projects`. Exclude NULL `dept_id` values. Order by `dept_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Departments with both staff and initiatives\nSELECT dept_id FROM employees WHERE dept_id IS NOT NULL\nINTERSECT\nSELECT dept_id FROM projects WHERE dept_id IS NOT NULL\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id FROM employees WHERE dept_id IS NOT NULL INTERSECT SELECT dept_id FROM projects WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;",
+    "solution_explanation": "Determines departments active across both human resources and operational project initiatives.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter out NULL dept_id values."
+    ],
+    "interview_tip": "INTERSECT provides a set-based replacement for double-INNER-JOIN existence tests.",
+    "hints": [
+      "Select non-null dept_id from employees.",
+      "INTERSECT with non-null dept_id from projects.",
+      "Query: SELECT dept_id FROM employees WHERE dept_id IS NOT NULL INTERSECT SELECT dept_id FROM projects WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "departments",
+      "projects",
+      "operations"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-23",
+    "slug": "except-departments-with-employees-but-no-projects",
+    "title": "Find Staffed Departments Without Projects via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `dept_id` values for departments that have employees (`dept_id` in `employees` where `dept_id IS NOT NULL`) but do NOT have any projects registered in `projects`. Order by `dept_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Staffed departments lacking project initiatives\nSELECT dept_id FROM employees WHERE dept_id IS NOT NULL\nEXCEPT\nSELECT dept_id FROM projects WHERE dept_id IS NOT NULL\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id FROM employees WHERE dept_id IS NOT NULL EXCEPT SELECT dept_id FROM projects WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;",
+    "solution_explanation": "Subtracts departments involved in projects from departments that have active staff.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Inverting the query order."
+    ],
+    "interview_tip": "EXCEPT reveals operational imbalances between departmental staffing and active project roadmaps.",
+    "hints": [
+      "Select non-null dept_id from employees.",
+      "EXCEPT with non-null dept_id from projects.",
+      "Query: SELECT dept_id FROM employees WHERE dept_id IS NOT NULL EXCEPT SELECT dept_id FROM projects WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "workforce",
+      "projects",
+      "planning"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-24",
+    "slug": "intersect-students-taking-midterm-and-final",
+    "title": "Enrollments Completing Both Exams via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, find all `enrollment_id` values that have recorded an assessment with `assessment_type = 'midterm'` AND an assessment with `assessment_type = 'final'`. Order by `enrollment_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Enrollments with both midterm and final exam scores\nSELECT enrollment_id FROM marks WHERE assessment_type = 'midterm'\nINTERSECT\nSELECT enrollment_id FROM marks WHERE assessment_type = 'final'\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id FROM marks WHERE assessment_type = 'midterm' INTERSECT SELECT enrollment_id FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Intersects student enrollment identifiers having midterm records with those having final records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing assessment_type = 'midterm' AND assessment_type = 'final' in a single SELECT."
+    ],
+    "interview_tip": "Entities requiring multiple event occurrences across time are classic INTERSECT candidates.",
+    "hints": [
+      "Select enrollment_id where `assessment_type = 'midterm'`.",
+      "INTERSECT with enrollment_id where `assessment_type = 'final'`.",
+      "Query: SELECT enrollment_id FROM marks WHERE assessment_type = 'midterm' INTERSECT SELECT enrollment_id FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "academic",
+      "marks",
+      "milestones"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-25",
+    "slug": "except-enrollments-with-midterm-but-no-final",
+    "title": "Find Incomplete Enrollments Missing Final Exam via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `enrollment_id` values that have a score for `assessment_type = 'midterm'` but have NO score recorded for `assessment_type = 'final'`. Order by `enrollment_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Enrollments taking midterm but missing final exam\nSELECT enrollment_id FROM marks WHERE assessment_type = 'midterm'\nEXCEPT\nSELECT enrollment_id FROM marks WHERE assessment_type = 'final'\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id FROM marks WHERE assessment_type = 'midterm' EXCEPT SELECT enrollment_id FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Subtracts final exam enrollment IDs from midterm enrollment IDs to find students who took the midterm but missed the final.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the query order."
+    ],
+    "interview_tip": "Dropout analysis between progressive testing phases is solved cleanly with EXCEPT.",
+    "hints": [
+      "Select enrollment_id where `assessment_type = 'midterm'` first.",
+      "EXCEPT with enrollment_id where `assessment_type = 'final'`.",
+      "Query: SELECT enrollment_id FROM marks WHERE assessment_type = 'midterm' EXCEPT SELECT enrollment_id FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "academic",
+      "grading",
+      "dropouts"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-26",
+    "slug": "except-products-in-catalog-without-reviews",
+    "title": "Identify Products Without Customer Reviews via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `product_id` numbers in `products` that have never received a customer review in the `reviews` table. Order by `product_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Catalog products with zero reviews\nSELECT product_id FROM products\nEXCEPT\nSELECT product_id FROM reviews\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM products EXCEPT SELECT product_id FROM reviews ORDER BY product_id ASC;",
+    "solution_explanation": "Subtracts reviewed product IDs from master product catalog IDs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing reviews first instead of products."
+    ],
+    "interview_tip": "EXCEPT is an expressive way to perform zero-engagement isolation across entity pairs.",
+    "hints": [
+      "Select `product_id` from products.",
+      "EXCEPT with `SELECT product_id FROM reviews`.",
+      "Query: SELECT product_id FROM products EXCEPT SELECT product_id FROM reviews ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "ecommerce",
+      "reviews",
+      "unreviewed"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-27",
+    "slug": "intersect-high-budget-departments-and-staffed-departments",
+    "title": "Staffed Departments with High Budgets via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, find all `dept_id` values for departments that have a budget of at least 800,000 (`budget >= 800000.00` in `departments`) AND have at least one employee assigned in `employees`. Order by `dept_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Staffed departments with major budgets\nSELECT dept_id FROM departments WHERE budget >= 800000.00\nINTERSECT\nSELECT dept_id FROM employees WHERE dept_id IS NOT NULL\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id FROM departments WHERE budget >= 800000.00 INTERSECT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;",
+    "solution_explanation": "Computes the intersection of high-budget departments and staffed operational units.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the NOT NULL check on employees.dept_id."
+    ],
+    "interview_tip": "INTERSECT provides set-level filtering without requiring correlated EXISTS subqueries.",
+    "hints": [
+      "Select dept_id from departments where `budget >= 800000.00`.",
+      "INTERSECT with dept_id from employees where `dept_id IS NOT NULL`.",
+      "Query: SELECT dept_id FROM departments WHERE budget >= 800000.00 INTERSECT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "budget",
+      "finance",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-28",
+    "slug": "except-high-budget-departments-without-staff",
+    "title": "Detect High-Budget Unstaffed Departments via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `dept_id` values for departments that have a budget of at least 500,000 (`budget >= 500000.00` in `departments`) but have zero employees assigned in `employees`. Order by `dept_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Well-funded departments that have no staff\nSELECT dept_id FROM departments WHERE budget >= 500000.00\nEXCEPT\nSELECT dept_id FROM employees WHERE dept_id IS NOT NULL\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id FROM departments WHERE budget >= 500000.00 EXCEPT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;",
+    "solution_explanation": "Subtracts staffed departments from the pool of high-budget departments, revealing vacant budgets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the budget >= 500000.00 predicate."
+    ],
+    "interview_tip": "Audit queries routinely use EXCEPT to surface high-capital accounts with zero operational personnel.",
+    "hints": [
+      "Select dept_id from departments where `budget >= 500000.00`.",
+      "EXCEPT with dept_id from employees where `dept_id IS NOT NULL`.",
+      "Query: SELECT dept_id FROM departments WHERE budget >= 500000.00 EXCEPT SELECT dept_id FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "budget",
+      "audit",
+      "governance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-29",
+    "slug": "intersect-students-completed-math-and-physics",
+    "title": "Scholars Completing Both Math and Physics via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, find all `student_id` numbers of students who have completed (`e.status = 'completed'`) at least one Mathematics course AND have also completed at least one Physics course. Order by `student_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Dual-STEM scholars via INTERSECT\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Mathematics' AND e.status = 'completed'\nINTERSECT\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Physics' AND e.status = 'completed'\nORDER BY student_id ASC;",
+    "solution_query": "SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' AND e.status = 'completed' INTERSECT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Physics' AND e.status = 'completed' ORDER BY student_id ASC;",
+    "solution_explanation": "Intersects student cohorts who completed courses in both Mathematics and Physics departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to check e.status = 'completed' in both branches."
+    ],
+    "interview_tip": "Prerequisite verification engines frequently utilize INTERSECT across course requirements.",
+    "hints": [
+      "Branch 1 filters Mathematics courses with completed status.",
+      "Branch 2 filters Physics courses with completed status.",
+      "Query: SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' AND e.status = 'completed' INTERSECT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Physics' AND e.status = 'completed' ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "academic",
+      "prerequisites",
+      "stem"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-30",
+    "slug": "except-students-enrolled-in-cs-not-math",
+    "title": "Isolate Pure Computer Science Cohort via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `student_id` numbers of students who are enrolled in at least one Computer Science course (`c.department = 'Computer Science'`) but are NOT enrolled in any Mathematics courses (`c.department = 'Mathematics'`). Order by `student_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Computer Science students without Math registrations\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Computer Science'\nEXCEPT\nSELECT e.student_id\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nWHERE c.department = 'Mathematics'\nORDER BY student_id ASC;",
+    "solution_query": "SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Computer Science' EXCEPT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' ORDER BY student_id ASC;",
+    "solution_explanation": "Subtracts students registered in Mathematics from the pool of students registered in Computer Science.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN and checking for NULL in a single query when EXCEPT is requested."
+    ],
+    "interview_tip": "EXCEPT is the most direct declarative way to say 'all entities with property A except those with property B'.",
+    "hints": [
+      "Branch 1 selects student_id for Computer Science courses.",
+      "Branch 2 selects student_id for Mathematics courses.",
+      "Query: SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Computer Science' EXCEPT SELECT e.student_id FROM enrollments e JOIN courses c ON e.course_id = c.course_id WHERE c.department = 'Mathematics' ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "academic",
+      "curriculum",
+      "cohort-exclusion"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-31",
+    "slug": "intersect-products-with-five-star-reviews-and-purchases",
+    "title": "Identify Top Rated Products with Sales via INTERSECT",
+    "description_markdown": "Using `INTERSECT`, find all `product_id` numbers of products that have received at least one 5-star review (`rating = 5` in `reviews`) AND have been purchased in `order_items`. Order by `product_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "reviews",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Five-star rated products that have verified sales\nSELECT product_id FROM reviews WHERE rating = 5\nINTERSECT\nSELECT product_id FROM order_items\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM reviews WHERE rating = 5 INTERSECT SELECT product_id FROM order_items ORDER BY product_id ASC;",
+    "solution_explanation": "Intersects top-rated products with verified purchases to confirm popular, high-satisfaction merchandise.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting the rating = 5 filter on reviews."
+    ],
+    "interview_tip": "Product recommendation engines use set intersection to find items meeting multiple qualifying thresholds.",
+    "hints": [
+      "Select product_id from reviews where `rating = 5`.",
+      "INTERSECT with product_id from order_items.",
+      "Query: SELECT product_id FROM reviews WHERE rating = 5 INTERSECT SELECT product_id FROM order_items ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "intersect",
+      "reviews",
+      "ratings",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-inex-32",
+    "slug": "except-managers-who-are-not-top-executives",
+    "title": "Identify Mid-Tier Managers via EXCEPT",
+    "description_markdown": "Using `EXCEPT`, find all `emp_id` numbers of employees who are managers (`manager_id AS emp_id` in `employees` where `manager_id IS NOT NULL`) EXCEPT those who report to no one (`emp_id` in `employees` where `manager_id IS NULL`), isolating mid-tier managers from top executives. Order by `emp_id` ascending.",
+    "topic_id": "intersect-except",
+    "subtopic_id": "set-diff",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Mid-tier managers who have subordinates but also report to someone\nSELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL\nEXCEPT\nSELECT emp_id FROM employees WHERE manager_id IS NULL\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL EXCEPT SELECT emp_id FROM employees WHERE manager_id IS NULL ORDER BY emp_id ASC;",
+    "solution_explanation": "Subtracts top-level executives (who have no manager) from the set of all managers, leaving only mid-tier managers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting emp_id instead of manager_id in the first branch."
+    ],
+    "interview_tip": "Subtracting top root nodes from the parent set isolates intermediate tree nodes in hierarchical structures.",
+    "hints": [
+      "First query selects `manager_id AS emp_id` where `manager_id IS NOT NULL`.",
+      "EXCEPT with `emp_id` where `manager_id IS NULL`.",
+      "Query: SELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL EXCEPT SELECT emp_id FROM employees WHERE manager_id IS NULL ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "except",
+      "hierarchy",
+      "management",
+      "mid-tier"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inex-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inex-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inex-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

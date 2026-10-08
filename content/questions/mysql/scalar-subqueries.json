@@ -1,0 +1,2363 @@
+[
+  {
+    "id": "q-my-sub-01",
+    "slug": "employees-earning-above-company-average",
+    "title": "Find Employees Earning Above Company Average",
+    "description_markdown": "Find all employees whose salary is strictly greater than the company-wide average salary using a scalar subquery. Return `first_name`, `last_name`, and `salary`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Scalar subquery comparing against AVG(salary)\nSELECT first_name, last_name, salary\nFROM employees\nWHERE salary > (SELECT ...)",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees) ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "The scalar subquery `(SELECT AVG(salary) FROM employees)` computes a single numerical value evaluated against each employee row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Write `WHERE salary > (SELECT AVG(salary) FROM employees)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees) ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-02",
+    "slug": "products-priced-above-category-average",
+    "title": "Priced Above Category Benchmark",
+    "description_markdown": "Find products whose price is strictly greater than the average price of all products. Return `product_name` and `price`. Order by `price` DESC, `product_id` ASC.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Scalar subquery for products\nSELECT ...",
+    "solution_query": "SELECT product_name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price DESC, product_id ASC;",
+    "solution_explanation": "Filters catalog items priced above the global average price.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE price > (SELECT AVG(price) FROM products)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT product_name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-03",
+    "slug": "students-with-top-gpa-in-cohort",
+    "title": "Retrieve Student(s) with Highest Overall GPA",
+    "description_markdown": "Find the student(s) who achieve the maximum GPA in the university (`gpa = (SELECT MAX(gpa) FROM students)`). Return `first_name`, `last_name`, and `gpa`. Order by `student_id`.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Compare against MAX(gpa)\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, gpa FROM students WHERE gpa = (SELECT MAX(gpa) FROM students) ORDER BY student_id ASC;",
+    "solution_explanation": "Selects all top students (handling potential ties cleanly) matching the global scalar maximum.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE gpa = (SELECT MAX(gpa) FROM students)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, gpa FROM students WHERE gpa = (SELECT MAX(gpa) FROM students) ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "max-ties"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-04",
+    "slug": "employees-earning-min-salary",
+    "title": "Find Employees Earning the Minimum Company Salary",
+    "description_markdown": "Use a scalar subquery `(SELECT MIN(salary) FROM employees)` to find the employee(s) receiving the lowest base salary in the company. Return `first_name`, `last_name`, and `salary`. Order by `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Scalar subquery for minimum salary\nSELECT first_name, last_name, salary\nFROM employees\nWHERE salary = (SELECT ...)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary = (SELECT MIN(salary) FROM employees) ORDER BY emp_id ASC;",
+    "solution_explanation": "The subquery `(SELECT MIN(salary) FROM employees)` returns a single scalar value which is evaluated against each row's salary.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 in the main query instead of a subquery, which fails when multiple employees tie for lowest salary."
+    ],
+    "interview_tip": "A scalar subquery handles ties automatically, whereas ORDER BY ... LIMIT 1 misses tied records.",
+    "hints": [
+      "Use `WHERE salary = (SELECT MIN(salary) FROM employees)`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary = (SELECT MIN(salary) FROM employees) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-05",
+    "slug": "products-priced-at-maximum",
+    "title": "Identify Catalog Products with the Highest Price",
+    "description_markdown": "Use a scalar subquery to find product(s) priced at the exact maximum price in the catalog (`price = (SELECT MAX(price) FROM products)`). Return `product_name` and `price`. Order by `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Scalar subquery for maximum price\nSELECT product_name, price\nFROM products\nWHERE price = (SELECT ...)\nORDER BY ...;",
+    "solution_query": "SELECT product_name, price FROM products WHERE price = (SELECT MAX(price) FROM products) ORDER BY product_id ASC;",
+    "solution_explanation": "Evaluates product price against the global scalar maximum returned by the subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using hardcoded numbers instead of computing MAX(price)."
+    ],
+    "interview_tip": "Scalar subqueries dynamically adapt as new records are inserted without requiring code changes.",
+    "hints": [
+      "Use `WHERE price = (SELECT MAX(price) FROM products)`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_name, price FROM products WHERE price = (SELECT MAX(price) FROM products) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-06",
+    "slug": "students-lowest-active-gpa",
+    "title": "Find Students with the Lowest Non-Zero GPA",
+    "description_markdown": "Use a scalar subquery to find student(s) whose GPA equals the minimum non-zero GPA across the college (`gpa = (SELECT MIN(gpa) FROM students WHERE gpa > 0)`). Return `first_name`, `last_name`, and `gpa`. Order by `student_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Lowest non-zero GPA\nSELECT first_name, last_name, gpa\nFROM students\nWHERE gpa = (SELECT MIN(gpa) FROM students WHERE gpa > 0)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, gpa FROM students WHERE gpa = (SELECT MIN(gpa) FROM students WHERE gpa > 0) ORDER BY student_id ASC;",
+    "solution_explanation": "Filters out unmatriculated freshmen with 0.00 GPA inside the scalar subquery to find the true academic minimum.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting WHERE gpa > 0 in the subquery."
+    ],
+    "interview_tip": "Always isolate domain edge cases (like initial default zeros) inside aggregate subqueries.",
+    "hints": [
+      "Use `WHERE gpa = (SELECT MIN(gpa) FROM students WHERE gpa > 0)`.",
+      "Order by `student_id ASC`.",
+      "Query: SELECT first_name, last_name, gpa FROM students WHERE gpa = (SELECT MIN(gpa) FROM students WHERE gpa > 0) ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-07",
+    "slug": "orders-above-average-amount",
+    "title": "Filter Orders Exceeding Average Transaction Size",
+    "description_markdown": "Use a scalar subquery to find orders where `total_amount` is strictly greater than the average `total_amount` of all orders. Return `order_id`, `customer_id`, and `total_amount`. Order by `total_amount` descending, then `order_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Orders above average amount\nSELECT order_id, customer_id, total_amount\nFROM orders\nWHERE total_amount > (SELECT AVG(total_amount) FROM orders)\nORDER BY ...;",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders WHERE total_amount > (SELECT AVG(total_amount) FROM orders) ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Computes the baseline order average once and filters outer rows exceeding it.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing AVG in WHERE without a subquery."
+    ],
+    "interview_tip": "Aggregate functions cannot appear directly in WHERE; they must be enclosed in a subquery or evaluated in HAVING.",
+    "hints": [
+      "Use `WHERE total_amount > (SELECT AVG(total_amount) FROM orders)`.",
+      "Order by `total_amount DESC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders WHERE total_amount > (SELECT AVG(total_amount) FROM orders) ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-08",
+    "slug": "departments-above-average-budget",
+    "title": "Identify Departments Budgeted Above Corporate Average",
+    "description_markdown": "Use a scalar subquery to find departments whose `budget` is strictly greater than the average department budget. Return `dept_name` and `budget`. Order by `budget` descending, then `dept_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Departments above average budget\nSELECT dept_name, budget\nFROM departments\nWHERE budget > (SELECT AVG(budget) FROM departments)\nORDER BY ...;",
+    "solution_query": "SELECT dept_name, budget FROM departments WHERE budget > (SELECT AVG(budget) FROM departments) ORDER BY budget DESC, dept_id ASC;",
+    "solution_explanation": "Compares each department's budget allocation against the global departmental mean.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting dept_name descending instead of budget."
+    ],
+    "interview_tip": "Scalar subqueries in the WHERE clause run once and are treated as constants by modern query optimizers.",
+    "hints": [
+      "Use `WHERE budget > (SELECT AVG(budget) FROM departments)`.",
+      "Order by `budget DESC, dept_id ASC`.",
+      "Query: SELECT dept_name, budget FROM departments WHERE budget > (SELECT AVG(budget) FROM departments) ORDER BY budget DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-09",
+    "slug": "professors-above-average-salary",
+    "title": "Find Faculty Paid Above Academic Benchmark",
+    "description_markdown": "Use a scalar subquery to find professors who earn strictly more than the institution-wide average professor salary. Return `first_name`, `last_name`, and `salary`. Order by `salary` descending, then `professor_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Professors above average salary\nSELECT first_name, last_name, salary\nFROM professors\nWHERE salary > (SELECT AVG(salary) FROM professors)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary FROM professors WHERE salary > (SELECT AVG(salary) FROM professors) ORDER BY salary DESC, professor_id ASC;",
+    "solution_explanation": "Filters the professor roster against the university's mean faculty salary.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using `>=` instead of strictly `>`."
+    ],
+    "interview_tip": "Pay close attention to 'strictly greater' (>) vs 'at least' (>=) in problem specifications.",
+    "hints": [
+      "Use `WHERE salary > (SELECT AVG(salary) FROM professors)`.",
+      "Order by `salary DESC, professor_id ASC`.",
+      "Query: SELECT first_name, last_name, salary FROM professors WHERE salary > (SELECT AVG(salary) FROM professors) ORDER BY salary DESC, professor_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-10",
+    "slug": "product-price-spread-from-average",
+    "title": "Compute Product Price Delta Relative to Catalog Average",
+    "description_markdown": "Use a scalar subquery in the `SELECT` list to calculate how much each product's price differs from the catalog average: `ROUND(price - (SELECT AVG(price) FROM products), 2) AS price_diff`. Return `product_name`, `price`, and `price_diff`. Order by `price_diff` descending, then `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "price_diff",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Scalar subquery in SELECT\nSELECT product_name, price, ROUND(price - (SELECT AVG(price) FROM products), 2) AS price_diff\nFROM products\nORDER BY ...;",
+    "solution_query": "SELECT product_name, price, ROUND(price - (SELECT AVG(price) FROM products), 2) AS price_diff FROM products ORDER BY price_diff DESC, product_id ASC;",
+    "solution_explanation": "A scalar subquery in the SELECT projection acts as a dynamic constant subtracted from each row's price.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Attempting to calculate price - AVG(price) directly in SELECT without a subquery."
+    ],
+    "interview_tip": "Scalar subqueries in SELECT clauses allow mixing row-level and aggregate metrics without GROUP BY.",
+    "hints": [
+      "Use `ROUND(price - (SELECT AVG(price) FROM products), 2) AS price_diff`.",
+      "Order by `price_diff DESC, product_id ASC`.",
+      "Query: SELECT product_name, price, ROUND(price - (SELECT AVG(price) FROM products), 2) AS price_diff FROM products ORDER BY price_diff DESC, product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "select-subquery",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-11",
+    "slug": "employee-salary-gap-from-top-earner",
+    "title": "Calculate Compensation Deficit from Top Earner",
+    "description_markdown": "Use a scalar subquery in the `SELECT` list to compute each employee's salary gap from the maximum corporate salary: `((SELECT MAX(salary) FROM employees) - salary) AS gap_from_max`. Return `first_name`, `last_name`, `salary`, and `gap_from_max`. Order by `gap_from_max` ascending, then `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "gap_from_max",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary gap from max earner\nSELECT first_name, last_name, salary, ((SELECT MAX(salary) FROM employees) - salary) AS gap_from_max\nFROM employees\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary, ((SELECT MAX(salary) FROM employees) - salary) AS gap_from_max FROM employees ORDER BY gap_from_max ASC, emp_id ASC;",
+    "solution_explanation": "Subtracts each employee's compensation from the company's highest salary computed via a scalar subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting salary from max in reverse order, creating negative values."
+    ],
+    "interview_tip": "Scalar projections are useful for benchmarking individual performance against maximum targets.",
+    "hints": [
+      "Use `((SELECT MAX(salary) FROM employees) - salary) AS gap_from_max`.",
+      "Order by `gap_from_max ASC, emp_id ASC`.",
+      "Query: SELECT first_name, last_name, salary, ((SELECT MAX(salary) FROM employees) - salary) AS gap_from_max FROM employees ORDER BY gap_from_max ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-12",
+    "slug": "courses-with-maximum-credit-units",
+    "title": "Find Courses Offering Maximum Academic Credits",
+    "description_markdown": "Use a scalar subquery to find all courses offering the maximum number of credits available (`credits = (SELECT MAX(credits) FROM courses)`). Return `course_code`, `course_name`, and `credits`. Order by `course_code` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Courses with maximum credits\nSELECT course_code, course_name, credits\nFROM courses\nWHERE credits = (SELECT MAX(credits) FROM courses)\nORDER BY ...;",
+    "solution_query": "SELECT course_code, course_name, credits FROM courses WHERE credits = (SELECT MAX(credits) FROM courses) ORDER BY course_code ASC;",
+    "solution_explanation": "Retrieves top credit-bearing classes dynamically using a scalar subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Hardcoding credits = 4."
+    ],
+    "interview_tip": "Dynamic subqueries prevent hardcoded schema assumptions.",
+    "hints": [
+      "Use `WHERE credits = (SELECT MAX(credits) FROM courses)`.",
+      "Order by `course_code ASC`.",
+      "Query: SELECT course_code, course_name, credits FROM courses WHERE credits = (SELECT MAX(credits) FROM courses) ORDER BY course_code ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-13",
+    "slug": "department-budget-share-percentage",
+    "title": "Calculate Department Percentage of Total Company Budget",
+    "description_markdown": "Use a scalar subquery in the `SELECT` list to calculate each department's percentage share of the company's total budget: `ROUND(budget * 100.0 / (SELECT SUM(budget) FROM departments), 2) AS budget_share_pct`. Return `dept_name`, `budget`, and `budget_share_pct`. Order by `budget_share_pct` descending, then `dept_name` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      },
+      {
+        "name": "budget_share_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department percentage of total budget\nSELECT dept_name, budget, ROUND(budget * 100.0 / (SELECT SUM(budget) FROM departments), 2) AS budget_share_pct\nFROM departments\nORDER BY ...;",
+    "solution_query": "SELECT dept_name, budget, ROUND(budget * 100.0 / (SELECT SUM(budget) FROM departments), 2) AS budget_share_pct FROM departments ORDER BY budget_share_pct DESC, dept_name ASC;",
+    "solution_explanation": "Divides individual department budget by the company grand total computed via `(SELECT SUM(budget) FROM departments)`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Integer division truncation (multiplying by 100.0 ensures numeric precision)."
+    ],
+    "interview_tip": "Always multiply by 100.0 before dividing to ensure floating point precision across all SQL dialects.",
+    "hints": [
+      "Use `ROUND(budget * 100.0 / (SELECT SUM(budget) FROM departments), 2) AS budget_share_pct`.",
+      "Order by `budget_share_pct DESC, dept_name ASC`.",
+      "Query: SELECT dept_name, budget, ROUND(budget * 100.0 / (SELECT SUM(budget) FROM departments), 2) AS budget_share_pct FROM departments ORDER BY budget_share_pct DESC, dept_name ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "finance",
+      "percentages"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-14",
+    "slug": "projects-funded-above-average",
+    "title": "Identify Technology Projects Funded Above Average",
+    "description_markdown": "Use a scalar subquery to find projects whose budget is strictly greater than the average project budget (`budget > (SELECT AVG(budget) FROM projects)`). Return `project_name` and `budget`. Order by `budget` descending, then `project_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Projects funded above average\nSELECT project_name, budget\nFROM projects\nWHERE budget > (SELECT AVG(budget) FROM projects)\nORDER BY ...;",
+    "solution_query": "SELECT project_name, budget FROM projects WHERE budget > (SELECT AVG(budget) FROM projects) ORDER BY budget DESC, project_id ASC;",
+    "solution_explanation": "Filters the project inventory against the mean project budget expenditure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing projects budget with departments budget."
+    ],
+    "interview_tip": "Keep table references consistent with the target entity.",
+    "hints": [
+      "Use `WHERE budget > (SELECT AVG(budget) FROM projects)`.",
+      "Order by `budget DESC, project_id ASC`.",
+      "Query: SELECT project_name, budget FROM projects WHERE budget > (SELECT AVG(budget) FROM projects) ORDER BY budget DESC, project_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-15",
+    "slug": "marks-above-final-exam-average",
+    "title": "Filter Final Exam Scores Exceeding the Exam Average",
+    "description_markdown": "Use a scalar subquery to find final exam marks (`assessment_type = 'final'`) where `score` is strictly greater than the average score of all final exams (`SELECT AVG(score) FROM marks WHERE assessment_type = 'final'`). Return `mark_id`, `enrollment_id`, and `score`. Order by `score` descending, then `mark_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Final exam marks above average\nSELECT mark_id, enrollment_id, score\nFROM marks\nWHERE assessment_type = 'final'\n  AND score > (SELECT AVG(score) FROM marks WHERE assessment_type = 'final')\nORDER BY ...;",
+    "solution_query": "SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'final' AND score > (SELECT AVG(score) FROM marks WHERE assessment_type = 'final') ORDER BY score DESC, mark_id ASC;",
+    "solution_explanation": "Applies a predicate inside both the outer query and the scalar subquery to evaluate against the specific assessment cohort average.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the assessment_type filter inside the subquery, calculating the average across midterms and quizzes instead."
+    ],
+    "interview_tip": "Always scope the subquery cohort condition identically to the outer filter when comparing like-for-like subsets.",
+    "hints": [
+      "Include `assessment_type = 'final'` in both the outer query and the subquery.",
+      "Order by `score DESC, mark_id ASC`.",
+      "Query: SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'final' AND score > (SELECT AVG(score) FROM marks WHERE assessment_type = 'final') ORDER BY score DESC, mark_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-16",
+    "slug": "double-average-sized-orders",
+    "title": "Detect High-Volume Outlier Orders",
+    "description_markdown": "Use a scalar subquery to find outlier orders whose `total_amount` is at least twice the platform's average order value (`total_amount >= (SELECT 2 * AVG(total_amount) FROM orders)`). Return `order_id`, `customer_id`, and `total_amount`. Order by `total_amount` descending, then `order_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Orders >= 2 * average amount\nSELECT order_id, customer_id, total_amount\nFROM orders\nWHERE total_amount >= (SELECT 2 * AVG(total_amount) FROM orders)\nORDER BY ...;",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders WHERE total_amount >= (SELECT 2 * AVG(total_amount) FROM orders) ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Scales the aggregate benchmark value by multiplying within the scalar subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplying outer total_amount instead of the scalar average."
+    ],
+    "interview_tip": "Multiplying inside the scalar subquery computes the 2x multiplier once, rather than on every row.",
+    "hints": [
+      "Use `WHERE total_amount >= (SELECT 2 * AVG(total_amount) FROM orders)`.",
+      "Order by `total_amount DESC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders WHERE total_amount >= (SELECT 2 * AVG(total_amount) FROM orders) ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "outliers",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-17",
+    "slug": "most-recently-hired-employees",
+    "title": "Identify Staff Hired on the Most Recent Hire Date",
+    "description_markdown": "Use a scalar subquery to find employee(s) whose `hire_date` matches the most recent hire date recorded in the company (`hire_date = (SELECT MAX(hire_date) FROM employees)`). Return `first_name`, `last_name`, and `hire_date`. Order by `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Most recent hire date\nSELECT first_name, last_name, hire_date\nFROM employees\nWHERE hire_date = (SELECT MAX(hire_date) FROM employees)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, hire_date FROM employees WHERE hire_date = (SELECT MAX(hire_date) FROM employees) ORDER BY emp_id ASC;",
+    "solution_explanation": "Returns the newest hire cohort by matching against the scalar maximum hire date.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 which drops ties when multiple employees share the newest start date."
+    ],
+    "interview_tip": "Scalar subqueries handle date ties correctly across all employees onboarding on the same day.",
+    "hints": [
+      "Use `WHERE hire_date = (SELECT MAX(hire_date) FROM employees)`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT first_name, last_name, hire_date FROM employees WHERE hire_date = (SELECT MAX(hire_date) FROM employees) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "dates",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-18",
+    "slug": "senior-tenured-employees",
+    "title": "Identify Senior Staff Hired on the Earliest Hire Date",
+    "description_markdown": "Use a scalar subquery to find employee(s) hired on the earliest start date in company history (`hire_date = (SELECT MIN(hire_date) FROM employees)`). Return `first_name`, `last_name`, and `hire_date`. Order by `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Earliest hire date\nSELECT first_name, last_name, hire_date\nFROM employees\nWHERE hire_date = (SELECT MIN(hire_date) FROM employees)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, hire_date FROM employees WHERE hire_date = (SELECT MIN(hire_date) FROM employees) ORDER BY emp_id ASC;",
+    "solution_explanation": "Pinpoints founding or earliest tenured personnel using `MIN(hire_date)`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using MIN(salary) instead of hire_date."
+    ],
+    "interview_tip": "MIN and MAX on temporal columns identify boundary dates reliably.",
+    "hints": [
+      "Use `WHERE hire_date = (SELECT MIN(hire_date) FROM employees)`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT first_name, last_name, hire_date FROM employees WHERE hire_date = (SELECT MIN(hire_date) FROM employees) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "dates",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-19",
+    "slug": "products-cost-below-average",
+    "title": "Identify Products with Manufacturing Cost Below Average",
+    "description_markdown": "Use a scalar subquery to find products whose wholesale `cost` is strictly below the catalog average cost (`cost < (SELECT AVG(cost) FROM products)`). Return `product_name`, `cost`, and `price`. Order by `cost` ascending, then `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "cost",
+        "type": "decimal"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Products with cost below average\nSELECT product_name, cost, price\nFROM products\nWHERE cost < (SELECT AVG(cost) FROM products)\nORDER BY ...;",
+    "solution_query": "SELECT product_name, cost, price FROM products WHERE cost < (SELECT AVG(cost) FROM products) ORDER BY cost ASC, product_id ASC;",
+    "solution_explanation": "Compares unit acquisition cost against the global inventory mean.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering price instead of cost."
+    ],
+    "interview_tip": "Cost vs price comparisons evaluate margin profiles.",
+    "hints": [
+      "Use `WHERE cost < (SELECT AVG(cost) FROM products)`.",
+      "Order by `cost ASC, product_id ASC`.",
+      "Query: SELECT product_name, cost, price FROM products WHERE cost < (SELECT AVG(cost) FROM products) ORDER BY cost ASC, product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "inventory",
+      "costs"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-20",
+    "slug": "student-gpa-spread-from-college-average",
+    "title": "Compute GPA Spread from Collegiate Academic Average",
+    "description_markdown": "Use a scalar subquery in the `SELECT` list to compute each student's GPA delta from the average non-zero collegiate GPA: `ROUND(gpa - (SELECT AVG(gpa) FROM students WHERE gpa > 0), 2) AS gpa_diff`. Filter outer rows with `WHERE gpa > 0`. Return `first_name`, `last_name`, `gpa`, and `gpa_diff`. Order by `gpa_diff` descending, then `student_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      },
+      {
+        "name": "gpa_diff",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- GPA difference from average\nSELECT first_name, last_name, gpa, ROUND(gpa - (SELECT AVG(gpa) FROM students WHERE gpa > 0), 2) AS gpa_diff\nFROM students\nWHERE gpa > 0\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, gpa, ROUND(gpa - (SELECT AVG(gpa) FROM students WHERE gpa > 0), 2) AS gpa_diff FROM students WHERE gpa > 0 ORDER BY gpa_diff DESC, student_id ASC;",
+    "solution_explanation": "Subtracts the collegiate active GPA mean from each active student's GPA.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving unmatriculated students (gpa = 0) in the calculation."
+    ],
+    "interview_tip": "Keep outer and inner filters aligned when measuring spread against non-zero baselines.",
+    "hints": [
+      "Use `ROUND(gpa - (SELECT AVG(gpa) FROM students WHERE gpa > 0), 2) AS gpa_diff`.",
+      "Filter outer rows with `WHERE gpa > 0`.",
+      "Query: SELECT first_name, last_name, gpa, ROUND(gpa - (SELECT AVG(gpa) FROM students WHERE gpa > 0), 2) AS gpa_diff FROM students WHERE gpa > 0 ORDER BY gpa_diff DESC, student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-21",
+    "slug": "assignments-highest-hours",
+    "title": "Find Project Assignments with the Maximum Work Hours",
+    "description_markdown": "Use a scalar subquery to find project assignment(s) where `hours_worked` equals the maximum hours logged across all assignments (`hours_worked = (SELECT MAX(hours_worked) FROM assignments)`). Return `assignment_id`, `emp_id`, `project_id`, and `hours_worked`. Order by `assignment_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Assignment with maximum hours\nSELECT assignment_id, emp_id, project_id, hours_worked\nFROM assignments\nWHERE hours_worked = (SELECT MAX(hours_worked) FROM assignments)\nORDER BY ...;",
+    "solution_query": "SELECT assignment_id, emp_id, project_id, hours_worked FROM assignments WHERE hours_worked = (SELECT MAX(hours_worked) FROM assignments) ORDER BY assignment_id ASC;",
+    "solution_explanation": "Retrieves the single heaviest labor engagement(s) logged in the timesheet database.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 which ignores ties."
+    ],
+    "interview_tip": "Always use scalar subqueries for max/min queries when ties must be preserved.",
+    "hints": [
+      "Use `WHERE hours_worked = (SELECT MAX(hours_worked) FROM assignments)`.",
+      "Order by `assignment_id ASC`.",
+      "Query: SELECT assignment_id, emp_id, project_id, hours_worked FROM assignments WHERE hours_worked = (SELECT MAX(hours_worked) FROM assignments) ORDER BY assignment_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "timesheet"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-22",
+    "slug": "orders-placed-on-most-recent-date",
+    "title": "Retrieve Orders Placed on the Most Recent Calendar Date",
+    "description_markdown": "Use a scalar subquery to find all orders placed on the latest recorded `order_date` (`order_date = (SELECT MAX(order_date) FROM orders)`). Return `order_id`, `customer_id`, `total_amount`, and `order_date`. Order by `order_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Orders on latest date\nSELECT order_id, customer_id, total_amount, order_date\nFROM orders\nWHERE order_date = (SELECT MAX(order_date) FROM orders)\nORDER BY ...;",
+    "solution_query": "SELECT order_id, customer_id, total_amount, order_date FROM orders WHERE order_date = (SELECT MAX(order_date) FROM orders) ORDER BY order_id ASC;",
+    "solution_explanation": "Filters transactions to the most recent operational day in the retail ledger.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Hardcoding the date literal."
+    ],
+    "interview_tip": "Real-time reporting dashboards frequently query against `(SELECT MAX(date) FROM ...)`.",
+    "hints": [
+      "Use `WHERE order_date = (SELECT MAX(order_date) FROM orders)`.",
+      "Order by `order_id ASC`.",
+      "Query: SELECT order_id, customer_id, total_amount, order_date FROM orders WHERE order_date = (SELECT MAX(order_date) FROM orders) ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "orders",
+      "dates"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-23",
+    "slug": "products-with-lowest-stock",
+    "title": "Identify Products with the Lowest Available Stock",
+    "description_markdown": "Use a scalar subquery to find product(s) holding the minimum inventory quantity (`stock_quantity = (SELECT MIN(stock_quantity) FROM products)`). Return `product_name`, `stock_quantity`, and `price`. Order by `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Products with lowest stock\nSELECT product_name, stock_quantity, price\nFROM products\nWHERE stock_quantity = (SELECT MIN(stock_quantity) FROM products)\nORDER BY ...;",
+    "solution_query": "SELECT product_name, stock_quantity, price FROM products WHERE stock_quantity = (SELECT MIN(stock_quantity) FROM products) ORDER BY product_id ASC;",
+    "solution_explanation": "Identifies critically low inventory merchandise using scalar MIN.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 without considering inventory ties."
+    ],
+    "interview_tip": "Warehouse reorder triggers often query for items matching MIN(stock_quantity).",
+    "hints": [
+      "Use `WHERE stock_quantity = (SELECT MIN(stock_quantity) FROM products)`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_name, stock_quantity, price FROM products WHERE stock_quantity = (SELECT MIN(stock_quantity) FROM products) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-24",
+    "slug": "professors-lowest-salary",
+    "title": "Identify Professors with Lowest Compensation",
+    "description_markdown": "Use a scalar subquery to find professor(s) receiving the lowest faculty compensation (`salary = (SELECT MIN(salary) FROM professors)`). Return `first_name`, `last_name`, and `salary`. Order by `professor_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Faculty with lowest salary\nSELECT first_name, last_name, salary\nFROM professors\nWHERE salary = (SELECT MIN(salary) FROM professors)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary FROM professors WHERE salary = (SELECT MIN(salary) FROM professors) ORDER BY professor_id ASC;",
+    "solution_explanation": "Retrieves faculty members at the entry compensation tier.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering department instead of university-wide salary."
+    ],
+    "interview_tip": "Scalar subqueries match the exact minimum value across the entire table.",
+    "hints": [
+      "Use `WHERE salary = (SELECT MIN(salary) FROM professors)`.",
+      "Order by `professor_id ASC`.",
+      "Query: SELECT first_name, last_name, salary FROM professors WHERE salary = (SELECT MIN(salary) FROM professors) ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-25",
+    "slug": "employees-second-highest-salary",
+    "title": "Retrieve Staff Earning the Second Highest Salary",
+    "description_markdown": "Use nested scalar subqueries to find employee(s) who earn the second-highest salary in the company: `salary = (SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees))`. Return `first_name`, `last_name`, and `salary`. Order by `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Second highest salary\nSELECT first_name, last_name, salary\nFROM employees\nWHERE salary = (SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees))\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary = (SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)) ORDER BY emp_id ASC;",
+    "solution_explanation": "The inner subquery excludes the top salary; the outer subquery computes the max among the remaining salaries, finding the second highest.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 OFFSET 1, which fails if there are ties at the top salary."
+    ],
+    "interview_tip": "This is arguably the most famous SQL interview problem in history. The nested MAX pattern handles top-tier ties perfectly.",
+    "hints": [
+      "Use `WHERE salary = (SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees))`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary = (SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "interview-classic",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-26",
+    "slug": "products-second-highest-price",
+    "title": "Retrieve Products Priced at the Second Highest Tier",
+    "description_markdown": "Use nested scalar subqueries to find product(s) priced at the second highest price in the catalog: `price = (SELECT MAX(price) FROM products WHERE price < (SELECT MAX(price) FROM products))`. Return `product_name` and `price`. Order by `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Second highest price\nSELECT product_name, price\nFROM products\nWHERE price = (SELECT MAX(price) FROM products WHERE price < (SELECT MAX(price) FROM products))\nORDER BY ...;",
+    "solution_query": "SELECT product_name, price FROM products WHERE price = (SELECT MAX(price) FROM products WHERE price < (SELECT MAX(price) FROM products)) ORDER BY product_id ASC;",
+    "solution_explanation": "Finds items positioned immediately below the flagship top-priced merchandise.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 OFFSET 1 without handling ties."
+    ],
+    "interview_tip": "The nested subquery pattern is ANSI SQL standard and executes safely across all relational engines.",
+    "hints": [
+      "Use `WHERE price = (SELECT MAX(price) FROM products WHERE price < (SELECT MAX(price) FROM products))`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_name, price FROM products WHERE price = (SELECT MAX(price) FROM products WHERE price < (SELECT MAX(price) FROM products)) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-27",
+    "slug": "departments-above-average-total-payroll",
+    "title": "Filter Departments Whose Total Payroll Exceeds Departmental Average",
+    "description_markdown": "Join `departments` and `employees` on `dept_id`. Group by `d.dept_id` and `d.dept_name`. Use a scalar subquery inside `HAVING` to filter for departments whose total payroll `SUM(e.salary)` is strictly greater than the average total payroll across all departments: `HAVING SUM(e.salary) > (SELECT AVG(dept_tot) FROM (SELECT SUM(salary) AS dept_tot FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) sub)`. Return `d.dept_name` and `SUM(e.salary) AS total_payroll`. Order by `total_payroll` descending, then `d.dept_name` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_payroll",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Scalar subquery in HAVING\nSELECT d.dept_name, SUM(e.salary) AS total_payroll\nFROM departments d\nJOIN employees e ON d.dept_id = e.dept_id\nGROUP BY d.dept_id, d.dept_name\nHAVING SUM(e.salary) > (SELECT AVG(dept_tot) FROM (SELECT SUM(salary) AS dept_tot FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) sub)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, SUM(e.salary) AS total_payroll FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name HAVING SUM(e.salary) > (SELECT AVG(dept_tot) FROM (SELECT SUM(salary) AS dept_tot FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) sub) ORDER BY total_payroll DESC, d.dept_name ASC;",
+    "solution_explanation": "Embeds a derived-table aggregation inside a scalar subquery evaluated in the HAVING clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the subquery in WHERE, which evaluates row salaries instead of group payroll totals."
+    ],
+    "interview_tip": "Scalar subqueries in HAVING allow filtering aggregate groups by higher-level aggregates of aggregates.",
+    "hints": [
+      "Use `HAVING SUM(e.salary) > (SELECT AVG(dept_tot) FROM (SELECT SUM(salary) AS dept_tot FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) sub)`.",
+      "Order by `total_payroll DESC, d.dept_name ASC`.",
+      "Query: SELECT d.dept_name, SUM(e.salary) AS total_payroll FROM departments d JOIN employees e ON d.dept_id = e.dept_id GROUP BY d.dept_id, d.dept_name HAVING SUM(e.salary) > (SELECT AVG(dept_tot) FROM (SELECT SUM(salary) AS dept_tot FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id) sub) ORDER BY total_payroll DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "having",
+      "payroll"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-28",
+    "slug": "customers-completed-spend-above-customer-average",
+    "title": "Filter Customers Whose Lifetime Spend Exceeds Average Customer Spend",
+    "description_markdown": "Join `customers` and `orders` on `customer_id`. Filter for `o.order_status = 'completed'`. Group by `c.customer_id` and `c.first_name`. Use a scalar subquery in `HAVING` to return customers whose total spend is strictly greater than the average customer lifetime completed spend: `HAVING SUM(o.total_amount) > (SELECT AVG(cust_tot) FROM (SELECT SUM(total_amount) AS cust_tot FROM orders WHERE order_status = 'completed' GROUP BY customer_id) sub)`. Return `c.first_name` and `SUM(o.total_amount) AS total_spend`. Order by `total_spend` descending, then `c.first_name` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Scalar subquery in HAVING for customer spend\nSELECT c.first_name, SUM(o.total_amount) AS total_spend\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_status = 'completed'\nGROUP BY c.customer_id, c.first_name\nHAVING SUM(o.total_amount) > (SELECT AVG(cust_tot) FROM (SELECT SUM(total_amount) AS cust_tot FROM orders WHERE order_status = 'completed' GROUP BY customer_id) sub)\nORDER BY ...;",
+    "solution_query": "SELECT c.first_name, SUM(o.total_amount) AS total_spend FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name HAVING SUM(o.total_amount) > (SELECT AVG(cust_tot) FROM (SELECT SUM(total_amount) AS cust_tot FROM orders WHERE order_status = 'completed' GROUP BY customer_id) sub) ORDER BY total_spend DESC, c.first_name ASC;",
+    "solution_explanation": "Identifies premium customer segments whose cumulative spend exceeds the typical customer lifetime value.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including non-completed orders in the average calculation."
+    ],
+    "interview_tip": "Comparing individual customer totals against the average customer total is a core cohort analysis technique.",
+    "hints": [
+      "Filter `order_status = 'completed'` in both queries.",
+      "Use `HAVING SUM(o.total_amount) > (SELECT AVG(cust_tot) FROM (SELECT SUM(total_amount) AS cust_tot FROM orders WHERE order_status = 'completed' GROUP BY customer_id) sub)`.",
+      "Query: SELECT c.first_name, SUM(o.total_amount) AS total_spend FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' GROUP BY c.customer_id, c.first_name HAVING SUM(o.total_amount) > (SELECT AVG(cust_tot) FROM (SELECT SUM(total_amount) AS cust_tot FROM orders WHERE order_status = 'completed' GROUP BY customer_id) sub) ORDER BY total_spend DESC, c.first_name ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "having",
+      "customer-segmentation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-29",
+    "slug": "courses-above-average-enrollment-count",
+    "title": "Find Courses with Enrollment Above Curricular Average",
+    "description_markdown": "Join `courses` and `enrollments` on `course_id`. Group by `c.course_id`, `c.course_code`, and `c.course_name`. Use a scalar subquery in `HAVING` to find courses with student count strictly greater than the average enrollment per enrolled course: `HAVING COUNT(e.enrollment_id) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM enrollments GROUP BY course_id) sub)`. Return `c.course_code`, `c.course_name`, and `COUNT(e.enrollment_id) AS student_count`. Order by `student_count` descending, then `c.course_code` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "student_count",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Scalar subquery in HAVING for course enrollments\nSELECT c.course_code, c.course_name, COUNT(e.enrollment_id) AS student_count\nFROM courses c\nJOIN enrollments e ON c.course_id = e.course_id\nGROUP BY c.course_id, c.course_code, c.course_name\nHAVING COUNT(e.enrollment_id) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM enrollments GROUP BY course_id) sub)\nORDER BY ...;",
+    "solution_query": "SELECT c.course_code, c.course_name, COUNT(e.enrollment_id) AS student_count FROM courses c JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code, c.course_name HAVING COUNT(e.enrollment_id) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM enrollments GROUP BY course_id) sub) ORDER BY student_count DESC, c.course_code ASC;",
+    "solution_explanation": "Highlights high-demand academic classes exceeding average student enrollment size.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving c.course_name out of GROUP BY."
+    ],
+    "interview_tip": "Group by both unique identifier and human-readable title attributes.",
+    "hints": [
+      "Use `HAVING COUNT(e.enrollment_id) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM enrollments GROUP BY course_id) sub)`.",
+      "Order by `student_count DESC, c.course_code ASC`.",
+      "Query: SELECT c.course_code, c.course_name, COUNT(e.enrollment_id) AS student_count FROM courses c JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code, c.course_name HAVING COUNT(e.enrollment_id) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM enrollments GROUP BY course_id) sub) ORDER BY student_count DESC, c.course_code ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "having",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-30",
+    "slug": "products-with-highest-gross-margin",
+    "title": "Identify Products Delivering Maximum Profit Margin",
+    "description_markdown": "Use a scalar subquery to find product(s) yielding the absolute maximum per-unit profit margin (`(price - cost) = (SELECT MAX(price - cost) FROM products)`). Return `product_name`, `price`, `cost`, and `(price - cost) AS unit_margin`. Order by `product_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "cost",
+        "type": "decimal"
+      },
+      {
+        "name": "unit_margin",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Product with highest unit margin\nSELECT product_name, price, cost, (price - cost) AS unit_margin\nFROM products\nWHERE (price - cost) = (SELECT MAX(price - cost) FROM products)\nORDER BY ...;",
+    "solution_query": "SELECT product_name, price, cost, (price - cost) AS unit_margin FROM products WHERE (price - cost) = (SELECT MAX(price - cost) FROM products) ORDER BY product_id ASC;",
+    "solution_explanation": "Calculates maximum dollar margin using an arithmetic expression inside MAX.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using MAX(price) - MAX(cost) which computes the difference of two different products."
+    ],
+    "interview_tip": "MAX(price - cost) evaluates the margin per row, whereas MAX(price) - MAX(cost) compares two independent maxima.",
+    "hints": [
+      "Use `WHERE (price - cost) = (SELECT MAX(price - cost) FROM products)`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_name, price, cost, (price - cost) AS unit_margin FROM products WHERE (price - cost) = (SELECT MAX(price - cost) FROM products) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "margins",
+      "profitability"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-31",
+    "slug": "employees-within-ten-percent-of-top-salary",
+    "title": "Identify Staff Within 10% of Executive Peak Salary",
+    "description_markdown": "Use a scalar subquery to find employees earning within 10% of the maximum company salary (`salary >= (SELECT 0.90 * MAX(salary) FROM employees)`). Return `first_name`, `last_name`, and `salary`. Order by `salary` descending, then `emp_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Staff earning within 10% of max salary\nSELECT first_name, last_name, salary\nFROM employees\nWHERE salary >= (SELECT 0.90 * MAX(salary) FROM employees)\nORDER BY ...;",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees WHERE salary >= (SELECT 0.90 * MAX(salary) FROM employees) ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Scales the scalar peak compensation threshold to isolate top executive earners.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Multiplying by 0.10 instead of 0.90."
+    ],
+    "interview_tip": "Filtering by percentage of max captures the elite upper-bracket tier cleanly.",
+    "hints": [
+      "Use `WHERE salary >= (SELECT 0.90 * MAX(salary) FROM employees)`.",
+      "Order by `salary DESC, emp_id ASC`.",
+      "Query: SELECT first_name, last_name, salary FROM employees WHERE salary >= (SELECT 0.90 * MAX(salary) FROM employees) ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sub-32",
+    "slug": "students-with-perfect-final-exam-scores",
+    "title": "Find Students Achieving the Maximum Recorded Final Score",
+    "description_markdown": "Use scalar subqueries and table joins to find all students who scored the maximum grade earned on any final exam assessment across the entire university. Return `s.first_name`, `s.last_name`, and `s.major`. Order by `s.student_id` ascending.",
+    "topic_id": "scalar-subqueries",
+    "subtopic_id": "sub-scalar",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Students matching maximum final exam score\nSELECT s.first_name, s.last_name, s.major\nFROM students s\nJOIN enrollments e ON s.student_id = e.student_id\nJOIN marks m ON e.enrollment_id = m.enrollment_id\nWHERE m.assessment_type = 'final'\n  AND m.score = (SELECT MAX(score) FROM marks WHERE assessment_type = 'final')\nORDER BY ...;",
+    "solution_query": "SELECT s.first_name, s.last_name, s.major FROM students s JOIN enrollments e ON s.student_id = e.student_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' AND m.score = (SELECT MAX(score) FROM marks WHERE assessment_type = 'final') ORDER BY s.student_id ASC;",
+    "solution_explanation": "Pairs the student roster through enrollment and mark tables with a scalar subquery calculating the university-wide highest final exam mark.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the assessment_type = 'final' filter in either the outer query or the scalar subquery."
+    ],
+    "interview_tip": "When querying maximums across categories, always ensure both outer and inner query filters align.",
+    "hints": [
+      "Join `students` -> `enrollments` -> `marks`.",
+      "Filter `m.score = (SELECT MAX(score) FROM marks WHERE assessment_type = 'final')`.",
+      "Query: SELECT s.first_name, s.last_name, s.major FROM students s JOIN enrollments e ON s.student_id = e.student_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.assessment_type = 'final' AND m.score = (SELECT MAX(score) FROM marks WHERE assessment_type = 'final') ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "scalar",
+      "academics",
+      "honors"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sub-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sub-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sub-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

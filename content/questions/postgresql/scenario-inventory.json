@@ -1,0 +1,2487 @@
+[
+  {
+    "id": "q-sc-inv-01",
+    "slug": "inventory-items-below-reorder-level",
+    "title": "Flag Low Stock SKUs Below Reorder Trigger",
+    "description_markdown": "Supply chain alert: Find all items in `stock_items` where `quantity_on_hand <= reorder_level`. Return `sku`, `name`, `quantity_on_hand`, and `reorder_level`. Order by `quantity_on_hand` ASC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stock below reorder point\nSELECT sku, name, quantity_on_hand, reorder_level FROM stock_items WHERE ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, reorder_level FROM stock_items WHERE quantity_on_hand <= reorder_level ORDER BY quantity_on_hand ASC, sku ASC;",
+    "solution_explanation": "Generates replenishment purchase orders for low-stock SKUs.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE quantity_on_hand <= reorder_level`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT sku, name, quantity_on_hand, reorder_level FROM stock_items WHERE quantity_on_hand <= reorder_level ORDER BY quantity_on_hand ASC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "reorder-point"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inv-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inv-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inv-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-02",
+    "slug": "inventory-valuation-by-warehouse",
+    "title": "Compute Total Inventory Valuation per Warehouse",
+    "description_markdown": "Finance request: For each warehouse in `warehouses`, calculate the total inventory valuation (`SUM(quantity_on_hand * unit_cost)` as `total_valuation`). Return `w.name AS warehouse_name`, `w.location`, and `total_valuation`. Order by `total_valuation` DESC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_name",
+        "type": "varchar"
+      },
+      {
+        "name": "location",
+        "type": "varchar"
+      },
+      {
+        "name": "total_valuation",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Warehouse inventory valuation\nSELECT ...",
+    "solution_query": "SELECT w.name AS warehouse_name, w.location, SUM(s.quantity_on_hand * s.unit_cost) AS total_valuation FROM warehouses w JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name, w.location ORDER BY total_valuation DESC, w.warehouse_id ASC;",
+    "solution_explanation": "Multiplies on-hand units by acquisition unit costs and aggregates across facilities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Multiply `s.quantity_on_hand * s.unit_cost` inside SUM.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT w.name AS warehouse_name, w.location, SUM(s.quantity_on_hand * s.unit_cost) AS total_valuation FROM warehouses w JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name, w.location ORDER BY total_valuation DESC, w.warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "asset-valuation"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inv-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inv-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inv-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-03",
+    "slug": "inventory-supplier-dependency-audit",
+    "title": "Supplier Lead Volume and Country Concentration",
+    "description_markdown": "Procurement request: Group by supplier (`suppliers`) to calculate count of unique SKUs provided (`COUNT(s.item_id)` as `supplied_skus`), and total stock held across facilities (`SUM(s.quantity_on_hand)` as `total_units`). Return `sp.name AS supplier_name`, `sp.country`, `supplied_skus`, and `total_units`. Order by `total_units` DESC, `sp.supplier_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "supplied_skus",
+        "type": "bigint"
+      },
+      {
+        "name": "total_units",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Supplier metrics\nSELECT ...",
+    "solution_query": "SELECT sp.name AS supplier_name, sp.country, COUNT(s.item_id) AS supplied_skus, SUM(s.quantity_on_hand) AS total_units FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name, sp.country ORDER BY total_units DESC, sp.supplier_id ASC;",
+    "solution_explanation": "Audits supplier exposure and inventory concentration risks.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join suppliers with stock_items.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT sp.name AS supplier_name, sp.country, COUNT(s.item_id) AS supplied_skus, SUM(s.quantity_on_hand) AS total_units FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name, sp.country ORDER BY total_units DESC, sp.supplier_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "supplier-risk"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-inv-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-inv-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-inv-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-04",
+    "slug": "inv-warehouses-by-capacity",
+    "title": "Filter High-Capacity Regional Warehouses",
+    "description_markdown": "Retrieve all regional logistics hubs from `warehouses` with a storage capacity of at least 40,000 units (`capacity >= 40000`). Return `warehouse_id`, `name`, `location`, and `capacity`. Order by `capacity` DESC, `warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "location",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT warehouse_id, name, location, capacity FROM warehouses WHERE capacity >= 40000 ORDER BY capacity DESC, warehouse_id ASC;",
+    "solution_explanation": "Filters warehouses matching the high storage threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE capacity >= 40000`.",
+      "Order by `capacity` DESC, `warehouse_id` ASC.",
+      "Query: SELECT warehouse_id, name, location, capacity FROM warehouses WHERE capacity >= 40000 ORDER BY capacity DESC, warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-05",
+    "slug": "inv-high-unit-cost-skus",
+    "title": "Filter High Unit Cost Stock Items",
+    "description_markdown": "Find all premium stock items in `stock_items` where `unit_cost > 20.00`. Return `sku`, `name`, and `unit_cost`. Order by `unit_cost` DESC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, unit_cost FROM stock_items WHERE unit_cost > 20.00 ORDER BY unit_cost DESC, sku ASC;",
+    "solution_explanation": "Filters inventory by procurement acquisition price threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE unit_cost > 20.00`.",
+      "Order by `unit_cost` DESC, `sku` ASC.",
+      "Query: SELECT sku, name, unit_cost FROM stock_items WHERE unit_cost > 20.00 ORDER BY unit_cost DESC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-06",
+    "slug": "inv-international-suppliers",
+    "title": "List International Component Suppliers Outside USA",
+    "description_markdown": "Procurement compliance check: Retrieve all vendors from `suppliers` whose headquarters are outside the United States (`country != 'USA'`). Return `supplier_id`, `name`, `country`, and `contact_email`. Order by `country` ASC, `name` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "contact_email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT supplier_id, name, country, contact_email FROM suppliers WHERE country != 'USA' ORDER BY country ASC, name ASC;",
+    "solution_explanation": "Filters vendors excluding the domestic US jurisdiction.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE country != 'USA'` or `<> 'USA'`.",
+      "Order by `country` ASC, `name` ASC.",
+      "Query: SELECT supplier_id, name, country, contact_email FROM suppliers WHERE country != 'USA' ORDER BY country ASC, name ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-07",
+    "slug": "inv-total-units-in-stock",
+    "title": "Aggregate Company-Wide Inventory Volume and Unit Cost",
+    "description_markdown": "Compute aggregate totals across all items in `stock_items`: total on-hand quantity (`SUM(quantity_on_hand)` as `total_units`) and average unit acquisition cost (`ROUND(AVG(unit_cost), 2)` as `avg_unit_cost`).",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_units",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_unit_cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT SUM(quantity_on_hand) AS total_units, ROUND(AVG(unit_cost), 2) AS avg_unit_cost FROM stock_items;",
+    "solution_explanation": "Aggregates overall unit volume and mean cost baseline.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(quantity_on_hand)` and `ROUND(AVG(unit_cost), 2)`.",
+      "No GROUP BY clause is necessary for full-table aggregation.",
+      "Query: SELECT SUM(quantity_on_hand) AS total_units, ROUND(AVG(unit_cost), 2) AS avg_unit_cost FROM stock_items;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-08",
+    "slug": "inv-stock-status-classification",
+    "title": "Classify Inventory Health and Stocking Thresholds",
+    "description_markdown": "Supply chain dashboard: Categorize items in `stock_items` using a `CASE` expression as `stock_status`:\n- If `quantity_on_hand <= 10`, return `'Critical'`\n- Else if `quantity_on_hand <= reorder_level`, return `'Low'`\n- Otherwise, return `'Adequate'`\n\nReturn `sku`, `name`, `quantity_on_hand`, `reorder_level`, and `stock_status`. Order by `quantity_on_hand` ASC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      },
+      {
+        "name": "stock_status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, reorder_level, CASE WHEN quantity_on_hand <= 10 THEN 'Critical' WHEN quantity_on_hand <= reorder_level THEN 'Low' ELSE 'Adequate' END AS stock_status FROM stock_items ORDER BY quantity_on_hand ASC, sku ASC;",
+    "solution_explanation": "Applies conditional evaluation to inventory levels.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN quantity_on_hand <= 10 THEN 'Critical' WHEN quantity_on_hand <= reorder_level THEN 'Low' ELSE 'Adequate' END`.",
+      "Order by `quantity_on_hand` ASC, `sku` ASC.",
+      "Query: SELECT sku, name, quantity_on_hand, reorder_level, CASE WHEN quantity_on_hand <= 10 THEN 'Critical' WHEN quantity_on_hand <= reorder_level THEN 'Low' ELSE 'Adequate' END AS stock_status FROM stock_items ORDER BY quantity_on_hand ASC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-09",
+    "slug": "inv-transactions-by-type",
+    "title": "Summarize Inventory Transactions by Movement Type",
+    "description_markdown": "Logistics audit: For each `transaction_type` in `stock_transactions`, count total transactions (`COUNT(tx_id)` as `tx_count`) and aggregate moved units (`SUM(quantity)` as `total_qty`). Return `transaction_type`, `tx_count`, and `total_qty`. Order by `tx_count` DESC, `transaction_type` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "tx_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_qty",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT transaction_type, COUNT(tx_id) AS tx_count, SUM(quantity) AS total_qty FROM stock_transactions GROUP BY transaction_type ORDER BY tx_count DESC, transaction_type ASC;",
+    "solution_explanation": "Groups warehouse inventory operations by transaction type.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `transaction_type`.",
+      "Aggregate with `COUNT(tx_id)` and `SUM(quantity)`.",
+      "Query: SELECT transaction_type, COUNT(tx_id) AS tx_count, SUM(quantity) AS total_qty FROM stock_transactions GROUP BY transaction_type ORDER BY tx_count DESC, transaction_type ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-10",
+    "slug": "inv-warehouse-item-count",
+    "title": "Count Distinct SKUs Stored per Warehouse Facility",
+    "description_markdown": "Count how many distinct catalog SKUs are stored at each facility. Join `warehouses` with `stock_items`. Return `w.warehouse_id`, `w.name`, and `COUNT(s.item_id)` as `sku_count`. Order by `sku_count` DESC, `w.warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "sku_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT w.warehouse_id, w.name, COUNT(s.item_id) AS sku_count FROM warehouses w JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name ORDER BY sku_count DESC, w.warehouse_id ASC;",
+    "solution_explanation": "Inner joins warehouses with catalog items and counts records per facility.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `warehouses w` and `stock_items s` on `w.warehouse_id = s.warehouse_id`.",
+      "Group by `w.warehouse_id, w.name` and order by `sku_count` DESC, `w.warehouse_id` ASC.",
+      "Query: SELECT w.warehouse_id, w.name, COUNT(s.item_id) AS sku_count FROM warehouses w JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name ORDER BY sku_count DESC, w.warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-11",
+    "slug": "inv-item-supplier-overview",
+    "title": "Map Catalog Items to Sourcing Vendors and Origin Countries",
+    "description_markdown": "Produce a sourcing lookup mapping each item in `stock_items` to its vendor in `suppliers`. Return `s.sku`, `s.name AS item_name`, `sp.name AS supplier_name`, and `sp.country`. Order by `s.sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items",
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "item_name",
+        "type": "varchar"
+      },
+      {
+        "name": "supplier_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.sku, s.name AS item_name, sp.name AS supplier_name, sp.country FROM stock_items s JOIN suppliers sp ON s.supplier_id = sp.supplier_id ORDER BY s.sku ASC;",
+    "solution_explanation": "Joins inventory items to primary suppliers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `stock_items s` and `suppliers sp` on `s.supplier_id = sp.supplier_id`.",
+      "Alias columns as `item_name` and `supplier_name`.",
+      "Query: SELECT s.sku, s.name AS item_name, sp.name AS supplier_name, sp.country FROM stock_items s JOIN suppliers sp ON s.supplier_id = sp.supplier_id ORDER BY s.sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-12",
+    "slug": "inv-inbound-transactions",
+    "title": "Audit Inbound Restocking Purchase Transactions",
+    "description_markdown": "Filter all inbound inventory movements (`transaction_type = 'inbound'`). Join `stock_transactions` with `stock_items`. Return `t.tx_id`, `s.sku`, `s.name`, `t.quantity`, and `t.tx_date`. Order by `t.tx_date` ASC, `t.tx_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "tx_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "tx_date",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT t.tx_id, s.sku, s.name, t.quantity, t.tx_date FROM stock_transactions t JOIN stock_items s ON t.item_id = s.item_id WHERE t.transaction_type = 'inbound' ORDER BY t.tx_date ASC, t.tx_id ASC;",
+    "solution_explanation": "Audits inbound fulfillment intake events.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `t.item_id = s.item_id` with `WHERE t.transaction_type = 'inbound'`.",
+      "Order by `t.tx_date` ASC, `t.tx_id` ASC.",
+      "Query: SELECT t.tx_id, s.sku, s.name, t.quantity, t.tx_date FROM stock_transactions t JOIN stock_items s ON t.item_id = s.item_id WHERE t.transaction_type = 'inbound' ORDER BY t.tx_date ASC, t.tx_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-13",
+    "slug": "inv-stock-value-per-item",
+    "title": "Calculate Line-Item Inventory Valuation",
+    "description_markdown": "Financial accounting: For each product in `stock_items`, calculate the total inventory valuation (`quantity_on_hand * unit_cost` as `inventory_value`). Return `sku`, `name`, `quantity_on_hand`, `unit_cost`, and `inventory_value`. Order by `inventory_value` DESC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "unit_cost",
+        "type": "numeric"
+      },
+      {
+        "name": "inventory_value",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, unit_cost, (quantity_on_hand * unit_cost) AS inventory_value FROM stock_items ORDER BY inventory_value DESC, sku ASC;",
+    "solution_explanation": "Multiplies current on-hand units by acquisition unit price.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Multiply `quantity_on_hand * unit_cost` as `inventory_value`.",
+      "Order by `inventory_value` DESC, `sku` ASC.",
+      "Query: SELECT sku, name, quantity_on_hand, unit_cost, (quantity_on_hand * unit_cost) AS inventory_value FROM stock_items ORDER BY inventory_value DESC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-14",
+    "slug": "inv-warehouses-above-average-capacity",
+    "title": "Identify Hubs Operating Above Average Facility Capacity",
+    "description_markdown": "Facilities strategy: Identify warehouses whose storage capacity is strictly greater than the average capacity across all warehouses. Return `warehouse_id`, `name`, and `capacity`. Order by `capacity` DESC, `warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT warehouse_id, name, capacity FROM warehouses WHERE capacity > (SELECT AVG(capacity) FROM warehouses) ORDER BY capacity DESC, warehouse_id ASC;",
+    "solution_explanation": "Applies a scalar subquery in the WHERE clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE capacity > (SELECT AVG(capacity) FROM warehouses)`.",
+      "Order by `capacity` DESC, `warehouse_id` ASC.",
+      "Query: SELECT warehouse_id, name, capacity FROM warehouses WHERE capacity > (SELECT AVG(capacity) FROM warehouses) ORDER BY capacity DESC, warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-15",
+    "slug": "inv-suppliers-with-multiple-items",
+    "title": "Filter High-Breadth Suppliers Providing Multiple SKUs",
+    "description_markdown": "Find suppliers in `suppliers` that manufacture or supply more than one distinct item (`COUNT(s.item_id) > 1`). Return `sp.supplier_id`, `sp.name`, and `COUNT(s.item_id)` as `item_count`. Order by `item_count` DESC, `sp.supplier_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sp.supplier_id, sp.name, COUNT(s.item_id) AS item_count FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name HAVING COUNT(s.item_id) > 1 ORDER BY item_count DESC, sp.supplier_id ASC;",
+    "solution_explanation": "Uses HAVING to filter grouped vendor catalogs.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `suppliers sp` and `stock_items s` on `sp.supplier_id = s.supplier_id`.",
+      "Group by `sp.supplier_id, sp.name` and filter with `HAVING COUNT(s.item_id) > 1`.",
+      "Query: SELECT sp.supplier_id, sp.name, COUNT(s.item_id) AS item_count FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name HAVING COUNT(s.item_id) > 1 ORDER BY item_count DESC, sp.supplier_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-16",
+    "slug": "inv-net-movement-by-item",
+    "title": "Compute Net Transaction Flow per Catalog Item",
+    "description_markdown": "Calculate net unit movement for items that have transactions: inbound receipts increase stock (`+quantity`), outbound shipments decrease stock (`-quantity`). Group by item. Return `s.item_id`, `s.sku`, `s.name`, and the net total as `net_movement`. Order by `net_movement` DESC, `s.item_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items",
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "net_movement",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.item_id, s.sku, s.name, SUM(CASE WHEN t.transaction_type = 'inbound' THEN t.quantity WHEN t.transaction_type = 'outbound' THEN -t.quantity ELSE 0 END) AS net_movement FROM stock_items s JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY s.item_id, s.sku, s.name ORDER BY net_movement DESC, s.item_id ASC;",
+    "solution_explanation": "Uses conditional aggregation across transaction types.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(CASE WHEN t.transaction_type = 'inbound' THEN t.quantity WHEN t.transaction_type = 'outbound' THEN -t.quantity ELSE 0 END)`.",
+      "Group by `s.item_id, s.sku, s.name` and order by `net_movement` DESC, `s.item_id` ASC.",
+      "Query: SELECT s.item_id, s.sku, s.name, SUM(CASE WHEN t.transaction_type = 'inbound' THEN t.quantity WHEN t.transaction_type = 'outbound' THEN -t.quantity ELSE 0 END) AS net_movement FROM stock_items s JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY s.item_id, s.sku, s.name ORDER BY net_movement DESC, s.item_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-17",
+    "slug": "inv-items-without-transactions",
+    "title": "Identify Dormant SKUs with Zero Transaction History",
+    "description_markdown": "Audit dormant stock: Find all items in `stock_items` that have never had any recorded transactions in `stock_transactions`. Return `s.item_id`, `s.sku`, `s.name`, and `s.quantity_on_hand`. Order by `s.item_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items",
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.item_id, s.sku, s.name, s.quantity_on_hand FROM stock_items s LEFT JOIN stock_transactions t ON s.item_id = t.item_id WHERE t.tx_id IS NULL ORDER BY s.item_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and IS NULL filter.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Left join `stock_items s` with `stock_transactions t` on `s.item_id = t.item_id`.",
+      "Filter with `WHERE t.tx_id IS NULL`.",
+      "Query: SELECT s.item_id, s.sku, s.name, s.quantity_on_hand FROM stock_items s LEFT JOIN stock_transactions t ON s.item_id = t.item_id WHERE t.tx_id IS NULL ORDER BY s.item_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-18",
+    "slug": "inv-warehouse-capacity-utilization",
+    "title": "Calculate Warehouse Capacity Utilization Percentages",
+    "description_markdown": "Calculate capacity utilization for each facility: sum current on-hand units (`COALESCE(SUM(s.quantity_on_hand), 0)` as `total_units_stored`) and compute the percentage of storage capacity filled: `ROUND((COALESCE(SUM(s.quantity_on_hand), 0) * 100.0) / w.capacity, 2)` as `utilization_pct`. Return `w.warehouse_id`, `w.name`, `w.capacity`, `total_units_stored`, and `utilization_pct`. Order by `utilization_pct` DESC, `w.warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity",
+        "type": "integer"
+      },
+      {
+        "name": "total_units_stored",
+        "type": "bigint"
+      },
+      {
+        "name": "utilization_pct",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT w.warehouse_id, w.name, w.capacity, COALESCE(SUM(s.quantity_on_hand), 0) AS total_units_stored, ROUND((COALESCE(SUM(s.quantity_on_hand), 0) * 100.0) / w.capacity, 2) AS utilization_pct FROM warehouses w LEFT JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name, w.capacity ORDER BY utilization_pct DESC, w.warehouse_id ASC;",
+    "solution_explanation": "Left joins facilities with inventory and computes ratio against nominal capacity.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND((COALESCE(SUM(s.quantity_on_hand), 0) * 100.0) / w.capacity, 2)`.",
+      "Group by `w.warehouse_id, w.name, w.capacity`.",
+      "Query: SELECT w.warehouse_id, w.name, w.capacity, COALESCE(SUM(s.quantity_on_hand), 0) AS total_units_stored, ROUND((COALESCE(SUM(s.quantity_on_hand), 0) * 100.0) / w.capacity, 2) AS utilization_pct FROM warehouses w LEFT JOIN stock_items s ON w.warehouse_id = s.warehouse_id GROUP BY w.warehouse_id, w.name, w.capacity ORDER BY utilization_pct DESC, w.warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-19",
+    "slug": "inv-supplier-average-item-cost",
+    "title": "Calculate Average Item Cost and SKU Breadth by Supplier",
+    "description_markdown": "Procurement pricing review: For each supplier providing inventory items, count supplied items (`COUNT(s.item_id)` as `item_count`) and compute the average unit cost (`ROUND(AVG(s.unit_cost), 2)` as `avg_unit_cost`). Return `sp.name AS supplier_name`, `item_count`, and `avg_unit_cost`. Order by `avg_unit_cost` DESC, `sp.supplier_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_name",
+        "type": "varchar"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_unit_cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sp.name AS supplier_name, COUNT(s.item_id) AS item_count, ROUND(AVG(s.unit_cost), 2) AS avg_unit_cost FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name ORDER BY avg_unit_cost DESC, sp.supplier_id ASC;",
+    "solution_explanation": "Aggregates pricing benchmarks per vendor.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `suppliers sp` and `stock_items s` on `sp.supplier_id = s.supplier_id`.",
+      "Group by `sp.supplier_id, sp.name` and order by `avg_unit_cost` DESC, `sp.supplier_id` ASC.",
+      "Query: SELECT sp.name AS supplier_name, COUNT(s.item_id) AS item_count, ROUND(AVG(s.unit_cost), 2) AS avg_unit_cost FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name ORDER BY avg_unit_cost DESC, sp.supplier_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-20",
+    "slug": "inv-highest-cost-item-per-warehouse",
+    "title": "Identify Most Expensive SKU per Warehouse Facility",
+    "description_markdown": "Using a window ranking function, find the single product with the highest `unit_cost` stored in each warehouse. If tied, pick the lowest `item_id`. Return `warehouse_id`, `sku`, `name`, and `unit_cost`. Order by `warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH RankedItems AS (SELECT warehouse_id, sku, name, unit_cost, ROW_NUMBER() OVER (PARTITION BY warehouse_id ORDER BY unit_cost DESC, item_id ASC) AS rn FROM stock_items) SELECT warehouse_id, sku, name, unit_cost FROM RankedItems WHERE rn = 1 ORDER BY warehouse_id ASC;",
+    "solution_explanation": "Uses ROW_NUMBER() partitioned by warehouse and filtered to rank 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY warehouse_id ORDER BY unit_cost DESC, item_id ASC)` in a CTE.",
+      "Filter outer query with `WHERE rn = 1`.",
+      "Query: WITH RankedItems AS (SELECT warehouse_id, sku, name, unit_cost, ROW_NUMBER() OVER (PARTITION BY warehouse_id ORDER BY unit_cost DESC, item_id ASC) AS rn FROM stock_items) SELECT warehouse_id, sku, name, unit_cost FROM RankedItems WHERE rn = 1 ORDER BY warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-21",
+    "slug": "inv-recent-transaction-per-item",
+    "title": "Retrieve Latest Movement Log per Active Item",
+    "description_markdown": "Logistics tracking: Find the most recent transaction entry for each item that has activity in `stock_transactions`. Return `item_id`, `tx_id`, `transaction_type`, `quantity`, and `tx_date`. Order by `item_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "tx_id",
+        "type": "integer"
+      },
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "tx_date",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH LatestTx AS (SELECT item_id, tx_id, transaction_type, quantity, tx_date, ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY tx_date DESC, tx_id DESC) AS rn FROM stock_transactions) SELECT item_id, tx_id, transaction_type, quantity, tx_date FROM LatestTx WHERE rn = 1 ORDER BY item_id ASC;",
+    "solution_explanation": "Applies ROW_NUMBER() ordered by transaction timestamp descending.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY tx_date DESC, tx_id DESC)`.",
+      "Filter in outer query where `rn = 1`.",
+      "Query: WITH LatestTx AS (SELECT item_id, tx_id, transaction_type, quantity, tx_date, ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY tx_date DESC, tx_id DESC) AS rn FROM stock_transactions) SELECT item_id, tx_id, transaction_type, quantity, tx_date FROM LatestTx WHERE rn = 1 ORDER BY item_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-22",
+    "slug": "inv-safety-stock-ratio",
+    "title": "Calculate Safety Stock Coverage Ratio",
+    "description_markdown": "Inventory risk analysis: Calculate the stock coverage ratio for every product: `ROUND((quantity_on_hand * 1.0) / reorder_level, 2)` as `coverage_ratio`. Return `sku`, `name`, `quantity_on_hand`, `reorder_level`, and `coverage_ratio`. Order by `coverage_ratio` ASC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      },
+      {
+        "name": "coverage_ratio",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, reorder_level, ROUND((quantity_on_hand * 1.0) / reorder_level, 2) AS coverage_ratio FROM stock_items ORDER BY coverage_ratio ASC, sku ASC;",
+    "solution_explanation": "Evaluates current stock against reorder threshold ratios.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Divide `(quantity_on_hand * 1.0)` by `reorder_level` and round to 2 decimals.",
+      "Order by `coverage_ratio` ASC, `sku` ASC.",
+      "Query: SELECT sku, name, quantity_on_hand, reorder_level, ROUND((quantity_on_hand * 1.0) / reorder_level, 2) AS coverage_ratio FROM stock_items ORDER BY coverage_ratio ASC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-23",
+    "slug": "inv-rank-items-by-value",
+    "title": "Dense Rank Products by Total On-Hand Asset Value",
+    "description_markdown": "Rank products across the catalog by total holding valuation (`quantity_on_hand * unit_cost` as `total_val`) using `DENSE_RANK()` as `value_rank`. Return `sku`, `name`, `total_val`, and `value_rank`. Order by `value_rank` ASC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_val",
+        "type": "numeric"
+      },
+      {
+        "name": "value_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, (quantity_on_hand * unit_cost) AS total_val, DENSE_RANK() OVER (ORDER BY (quantity_on_hand * unit_cost) DESC) AS value_rank FROM stock_items ORDER BY value_rank ASC, sku ASC;",
+    "solution_explanation": "Applies DENSE_RANK window function ordered by asset value descending.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY (quantity_on_hand * unit_cost) DESC)`.",
+      "Order by `value_rank` ASC, `sku` ASC.",
+      "Query: SELECT sku, name, (quantity_on_hand * unit_cost) AS total_val, DENSE_RANK() OVER (ORDER BY (quantity_on_hand * unit_cost) DESC) AS value_rank FROM stock_items ORDER BY value_rank ASC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-24",
+    "slug": "inv-outbound-volume-by-warehouse",
+    "title": "Aggregate Outbound Fulfillment Dispatch Units by Hub",
+    "description_markdown": "Calculate total units dispatched via outbound transactions for each warehouse facility (`COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0)` as `total_outbound`). Include warehouses with zero outbound activity. Return `w.warehouse_id`, `w.name`, and `total_outbound`. Order by `total_outbound` DESC, `w.warehouse_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses",
+      "stock_items",
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_outbound",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT w.warehouse_id, w.name, COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) AS total_outbound FROM warehouses w LEFT JOIN stock_items s ON w.warehouse_id = s.warehouse_id LEFT JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY w.warehouse_id, w.name ORDER BY total_outbound DESC, w.warehouse_id ASC;",
+    "solution_explanation": "Joins warehouses through stock items to movement logs with conditional sum.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN` twice from warehouses to stock_items to stock_transactions.",
+      "Sum with `CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END`.",
+      "Query: SELECT w.warehouse_id, w.name, COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) AS total_outbound FROM warehouses w LEFT JOIN stock_items s ON w.warehouse_id = s.warehouse_id LEFT JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY w.warehouse_id, w.name ORDER BY total_outbound DESC, w.warehouse_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-25",
+    "slug": "inv-cumulative-transaction-volume",
+    "title": "Calculate Cumulative Transaction Flow per Item",
+    "description_markdown": "For all records in `stock_transactions`, calculate the cumulative running total of units moved per item: `SUM(quantity) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC)` as `running_qty`. Return `tx_id`, `item_id`, `transaction_type`, `quantity`, `tx_date`, and `running_qty`. Order by `item_id` ASC, `tx_date` ASC, `tx_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "tx_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "tx_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "running_qty",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT tx_id, item_id, transaction_type, quantity, tx_date, SUM(quantity) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC) AS running_qty FROM stock_transactions ORDER BY item_id ASC, tx_date ASC, tx_id ASC;",
+    "solution_explanation": "Computes a running sum partition over chronological item events.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(quantity) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC)`.",
+      "Order by `item_id` ASC, `tx_date` ASC, `tx_id` ASC.",
+      "Query: SELECT tx_id, item_id, transaction_type, quantity, tx_date, SUM(quantity) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC) AS running_qty FROM stock_transactions ORDER BY item_id ASC, tx_date ASC, tx_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-26",
+    "slug": "inv-stock-item-summary-stats",
+    "title": "Compare Item Unit Cost Against Catalog Maximum",
+    "description_markdown": "Using an empty window frame `MAX(unit_cost) OVER ()`, calculate the cost difference between the most expensive item in the catalog and each product: `(MAX(unit_cost) OVER () - unit_cost)` as `diff_from_max`. Return `sku`, `name`, `unit_cost`, and `diff_from_max`. Order by `diff_from_max` ASC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_cost",
+        "type": "numeric"
+      },
+      {
+        "name": "diff_from_max",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, unit_cost, (MAX(unit_cost) OVER () - unit_cost) AS diff_from_max FROM stock_items ORDER BY diff_from_max ASC, sku ASC;",
+    "solution_explanation": "Compares individual item costs to the global catalog maximum.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `MAX(unit_cost) OVER () - unit_cost` as `diff_from_max`.",
+      "Order by `diff_from_max` ASC, `sku` ASC.",
+      "Query: SELECT sku, name, unit_cost, (MAX(unit_cost) OVER () - unit_cost) AS diff_from_max FROM stock_items ORDER BY diff_from_max ASC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-27",
+    "slug": "inv-reorder-urgency-tier",
+    "title": "Calculate Replenishment Deficit and Procurement Costs",
+    "description_markdown": "Procurement action report: For products that have fallen strictly below their reorder threshold (`quantity_on_hand < reorder_level`), calculate the unit deficit (`(reorder_level - quantity_on_hand)` as `stock_deficit`) and the direct capital required to restore inventory to the reorder level (`(reorder_level - quantity_on_hand) * unit_cost` as `replenishment_cost`). Return `sku`, `name`, `quantity_on_hand`, `reorder_level`, `stock_deficit`, and `replenishment_cost`. Order by `replenishment_cost` DESC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_level",
+        "type": "integer"
+      },
+      {
+        "name": "stock_deficit",
+        "type": "integer"
+      },
+      {
+        "name": "replenishment_cost",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sku, name, quantity_on_hand, reorder_level, (reorder_level - quantity_on_hand) AS stock_deficit, ((reorder_level - quantity_on_hand) * unit_cost) AS replenishment_cost FROM stock_items WHERE quantity_on_hand < reorder_level ORDER BY replenishment_cost DESC, sku ASC;",
+    "solution_explanation": "Computes shortage quantity and procurement cost to restore baseline inventory.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE quantity_on_hand < reorder_level`.",
+      "Compute `(reorder_level - quantity_on_hand) * unit_cost` as `replenishment_cost`.",
+      "Query: SELECT sku, name, quantity_on_hand, reorder_level, (reorder_level - quantity_on_hand) AS stock_deficit, ((reorder_level - quantity_on_hand) * unit_cost) AS replenishment_cost FROM stock_items WHERE quantity_on_hand < reorder_level ORDER BY replenishment_cost DESC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-28",
+    "slug": "inv-supplier-warehouse-matrix",
+    "title": "Map Supplier Sourcing Density Across Warehouse Facilities",
+    "description_markdown": "Supply chain network matrix: For each active warehouse and supplier relationship present in `stock_items`, count the number of catalog items provided (`COUNT(s.item_id)` as `item_count`). Return `w.name AS warehouse_name`, `sp.name AS supplier_name`, and `item_count`. Order by `item_count` DESC, `w.warehouse_id` ASC, `sp.supplier_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "warehouses",
+      "suppliers",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_name",
+        "type": "varchar"
+      },
+      {
+        "name": "supplier_name",
+        "type": "varchar"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT w.name AS warehouse_name, sp.name AS supplier_name, COUNT(s.item_id) AS item_count FROM stock_items s JOIN warehouses w ON s.warehouse_id = w.warehouse_id JOIN suppliers sp ON s.supplier_id = sp.supplier_id GROUP BY w.warehouse_id, w.name, sp.supplier_id, sp.name ORDER BY item_count DESC, w.warehouse_id ASC, sp.supplier_id ASC;",
+    "solution_explanation": "Aggregates multi-table inventory cross relationships.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `stock_items s` with `warehouses w` and `suppliers sp`.",
+      "Group by warehouse and supplier primary keys and names.",
+      "Query: SELECT w.name AS warehouse_name, sp.name AS supplier_name, COUNT(s.item_id) AS item_count FROM stock_items s JOIN warehouses w ON s.warehouse_id = w.warehouse_id JOIN suppliers sp ON s.supplier_id = sp.supplier_id GROUP BY w.warehouse_id, w.name, sp.supplier_id, sp.name ORDER BY item_count DESC, w.warehouse_id ASC, sp.supplier_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-29",
+    "slug": "inv-warehouse-stock-percentage-share",
+    "title": "Calculate Line-Item Share of Warehouse Asset Value",
+    "description_markdown": "Asset concentration analysis: For each SKU in `stock_items`, calculate what percentage of its warehouse facility's total inventory value it represents: `ROUND(((quantity_on_hand * unit_cost) * 100.0) / SUM(quantity_on_hand * unit_cost) OVER (PARTITION BY warehouse_id), 2)` as `pct_of_warehouse_val`. Return `warehouse_id`, `sku`, `name`, and `pct_of_warehouse_val`. Order by `warehouse_id` ASC, `pct_of_warehouse_val` DESC, `sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "pct_of_warehouse_val",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT warehouse_id, sku, name, ROUND(((quantity_on_hand * unit_cost) * 100.0) / SUM(quantity_on_hand * unit_cost) OVER (PARTITION BY warehouse_id), 2) AS pct_of_warehouse_val FROM stock_items ORDER BY warehouse_id ASC, pct_of_warehouse_val DESC, sku ASC;",
+    "solution_explanation": "Computes percentage contribution within each warehouse partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use window aggregate `SUM(quantity_on_hand * unit_cost) OVER (PARTITION BY warehouse_id)`.",
+      "Multiply line item value by 100.0 before dividing and rounding.",
+      "Query: SELECT warehouse_id, sku, name, ROUND(((quantity_on_hand * unit_cost) * 100.0) / SUM(quantity_on_hand * unit_cost) OVER (PARTITION BY warehouse_id), 2) AS pct_of_warehouse_val FROM stock_items ORDER BY warehouse_id ASC, pct_of_warehouse_val DESC, sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-30",
+    "slug": "inv-inventory-turnover-audit",
+    "title": "Calculate Inventory Outbound Turnover Velocity",
+    "description_markdown": "Calculate outbound inventory velocity: for each product in `stock_items`, calculate total units dispatched via outbound transactions (`COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0)` as `total_dispatched`) and the ratio of dispatched units to current on-hand stock (`ROUND((total_dispatched * 1.0) / s.quantity_on_hand, 2)` as `turnover_ratio`). Return `s.sku`, `s.name`, `s.quantity_on_hand`, `total_dispatched`, and `turnover_ratio`. Order by `turnover_ratio` DESC, `s.sku` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items",
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "total_dispatched",
+        "type": "bigint"
+      },
+      {
+        "name": "turnover_ratio",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT s.sku, s.name, s.quantity_on_hand, COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) AS total_dispatched, ROUND((COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) * 1.0) / s.quantity_on_hand, 2) AS turnover_ratio FROM stock_items s LEFT JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY s.item_id, s.sku, s.name, s.quantity_on_hand ORDER BY turnover_ratio DESC, s.sku ASC;",
+    "solution_explanation": "Measures turnover speed by contrasting cumulative outbound shipments with remaining inventory.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN stock_transactions t ON s.item_id = t.item_id`.",
+      "Group by product fields and compute turnover ratio.",
+      "Query: SELECT s.sku, s.name, s.quantity_on_hand, COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) AS total_dispatched, ROUND((COALESCE(SUM(CASE WHEN t.transaction_type = 'outbound' THEN t.quantity ELSE 0 END), 0) * 1.0) / s.quantity_on_hand, 2) AS turnover_ratio FROM stock_items s LEFT JOIN stock_transactions t ON s.item_id = t.item_id GROUP BY s.item_id, s.sku, s.name, s.quantity_on_hand ORDER BY turnover_ratio DESC, s.sku ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-31",
+    "slug": "inv-lag-transaction-interval",
+    "title": "Track Previous Transaction Timestamp with Window LAG",
+    "description_markdown": "Audit transaction intervals: For each movement in `stock_transactions`, retrieve the timestamp of the immediate preceding transaction for the same item using `LAG(tx_date) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC)` as `prev_tx_date`. Return `tx_id`, `item_id`, `transaction_type`, `quantity`, `tx_date`, and `prev_tx_date`. Order by `item_id` ASC, `tx_date` ASC, `tx_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "tx_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      },
+      {
+        "name": "tx_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_tx_date",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT tx_id, item_id, transaction_type, quantity, tx_date, LAG(tx_date) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC) AS prev_tx_date FROM stock_transactions ORDER BY item_id ASC, tx_date ASC, tx_id ASC;",
+    "solution_explanation": "Applies LAG window offset to retrieve preceding movement event dates.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(tx_date) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC)`.",
+      "Order by `item_id` ASC, `tx_date` ASC, `tx_id` ASC.",
+      "Query: SELECT tx_id, item_id, transaction_type, quantity, tx_date, LAG(tx_date) OVER (PARTITION BY item_id ORDER BY tx_date ASC, tx_id ASC) AS prev_tx_date FROM stock_transactions ORDER BY item_id ASC, tx_date ASC, tx_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-inv-32",
+    "slug": "inv-high-dependency-suppliers",
+    "title": "Detect Suppliers Dominating Global Inventory Value",
+    "description_markdown": "Supplier concentration risk: Find suppliers whose provided items represent at least 15% of the company's total catalog inventory valuation (`val_share_pct >= 15.0`). Return `sp.supplier_id`, `sp.name`, `SUM(s.quantity_on_hand * s.unit_cost)` as `supplier_val`, and `ROUND((SUM(s.quantity_on_hand * s.unit_cost) * 100.0) / (SELECT SUM(quantity_on_hand * unit_cost) FROM stock_items), 2)` as `val_share_pct`. Order by `val_share_pct` DESC, `sp.supplier_id` ASC.",
+    "topic_id": "scenario-inventory",
+    "subtopic_id": "sc-inv",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers",
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "supplier_val",
+        "type": "numeric"
+      },
+      {
+        "name": "val_share_pct",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sp.supplier_id, sp.name, SUM(s.quantity_on_hand * s.unit_cost) AS supplier_val, ROUND((SUM(s.quantity_on_hand * s.unit_cost) * 100.0) / (SELECT SUM(quantity_on_hand * unit_cost) FROM stock_items), 2) AS val_share_pct FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name HAVING ROUND((SUM(s.quantity_on_hand * s.unit_cost) * 100.0) / (SELECT SUM(quantity_on_hand * unit_cost) FROM stock_items), 2) >= 15.0 ORDER BY val_share_pct DESC, sp.supplier_id ASC;",
+    "solution_explanation": "Aggregates inventory value per supplier and compares to global subquery valuation.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subquery `(SELECT SUM(quantity_on_hand * unit_cost) FROM stock_items)` as denominator.",
+      "Filter in HAVING clause with `>= 15.0`.",
+      "Query: SELECT sp.supplier_id, sp.name, SUM(s.quantity_on_hand * s.unit_cost) AS supplier_val, ROUND((SUM(s.quantity_on_hand * s.unit_cost) * 100.0) / (SELECT SUM(quantity_on_hand * unit_cost) FROM stock_items), 2) AS val_share_pct FROM suppliers sp JOIN stock_items s ON sp.supplier_id = s.supplier_id GROUP BY sp.supplier_id, sp.name HAVING val_share_pct >= 15.0 ORDER BY val_share_pct DESC, sp.supplier_id ASC;"
+    ],
+    "tags": [
+      "inventory",
+      "sc-inv"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-inv-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-inv-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-inv-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

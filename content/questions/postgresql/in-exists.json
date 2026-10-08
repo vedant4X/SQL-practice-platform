@@ -1,0 +1,2352 @@
+[
+  {
+    "id": "q-ine-01",
+    "slug": "customers-who-purchased-expensive-items",
+    "title": "Find Customers with Orders Using EXISTS",
+    "description_markdown": "Find customers in `customers` who have placed at least one completed order (`orders.order_status = 'completed'`) using an `EXISTS` subquery. Return `customer_id`, `first_name`, and `email`. Order by `customer_id`.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Use EXISTS subquery\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE EXISTS (SELECT 1 FROM orders o WHERE ...)",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id AND o.order_status = 'completed') ORDER BY c.customer_id ASC;",
+    "solution_explanation": "EXISTS tests for the existence of rows in a subquery and short-circuits as soon as a match is found.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Correlate the subquery on `o.customer_id = c.customer_id AND o.order_status = 'completed'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id AND o.order_status = 'completed') ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "exists",
+      "subqueries"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-02",
+    "slug": "professors-not-assigned-to-any-course",
+    "title": "Find Professors with NOT EXISTS",
+    "description_markdown": "Find professors in `professors` who are NOT assigned to teach any course in `courses` using `NOT EXISTS`. Return `professor_id`, `first_name`, and `last_name`. Order by `professor_id`.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS subquery\nSELECT ...",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.last_name FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY p.professor_id ASC;",
+    "solution_explanation": "NOT EXISTS returns TRUE if the subquery produces 0 rows for that outer professor.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.professor_id, p.first_name, p.last_name FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c WHERE c.professor_id = p.professor_id) ORDER BY p.professor_id ASC;"
+    ],
+    "tags": [
+      "not-exists",
+      "semi-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-03",
+    "slug": "departments-with-assigned-projects",
+    "title": "Departments Sponsoring Active Projects via IN",
+    "description_markdown": "Find all departments from `departments` whose `dept_id` is in the set of departments sponsoring projects with a budget >= 500,000 in `projects`. Return `dept_name` and `budget`. Order by `dept_name`.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Subquery with IN\nSELECT ...",
+    "solution_query": "SELECT dept_name, budget FROM departments WHERE dept_id IN (SELECT dept_id FROM projects WHERE budget >= 500000) ORDER BY dept_name ASC;",
+    "solution_explanation": "The IN subquery outputs a set of department IDs that qualify based on project capital allocations.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE dept_id IN (SELECT dept_id FROM projects WHERE budget >= 500000)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_name, budget FROM departments WHERE dept_id IN (SELECT dept_id FROM projects WHERE budget >= 500000) ORDER BY dept_name ASC;"
+    ],
+    "tags": [
+      "in-subquery",
+      "filtering"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-04",
+    "slug": "customers-who-purchased-in-subquery",
+    "title": "Filter Customers with Order History via IN Subquery",
+    "description_markdown": "Use an `IN` subquery `customer_id IN (SELECT customer_id FROM orders)` to find all customers who have placed at least one order. Return `customer_id`, `first_name`, and `email`. Order by `customer_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery for active purchasers\nSELECT customer_id, first_name, email\nFROM customers\nWHERE customer_id IN (SELECT customer_id FROM orders)\nORDER BY ...;",
+    "solution_query": "SELECT customer_id, first_name, email FROM customers WHERE customer_id IN (SELECT customer_id FROM orders) ORDER BY customer_id ASC;",
+    "solution_explanation": "The `IN` subquery builds a set of distinct customer keys who own order records and tests outer customer rows against it.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using `= (SELECT customer_id FROM orders)` which errors with multiple rows."
+    ],
+    "interview_tip": "IN tests for membership within a multi-row single-column list returned by a subquery.",
+    "hints": [
+      "Use `WHERE customer_id IN (SELECT customer_id FROM orders)`.",
+      "Order by `customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, email FROM customers WHERE customer_id IN (SELECT customer_id FROM orders) ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "membership"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-05",
+    "slug": "departments-with-assigned-employees",
+    "title": "Find Populated Departments Using IN Subquery",
+    "description_markdown": "Use an `IN` subquery to find departments that have at least one employee assigned (`dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL)`). Return `dept_id` and `dept_name`. Order by `dept_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery for staffed departments\nSELECT dept_id, dept_name\nFROM departments\nWHERE dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL)\nORDER BY ...;",
+    "solution_query": "SELECT dept_id, dept_name FROM departments WHERE dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL) ORDER BY dept_id ASC;",
+    "solution_explanation": "Filters the department registry to those whose ID appears in the active employee roster.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off dept_id IS NOT NULL in the subquery."
+    ],
+    "interview_tip": "Filtering out NULLs in subqueries is always best practice when writing IN/NOT IN clauses.",
+    "hints": [
+      "Use `WHERE dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL)`.",
+      "Order by `dept_id ASC`.",
+      "Query: SELECT dept_id, dept_name FROM departments WHERE dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL) ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "organization"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-06",
+    "slug": "professors-teaching-courses",
+    "title": "Identify Active Instructors via IN Subquery",
+    "description_markdown": "Use an `IN` subquery to find professors currently assigned to teach at least one course (`professor_id IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL)`). Return `professor_id`, `last_name`, and `department`. Order by `professor_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery for teaching professors\nSELECT professor_id, last_name, department\nFROM professors\nWHERE professor_id IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL)\nORDER BY ...;",
+    "solution_query": "SELECT professor_id, last_name, department FROM professors WHERE professor_id IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL) ORDER BY professor_id ASC;",
+    "solution_explanation": "Returns faculty whose primary key appears within the active course instructor assignment list.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN when the question specifically requests an IN subquery."
+    ],
+    "interview_tip": "Subquery membership checks avoid duplicate rows that can happen with 1-to-many joins.",
+    "hints": [
+      "Use `WHERE professor_id IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL)`.",
+      "Order by `professor_id ASC`.",
+      "Query: SELECT professor_id, last_name, department FROM professors WHERE professor_id IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL) ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-07",
+    "slug": "products-ordered-in-bulk",
+    "title": "Detect Products Sold in Bulk via EXISTS",
+    "description_markdown": "Use a correlated `EXISTS` subquery to find products that have been purchased with a quantity of 2 or more in at least one order line (`EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id AND oi.quantity >= 2)`). Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS for bulk orders\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nWHERE EXISTS (\n  SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id AND oi.quantity >= 2\n)\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id AND oi.quantity >= 2) ORDER BY p.product_id ASC;",
+    "solution_explanation": "EXISTS short-circuits as soon as a single matching order item meeting the quantity threshold is encountered.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting column data inside EXISTS rather than a constant like 1."
+    ],
+    "interview_tip": "SELECT 1 inside EXISTS is standard practice because the database engine ignores projection expressions during existence checks.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id AND oi.quantity >= 2)`.",
+      "Order by `p.product_id ASC`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id AND oi.quantity >= 2) ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "performance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-08",
+    "slug": "employees-assigned-to-cloud-project",
+    "title": "Filter Staff Assigned to Cloud Migration Initiative",
+    "description_markdown": "Use an `IN` subquery to find employees assigned to project 101 (`emp_id IN (SELECT emp_id FROM assignments WHERE project_id = 101)`). Return `emp_id`, `first_name`, and `last_name`. Order by `emp_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery on project 101\nSELECT emp_id, first_name, last_name\nFROM employees\nWHERE emp_id IN (SELECT emp_id FROM assignments WHERE project_id = 101)\nORDER BY ...;",
+    "solution_query": "SELECT emp_id, first_name, last_name FROM employees WHERE emp_id IN (SELECT emp_id FROM assignments WHERE project_id = 101) ORDER BY emp_id ASC;",
+    "solution_explanation": "Selects employees whose emp_id exists in the subset of assignments matching project 101.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using an outer join where an IN subquery was specified."
+    ],
+    "interview_tip": "IN subqueries avoid duplicating employee rows even if an employee had multiple roles on the project.",
+    "hints": [
+      "Use `WHERE emp_id IN (SELECT emp_id FROM assignments WHERE project_id = 101)`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, last_name FROM employees WHERE emp_id IN (SELECT emp_id FROM assignments WHERE project_id = 101) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-09",
+    "slug": "students-enrolled-in-cs101",
+    "title": "Identify Students Enrolled in Introductory Computer Science",
+    "description_markdown": "Use a correlated `EXISTS` subquery to find students who are enrolled in course 101 (`EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.course_id = 101)`). Return `s.student_id`, `s.first_name`, and `s.last_name`. Order by `s.student_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS subquery for CS101 enrollments\nSELECT s.student_id, s.first_name, s.last_name\nFROM students s\nWHERE EXISTS (\n  SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.course_id = 101\n)\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.last_name FROM students s WHERE EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.course_id = 101) ORDER BY s.student_id ASC;",
+    "solution_explanation": "Checks existence of an active course 101 enrollment record for each candidate student row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the correlation condition `e.student_id = s.student_id`."
+    ],
+    "interview_tip": "Uncorrelated EXISTS evaluates to TRUE for all rows if any row exists in the subquery; always correlate appropriately.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.course_id = 101)`.",
+      "Order by `s.student_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, s.last_name FROM students s WHERE EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.course_id = 101) ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-10",
+    "slug": "customers-with-paypal-payments",
+    "title": "Filter Customers Transacting with PayPal",
+    "description_markdown": "Use an `IN` subquery combining `orders` and `payments` to find customers who have paid via 'paypal' (`customer_id IN (SELECT o.customer_id FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_method = 'paypal')`). Return `customer_id`, `first_name`, and `email`. Order by `customer_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery with joined tables\nSELECT customer_id, first_name, email\nFROM customers\nWHERE customer_id IN (\n  SELECT o.customer_id FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_method = 'paypal'\n)\nORDER BY ...;",
+    "solution_query": "SELECT customer_id, first_name, email FROM customers WHERE customer_id IN (SELECT o.customer_id FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_method = 'paypal') ORDER BY customer_id ASC;",
+    "solution_explanation": "Embeds a multi-table join inside the IN subquery to target a specific transaction method cohort.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining the outer query to payments, resulting in duplicate customer records."
+    ],
+    "interview_tip": "Subqueries isolate multi-table join multiplicity from the outer entity stream.",
+    "hints": [
+      "Use `WHERE customer_id IN (SELECT o.customer_id FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_method = 'paypal')`.",
+      "Order by `customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, email FROM customers WHERE customer_id IN (SELECT o.customer_id FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_method = 'paypal') ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "payments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-11",
+    "slug": "departments-with-high-earners",
+    "title": "Locate Departments Employing High Earners via EXISTS",
+    "description_markdown": "Use a correlated `EXISTS` subquery to find departments that employ at least one person earning a salary of 150,000 or more (`EXISTS (SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id AND e.salary >= 150000)`). Return `d.dept_id`, `d.dept_name`, and `d.budget`. Order by `d.dept_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS for high earner departments\nSELECT d.dept_id, d.dept_name, d.budget\nFROM departments d\nWHERE EXISTS (\n  SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id AND e.salary >= 150000\n)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE EXISTS (SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id AND e.salary >= 150000) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Uses semi-join semantics: each matching department appears exactly once without needing a DISTINCT or GROUP BY clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using an inner join without DISTINCT which duplicates departments with multiple high earners."
+    ],
+    "interview_tip": "EXISTS is the canonical SQL pattern for semi-joins to avoid duplicate rows from 1-to-many relationships.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id AND e.salary >= 150000)`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE EXISTS (SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id AND e.salary >= 150000) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "semi-join",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-12",
+    "slug": "categories-with-active-products",
+    "title": "Filter Categories Containing Active Merchandise",
+    "description_markdown": "Use an `IN` subquery to select categories that contain at least one active product (`category_id IN (SELECT category_id FROM products WHERE is_active = TRUE)`). Return `category_id` and `category_name`. Order by `category_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery for active categories\nSELECT category_id, category_name\nFROM categories\nWHERE category_id IN (SELECT category_id FROM products WHERE is_active = TRUE)\nORDER BY ...;",
+    "solution_query": "SELECT category_id, category_name FROM categories WHERE category_id IN (SELECT category_id FROM products WHERE is_active = TRUE) ORDER BY category_id ASC;",
+    "solution_explanation": "Returns categories having active merchandise in the catalog.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting inactive products."
+    ],
+    "interview_tip": "IN subqueries keep the outer query clean and avoid unnecessary joins.",
+    "hints": [
+      "Use `WHERE category_id IN (SELECT category_id FROM products WHERE is_active = TRUE)`.",
+      "Order by `category_id ASC`.",
+      "Query: SELECT category_id, category_name FROM categories WHERE category_id IN (SELECT category_id FROM products WHERE is_active = TRUE) ORDER BY category_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-13",
+    "slug": "courses-taught-by-full-professors",
+    "title": "Filter Courses Taught by Full Professors via IN",
+    "description_markdown": "Use an `IN` subquery to find courses taught by professors holding the title 'Full Professor' (`professor_id IN (SELECT professor_id FROM professors WHERE title = 'Full Professor')`). Return `course_code`, `course_name`, and `credits`. Order by `course_code` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Courses taught by Full Professors\nSELECT course_code, course_name, credits\nFROM courses\nWHERE professor_id IN (SELECT professor_id FROM professors WHERE title = 'Full Professor')\nORDER BY ...;",
+    "solution_query": "SELECT course_code, course_name, credits FROM courses WHERE professor_id IN (SELECT professor_id FROM professors WHERE title = 'Full Professor') ORDER BY course_code ASC;",
+    "solution_explanation": "Selects courses whose assigned instructor matches the senior faculty criteria in the subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining professors table when problem specifies IN."
+    ],
+    "interview_tip": "IN subqueries express filter conditions cleanly without modifying the FROM clause.",
+    "hints": [
+      "Use `WHERE professor_id IN (SELECT professor_id FROM professors WHERE title = 'Full Professor')`.",
+      "Order by `course_code ASC`.",
+      "Query: SELECT course_code, course_name, credits FROM courses WHERE professor_id IN (SELECT professor_id FROM professors WHERE title = 'Full Professor') ORDER BY course_code ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-14",
+    "slug": "customers-with-five-star-reviews",
+    "title": "Identify Delighted Customers via EXISTS",
+    "description_markdown": "Use a correlated `EXISTS` subquery to identify customers who have written at least one 5-star review (`EXISTS (SELECT 1 FROM reviews r WHERE r.customer_id = c.customer_id AND r.rating = 5)`). Return `c.customer_id`, `c.first_name`, and `c.city`. Order by `c.customer_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS for 5-star reviewers\nSELECT c.customer_id, c.first_name, c.city\nFROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM reviews r WHERE r.customer_id = c.customer_id AND r.rating = 5\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.city FROM customers c WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.customer_id = c.customer_id AND r.rating = 5) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Returns customer profiles who submitted maximum satisfaction ratings without emitting multiple rows for repeat reviewers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using JOIN which produces duplicate rows when a customer wrote multiple 5-star reviews."
+    ],
+    "interview_tip": "EXISTS guarantees 1 row per customer regardless of how many matching records exist in the child table.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.customer_id = c.customer_id AND r.rating = 5)`.",
+      "Order by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, c.city FROM customers c WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.customer_id = c.customer_id AND r.rating = 5) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "customer-feedback"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-15",
+    "slug": "projects-with-heavy-labor-allocations",
+    "title": "Locate Projects with Extensive Labor via EXISTS",
+    "description_markdown": "Use a correlated `EXISTS` subquery to locate projects that have at least one assignment logging 500 or more hours worked (`EXISTS (SELECT 1 FROM assignments a WHERE a.project_id = p.project_id AND a.hours_worked >= 500)`). Return `p.project_id`, `p.project_name`, and `p.budget`. Order by `p.project_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS for heavy labor projects\nSELECT p.project_id, p.project_name, p.budget\nFROM projects p\nWHERE EXISTS (\n  SELECT 1 FROM assignments a WHERE a.project_id = p.project_id AND a.hours_worked >= 500\n)\nORDER BY ...;",
+    "solution_query": "SELECT p.project_id, p.project_name, p.budget FROM projects p WHERE EXISTS (SELECT 1 FROM assignments a WHERE a.project_id = p.project_id AND a.hours_worked >= 500) ORDER BY p.project_id ASC;",
+    "solution_explanation": "Filters project entities by checking existence of significant individual employee contributions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Summing hours worked instead of checking individual assignment hours."
+    ],
+    "interview_tip": "Existence checks on line items isolate parent projects without expensive group-by operations.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM assignments a WHERE a.project_id = p.project_id AND a.hours_worked >= 500)`.",
+      "Order by `p.project_id ASC`.",
+      "Query: SELECT p.project_id, p.project_name, p.budget FROM projects p WHERE EXISTS (SELECT 1 FROM assignments a WHERE a.project_id = p.project_id AND a.hours_worked >= 500) ORDER BY p.project_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "timesheet"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-16",
+    "slug": "students-with-honors-final-exam-grade",
+    "title": "Identify Honor Students via EXISTS Multi-Table Subquery",
+    "description_markdown": "Use a correlated `EXISTS` subquery across `enrollments` and `marks` to find students who achieved a final exam score of 90 or greater (`EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.student_id = s.student_id AND m.assessment_type = 'final' AND m.score >= 90)`). Return `s.student_id`, `s.first_name`, and `s.major`. Order by `s.student_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- EXISTS with joined tables\nSELECT s.student_id, s.first_name, s.major\nFROM students s\nWHERE EXISTS (\n  SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.student_id = s.student_id AND m.assessment_type = 'final' AND m.score >= 90\n)\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.major FROM students s WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.student_id = s.student_id AND m.assessment_type = 'final' AND m.score >= 90) ORDER BY s.student_id ASC;",
+    "solution_explanation": "Correlates the student row to an inner join of enrollments and marks inside EXISTS.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the assessment_type = 'final' filter."
+    ],
+    "interview_tip": "Joining tables inside EXISTS allows testing multi-level relational preconditions cleanly.",
+    "hints": [
+      "Join `enrollments` and `marks` inside `EXISTS`.",
+      "Filter `WHERE e.student_id = s.student_id AND m.assessment_type = 'final' AND m.score >= 90`.",
+      "Query: SELECT s.student_id, s.first_name, s.major FROM students s WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.student_id = s.student_id AND m.assessment_type = 'final' AND m.score >= 90) ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-17",
+    "slug": "products-with-reviews-and-orders",
+    "title": "Find Products with Both Purchase and Review History",
+    "description_markdown": "Use two correlated `EXISTS` subqueries connected by `AND` to find products that have BOTH at least one review AND at least one order line. Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Dual EXISTS subqueries\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nWHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id)\n  AND EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id)\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id) AND EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id) ORDER BY p.product_id ASC;",
+    "solution_explanation": "Chaining multiple EXISTS subqueries enforces multiple independent one-to-many conditions without creating Cartesian cross products.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining both tables in FROM, causing massive Cartesian row duplication."
+    ],
+    "interview_tip": "Dual EXISTS is the standard professional solution to the Cartesian chasm problem.",
+    "hints": [
+      "Use `WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id) AND EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id)`.",
+      "Order by `p.product_id ASC`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.product_id) AND EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id) ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "dual-exists",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-18",
+    "slug": "managers-who-hold-project-assignments",
+    "title": "Identify People Managers Who Also Work Projects",
+    "description_markdown": "Use dual correlated `EXISTS` subqueries to find employees who manage at least one subordinate (`EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = e.emp_id)`) AND also hold at least one active project assignment (`EXISTS (SELECT 1 FROM assignments a WHERE a.emp_id = e.emp_id)`). Return `e.emp_id`, `e.first_name`, and `e.job_title`. Order by `e.emp_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Dual EXISTS for managers with assignments\nSELECT e.emp_id, e.first_name, e.job_title\nFROM employees e\nWHERE EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = e.emp_id)\n  AND EXISTS (SELECT 1 FROM assignments a WHERE a.emp_id = e.emp_id)\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.job_title FROM employees e WHERE EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = e.emp_id) AND EXISTS (SELECT 1 FROM assignments a WHERE a.emp_id = e.emp_id) ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Asserts two independent relational roles: supervisory authority (self-join existence) and individual hands-on delivery (assignment existence).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Conflating manager_id = e.emp_id with e.manager_id = sub.emp_id."
+    ],
+    "interview_tip": "Dual EXISTS isolates complex intersecting roles without row multiplication.",
+    "hints": [
+      "Check `EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = e.emp_id)`.",
+      "Check `AND EXISTS (SELECT 1 FROM assignments a WHERE a.emp_id = e.emp_id)`.",
+      "Query: SELECT e.emp_id, e.first_name, e.job_title FROM employees e WHERE EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = e.emp_id) AND EXISTS (SELECT 1 FROM assignments a WHERE a.emp_id = e.emp_id) ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "dual-exists",
+      "management"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-19",
+    "slug": "courses-with-midterms-and-finals",
+    "title": "Verify Courses Evaluating with Both Midterm and Final Exams",
+    "description_markdown": "Use dual `EXISTS` subqueries to find courses that have both 'midterm' AND 'final' assessment marks recorded across their enrollments. Return `c.course_code` and `c.course_name`. Order by `c.course_code` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Courses with midterm AND final\nSELECT c.course_code, c.course_name\nFROM courses c\nWHERE EXISTS (\n  SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.course_id = c.course_id AND m.assessment_type = 'midterm'\n) AND EXISTS (\n  SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.course_id = c.course_id AND m.assessment_type = 'final'\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.course_code, c.course_name FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'midterm') AND EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') ORDER BY c.course_code ASC;",
+    "solution_explanation": "Evaluates comprehensive assessment structures using parallel existence checks on joined evaluation records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Trying to check m.assessment_type = 'midterm' AND m.assessment_type = 'final' in a single row, which is impossible."
+    ],
+    "interview_tip": "Testing that an entity possesses two different child attribute values requires two separate subqueries (relational division).",
+    "hints": [
+      "Use one EXISTS for `midterm` and another for `final`.",
+      "Order by `c.course_code ASC`.",
+      "Query: SELECT c.course_code, c.course_name FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'midterm') AND EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') ORDER BY c.course_code ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "relational-division",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-20",
+    "slug": "customers-who-never-ordered-not-in",
+    "title": "Filter Customers with No Orders via Safe NOT IN",
+    "description_markdown": "Use `NOT IN` with an explicit `WHERE customer_id IS NOT NULL` check to find customers who have never placed an order. Return `customer_id`, `first_name`, and `email`. Order by `customer_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Safe NOT IN subquery\nSELECT customer_id, first_name, email\nFROM customers\nWHERE customer_id NOT IN (\n  SELECT customer_id FROM orders WHERE customer_id IS NOT NULL\n)\nORDER BY ...;",
+    "solution_query": "SELECT customer_id, first_name, email FROM customers WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL) ORDER BY customer_id ASC;",
+    "solution_explanation": "NOT IN excludes rows matching any item in the subquery result; filtering out NULLs ensures three-valued logic returns correct results.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the IS NOT NULL guard in the subquery."
+    ],
+    "interview_tip": "Never write NOT IN without guaranteeing the subquery cannot produce NULLs.",
+    "hints": [
+      "Use `WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL)`.",
+      "Order by `customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, email FROM customers WHERE customer_id NOT IN (SELECT customer_id FROM orders WHERE customer_id IS NOT NULL) ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-in",
+      "null-safety"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-21",
+    "slug": "departments-with-no-projects-not-exists",
+    "title": "Identify Departments Sponsoring No Projects via NOT EXISTS",
+    "description_markdown": "Use a correlated `NOT EXISTS` subquery to find departments that currently have no associated projects (`NOT EXISTS (SELECT 1 FROM projects p WHERE p.dept_id = d.dept_id)`). Return `d.dept_id` and `d.dept_name`. Order by `d.dept_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for projectless departments\nSELECT d.dept_id, d.dept_name\nFROM departments d\nWHERE NOT EXISTS (\n  SELECT 1 FROM projects p WHERE p.dept_id = d.dept_id\n)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name FROM departments d WHERE NOT EXISTS (SELECT 1 FROM projects p WHERE p.dept_id = d.dept_id) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "NOT EXISTS evaluates to true only when the subquery finds 0 matching project rows for the given department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to correlate on `p.dept_id = d.dept_id`."
+    ],
+    "interview_tip": "NOT EXISTS is the industry standard idiom for anti-joins because of its robustness and NULL safety.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM projects p WHERE p.dept_id = d.dept_id)`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name FROM departments d WHERE NOT EXISTS (SELECT 1 FROM projects p WHERE p.dept_id = d.dept_id) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-exists",
+      "anti-semi-join"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-22",
+    "slug": "students-with-no-dropped-courses-not-exists",
+    "title": "Filter Students with Flawless Persistence via NOT EXISTS",
+    "description_markdown": "Use `NOT EXISTS` to find students who have NEVER dropped any course enrollment (`NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'dropped')`). Return `s.student_id`, `s.first_name`, and `s.major`. Order by `s.student_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for zero drops\nSELECT s.student_id, s.first_name, s.major\nFROM students s\nWHERE NOT EXISTS (\n  SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'dropped'\n)\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.major FROM students s WHERE NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'dropped') ORDER BY s.student_id ASC;",
+    "solution_explanation": "Eliminates students who have even a single dropped course in their academic record.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE e.status != 'dropped' in an inner join, which includes students who dropped some other course."
+    ],
+    "interview_tip": "NOT EXISTS correctly implements universal quantification: 'there does not exist any X such that Y'.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'dropped')`.",
+      "Order by `s.student_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, s.major FROM students s WHERE NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'dropped') ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-23",
+    "slug": "products-never-purchased-not-in",
+    "title": "Locate Unsold Inventory via Safe NOT IN",
+    "description_markdown": "Use `NOT IN` to identify products that have never been purchased (`product_id NOT IN (SELECT product_id FROM order_items WHERE product_id IS NOT NULL)`). Return `product_id`, `product_name`, and `price`. Order by `product_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Safe NOT IN for unsold products\nSELECT product_id, product_name, price\nFROM products\nWHERE product_id NOT IN (\n  SELECT product_id FROM order_items WHERE product_id IS NOT NULL\n)\nORDER BY ...;",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE product_id NOT IN (SELECT product_id FROM order_items WHERE product_id IS NOT NULL) ORDER BY product_id ASC;",
+    "solution_explanation": "Evaluates membership exclusion against the unique set of purchased product keys.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the IS NOT NULL filter on order_items.product_id."
+    ],
+    "interview_tip": "A single null in a NOT IN subquery causes the entire condition to return 0 rows.",
+    "hints": [
+      "Use `WHERE product_id NOT IN (SELECT product_id FROM order_items WHERE product_id IS NOT NULL)`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE product_id NOT IN (SELECT product_id FROM order_items WHERE product_id IS NOT NULL) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-in",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-24",
+    "slug": "employees-not-in-assignments-not-in",
+    "title": "Filter Unassigned Staff via Safe NOT IN",
+    "description_markdown": "Use `NOT IN` to find staff who have zero project assignments (`emp_id NOT IN (SELECT emp_id FROM assignments WHERE emp_id IS NOT NULL)`). Return `emp_id`, `first_name`, and `job_title`. Order by `emp_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Safe NOT IN for bench staff\nSELECT emp_id, first_name, job_title\nFROM employees\nWHERE emp_id NOT IN (\n  SELECT emp_id FROM assignments WHERE emp_id IS NOT NULL\n)\nORDER BY ...;",
+    "solution_query": "SELECT emp_id, first_name, job_title FROM employees WHERE emp_id NOT IN (SELECT emp_id FROM assignments WHERE emp_id IS NOT NULL) ORDER BY emp_id ASC;",
+    "solution_explanation": "Returns personnel whose employee identifier never appears in the assignments ledger.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out the IS NOT NULL guard."
+    ],
+    "interview_tip": "Always enforce null-safety when demonstrating NOT IN in technical interviews.",
+    "hints": [
+      "Use `WHERE emp_id NOT IN (SELECT emp_id FROM assignments WHERE emp_id IS NOT NULL)`.",
+      "Order by `emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, job_title FROM employees WHERE emp_id NOT IN (SELECT emp_id FROM assignments WHERE emp_id IS NOT NULL) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-in",
+      "staffing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-25",
+    "slug": "professors-not-teaching-not-in",
+    "title": "Identify Non-Teaching Faculty via Safe NOT IN",
+    "description_markdown": "Use `NOT IN` to find professors who are not currently assigned to teach any course (`professor_id NOT IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL)`). Return `professor_id`, `last_name`, and `department`. Order by `professor_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Safe NOT IN for unassigned faculty\nSELECT professor_id, last_name, department\nFROM professors\nWHERE professor_id NOT IN (\n  SELECT professor_id FROM courses WHERE professor_id IS NOT NULL\n)\nORDER BY ...;",
+    "solution_query": "SELECT professor_id, last_name, department FROM professors WHERE professor_id NOT IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL) ORDER BY professor_id ASC;",
+    "solution_explanation": "Filters out professors who do not possess a foreign key match in the courses table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting WHERE professor_id IS NOT NULL in the subquery."
+    ],
+    "interview_tip": "Remember: `x NOT IN (1, 2, NULL)` evaluates to `UNKNOWN`, not TRUE or FALSE.",
+    "hints": [
+      "Use `WHERE professor_id NOT IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL)`.",
+      "Order by `professor_id ASC`.",
+      "Query: SELECT professor_id, last_name, department FROM professors WHERE professor_id NOT IN (SELECT professor_id FROM courses WHERE professor_id IS NOT NULL) ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-in",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-26",
+    "slug": "categories-without-products-not-exists",
+    "title": "Detect Empty Categories via NOT EXISTS",
+    "description_markdown": "Use `NOT EXISTS` to find categories that contain zero catalog products (`NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id = c.category_id)`). Return `c.category_id` and `c.category_name`. Order by `c.category_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for empty categories\nSELECT c.category_id, c.category_name\nFROM categories c\nWHERE NOT EXISTS (\n  SELECT 1 FROM products p WHERE p.category_id = c.category_id\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.category_id, c.category_name FROM categories c WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id = c.category_id) ORDER BY c.category_id ASC;",
+    "solution_explanation": "Pinpoints taxonomic categories that have not yet had any merchandise items assigned.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN and forgetting WHERE p.product_id IS NULL."
+    ],
+    "interview_tip": "NOT EXISTS directly expresses non-existence without column null checks.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id = c.category_id)`.",
+      "Order by `c.category_id ASC`.",
+      "Query: SELECT c.category_id, c.category_name FROM categories c WHERE NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id = c.category_id) ORDER BY c.category_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-exists",
+      "taxonomy"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-27",
+    "slug": "high-value-credit-card-orders",
+    "title": "Filter High-Value Credit Card Transactions via EXISTS",
+    "description_markdown": "Find orders where `total_amount >= 500` AND an associated payment was made with 'credit_card' using `EXISTS (SELECT 1 FROM payments pay WHERE pay.order_id = o.order_id AND pay.payment_method = 'credit_card')`. Return `o.order_id`, `o.customer_id`, and `o.total_amount`. Order by `o.order_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- High value orders with credit card payment\nSELECT o.order_id, o.customer_id, o.total_amount\nFROM orders o\nWHERE o.total_amount >= 500\n  AND EXISTS (\n    SELECT 1 FROM payments pay WHERE pay.order_id = o.order_id AND pay.payment_method = 'credit_card'\n  )\nORDER BY ...;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount >= 500 AND EXISTS (SELECT 1 FROM payments pay WHERE pay.order_id = o.order_id AND pay.payment_method = 'credit_card') ORDER BY o.order_id ASC;",
+    "solution_explanation": "Combines outer scalar filtering on total_amount with semi-join existence verification on payment method.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing total_amount filter inside the EXISTS subquery."
+    ],
+    "interview_tip": "Keep outer table attributes in the outer WHERE clause to enable index partition pruning.",
+    "hints": [
+      "Use `WHERE o.total_amount >= 500 AND EXISTS (SELECT 1 FROM payments pay WHERE pay.order_id = o.order_id AND pay.payment_method = 'credit_card')`.",
+      "Order by `o.order_id ASC`.",
+      "Query: SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount >= 500 AND EXISTS (SELECT 1 FROM payments pay WHERE pay.order_id = o.order_id AND pay.payment_method = 'credit_card') ORDER BY o.order_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "exists",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-28",
+    "slug": "departments-with-at-least-three-employees",
+    "title": "Filter Substantial Departments via Aggregated IN Subquery",
+    "description_markdown": "Use an `IN` subquery with `GROUP BY ... HAVING COUNT(*) >= 3` to find departments that employ at least 3 people (`dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) >= 3)`). Return `d.dept_id`, `d.dept_name`, and `d.budget`. Order by `d.dept_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery with GROUP BY and HAVING\nSELECT d.dept_id, d.dept_name, d.budget\nFROM departments d\nWHERE d.dept_id IN (\n  SELECT dept_id FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) >= 3\n)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE d.dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) >= 3) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Calculates department headcounts in an isolated subquery and feeds qualifying department IDs to the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining employees in outer query, requiring an extra outer GROUP BY."
+    ],
+    "interview_tip": "Encapsulating group aggregation inside an IN subquery eliminates the need for outer GROUP BY logic.",
+    "hints": [
+      "Use `WHERE d.dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) >= 3)`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE d.dept_id IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) >= 3) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "having",
+      "headcount"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-29",
+    "slug": "students-enrolled-in-multiple-courses",
+    "title": "Filter Multi-Course Students via Aggregated IN Subquery",
+    "description_markdown": "Use an `IN` subquery with `GROUP BY ... HAVING COUNT(*) >= 2` to identify students who are enrolled in at least two courses (`student_id IN (SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 2)`). Return `student_id`, `first_name`, and `last_name`. Order by `student_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery for multi-course students\nSELECT student_id, first_name, last_name\nFROM students\nWHERE student_id IN (\n  SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 2\n)\nORDER BY ...;",
+    "solution_query": "SELECT student_id, first_name, last_name FROM students WHERE student_id IN (SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 2) ORDER BY student_id ASC;",
+    "solution_explanation": "Returns students whose enrollment count satisfies the minimum threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Counting students instead of course enrollments."
+    ],
+    "interview_tip": "IN subqueries with HAVING filter entities by child cardinality cleanly.",
+    "hints": [
+      "Use `WHERE student_id IN (SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 2)`.",
+      "Order by `student_id ASC`.",
+      "Query: SELECT student_id, first_name, last_name FROM students WHERE student_id IN (SELECT student_id FROM enrollments GROUP BY student_id HAVING COUNT(*) >= 2) ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "having",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-30",
+    "slug": "products-ordered-by-multiple-customers",
+    "title": "Find Products Ordered by Multiple Distinct Customers",
+    "description_markdown": "Use an `IN` subquery joining `order_items` and `orders` to find products that have been purchased by at least 2 distinct customers: `product_id IN (SELECT oi.product_id FROM order_items oi JOIN orders o ON oi.order_id = o.order_id GROUP BY oi.product_id HAVING COUNT(DISTINCT o.customer_id) >= 2)`. Return `product_id`, `product_name`, and `price`. Order by `product_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery with COUNT(DISTINCT customer_id)\nSELECT product_id, product_name, price\nFROM products\nWHERE product_id IN (\n  SELECT oi.product_id FROM order_items oi JOIN orders o ON oi.order_id = o.order_id\n  GROUP BY oi.product_id HAVING COUNT(DISTINCT o.customer_id) >= 2\n)\nORDER BY ...;",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE product_id IN (SELECT oi.product_id FROM order_items oi JOIN orders o ON oi.order_id = o.order_id GROUP BY oi.product_id HAVING COUNT(DISTINCT o.customer_id) >= 2) ORDER BY product_id ASC;",
+    "solution_explanation": "Isolates catalog products with broad customer adoption rather than multiple purchases by the same customer.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT(o.order_id) which counts multiple orders from the same single customer."
+    ],
+    "interview_tip": "Always use COUNT(DISTINCT customer_id) when evaluating user reach.",
+    "hints": [
+      "Join `order_items` to `orders` inside the subquery.",
+      "Filter `HAVING COUNT(DISTINCT o.customer_id) >= 2`.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE product_id IN (SELECT oi.product_id FROM order_items oi JOIN orders o ON oi.order_id = o.order_id GROUP BY oi.product_id HAVING COUNT(DISTINCT o.customer_id) >= 2) ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "distinct-count",
+      "merchandising"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-31",
+    "slug": "employees-in-high-budget-projects",
+    "title": "Filter Staff Assigned to High-Budget Initiatives via IN",
+    "description_markdown": "Use an `IN` subquery joining `assignments` and `projects` to identify employees who are assigned to at least one project with a budget of 500,000 or greater: `emp_id IN (SELECT a.emp_id FROM assignments a JOIN projects p ON a.project_id = p.project_id WHERE p.budget >= 500000)`. Return `emp_id`, `first_name`, and `last_name`. Order by `emp_id` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-in",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- IN subquery joining assignments and projects\nSELECT emp_id, first_name, last_name\nFROM employees\nWHERE emp_id IN (\n  SELECT a.emp_id FROM assignments a JOIN projects p ON a.project_id = p.project_id WHERE p.budget >= 500000\n)\nORDER BY ...;",
+    "solution_query": "SELECT emp_id, first_name, last_name FROM employees WHERE emp_id IN (SELECT a.emp_id FROM assignments a JOIN projects p ON a.project_id = p.project_id WHERE p.budget >= 500000) ORDER BY emp_id ASC;",
+    "solution_explanation": "Returns personnel attached to strategic major-budget initiatives without multiplying employee rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which outputs duplicate rows for employees assigned to multiple high-budget projects."
+    ],
+    "interview_tip": "IN subqueries act as natural de-duplicating semi-joins.",
+    "hints": [
+      "Join `assignments` and `projects` inside the IN subquery.",
+      "Filter `WHERE p.budget >= 500000`.",
+      "Query: SELECT emp_id, first_name, last_name FROM employees WHERE emp_id IN (SELECT a.emp_id FROM assignments a JOIN projects p ON a.project_id = p.project_id WHERE p.budget >= 500000) ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "in-clause",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ine-32",
+    "slug": "courses-with-all-final-grades-above-eighty",
+    "title": "Verify Courses with High Passing Standards via NOT EXISTS",
+    "description_markdown": "Use `NOT EXISTS` and `EXISTS` to find courses that have final exam marks recorded (`EXISTS ...`), and where NO final exam score fell below 80.00 (`NOT EXISTS ... score < 80.00`). Return `c.course_code`, `c.course_name`, and `c.department`. Order by `c.course_code` ascending.",
+    "topic_id": "in-exists",
+    "subtopic_id": "sub-exists",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Universal quantification with NOT EXISTS and EXISTS\nSELECT c.course_code, c.course_name, c.department\nFROM courses c\nWHERE EXISTS (\n  SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.course_id = c.course_id AND m.assessment_type = 'final'\n) AND NOT EXISTS (\n  SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.course_id = c.course_id AND m.assessment_type = 'final' AND m.score < 80.00\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.course_code, c.course_name, c.department FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') AND NOT EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final' AND m.score < 80.00) ORDER BY c.course_code ASC;",
+    "solution_explanation": "Expresses 'for all students, score >= 80' using double negation: 'exists at least one exam AND does not exist any exam with score < 80'.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the EXISTS check, which would include courses with 0 exams (vacuous truth)."
+    ],
+    "interview_tip": "In SQL, universal quantification ('for all') is implemented using NOT EXISTS ('there is no counterexample') plus EXISTS ('the set is not empty').",
+    "hints": [
+      "Combine `EXISTS` (must have at least 1 final exam) with `NOT EXISTS` (no final exam score < 80).",
+      "Order by `c.course_code ASC`.",
+      "Query: SELECT c.course_code, c.course_name, c.department FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') AND NOT EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final' AND m.score < 80.00) ORDER BY c.course_code ASC;"
+    ],
+    "tags": [
+      "subqueries",
+      "not-exists",
+      "universal-quantification",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ine-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ine-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ine-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

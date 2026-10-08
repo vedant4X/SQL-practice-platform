@@ -1,0 +1,2500 @@
+[
+  {
+    "id": "q-tmp-01",
+    "slug": "staging-top-earners-temp-table",
+    "title": "Stage High Earners into Staging Structure",
+    "description_markdown": "Extract high earners (`salary >= 140000`) from `employees`. Return `emp_id`, `first_name`, and `salary`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Select records for staging\nSELECT emp_id, first_name, salary FROM employees WHERE ...",
+    "solution_query": "SELECT emp_id, first_name, salary FROM employees WHERE salary >= 140000 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Filters the target staging dataset before pipeline transformations.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE salary >= 140000`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT emp_id, first_name, salary FROM employees WHERE salary >= 140000 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "temp-tables",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-02",
+    "slug": "staged-order-revenue-reconciliation",
+    "title": "Stage Daily Revenue for Reconciliation",
+    "description_markdown": "For completed orders (`order_status = 'completed'`) in `orders`, calculate total revenue per `order_date` as `daily_revenue`, and order count as `daily_orders`. Return `order_date`, `daily_orders`, and `daily_revenue`. Order by `order_date` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "daily_orders",
+        "type": "bigint"
+      },
+      {
+        "name": "daily_revenue",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage daily revenues\nSELECT ...",
+    "solution_query": "SELECT order_date, COUNT(*) AS daily_orders, SUM(total_amount) AS daily_revenue FROM orders WHERE order_status = 'completed' GROUP BY order_date ORDER BY order_date ASC;",
+    "solution_explanation": "Aggregates transactions into daily reporting batches commonly written to staging tables.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `order_date`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_date, COUNT(*) AS daily_orders, SUM(total_amount) AS daily_revenue FROM orders WHERE order_status = 'completed' GROUP BY order_date ORDER BY order_date ASC;"
+    ],
+    "tags": [
+      "temp-tables",
+      "daily-aggregates"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-03",
+    "slug": "staged-course-enrollment-load-factors",
+    "title": "Stage Course Enrollment Capacity Metrics",
+    "description_markdown": "From `courses` and `enrollments`, calculate for each course: `c.course_code`, `c.course_name`, count of active enrollments (`COUNT(e.enrollment_id)` as `enrolled_students`). Order by `enrolled_students` DESC, `c.course_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "enrolled_students",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Course enrollment capacity staging\nSELECT ...",
+    "solution_query": "SELECT c.course_code, c.course_name, COUNT(e.enrollment_id) AS enrolled_students FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code, c.course_name ORDER BY enrolled_students DESC, c.course_id ASC;",
+    "solution_explanation": "Pre-calculates course capacity metrics for registrar pipeline updates.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use LEFT JOIN to retain courses with zero enrollments.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.course_code, c.course_name, COUNT(e.enrollment_id) AS enrolled_students FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id GROUP BY c.course_id, c.course_code, c.course_name ORDER BY enrolled_students DESC, c.course_id ASC;"
+    ],
+    "tags": [
+      "temp-tables",
+      "course-capacity"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-04",
+    "slug": "tmp-staging-inactive-products",
+    "title": "Stage Inactive Products for Archival Pipeline",
+    "description_markdown": "Stage discontinued or inactive products for an archive ETL job: select `product_id`, `product_name`, `price`, and `stock_quantity` from `products` where `is_active = FALSE`. Order by `product_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage inactive products for archiving\nSELECT product_id, product_name, price, stock_quantity\nFROM products\nWHERE is_active = FALSE\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price, stock_quantity FROM products WHERE is_active = FALSE ORDER BY product_id ASC;",
+    "solution_explanation": "Filters inactive catalog items for insertion into a staging or archive destination.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for is_active = TRUE instead of FALSE."
+    ],
+    "interview_tip": "Staging tables isolate data transformations so primary transaction tables avoid lock contention.",
+    "hints": [
+      "Filter with `WHERE is_active = FALSE`.",
+      "Order by `product_id ASC`.",
+      "Query: SELECT product_id, product_name, price, stock_quantity FROM products WHERE is_active = FALSE ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "staging",
+      "etl",
+      "products"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-05",
+    "slug": "tmp-staging-department-average-salaries",
+    "title": "Stage Department Salary Benchmarks",
+    "description_markdown": "Stage department-level salary benchmarks for compensation planning: from `employees`, calculate `dept_id` and `ROUND(AVG(salary), 2) AS avg_dept_salary` where `dept_id IS NOT NULL` grouped by `dept_id`. Order by `dept_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "avg_dept_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage department average salaries\nSELECT dept_id, ROUND(AVG(salary), 2) AS avg_dept_salary\nFROM employees\nWHERE dept_id IS NOT NULL\nGROUP BY dept_id\nORDER BY dept_id ASC;",
+    "solution_query": "SELECT dept_id, ROUND(AVG(salary), 2) AS avg_dept_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY dept_id ASC;",
+    "solution_explanation": "Pre-calculates departmental compensation averages into a staging structure.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to exclude NULL dept_id rows."
+    ],
+    "interview_tip": "Pre-aggregating benchmarks in temp tables simplifies subsequent employee variance updates.",
+    "hints": [
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Group by `dept_id` and round `AVG(salary)` to 2 decimals.",
+      "Query: SELECT dept_id, ROUND(AVG(salary), 2) AS avg_dept_salary FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY dept_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "aggregation",
+      "staging",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-06",
+    "slug": "tmp-staging-new-student-enrollments",
+    "title": "Stage Incoming Freshmen Roster",
+    "description_markdown": "Stage recently admitted students for orientation badge printing: select `student_id`, `first_name`, `email`, and `enrollment_year` from `students` where `enrollment_year >= 2023`. Order by `enrollment_year` DESC, `student_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage incoming students\nSELECT student_id, first_name, email, enrollment_year\nFROM students\nWHERE enrollment_year >= 2023\nORDER BY enrollment_year DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, email, enrollment_year FROM students WHERE enrollment_year >= 2023 ORDER BY enrollment_year DESC, student_id ASC;",
+    "solution_explanation": "Extracts freshmen students into a staging cohort for batch credentialing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Incorrect comparison operator on enrollment year."
+    ],
+    "interview_tip": "Staging cohorts allow external systems to process newly enrolled students asynchronously.",
+    "hints": [
+      "Filter with `WHERE enrollment_year >= 2023`.",
+      "Order by `enrollment_year DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, email, enrollment_year FROM students WHERE enrollment_year >= 2023 ORDER BY enrollment_year DESC, student_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "cohort",
+      "staging",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-07",
+    "slug": "tmp-staging-high-volume-customers",
+    "title": "Stage High-Frequency Customers for Loyalty Rewards",
+    "description_markdown": "Stage repeat buyers for a loyalty promotions batch: select `customer_id` and `COUNT(order_id) AS order_count` from `orders` group by `customer_id` having `COUNT(order_id) >= 2`. Order by `order_count` DESC, `customer_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage repeat customers\nSELECT customer_id, COUNT(order_id) AS order_count\nFROM orders\nGROUP BY customer_id\nHAVING COUNT(order_id) >= 2\nORDER BY order_count DESC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, COUNT(order_id) AS order_count FROM orders GROUP BY customer_id HAVING COUNT(order_id) >= 2 ORDER BY order_count DESC, customer_id ASC;",
+    "solution_explanation": "Filters customers with 2 or more orders into a candidate staging list for loyalty bonuses.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE instead of HAVING for aggregated order count."
+    ],
+    "interview_tip": "Filtering aggregated intermediate tables is often done via temp tables before issuing batch coupon writes.",
+    "hints": [
+      "Group orders by `customer_id`.",
+      "Filter groups with `HAVING COUNT(order_id) >= 2`.",
+      "Query: SELECT customer_id, COUNT(order_id) AS order_count FROM orders GROUP BY customer_id HAVING COUNT(order_id) >= 2 ORDER BY order_count DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "loyalty",
+      "aggregation",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-08",
+    "slug": "tmp-staging-high-budget-projects",
+    "title": "Stage Major Initiatives for Financial Audit",
+    "description_markdown": "Stage high-budget initiatives for capital audit: select `project_id`, `project_name`, and `budget` from `projects` where `budget >= 500000.00`. Order by `budget` DESC, `project_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage major initiatives\nSELECT project_id, project_name, budget\nFROM projects\nWHERE budget >= 500000.00\nORDER BY budget DESC, project_id ASC;",
+    "solution_query": "SELECT project_id, project_name, budget FROM projects WHERE budget >= 500000.00 ORDER BY budget DESC, project_id ASC;",
+    "solution_explanation": "Extracts substantial enterprise projects into an audit staging dataset.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Wrong numerical comparison threshold."
+    ],
+    "interview_tip": "Audit jobs stage records in dedicated temp tables to establish snapshot consistency.",
+    "hints": [
+      "Filter with `WHERE budget >= 500000.00`.",
+      "Order by `budget DESC, project_id ASC`.",
+      "Query: SELECT project_id, project_name, budget FROM projects WHERE budget >= 500000.00 ORDER BY budget DESC, project_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "audit",
+      "projects",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-09",
+    "slug": "tmp-staging-critical-stock-replenishment",
+    "title": "Stage Low Stock Products for Purchase Order Batch",
+    "description_markdown": "Stage low-stock merchandise for warehouse reorders: select `product_id`, `product_name`, and `stock_quantity` from `products` where `stock_quantity <= 40`. Order by `stock_quantity` ASC, `product_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage low stock products\nSELECT product_id, product_name, stock_quantity\nFROM products\nWHERE stock_quantity <= 40\nORDER BY stock_quantity ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, stock_quantity FROM products WHERE stock_quantity <= 40 ORDER BY stock_quantity ASC, product_id ASC;",
+    "solution_explanation": "Populates staging records for downstream purchase order generation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= instead of <=."
+    ],
+    "interview_tip": "Procurement pipelines stage depleted SKU batches before triggering EDI supplier orders.",
+    "hints": [
+      "Filter with `WHERE stock_quantity <= 40`.",
+      "Order by `stock_quantity ASC, product_id ASC`.",
+      "Query: SELECT product_id, product_name, stock_quantity FROM products WHERE stock_quantity <= 40 ORDER BY stock_quantity ASC, product_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "procurement",
+      "stock",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-10",
+    "slug": "tmp-staging-senior-faculty-roster",
+    "title": "Stage Senior Professors for Committee Selection",
+    "description_markdown": "Stage senior professors earning at least $95,000 for faculty senate appointments: select `professor_id`, `first_name`, `department`, and `salary` from `professors` where `salary >= 95000.00`. Order by `salary` DESC, `professor_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage senior faculty\nSELECT professor_id, first_name, department, salary\nFROM professors\nWHERE salary >= 95000.00\nORDER BY salary DESC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, department, salary FROM professors WHERE salary >= 95000.00 ORDER BY salary DESC, professor_id ASC;",
+    "solution_explanation": "Filters eligible senior faculty into a committee selection staging dataset.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omission of salary threshold."
+    ],
+    "interview_tip": "Staging eligible candidates in temporary structures enables multi-pass lottery and committee allocation algorithms.",
+    "hints": [
+      "Filter with `WHERE salary >= 95000.00`.",
+      "Order by `salary DESC, professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, department, salary FROM professors WHERE salary >= 95000.00 ORDER BY salary DESC, professor_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "faculty",
+      "staging",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-11",
+    "slug": "tmp-staging-sales-team-members",
+    "title": "Stage Sales Staff for Territory Reassignment",
+    "description_markdown": "Stage sales personnel (`dept_id = 3`) for annual quota and territory reallocation: select `emp_id`, `first_name`, `job_title`, and `salary` from `employees` where `dept_id = 3`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage sales team\nSELECT emp_id, first_name, job_title, salary\nFROM employees\nWHERE dept_id = 3\nORDER BY salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, job_title, salary FROM employees WHERE dept_id = 3 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Isolates the sales force into a staging table for compensation calibration.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Incorrect department ID."
+    ],
+    "interview_tip": "Departmental staging tables prevent lock contention when batch updating sales target attributes.",
+    "hints": [
+      "Filter with `WHERE dept_id = 3`.",
+      "Order by `salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, job_title, salary FROM employees WHERE dept_id = 3 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "sales",
+      "staging",
+      "workforce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-12",
+    "slug": "tmp-staging-non-completed-orders",
+    "title": "Stage Incomplete Orders for Fulfillment Tracking",
+    "description_markdown": "Stage open orders needing fulfillment or cancellation review: select `order_id`, `customer_id`, `order_status`, and `total_amount` from `orders` where `order_status != 'completed'`. Order by `order_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_status",
+        "type": "varchar"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage non-completed orders\nSELECT order_id, customer_id, order_status, total_amount\nFROM orders\nWHERE order_status != 'completed'\nORDER BY order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_status, total_amount FROM orders WHERE order_status != 'completed' ORDER BY order_id ASC;",
+    "solution_explanation": "Captures pending, processing, or cancelled transactions for logistics workflow queues.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking for order_status = 'completed'."
+    ],
+    "interview_tip": "Staging unfinished order queues enables dedicated microservice consumers to work without touching primary OLTP logs.",
+    "hints": [
+      "Filter with `WHERE order_status != 'completed'`.",
+      "Order by `order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_status, total_amount FROM orders WHERE order_status != 'completed' ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "fulfillment",
+      "queues",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-13",
+    "slug": "tmp-staging-four-credit-courses",
+    "title": "Stage Intensive 4-Credit Courses",
+    "description_markdown": "Stage rigorous 4-credit courses for lab fee recalculation: select `course_id`, `course_code`, `course_name`, and `credits` from `courses` where `credits = 4`. Order by `course_code` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage 4-credit courses\nSELECT course_id, course_code, course_name, credits\nFROM courses\nWHERE credits = 4\nORDER BY course_code ASC;",
+    "solution_query": "SELECT course_id, course_code, course_name, credits FROM courses WHERE credits = 4 ORDER BY course_code ASC;",
+    "solution_explanation": "Isolates high-credit courses into a staging table for registrar fee processing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for credits >= 4 when exactly 4 is requested."
+    ],
+    "interview_tip": "Course segmentation staging tables keep batch billing runs cleanly partitioned.",
+    "hints": [
+      "Filter with `WHERE credits = 4`.",
+      "Order by `course_code ASC`.",
+      "Query: SELECT course_id, course_code, course_name, credits FROM courses WHERE credits = 4 ORDER BY course_code ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "courses",
+      "credits",
+      "registrar"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-14",
+    "slug": "tmp-staging-product-margins",
+    "title": "Stage SKU Profit Margins for Pricing Adjustment",
+    "description_markdown": "Stage product profit spreads for markdown planning: select `product_id`, `product_name`, `price`, `cost`, and `ROUND(price - cost, 2) AS unit_profit` from `products` where `cost > 0`. Order by `unit_profit` DESC, `product_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "cost",
+        "type": "numeric"
+      },
+      {
+        "name": "unit_profit",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage SKU profit margins\nSELECT product_id, product_name, price, cost, ROUND(price - cost, 2) AS unit_profit\nFROM products\nWHERE cost > 0\nORDER BY unit_profit DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price, cost, ROUND(price - cost, 2) AS unit_profit FROM products WHERE cost > 0 ORDER BY unit_profit DESC, product_id ASC;",
+    "solution_explanation": "Calculates profit margins and stages valid costing data for pricing optimization models.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the cost > 0 validation guard."
+    ],
+    "interview_tip": "Staging calculated financial metrics allows batch repricing scripts to review proposed updates before committing.",
+    "hints": [
+      "Compute `ROUND(price - cost, 2) AS unit_profit`.",
+      "Filter with `WHERE cost > 0`.",
+      "Query: SELECT product_id, product_name, price, cost, ROUND(price - cost, 2) AS unit_profit FROM products WHERE cost > 0 ORDER BY unit_profit DESC, product_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "pricing",
+      "profit",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-15",
+    "slug": "tmp-staging-heavy-assignment-hours",
+    "title": "Stage High-Effort Project Assignments",
+    "description_markdown": "Stage project assignments with extensive billed effort for overtime review: select `assignment_id`, `emp_id`, `project_id`, and `hours_worked` from `assignments` where `hours_worked >= 400.0`. Order by `hours_worked` DESC, `assignment_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage heavy project assignments\nSELECT assignment_id, emp_id, project_id, hours_worked\nFROM assignments\nWHERE hours_worked >= 400.0\nORDER BY hours_worked DESC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, emp_id, project_id, hours_worked FROM assignments WHERE hours_worked >= 400.0 ORDER BY hours_worked DESC, assignment_id ASC;",
+    "solution_explanation": "Identifies heavy timesheet allocations for project cost accounting audits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using strictly > instead of >=."
+    ],
+    "interview_tip": "Time tracking pipelines stage billable hour outliers for project managers to review.",
+    "hints": [
+      "Filter with `WHERE hours_worked >= 400.0`.",
+      "Order by `hours_worked DESC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, emp_id, project_id, hours_worked FROM assignments WHERE hours_worked >= 400.0 ORDER BY hours_worked DESC, assignment_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "timesheet",
+      "overtime",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-16",
+    "slug": "tmp-staging-deans-list-candidates",
+    "title": "Stage Candidates for Dean's List Certification",
+    "description_markdown": "Stage qualifying students for Dean's List certificate generation: select `student_id`, `first_name`, `major`, and `gpa` from `students` where `gpa >= 3.60`. Order by `gpa` DESC, `student_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage Dean's List candidates\nSELECT student_id, first_name, major, gpa\nFROM students\nWHERE gpa >= 3.60\nORDER BY gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa FROM students WHERE gpa >= 3.60 ORDER BY gpa DESC, student_id ASC;",
+    "solution_explanation": "Filters the student roster to stage honors recipients before batch certificate generation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering with wrong GPA cut-off."
+    ],
+    "interview_tip": "Staging honors candidates decouples eligibility filtering from document generation print queues.",
+    "hints": [
+      "Filter with `WHERE gpa >= 3.60`.",
+      "Order by `gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, major, gpa FROM students WHERE gpa >= 3.60 ORDER BY gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "deans-list",
+      "academic",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-17",
+    "slug": "tmp-staging-north-american-customers",
+    "title": "Stage North American Customers for Logistics Routing",
+    "description_markdown": "Stage customers located in North America for regional delivery routing: select `customer_id`, `first_name`, `city`, and `country` from `customers` where `country IN ('USA', 'Canada')`. Order by `country` ASC, `city` ASC, `customer_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage North American customers\nSELECT customer_id, first_name, city, country\nFROM customers\nWHERE country IN ('USA', 'Canada')\nORDER BY country ASC, city ASC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, first_name, city, country FROM customers WHERE country IN ('USA', 'Canada') ORDER BY country ASC, city ASC, customer_id ASC;",
+    "solution_explanation": "Isolates US and Canadian customer records into a regional delivery staging batch.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting one of the country codes."
+    ],
+    "interview_tip": "Geographic staging partitions workloads across distributed regional fulfillment centers.",
+    "hints": [
+      "Filter with `WHERE country IN ('USA', 'Canada')`.",
+      "Order by `country ASC, city ASC, customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, city, country FROM customers WHERE country IN ('USA', 'Canada') ORDER BY country ASC, city ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "geography",
+      "logistics",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-18",
+    "slug": "tmp-staging-engineering-department-roster",
+    "title": "Stage Engineering Roster for Skills Inventory",
+    "description_markdown": "Stage technical staff (`dept_id = 1`) for skills matrix assessment: select `emp_id`, `first_name`, `job_title`, and `hire_date` from `employees` where `dept_id = 1`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage engineering roster\nSELECT emp_id, first_name, job_title, hire_date\nFROM employees\nWHERE dept_id = 1\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, job_title, hire_date FROM employees WHERE dept_id = 1 ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "Populates an engineering department cohort into staging for competency reviews.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting from the wrong department ID."
+    ],
+    "interview_tip": "Staging a single functional department allows HR systems to run isolated matrix calculations.",
+    "hints": [
+      "Filter with `WHERE dept_id = 1`.",
+      "Order by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, job_title, hire_date FROM employees WHERE dept_id = 1 ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "engineering",
+      "skills-matrix",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-19",
+    "slug": "tmp-staging-multi-unit-order-lines",
+    "title": "Stage Multi-Unit Order Lines for Bulk Packing",
+    "description_markdown": "Stage bulk item purchases for specialized warehouse carton packaging: select `order_item_id`, `order_id`, `product_id`, and `quantity` from `order_items` where `quantity >= 2`. Order by `quantity` DESC, `order_item_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_item_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage multi-unit order lines\nSELECT order_item_id, order_id, product_id, quantity\nFROM order_items\nWHERE quantity >= 2\nORDER BY quantity DESC, order_item_id ASC;",
+    "solution_query": "SELECT order_item_id, order_id, product_id, quantity FROM order_items WHERE quantity >= 2 ORDER BY quantity DESC, order_item_id ASC;",
+    "solution_explanation": "Filters order line items with quantity >= 2 for special bulk packing handling.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using quantity > 2 instead of >= 2."
+    ],
+    "interview_tip": "Staging specialized packing tasks routes warehouse workers to dedicated packaging stations.",
+    "hints": [
+      "Filter with `WHERE quantity >= 2`.",
+      "Order by `quantity DESC, order_item_id ASC`.",
+      "Query: SELECT order_item_id, order_id, product_id, quantity FROM order_items WHERE quantity >= 2 ORDER BY quantity DESC, order_item_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "bulk-packing",
+      "fulfillment",
+      "order-items"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-20",
+    "slug": "tmp-staging-midterm-assessments",
+    "title": "Stage Midterm Marks for Grade Distribution",
+    "description_markdown": "Stage midterm examination results for curve normalization: select `mark_id`, `enrollment_id`, and `score` from `marks` where `assessment_type = 'midterm'`. Order by `score` DESC, `mark_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage midterm assessment marks\nSELECT mark_id, enrollment_id, score\nFROM marks\nWHERE assessment_type = 'midterm'\nORDER BY score DESC, mark_id ASC;",
+    "solution_query": "SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'midterm' ORDER BY score DESC, mark_id ASC;",
+    "solution_explanation": "Stages midterm test records so statisticians can apply grading curves.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Typo in 'midterm' assessment type."
+    ],
+    "interview_tip": "Curve algorithms stage exam marks in temporary tables to compute standard deviation prior to scaling.",
+    "hints": [
+      "Filter with `WHERE assessment_type = 'midterm'`.",
+      "Order by `score DESC, mark_id ASC`.",
+      "Query: SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'midterm' ORDER BY score DESC, mark_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "grading",
+      "curve",
+      "marks"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-21",
+    "slug": "tmp-staging-department-headcounts",
+    "title": "Stage Department Headcounts for Facilities Planning",
+    "description_markdown": "Stage department personnel counts for desk seating allocation: select `dept_id` and `COUNT(*) AS head_count` from `employees` where `dept_id IS NOT NULL` group by `dept_id`. Order by `head_count` DESC, `dept_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "head_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage department headcounts\nSELECT dept_id, COUNT(*) AS head_count\nFROM employees\nWHERE dept_id IS NOT NULL\nGROUP BY dept_id\nORDER BY head_count DESC, dept_id ASC;",
+    "solution_query": "SELECT dept_id, COUNT(*) AS head_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY head_count DESC, dept_id ASC;",
+    "solution_explanation": "Computes staffing counts per department and stages them for office capacity planning.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including contractor employees without assigned dept_id."
+    ],
+    "interview_tip": "Staging aggregate headcounts simplifies downstream space utilization math.",
+    "hints": [
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Group by `dept_id` with `COUNT(*) AS head_count`.",
+      "Query: SELECT dept_id, COUNT(*) AS head_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id ORDER BY head_count DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "facilities",
+      "headcount",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-22",
+    "slug": "tmp-staging-customer-spending-totals",
+    "title": "Stage Customer Gross Spending Totals",
+    "description_markdown": "Stage gross customer purchase totals for tier categorization: select `customer_id` and `ROUND(SUM(total_amount), 2) AS total_spent` from `orders` group by `customer_id`. Order by `total_spent` DESC, `customer_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage customer spending totals\nSELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent\nFROM orders\nGROUP BY customer_id\nORDER BY total_spent DESC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent FROM orders GROUP BY customer_id ORDER BY total_spent DESC, customer_id ASC;",
+    "solution_explanation": "Aggregates revenue across all orders per buyer for customer scoring staging.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting rounding on total spend."
+    ],
+    "interview_tip": "Staging customer spend aggregates enables multi-stage RFM (Recency, Frequency, Monetary) analyses.",
+    "hints": [
+      "Group by `customer_id`.",
+      "Sum total amounts with `ROUND(SUM(total_amount), 2) AS total_spent`.",
+      "Query: SELECT customer_id, ROUND(SUM(total_amount), 2) AS total_spent FROM orders GROUP BY customer_id ORDER BY total_spent DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "customer-spending",
+      "monetary",
+      "rfm"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-23",
+    "slug": "tmp-staging-completed-course-records",
+    "title": "Stage Completed Enrollments for Degree Audit",
+    "description_markdown": "Stage finished coursework for graduation credit verification: select `enrollment_id`, `student_id`, `course_id`, and `semester` from `enrollments` where `status = 'completed'`. Order by `enrollment_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "semester",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage completed enrollments\nSELECT enrollment_id, student_id, course_id, semester\nFROM enrollments\nWHERE status = 'completed'\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id, student_id, course_id, semester FROM enrollments WHERE status = 'completed' ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Isolates passed enrollments into a degree audit staging pipeline.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including dropped or in-progress enrollments."
+    ],
+    "interview_tip": "Graduation check scripts read exclusively from completed course staging tables.",
+    "hints": [
+      "Filter with `WHERE status = 'completed'`.",
+      "Order by `enrollment_id ASC`.",
+      "Query: SELECT enrollment_id, student_id, course_id, semester FROM enrollments WHERE status = 'completed' ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "degree-audit",
+      "enrollments",
+      "graduation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-24",
+    "slug": "tmp-staging-premium-computer-items",
+    "title": "Stage Premium Computer Inventory for Secure Vaulting",
+    "description_markdown": "Stage high-value electronics (`category_id = 2` and `price >= 300.00`) for warehouse vault storage: select `product_id`, `product_name`, and `price` from `products` where `category_id = 2` and `price >= 300.00`. Order by `price` DESC, `product_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage premium computer inventory\nSELECT product_id, product_name, price\nFROM products\nWHERE category_id = 2 AND price >= 300.00\nORDER BY price DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price FROM products WHERE category_id = 2 AND price >= 300.00 ORDER BY price DESC, product_id ASC;",
+    "solution_explanation": "Screens premium computer equipment for locked cage storage protocols.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR instead of AND between category and price criteria."
+    ],
+    "interview_tip": "Security staging lists direct high-value shipments to restricted warehouse locations.",
+    "hints": [
+      "Filter with `WHERE category_id = 2 AND price >= 300.00`.",
+      "Order by `price DESC, product_id ASC`.",
+      "Query: SELECT product_id, product_name, price FROM products WHERE category_id = 2 AND price >= 300.00 ORDER BY price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "vault",
+      "inventory",
+      "computers"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-25",
+    "slug": "tmp-staging-top-rated-assignments",
+    "title": "Stage Top-Rated Contributions for Annual Awards",
+    "description_markdown": "Stage stellar project contributions (`rating >= 4.5`) for annual excellence awards: select `assignment_id`, `emp_id`, `project_id`, and `rating` from `assignments` where `rating >= 4.5`. Order by `rating` DESC, `assignment_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage top-rated assignments\nSELECT assignment_id, emp_id, project_id, rating\nFROM assignments\nWHERE rating >= 4.5\nORDER BY rating DESC, assignment_id ASC;",
+    "solution_query": "SELECT assignment_id, emp_id, project_id, rating FROM assignments WHERE rating >= 4.5 ORDER BY rating DESC, assignment_id ASC;",
+    "solution_explanation": "Screens high-performance assignment ratings into an awards staging dataset.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using strictly > instead of >=."
+    ],
+    "interview_tip": "Staging award nominations ensures immutable evaluation snapshots.",
+    "hints": [
+      "Filter with `WHERE rating >= 4.5`.",
+      "Order by `rating DESC, assignment_id ASC`.",
+      "Query: SELECT assignment_id, emp_id, project_id, rating FROM assignments WHERE rating >= 4.5 ORDER BY rating DESC, assignment_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "awards",
+      "excellence",
+      "ratings"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-26",
+    "slug": "tmp-staging-final-exam-scores",
+    "title": "Stage Final Exam Marks for Transcript Generation",
+    "description_markdown": "Stage final examination grades for transcript GPA calculation: select `mark_id`, `enrollment_id`, and `score` from `marks` where `assessment_type = 'final'`. Order by `score` DESC, `mark_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage final exam marks\nSELECT mark_id, enrollment_id, score\nFROM marks\nWHERE assessment_type = 'final'\nORDER BY score DESC, mark_id ASC;",
+    "solution_query": "SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'final' ORDER BY score DESC, mark_id ASC;",
+    "solution_explanation": "Extracts final marks into a staging table for term transcript collation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering for the wrong assessment type."
+    ],
+    "interview_tip": "Transcript systems stage final exam scores to run GPA validation scripts before locking official records.",
+    "hints": [
+      "Filter with `WHERE assessment_type = 'final'`.",
+      "Order by `score DESC, mark_id ASC`.",
+      "Query: SELECT mark_id, enrollment_id, score FROM marks WHERE assessment_type = 'final' ORDER BY score DESC, mark_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "transcripts",
+      "final-exams",
+      "marks"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-27",
+    "slug": "tmp-staging-marketing-staff-roster",
+    "title": "Stage Marketing Department Personnel",
+    "description_markdown": "Stage marketing staff (`dept_id = 4`) for campaign resource planning: select `emp_id`, `first_name`, `job_title`, and `salary` from `employees` where `dept_id = 4`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage marketing staff\nSELECT emp_id, first_name, job_title, salary\nFROM employees\nWHERE dept_id = 4\nORDER BY salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, job_title, salary FROM employees WHERE dept_id = 4 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "Captures the marketing cohort into staging for agency retainer planning.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatching the marketing department ID."
+    ],
+    "interview_tip": "Staging departmental cohorts simplifies multi-step capacity allocation models.",
+    "hints": [
+      "Filter with `WHERE dept_id = 4`.",
+      "Order by `salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, job_title, salary FROM employees WHERE dept_id = 4 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "marketing",
+      "workforce",
+      "staging"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-28",
+    "slug": "tmp-staging-high-value-order-audits",
+    "title": "Stage High-Value Orders for Fraud Inspection",
+    "description_markdown": "Stage large orders ($1,000 or greater) for manual fraud risk inspection: select `order_id`, `customer_id`, `order_date`, and `total_amount` from `orders` where `total_amount >= 1000.00`. Order by `total_amount` DESC, `order_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage high value orders\nSELECT order_id, customer_id, order_date, total_amount\nFROM orders\nWHERE total_amount >= 1000.00\nORDER BY total_amount DESC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount FROM orders WHERE total_amount >= 1000.00 ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Screens orders over $1,000 into a staging queue for payment verification review.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > instead of >= 1000.00."
+    ],
+    "interview_tip": "Fraud inspection queues stage high-dollar purchases before release to warehouse packing.",
+    "hints": [
+      "Filter with `WHERE total_amount >= 1000.00`.",
+      "Order by `total_amount DESC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount FROM orders WHERE total_amount >= 1000.00 ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "fraud-detection",
+      "orders",
+      "compliance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-29",
+    "slug": "tmp-staging-computer-science-courses",
+    "title": "Stage Computer Science Curriculum Catalog",
+    "description_markdown": "Stage department curriculum offerings for CS accreditation review: select `course_id`, `course_code`, `course_name`, and `credits` from `courses` where `department = 'Computer Science'`. Order by `course_code` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage CS curriculum\nSELECT course_id, course_code, course_name, credits\nFROM courses\nWHERE department = 'Computer Science'\nORDER BY course_code ASC;",
+    "solution_query": "SELECT course_id, course_code, course_name, credits FROM courses WHERE department = 'Computer Science' ORDER BY course_code ASC;",
+    "solution_explanation": "Isolates Computer Science offerings into a staging dataset for curriculum audits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Typo in department name."
+    ],
+    "interview_tip": "Departmental course staging feeds specialized accreditation export tools.",
+    "hints": [
+      "Filter with `WHERE department = 'Computer Science'`.",
+      "Order by `course_code ASC`.",
+      "Query: SELECT course_id, course_code, course_name, credits FROM courses WHERE department = 'Computer Science' ORDER BY course_code ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "curriculum",
+      "accreditation",
+      "courses"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-30",
+    "slug": "tmp-staging-project-headcount-allocation",
+    "title": "Stage Contributor Staffing Counts Per Project",
+    "description_markdown": "Stage staffing distribution across projects for resource balancing: select `project_id` and `COUNT(emp_id) AS contributor_count` from `assignments` group by `project_id`. Order by `contributor_count` DESC, `project_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "contributor_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage contributor counts per project\nSELECT project_id, COUNT(emp_id) AS contributor_count\nFROM assignments\nGROUP BY project_id\nORDER BY contributor_count DESC, project_id ASC;",
+    "solution_query": "SELECT project_id, COUNT(emp_id) AS contributor_count FROM assignments GROUP BY project_id ORDER BY contributor_count DESC, project_id ASC;",
+    "solution_explanation": "Aggregates assigned engineers per initiative and stages the counts for staffing reviews.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting project_id from GROUP BY."
+    ],
+    "interview_tip": "Staging contributor counts enables rapid project resourcing rebalances.",
+    "hints": [
+      "Group assignments by `project_id`.",
+      "Count contributors with `COUNT(emp_id) AS contributor_count`.",
+      "Query: SELECT project_id, COUNT(emp_id) AS contributor_count FROM assignments GROUP BY project_id ORDER BY contributor_count DESC, project_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "staffing",
+      "projects",
+      "resource-planning"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-31",
+    "slug": "tmp-staging-course-enrollment-headcounts",
+    "title": "Stage Course Registration Counts for Section Planning",
+    "description_markdown": "Stage registration volumes per course to assess classroom capacity requirements: select `course_id` and `COUNT(enrollment_id) AS enrollment_count` from `enrollments` group by `course_id`. Order by `enrollment_count` DESC, `course_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage course enrollment counts\nSELECT course_id, COUNT(enrollment_id) AS enrollment_count\nFROM enrollments\nGROUP BY course_id\nORDER BY enrollment_count DESC, course_id ASC;",
+    "solution_query": "SELECT course_id, COUNT(enrollment_id) AS enrollment_count FROM enrollments GROUP BY course_id ORDER BY enrollment_count DESC, course_id ASC;",
+    "solution_explanation": "Aggregates enrolled student counts per course into a section planning staging relation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting course_id from GROUP BY."
+    ],
+    "interview_tip": "Registration capacity planning relies on staged enrollment counts to trigger waitlist alerts.",
+    "hints": [
+      "Group enrollments by `course_id`.",
+      "Aggregate with `COUNT(enrollment_id) AS enrollment_count`.",
+      "Query: SELECT course_id, COUNT(enrollment_id) AS enrollment_count FROM enrollments GROUP BY course_id ORDER BY enrollment_count DESC, course_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "registration",
+      "classroom-planning",
+      "enrollments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-tmp-32",
+    "slug": "tmp-staging-european-customer-cohort",
+    "title": "Stage European Customer Cohort for Regional Marketing",
+    "description_markdown": "Stage European customer accounts for GDPR-compliant newsletter campaigns: select `customer_id`, `first_name`, and `country` from `customers` where `country IN ('UK', 'Germany', 'France', 'Italy')`. Order by `country` ASC, `first_name` ASC, `customer_id` ASC.",
+    "topic_id": "temporary-tables",
+    "subtopic_id": "temp-tbl",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Stage European customer cohort\nSELECT customer_id, first_name, country\nFROM customers\nWHERE country IN ('UK', 'Germany', 'France', 'Italy')\nORDER BY country ASC, first_name ASC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, first_name, country FROM customers WHERE country IN ('UK', 'Germany', 'France', 'Italy') ORDER BY country ASC, first_name ASC, customer_id ASC;",
+    "solution_explanation": "Screens European customers into a segmented staging relation for localized marketing outreach.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving out any of the four required European countries."
+    ],
+    "interview_tip": "Staging regional cohorts allows marketing automation tools to schedule sends in matching local timezones.",
+    "hints": [
+      "Filter with `WHERE country IN ('UK', 'Germany', 'France', 'Italy')`.",
+      "Order by `country ASC, first_name ASC, customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, country FROM customers WHERE country IN ('UK', 'Germany', 'France', 'Italy') ORDER BY country ASC, first_name ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "temporary-tables",
+      "cohort",
+      "gdpr",
+      "marketing"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-tmp-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-tmp-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-tmp-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

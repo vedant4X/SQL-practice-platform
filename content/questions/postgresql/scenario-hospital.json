@@ -1,0 +1,2343 @@
+[
+  {
+    "id": "q-sc-hsp-01",
+    "slug": "hospital-physician-appointment-caseload",
+    "title": "Calculate Physician Patient Workload",
+    "description_markdown": "Clinical request: For each doctor in `doctors`, count completed patient appointments as `completed_visits`. Return `d.name`, `d.specialization`, and `completed_visits`. Order by `completed_visits` DESC, `d.doctor_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_visits",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Doctor visit count\nSELECT ...",
+    "solution_query": "SELECT d.name, d.specialization, COUNT(a.appointment_id) AS completed_visits FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id AND a.status = 'completed' GROUP BY d.doctor_id, d.name, d.specialization ORDER BY completed_visits DESC, d.doctor_id ASC;",
+    "solution_explanation": "Counts completed appointments per doctor while keeping doctors with 0 appointments via LEFT JOIN.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Include condition in LEFT JOIN: `AND a.status = 'completed'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.name, d.specialization, COUNT(a.appointment_id) AS completed_visits FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id AND a.status = 'completed' GROUP BY d.doctor_id, d.name, d.specialization ORDER BY completed_visits DESC, d.doctor_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "workload"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hsp-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hsp-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hsp-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-02",
+    "slug": "hospital-frequent-patient-visits",
+    "title": "Identify Recurring Patients with Multiple Appointments",
+    "description_markdown": "Care coordination request: Find patients who have had strictly more than 1 appointment. Return `p.patient_id`, `p.name`, `p.blood_group`, and `COUNT(a.appointment_id) AS visit_count`. Order by `visit_count` DESC, `p.patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      },
+      {
+        "name": "visit_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Patients with > 1 visits\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name, p.blood_group, COUNT(a.appointment_id) AS visit_count FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name, p.blood_group HAVING COUNT(a.appointment_id) > 1 ORDER BY visit_count DESC, p.patient_id ASC;",
+    "solution_explanation": "Identifies recurring outpatient visits using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `HAVING COUNT(a.appointment_id) > 1`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.patient_id, p.name, p.blood_group, COUNT(a.appointment_id) AS visit_count FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name, p.blood_group HAVING COUNT(a.appointment_id) > 1 ORDER BY visit_count DESC, p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "patients"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hsp-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hsp-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hsp-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-03",
+    "slug": "hospital-prescription-duration-audit",
+    "title": "Prescription Regimen Days by Department",
+    "description_markdown": "Pharmacy request: Join `prescriptions`, `appointments`, and `doctors`. For each doctor department, calculate the total number of prescriptions issued (`COUNT(pr.prescription_id)` as `total_prescriptions`), and average duration in days (`ROUND(AVG(pr.duration_days), 1)` as `avg_days`). Return `d.department`, `total_prescriptions`, and `avg_days`. Order by `total_prescriptions` DESC, `d.department` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "prescriptions",
+      "appointments",
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "total_prescriptions",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_days",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Prescription duration aggregates\nSELECT ...",
+    "solution_query": "SELECT d.department, COUNT(pr.prescription_id) AS total_prescriptions, ROUND(AVG(pr.duration_days), 1) AS avg_days FROM doctors d JOIN appointments a ON d.doctor_id = a.doctor_id JOIN prescriptions pr ON a.appointment_id = pr.appointment_id GROUP BY d.department ORDER BY total_prescriptions DESC, d.department ASC;",
+    "solution_explanation": "Aggregates medication durations across clinical specialties.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join doctors -> appointments -> prescriptions.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.department, COUNT(pr.prescription_id) AS total_prescriptions, ROUND(AVG(pr.duration_days), 1) AS avg_days FROM doctors d JOIN appointments a ON d.doctor_id = a.doctor_id JOIN prescriptions pr ON a.appointment_id = pr.appointment_id GROUP BY d.department ORDER BY total_prescriptions DESC, d.department ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "pharmacy"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hsp-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hsp-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hsp-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-04",
+    "slug": "hsp-female-patients-directory",
+    "title": "Filter Female Patient Clinical Records",
+    "description_markdown": "Retrieve `patient_id`, `name`, and `blood_group` for all female patients (`gender = 'F'`). Order by `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT patient_id, name, blood_group FROM patients WHERE gender = 'F' ORDER BY patient_id ASC;",
+    "solution_explanation": "Filters patients by gender = 'F'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE gender = 'F'`.",
+      "Select `patient_id`, `name`, and `blood_group`.",
+      "Query: SELECT patient_id, name, blood_group FROM patients WHERE gender = 'F' ORDER BY patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-05",
+    "slug": "hsp-senior-medical-staff",
+    "title": "Identify Senior Doctors with Extensive Experience",
+    "description_markdown": "List doctors having at least 15 years of medical experience. Return `name`, `department`, and `experience_years`. Order by `experience_years` DESC, `name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT name, department, experience_years FROM doctors WHERE experience_years >= 15 ORDER BY experience_years DESC, name ASC;",
+    "solution_explanation": "Filters doctors with experience_years >= 15.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE experience_years >= 15`.",
+      "Order by `experience_years` DESC, `name` ASC.",
+      "Query: SELECT name, department, experience_years FROM doctors WHERE experience_years >= 15 ORDER BY experience_years DESC, name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-06",
+    "slug": "hsp-appointment-status-breakdown",
+    "title": "Aggregate Appointment Caseload by Status",
+    "description_markdown": "Count the total number of appointments per appointment `status` as `appointment_count`. Order by `appointment_count` DESC, `status` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "appointment_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT status, COUNT(*) AS appointment_count FROM appointments GROUP BY status ORDER BY appointment_count DESC, status ASC;",
+    "solution_explanation": "Groups appointments by status and counts rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `GROUP BY status`.",
+      "Count records with `COUNT(*) AS appointment_count`.",
+      "Query: SELECT status, COUNT(*) AS appointment_count FROM appointments GROUP BY status ORDER BY appointment_count DESC, status ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-07",
+    "slug": "hsp-universal-donor-blood-types",
+    "title": "Filter Patients with Type O Blood Groups",
+    "description_markdown": "List all patients with blood group 'O+' or 'O-'. Return `patient_id`, `name`, and `blood_group`. Order by `blood_group` ASC, `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT patient_id, name, blood_group FROM patients WHERE blood_group IN ('O+', 'O-') ORDER BY blood_group ASC, patient_id ASC;",
+    "solution_explanation": "Filters patients using IN ('O+', 'O-').",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE blood_group IN ('O+', 'O-')`.",
+      "Order by `blood_group` ASC, `patient_id` ASC.",
+      "Query: SELECT patient_id, name, blood_group FROM patients WHERE blood_group IN ('O+', 'O-') ORDER BY blood_group ASC, patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-08",
+    "slug": "hsp-patient-gender-distribution",
+    "title": "Calculate Patient Demographics by Gender",
+    "description_markdown": "Count total patients grouped by `gender` as `patient_count`. Order by `patient_count` DESC, `gender` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "gender",
+        "type": "varchar"
+      },
+      {
+        "name": "patient_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT gender, COUNT(*) AS patient_count FROM patients GROUP BY gender ORDER BY patient_count DESC, gender ASC;",
+    "solution_explanation": "Groups patients by gender and counts occurrences.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `GROUP BY gender`.",
+      "Aggregate with `COUNT(*) AS patient_count`.",
+      "Query: SELECT gender, COUNT(*) AS patient_count FROM patients GROUP BY gender ORDER BY patient_count DESC, gender ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-09",
+    "slug": "hsp-physicians-with-no-completed-appointments",
+    "title": "Detect Physicians with Zero Completed Appointments",
+    "description_markdown": "Find doctors who have never logged a completed appointment. Return `doctor_id`, `name`, and `department`. Order by `doctor_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT d.doctor_id, d.name, d.department FROM doctors d WHERE NOT EXISTS (SELECT 1 FROM appointments a WHERE a.doctor_id = d.doctor_id AND a.status = 'completed') ORDER BY d.doctor_id ASC;",
+    "solution_explanation": "Uses NOT EXISTS to find doctors with no completed appointment records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM appointments a WHERE ...)`.",
+      "Check `a.doctor_id = d.doctor_id AND a.status = 'completed'`.",
+      "Query: SELECT d.doctor_id, d.name, d.department FROM doctors d WHERE NOT EXISTS (SELECT 1 FROM appointments a WHERE a.doctor_id = d.doctor_id AND a.status = 'completed') ORDER BY d.doctor_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-10",
+    "slug": "hsp-patient-prescribed-medications-roster",
+    "title": "Retrieve Patient Prescriptions with Attending Doctor",
+    "description_markdown": "Join patients, appointments, and prescriptions to list `patient_name`, `medication_name`, and `dosage` for all prescribed medications. Order by `patient_name` ASC, `medication_name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments",
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_name",
+        "type": "varchar"
+      },
+      {
+        "name": "medication_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dosage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT pt.name AS patient_name, pr.medication_name, pr.dosage FROM patients pt JOIN appointments a ON pt.patient_id = a.patient_id JOIN prescriptions pr ON a.appointment_id = pr.appointment_id ORDER BY pt.name ASC, pr.medication_name ASC;",
+    "solution_explanation": "Joins patients, appointments, and prescriptions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `patients pt`, `appointments a`, and `prescriptions pr`.",
+      "Alias `pt.name AS patient_name`.",
+      "Query: SELECT pt.name AS patient_name, pr.medication_name, pr.dosage FROM patients pt JOIN appointments a ON pt.patient_id = a.patient_id JOIN prescriptions pr ON a.appointment_id = pr.appointment_id ORDER BY pt.name ASC, pr.medication_name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-11",
+    "slug": "hsp-maximum-prescription-duration-per-drug",
+    "title": "Find Maximum Treatment Duration for Prescribed Drugs",
+    "description_markdown": "For each medication in `prescriptions`, find the maximum treatment duration in days as `max_duration_days`. Order by `max_duration_days` DESC, `medication_name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "medication_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT medication_name, MAX(duration_days) AS max_duration_days FROM prescriptions GROUP BY medication_name ORDER BY max_duration_days DESC, medication_name ASC;",
+    "solution_explanation": "Groups prescriptions by medication_name and calculates MAX(duration_days).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `medication_name`.",
+      "Calculate `MAX(duration_days) AS max_duration_days`.",
+      "Query: SELECT medication_name, MAX(duration_days) AS max_duration_days FROM prescriptions GROUP BY medication_name ORDER BY max_duration_days DESC, medication_name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-12",
+    "slug": "hsp-departmental-appointment-volume",
+    "title": "Analyze Appointment Volume Across Hospital Departments",
+    "description_markdown": "For each medical `department`, count all scheduled or completed appointments as `total_appointments`. Include departments with zero appointments. Order by `total_appointments` DESC, `department` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "total_appointments",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT d.department, COUNT(a.appointment_id) AS total_appointments FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.department ORDER BY total_appointments DESC, d.department ASC;",
+    "solution_explanation": "Uses LEFT JOIN between doctors and appointments, grouping by department.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `doctors d` and `appointments a` on `d.doctor_id = a.doctor_id`.",
+      "Count appointments with `COUNT(a.appointment_id) AS total_appointments`.",
+      "Query: SELECT d.department, COUNT(a.appointment_id) AS total_appointments FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.department ORDER BY total_appointments DESC, d.department ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-13",
+    "slug": "hsp-patients-with-multiple-consultations",
+    "title": "Identify Frequent Patients with Multiple Consultations",
+    "description_markdown": "Find patients who have booked strictly more than 1 appointment. Return `patient_id`, `name`, and total appointments as `visit_count`. Order by `visit_count` DESC, `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "visit_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name, COUNT(a.appointment_id) AS visit_count FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name HAVING COUNT(a.appointment_id) > 1 ORDER BY visit_count DESC, p.patient_id ASC;",
+    "solution_explanation": "Joins patients and appointments, filtering with HAVING COUNT(a.appointment_id) > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `patients` and `appointments`.",
+      "Filter with `HAVING COUNT(a.appointment_id) > 1`.",
+      "Query: SELECT p.patient_id, p.name, COUNT(a.appointment_id) AS visit_count FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name HAVING COUNT(a.appointment_id) > 1 ORDER BY visit_count DESC, p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-14",
+    "slug": "hsp-doctor-patient-appointment-detail",
+    "title": "Detail Completed Encounters with Doctors and Patients",
+    "description_markdown": "List all completed appointments showing `appointment_id`, `patient_name`, `doctor_name`, and `diagnosis`. Order by `appointment_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments",
+      "patients",
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_name",
+        "type": "varchar"
+      },
+      {
+        "name": "doctor_name",
+        "type": "varchar"
+      },
+      {
+        "name": "diagnosis",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.appointment_id, p.name AS patient_name, d.name AS doctor_name, a.diagnosis FROM appointments a JOIN patients p ON a.patient_id = p.patient_id JOIN doctors d ON a.doctor_id = d.doctor_id WHERE a.status = 'completed' ORDER BY a.appointment_id ASC;",
+    "solution_explanation": "Three-table join between appointments, patients, and doctors filtering on completed status.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `appointments a` with `patients p` and `doctors d`.",
+      "Filter with `WHERE a.status = 'completed'`.",
+      "Query: SELECT a.appointment_id, p.name AS patient_name, d.name AS doctor_name, a.diagnosis FROM appointments a JOIN patients p ON a.patient_id = p.patient_id JOIN doctors d ON a.doctor_id = d.doctor_id WHERE a.status = 'completed' ORDER BY a.appointment_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-15",
+    "slug": "hsp-rank-doctors-by-seniority",
+    "title": "Rank Physicians by Years of Clinical Experience",
+    "description_markdown": "Rank doctors from most experienced to least experienced using `DENSE_RANK()` as `experience_rank`. Return `name`, `specialization`, `experience_years`, and `experience_rank`. Order by `experience_rank` ASC, `name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "experience_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT name, specialization, experience_years, DENSE_RANK() OVER (ORDER BY experience_years DESC) AS experience_rank FROM doctors ORDER BY experience_rank ASC, name ASC;",
+    "solution_explanation": "Uses DENSE_RANK() ordered by experience_years DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY experience_years DESC) AS experience_rank`.",
+      "Order by `experience_rank` ASC, `name` ASC.",
+      "Query: SELECT name, specialization, experience_years, DENSE_RANK() OVER (ORDER BY experience_years DESC) AS experience_rank FROM doctors ORDER BY experience_rank ASC, name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-16",
+    "slug": "hsp-average-prescription-course-duration",
+    "title": "Calculate Average Duration of Active Drug Treatments",
+    "description_markdown": "Calculate the average prescription duration in days for medications where duration is strictly greater than 0, rounded to 2 decimal places as `avg_duration_days`.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_duration_days",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT ROUND(AVG(duration_days), 2) AS avg_duration_days FROM prescriptions WHERE duration_days > 0;",
+    "solution_explanation": "Averages duration_days with filter duration_days > 0 and rounds to 2 decimals.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE duration_days > 0`.",
+      "Use `ROUND(AVG(duration_days), 2) AS avg_duration_days`.",
+      "Query: SELECT ROUND(AVG(duration_days), 2) AS avg_duration_days FROM prescriptions WHERE duration_days > 0;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-17",
+    "slug": "hsp-patients-with-no-cancellations",
+    "title": "Identify Reliable Patients with No Cancelled Appointments",
+    "description_markdown": "Find patients who have booked appointments but have never cancelled any appointment. Return `patient_id` and `name`. Order by `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name FROM patients p WHERE EXISTS (SELECT 1 FROM appointments a WHERE a.patient_id = p.patient_id) AND NOT EXISTS (SELECT 1 FROM appointments a WHERE a.patient_id = p.patient_id AND a.status = 'cancelled') ORDER BY p.patient_id ASC;",
+    "solution_explanation": "Combines EXISTS for booked appointments and NOT EXISTS for cancelled appointments.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Ensure patient has appointments with `EXISTS`.",
+      "Exclude cancellations with `NOT EXISTS (SELECT 1 FROM appointments a WHERE a.patient_id = p.patient_id AND a.status = 'cancelled')`.",
+      "Query: SELECT p.patient_id, p.name FROM patients p WHERE EXISTS (SELECT 1 FROM appointments a WHERE a.patient_id = p.patient_id) AND NOT EXISTS (SELECT 1 FROM appointments a WHERE a.patient_id = p.patient_id AND a.status = 'cancelled') ORDER BY p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-18",
+    "slug": "hsp-distinct-patients-per-doctor",
+    "title": "Count Unique Patients Handled per Physician",
+    "description_markdown": "For each doctor, count the number of unique patients treated as `unique_patients`. Return `name` and `unique_patients`. Order by `unique_patients` DESC, `name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "unique_patients",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT d.name, COUNT(DISTINCT a.patient_id) AS unique_patients FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.name ORDER BY unique_patients DESC, d.name ASC;",
+    "solution_explanation": "Performs LEFT JOIN and counts distinct patient_ids per doctor.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(DISTINCT a.patient_id)`.",
+      "Group by `d.doctor_id, d.name`.",
+      "Query: SELECT d.name, COUNT(DISTINCT a.patient_id) AS unique_patients FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.name ORDER BY unique_patients DESC, d.name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-19",
+    "slug": "hsp-long-term-prescriptions-audit",
+    "title": "Filter High-Duration Prescription Regimens",
+    "description_markdown": "List all prescriptions with a treatment regimen lasting at least 14 days. Return `prescription_id`, `medication_name`, and `duration_days`. Order by `duration_days` DESC, `prescription_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "prescription_id",
+        "type": "integer"
+      },
+      {
+        "name": "medication_name",
+        "type": "varchar"
+      },
+      {
+        "name": "duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT prescription_id, medication_name, duration_days FROM prescriptions WHERE duration_days >= 14 ORDER BY duration_days DESC, prescription_id ASC;",
+    "solution_explanation": "Filters prescriptions where duration_days >= 14.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE duration_days >= 14`.",
+      "Order by `duration_days` DESC, `prescription_id` ASC.",
+      "Query: SELECT prescription_id, medication_name, duration_days FROM prescriptions WHERE duration_days >= 14 ORDER BY duration_days DESC, prescription_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-20",
+    "slug": "hsp-doctors-above-average-experience",
+    "title": "Find Doctors Exceeding Hospital Average Experience",
+    "description_markdown": "Find physicians whose experience exceeds the average experience of all doctors in the hospital. Return `name`, `specialization`, and `experience_years`. Order by `experience_years` DESC, `name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "specialization",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT name, specialization, experience_years FROM doctors WHERE experience_years > (SELECT AVG(experience_years) FROM doctors) ORDER BY experience_years DESC, name ASC;",
+    "solution_explanation": "Filters doctors using a scalar subquery with AVG(experience_years).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE experience_years > (SELECT AVG(experience_years) FROM doctors)`.",
+      "Order by `experience_years` DESC, `name` ASC.",
+      "Query: SELECT name, specialization, experience_years FROM doctors WHERE experience_years > (SELECT AVG(experience_years) FROM doctors) ORDER BY experience_years DESC, name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-21",
+    "slug": "hsp-blood-group-patient-census",
+    "title": "Compile Hospital Patient Blood Group Census",
+    "description_markdown": "Count the total number of patients for each `blood_group` as `patient_count`. Order by `patient_count` DESC, `blood_group` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "blood_group",
+        "type": "varchar"
+      },
+      {
+        "name": "patient_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT blood_group, COUNT(*) AS patient_count FROM patients GROUP BY blood_group ORDER BY patient_count DESC, blood_group ASC;",
+    "solution_explanation": "Groups patients by blood_group and counts totals.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `blood_group`.",
+      "Count patients with `COUNT(*) AS patient_count`.",
+      "Query: SELECT blood_group, COUNT(*) AS patient_count FROM patients GROUP BY blood_group ORDER BY patient_count DESC, blood_group ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-22",
+    "slug": "hsp-doctor-seniority-classification",
+    "title": "Classify Medical Staff into Seniority Brackets",
+    "description_markdown": "Classify doctors using CASE: 'Chief / Veteran' for >= 20 years, 'Senior Attending' for >= 12 years, and 'Attending' otherwise as `seniority_level`. Order by `experience_years` DESC, `name` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "seniority_level",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT name, department, CASE WHEN experience_years >= 20 THEN 'Chief / Veteran' WHEN experience_years >= 12 THEN 'Senior Attending' ELSE 'Attending' END AS seniority_level FROM doctors ORDER BY experience_years DESC, name ASC;",
+    "solution_explanation": "Uses CASE statement to classify doctors into seniority tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN experience_years >= 20 THEN 'Chief / Veteran' ... END`.",
+      "Alias as `seniority_level`.",
+      "Query: SELECT name, department, CASE WHEN experience_years >= 20 THEN 'Chief / Veteran' WHEN experience_years >= 12 THEN 'Senior Attending' ELSE 'Attending' END AS seniority_level FROM doctors ORDER BY experience_years DESC, name ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-23",
+    "slug": "hsp-chronological-patient-appointments-lag",
+    "title": "Track Previous Consultation Timestamp Using LAG",
+    "description_markdown": "For each appointment, determine the patient's previous appointment timestamp as `prev_appointment_date` using `LAG()`. Return `appointment_id`, `patient_id`, `appointment_date`, and `prev_appointment_date`. Order by `patient_id` ASC, `appointment_date` ASC, `appointment_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "appointment_date",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_appointment_date",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT appointment_id, patient_id, appointment_date, LAG(appointment_date, 1) OVER (PARTITION BY patient_id ORDER BY appointment_date ASC, appointment_id ASC) AS prev_appointment_date FROM appointments ORDER BY patient_id ASC, appointment_date ASC, appointment_id ASC;",
+    "solution_explanation": "Uses LAG(appointment_date, 1) partitioned by patient_id ordered chronologically.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(appointment_date, 1) OVER (PARTITION BY patient_id ORDER BY appointment_date ASC, appointment_id ASC)`.",
+      "Preserve NULL for the first appointment per patient.",
+      "Query: SELECT appointment_id, patient_id, appointment_date, LAG(appointment_date, 1) OVER (PARTITION BY patient_id ORDER BY appointment_date ASC, appointment_id ASC) AS prev_appointment_date FROM appointments ORDER BY patient_id ASC, appointment_date ASC, appointment_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-24",
+    "slug": "hsp-patients-with-diagnoses-containing-terms",
+    "title": "Search Encounters by Diagnostic Keyword",
+    "description_markdown": "Find appointments whose `diagnosis` contains the word 'disease' or 'rhinitis'. Return `appointment_id`, `patient_id`, and `diagnosis`. Order by `appointment_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "diagnosis",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT appointment_id, patient_id, diagnosis FROM appointments WHERE diagnosis LIKE '%disease%' OR diagnosis LIKE '%rhinitis%' ORDER BY appointment_id ASC;",
+    "solution_explanation": "Filters appointments with pattern matching on diagnosis.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE diagnosis LIKE '%disease%' OR diagnosis LIKE '%rhinitis%'`.",
+      "Order by `appointment_id` ASC.",
+      "Query: SELECT appointment_id, patient_id, diagnosis FROM appointments WHERE diagnosis LIKE '%disease%' OR diagnosis LIKE '%rhinitis%' ORDER BY appointment_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-25",
+    "slug": "hsp-prescriptions-per-appointment-count",
+    "title": "Count Prescriptions Dispatched per Appointment",
+    "description_markdown": "Calculate the total number of prescriptions issued per appointment as `prescription_count`. Return `appointment_id` and `prescription_count`. Order by `prescription_count` DESC, `appointment_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments",
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "prescription_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.appointment_id, COUNT(p.prescription_id) AS prescription_count FROM appointments a JOIN prescriptions p ON a.appointment_id = p.appointment_id GROUP BY a.appointment_id ORDER BY prescription_count DESC, a.appointment_id ASC;",
+    "solution_explanation": "Joins appointments and prescriptions, grouping by appointment_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `appointments a` and `prescriptions p`.",
+      "Group by `a.appointment_id` and count prescriptions.",
+      "Query: SELECT a.appointment_id, COUNT(p.prescription_id) AS prescription_count FROM appointments a JOIN prescriptions p ON a.appointment_id = p.appointment_id GROUP BY a.appointment_id ORDER BY prescription_count DESC, a.appointment_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-26",
+    "slug": "hsp-younger-patients-born-after-1980",
+    "title": "Filter Patient Cohort Born After 1980",
+    "description_markdown": "List patients born on or after January 1, 1981. Return `patient_id`, `name`, and `dob`. Order by `dob` ASC, `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "dob",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT patient_id, name, dob FROM patients WHERE dob >= '1981-01-01' ORDER BY dob ASC, patient_id ASC;",
+    "solution_explanation": "Filters patients by date of birth.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE dob >= '1981-01-01'`.",
+      "Order by `dob` ASC, `patient_id` ASC.",
+      "Query: SELECT patient_id, name, dob FROM patients WHERE dob >= '1981-01-01' ORDER BY dob ASC, patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-27",
+    "slug": "hsp-internal-medicine-and-oncology-doctors",
+    "title": "Filter Doctors in Core Specialized Departments",
+    "description_markdown": "List doctors belonging to either the 'Internal' or 'Oncology' department. Return `doctor_id`, `name`, and `department`. Order by `department` ASC, `doctor_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT doctor_id, name, department FROM doctors WHERE department IN ('Internal', 'Oncology') ORDER BY department ASC, doctor_id ASC;",
+    "solution_explanation": "Filters doctors using IN ('Internal', 'Oncology').",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE department IN ('Internal', 'Oncology')`.",
+      "Order by `department` ASC, `doctor_id` ASC.",
+      "Query: SELECT doctor_id, name, department FROM doctors WHERE department IN ('Internal', 'Oncology') ORDER BY department ASC, doctor_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-28",
+    "slug": "hsp-latest-consultation-per-patient",
+    "title": "Determine Latest Recorded Visit Date per Patient",
+    "description_markdown": "For each patient with appointments, determine their most recent appointment date as `latest_appointment`. Return `patient_id`, `name`, and `latest_appointment`. Order by `latest_appointment` DESC, `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "latest_appointment",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name, MAX(a.appointment_date) AS latest_appointment FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name ORDER BY latest_appointment DESC, p.patient_id ASC;",
+    "solution_explanation": "Joins patients and appointments, aggregating MAX(appointment_date).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `patients` and `appointments`.",
+      "Group by patient and calculate `MAX(a.appointment_date)`.",
+      "Query: SELECT p.patient_id, p.name, MAX(a.appointment_date) AS latest_appointment FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.name ORDER BY latest_appointment DESC, p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-29",
+    "slug": "hsp-patient-comprehensive-history-summary",
+    "title": "Compile Patient Comprehensive Clinical Record Summary",
+    "description_markdown": "For each patient in the hospital, calculate their total appointment count (`total_appointments`) and total medications prescribed (`total_prescriptions`). Return `patient_id`, `name`, `total_appointments`, and `total_prescriptions`. Order by `total_appointments` DESC, `total_prescriptions` DESC, `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments",
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_appointments",
+        "type": "bigint"
+      },
+      {
+        "name": "total_prescriptions",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name, COUNT(DISTINCT a.appointment_id) AS total_appointments, COUNT(DISTINCT pr.prescription_id) AS total_prescriptions FROM patients p LEFT JOIN appointments a ON p.patient_id = a.patient_id LEFT JOIN prescriptions pr ON a.appointment_id = pr.appointment_id GROUP BY p.patient_id, p.name ORDER BY total_appointments DESC, total_prescriptions DESC, p.patient_id ASC;",
+    "solution_explanation": "Uses LEFT JOINs and COUNT(DISTINCT) to prevent Cartesian duplication across appointments and prescriptions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `appointments` and `prescriptions`.",
+      "Use `COUNT(DISTINCT a.appointment_id)` and `COUNT(DISTINCT pr.prescription_id)`.",
+      "Query: SELECT p.patient_id, p.name, COUNT(DISTINCT a.appointment_id) AS total_appointments, COUNT(DISTINCT pr.prescription_id) AS total_prescriptions FROM patients p LEFT JOIN appointments a ON p.patient_id = a.patient_id LEFT JOIN prescriptions pr ON a.appointment_id = pr.appointment_id GROUP BY p.patient_id, p.name ORDER BY total_appointments DESC, total_prescriptions DESC, p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-30",
+    "slug": "hsp-patients-with-no-appointments",
+    "title": "Audit Registered Patients with Zero Recorded Visits",
+    "description_markdown": "Find all registered patients who have never booked an appointment. Return `patient_id`, `name`, and `emergency_contact`. Order by `patient_id` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "emergency_contact",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.patient_id, p.name, p.emergency_contact FROM patients p LEFT JOIN appointments a ON p.patient_id = a.patient_id WHERE a.appointment_id IS NULL ORDER BY p.patient_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE a.appointment_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `appointments a` on `p.patient_id = a.patient_id`.",
+      "Filter with `WHERE a.appointment_id IS NULL`.",
+      "Query: SELECT p.patient_id, p.name, p.emergency_contact FROM patients p LEFT JOIN appointments a ON p.patient_id = a.patient_id WHERE a.appointment_id IS NULL ORDER BY p.patient_id ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-31",
+    "slug": "hsp-most-experienced-physician-per-dept",
+    "title": "Identify Most Experienced Doctor in Each Department",
+    "description_markdown": "For each hospital department, select the single doctor with the highest years of experience. If tied, pick the lowest `doctor_id`. Return `department`, `name`, and `experience_years`. Order by `department` ASC.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH ranked_doctors AS (SELECT department, name, experience_years, ROW_NUMBER() OVER (PARTITION BY department ORDER BY experience_years DESC, doctor_id ASC) AS rn FROM doctors) SELECT department, name, experience_years FROM ranked_doctors WHERE rn = 1 ORDER BY department ASC;",
+    "solution_explanation": "Uses a CTE with ROW_NUMBER() partitioned by department ordered by experience_years DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY department ORDER BY experience_years DESC, doctor_id ASC) AS rn`.",
+      "Filter `WHERE rn = 1` in the outer query.",
+      "Query: WITH ranked_doctors AS (SELECT department, name, experience_years, ROW_NUMBER() OVER (PARTITION BY department ORDER BY experience_years DESC, doctor_id ASC) AS rn FROM doctors) SELECT department, name, experience_years FROM ranked_doctors WHERE rn = 1 ORDER BY department ASC;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hsp-32",
+    "slug": "hsp-hospital-operations-kpi-summary",
+    "title": "Compile Hospital Executive Performance KPI Scorecard",
+    "description_markdown": "Calculate single-row hospital summary statistics: `total_patients`, `total_doctors`, `total_appointments`, and `completed_appointments`.",
+    "topic_id": "scenario-hospital",
+    "subtopic_id": "sc-hsp",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "patients",
+      "doctors",
+      "appointments",
+      "prescriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_patients",
+        "type": "bigint"
+      },
+      {
+        "name": "total_doctors",
+        "type": "bigint"
+      },
+      {
+        "name": "total_appointments",
+        "type": "bigint"
+      },
+      {
+        "name": "completed_appointments",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM patients) AS total_patients, (SELECT COUNT(*) FROM doctors) AS total_doctors, (SELECT COUNT(*) FROM appointments) AS total_appointments, (SELECT COUNT(*) FROM appointments WHERE status = 'completed') AS completed_appointments;",
+    "solution_explanation": "Uses scalar subqueries to produce an executive clinical KPI scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each count.",
+      "Filter `status = 'completed'` for the completed count.",
+      "Query: SELECT (SELECT COUNT(*) FROM patients) AS total_patients, (SELECT COUNT(*) FROM doctors) AS total_doctors, (SELECT COUNT(*) FROM appointments) AS total_appointments, (SELECT COUNT(*) FROM appointments WHERE status = 'completed') AS completed_appointments;"
+    ],
+    "tags": [
+      "hospital",
+      "sc-hsp"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hsp-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hsp-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hsp-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

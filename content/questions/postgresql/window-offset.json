@@ -1,0 +1,2683 @@
+[
+  {
+    "id": "q-wof-01",
+    "slug": "lag-previous-order-amount",
+    "title": "Access Previous Order Value via LAG",
+    "description_markdown": "From `orders`, for completed orders (`order_status = 'completed'`), retrieve `order_id`, `customer_id`, `order_date`, `total_amount`, and the previous order's amount for the SAME customer using `LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `prev_order_amount`. Order by `customer_id` ASC, `order_date` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_order_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use LAG window function\nSELECT order_id, customer_id, order_date, total_amount,\n  LAG(...) OVER (...) AS prev_order_amount\nFROM orders ...",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS prev_order_amount FROM orders WHERE order_status = 'completed' ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "LAG accesses attributes from the preceding row within the same window partition without a self-join.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS prev_order_amount FROM orders WHERE order_status = 'completed' ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-02",
+    "slug": "salary-revision-hike-differences",
+    "title": "Calculate Compensation Increments from Salary History",
+    "description_markdown": "From `salaries_history`, calculate for each employee the dollar difference between their current salary revision and their previous revision: `(salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC))` as `salary_increase`. Return `emp_id`, `effective_date`, `salary`, and `salary_increase`. Order by `emp_id` ASC, `effective_date` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "effective_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "salary_increase",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Calculate delta using LAG\nSELECT ...",
+    "solution_query": "SELECT emp_id, effective_date, salary, (salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC)) AS salary_increase FROM salaries_history ORDER BY emp_id ASC, effective_date ASC;",
+    "solution_explanation": "Calculates historical progression increments between consecutive compensation milestones.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `(salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC)) AS salary_increase`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT emp_id, effective_date, salary, (salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date ASC)) AS salary_increase FROM salaries_history ORDER BY emp_id ASC, effective_date ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "delta-analysis"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-03",
+    "slug": "lead-next-order-interval",
+    "title": "Determine Days Elapsed Until Next Customer Order",
+    "description_markdown": "Using `LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `next_order_date`, calculate the elapsed days until the next order `(LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) - order_date)` as `days_to_next_order`. Return `customer_id`, `order_id`, `order_date`, and `days_to_next_order`. Order by `customer_id` ASC, `order_date` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "days_to_next_order",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Next order date with LEAD\nSELECT ...",
+    "solution_query": "SELECT customer_id, order_id, order_date, (LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) - order_date) AS days_to_next_order FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "LEAD looks forward in the sequence to compute inter-purchase cycle metrics.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use LEAD to retrieve following date and subtract current order_date.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT customer_id, order_id, order_date, (LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) - order_date) AS days_to_next_order FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-04",
+    "slug": "wof-lag-previous-employee-salary",
+    "title": "Retrieve Immediately Preceding Employee Salary via LAG",
+    "description_markdown": "From `employees`, retrieve `emp_id`, `first_name`, `salary`, and the salary of the preceding employee when ordered by `salary` ASC, `emp_id` ASC using `LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC)` as `prev_salary`. Order by `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Access previous salary via LAG\nSELECT emp_id, first_name, salary,\n  LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS prev_salary\nFROM employees\nORDER BY salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS prev_salary FROM employees ORDER BY salary ASC, emp_id ASC;",
+    "solution_explanation": "LAG() accesses the salary of the row immediately prior in the specified sort order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the secondary tie-breaker in the window ORDER BY."
+    ],
+    "interview_tip": "LAG allows calculating row-to-row differences without self-joining the table.",
+    "hints": [
+      "Use `LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS prev_salary`.",
+      "Order outer query by `salary ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary, LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS prev_salary FROM employees ORDER BY salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "offsets",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-05",
+    "slug": "wof-lead-next-employee-salary",
+    "title": "Access Following Employee Salary via LEAD",
+    "description_markdown": "From `employees`, retrieve `emp_id`, `first_name`, `salary`, and the following employee's salary when sorted by `salary` ASC, `emp_id` ASC using `LEAD(salary) OVER (ORDER BY salary ASC, emp_id ASC)` as `next_salary`. Order by `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "next_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Access following salary via LEAD\nSELECT emp_id, first_name, salary,\n  LEAD(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS next_salary\nFROM employees\nORDER BY salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, LEAD(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS next_salary FROM employees ORDER BY salary ASC, emp_id ASC;",
+    "solution_explanation": "LEAD() looks ahead to the subsequent row's salary in the window sort order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing LAG with LEAD."
+    ],
+    "interview_tip": "LEAD is commonly used for lead-time and churn prediction lookaheads.",
+    "hints": [
+      "Use `LEAD(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS next_salary`.",
+      "Order by `salary ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary, LEAD(salary) OVER (ORDER BY salary ASC, emp_id ASC) AS next_salary FROM employees ORDER BY salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "offsets",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-06",
+    "slug": "wof-salary-difference-to-preceding",
+    "title": "Compute Salary Increment from Preceding Employee",
+    "description_markdown": "Calculate the compensation difference between each employee and the immediately lower-earning colleague: select `emp_id`, `first_name`, `salary`, and `ROUND(salary - LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC), 2) AS sal_diff` from `employees`. Order by `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "sal_diff",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Salary increment calculation\nSELECT emp_id, first_name, salary,\n  ROUND(salary - LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC), 2) AS sal_diff\nFROM employees\nORDER BY salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, ROUND(salary - LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC), 2) AS sal_diff FROM employees ORDER BY salary ASC, emp_id ASC;",
+    "solution_explanation": "Subtracts LAG(salary) from the current salary to calculate step increases across compensation tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting current salary from LAG instead of LAG from current salary."
+    ],
+    "interview_tip": "Calculating diffs between consecutive rows using LAG is a classic telemetry and financial analysis query pattern.",
+    "hints": [
+      "Use `ROUND(salary - LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC), 2) AS sal_diff`.",
+      "Order by `salary ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, salary, ROUND(salary - LAG(salary) OVER (ORDER BY salary ASC, emp_id ASC), 2) AS sal_diff FROM employees ORDER BY salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "delta",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-07",
+    "slug": "wof-next-order-date-per-customer",
+    "title": "Identify Next Order Date for Same Customer",
+    "description_markdown": "From `orders`, retrieve each order along with the customer's subsequent order date using `LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `next_order_date`. Return `order_id`, `customer_id`, `order_date`, and `next_order_date`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "next_order_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Subsequent order date via LEAD\nSELECT order_id, customer_id, order_date,\n  LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_date\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_date FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "Partitions by customer to find the immediate next transaction date for repeat buyers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY customer_id which causes cross-customer bleeding."
+    ],
+    "interview_tip": "Pairing order_date with next_order_date is the starting point for calculating customer repurchase intervals.",
+    "hints": [
+      "Partition by `customer_id` and order by `order_date ASC, order_id ASC`.",
+      "Use `LEAD(order_date) OVER (...) AS next_order_date`.",
+      "Query: SELECT order_id, customer_id, order_date, LEAD(order_date) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_date FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "partition-by",
+      "customer-orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-08",
+    "slug": "wof-previous-product-price-in-category",
+    "title": "Access Preceding Product Price Within Category",
+    "description_markdown": "From `products`, find the previous product price in the same category when sorted ascending: use `LAG(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC)` as `prev_cat_price`. Return `product_id`, `category_id`, `product_name`, `price`, and `prev_cat_price`. Order by `category_id` ASC, `price` ASC, `product_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_cat_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Previous product price in category\nSELECT product_id, category_id, product_name, price,\n  LAG(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS prev_cat_price\nFROM products\nORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, category_id, product_name, price, LAG(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS prev_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_explanation": "Tracks price progression within each individual product category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting category_id partitioning."
+    ],
+    "interview_tip": "Intra-category offsets allow pricing analysts to spot product price gaps.",
+    "hints": [
+      "Partition by `category_id`.",
+      "Use `LAG(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS prev_cat_price`.",
+      "Query: SELECT product_id, category_id, product_name, price, LAG(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS prev_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "partition-by",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-09",
+    "slug": "wof-lead-product-price-in-category",
+    "title": "Access Following Product Price Within Category",
+    "description_markdown": "From `products`, find the subsequent product price in the same category: use `LEAD(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC)` as `next_cat_price`. Return `product_id`, `category_id`, `product_name`, `price`, and `next_cat_price`. Order by `category_id` ASC, `price` ASC, `product_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "next_cat_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Following product price in category\nSELECT product_id, category_id, product_name, price,\n  LEAD(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS next_cat_price\nFROM products\nORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, category_id, product_name, price, LEAD(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS next_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_explanation": "Retrieves the higher neighboring product price in each category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEAD without PARTITION BY category_id."
+    ],
+    "interview_tip": "Combining LAG and LEAD exposes both adjacent price points simultaneously.",
+    "hints": [
+      "Use `LEAD(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS next_cat_price`.",
+      "Order by `category_id ASC, price ASC, product_id ASC`.",
+      "Query: SELECT product_id, category_id, product_name, price, LEAD(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS next_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "pricing",
+      "category"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-10",
+    "slug": "wof-previous-student-gpa-in-year",
+    "title": "Access Preceding Student GPA Within Enrollment Cohort",
+    "description_markdown": "From `students`, find the GPA of the preceding student within the same enrollment cohort: use `LAG(gpa) OVER (PARTITION BY enrollment_year ORDER BY gpa ASC, student_id ASC)` as `prev_gpa`. Return `student_id`, `first_name`, `enrollment_year`, `gpa`, and `prev_gpa`. Order by `enrollment_year` ASC, `gpa` ASC, `student_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_year",
+        "type": "integer"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Previous GPA in enrollment year\nSELECT student_id, first_name, enrollment_year, gpa,\n  LAG(gpa) OVER (PARTITION BY enrollment_year ORDER BY gpa ASC, student_id ASC) AS prev_gpa\nFROM students\nORDER BY enrollment_year ASC, gpa ASC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, enrollment_year, gpa, LAG(gpa) OVER (PARTITION BY enrollment_year ORDER BY gpa ASC, student_id ASC) AS prev_gpa FROM students ORDER BY enrollment_year ASC, gpa ASC, student_id ASC;",
+    "solution_explanation": "Tracks ascending GPA progression within each class year.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting enrollment_year partition."
+    ],
+    "interview_tip": "Partitioning by cohort years prevents mixing fresh admission metrics with senior standings.",
+    "hints": [
+      "Partition by `enrollment_year`.",
+      "Use `LAG(gpa) OVER (PARTITION BY enrollment_year ORDER BY gpa ASC, student_id ASC) AS prev_gpa`.",
+      "Query: SELECT student_id, first_name, enrollment_year, gpa, LAG(gpa) OVER (PARTITION BY enrollment_year ORDER BY gpa ASC, student_id ASC) AS prev_gpa FROM students ORDER BY enrollment_year ASC, gpa ASC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "cohort",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-11",
+    "slug": "wof-first-value-highest-department-salary",
+    "title": "Surface Department Maximum Salary on Every Row via FIRST_VALUE",
+    "description_markdown": "From `employees` where `dept_id IS NOT NULL`, display each employee alongside their department's peak salary using `FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC)` as `highest_dept_salary`. Return `emp_id`, `dept_id`, `first_name`, `salary`, and `highest_dept_salary`. Order by `dept_id` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "highest_dept_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department peak salary via FIRST_VALUE\nSELECT emp_id, dept_id, first_name, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS highest_dept_salary\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, salary, FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS highest_dept_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "FIRST_VALUE() retrieves the initial element in the partition according to the specified sort order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ASC instead of DESC inside the window clause."
+    ],
+    "interview_tip": "FIRST_VALUE preserves the top record value across every detail row in the group without requiring a join.",
+    "hints": [
+      "Use `FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS highest_dept_salary`.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, dept_id, first_name, salary, FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) AS highest_dept_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "department",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-12",
+    "slug": "wof-salary-gap-to-department-peak",
+    "title": "Calculate Pay Gap to Department Top Earner",
+    "description_markdown": "Calculate the compensation difference between the department's top earner and each employee: select `emp_id`, `dept_id`, `first_name`, `salary`, and `ROUND(FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) - salary, 2) AS gap_to_max` from `employees` where `dept_id IS NOT NULL`. Order by `dept_id` ASC, `salary` DESC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "gap_to_max",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Pay gap to department maximum\nSELECT emp_id, dept_id, first_name, salary,\n  ROUND(FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) - salary, 2) AS gap_to_max\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, salary, ROUND(FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) - salary, 2) AS gap_to_max FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Subtracts current employee salary from the highest departmental salary yielded by FIRST_VALUE.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting peak salary from current salary, resulting in negative values."
+    ],
+    "interview_tip": "Benchmarking against the partition peak using FIRST_VALUE is a standard compensation analytics technique.",
+    "hints": [
+      "Use `ROUND(FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) - salary, 2) AS gap_to_max`.",
+      "Order by `dept_id ASC, salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, dept_id, first_name, salary, ROUND(FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC, emp_id ASC) - salary, 2) AS gap_to_max FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "pay-gap",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-13",
+    "slug": "wof-two-step-lag-customer-orders",
+    "title": "Access Two-Step Prior Order Amount via Multi-Row LAG",
+    "description_markdown": "From `orders`, retrieve each order alongside the amount spent two orders prior for the same customer using `LAG(total_amount, 2) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `lag2_amount`. Return `order_id`, `customer_id`, `order_date`, `total_amount`, and `lag2_amount`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "lag2_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Two-step LAG offset\nSELECT order_id, customer_id, order_date, total_amount,\n  LAG(total_amount, 2) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS lag2_amount\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, LAG(total_amount, 2) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS lag2_amount FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "LAG(column, offset) allows specifying offsets greater than 1 to look back multiple positions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the offset integer argument 2."
+    ],
+    "interview_tip": "LAG accepts an optional second parameter defining how many rows back to inspect.",
+    "hints": [
+      "Use `LAG(total_amount, 2) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS lag2_amount`.",
+      "Order by `customer_id ASC, order_date ASC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, LAG(total_amount, 2) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS lag2_amount FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "multi-offset",
+      "orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-14",
+    "slug": "wof-two-step-lead-hire-dates",
+    "title": "Access Two-Step Following Hire Date via Multi-Row LEAD",
+    "description_markdown": "From `employees`, retrieve `emp_id`, `first_name`, `hire_date`, and the hire date of the colleague hired two positions later: use `LEAD(hire_date, 2) OVER (ORDER BY hire_date ASC, emp_id ASC)` as `lead2_hire_date`. Order by `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "lead2_hire_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Two-step LEAD offset\nSELECT emp_id, first_name, hire_date,\n  LEAD(hire_date, 2) OVER (ORDER BY hire_date ASC, emp_id ASC) AS lead2_hire_date\nFROM employees\nORDER BY hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, hire_date, LEAD(hire_date, 2) OVER (ORDER BY hire_date ASC, emp_id ASC) AS lead2_hire_date FROM employees ORDER BY hire_date ASC, emp_id ASC;",
+    "solution_explanation": "LEAD(column, 2) looks ahead 2 rows in chronological hire order.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing LEAD with LAG."
+    ],
+    "interview_tip": "Multi-row offset functions enable sliding window comparisons across arbitrary event steps.",
+    "hints": [
+      "Use `LEAD(hire_date, 2) OVER (ORDER BY hire_date ASC, emp_id ASC) AS lead2_hire_date`.",
+      "Order by `hire_date ASC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, hire_date, LEAD(hire_date, 2) OVER (ORDER BY hire_date ASC, emp_id ASC) AS lead2_hire_date FROM employees ORDER BY hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "multi-offset",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-15",
+    "slug": "wof-first-value-earliest-project-budget",
+    "title": "Project Initial Portfolio Budget via FIRST_VALUE",
+    "description_markdown": "From `projects`, display each project alongside the budget of the very first project launched by the company: use `FIRST_VALUE(budget) OVER (ORDER BY start_date ASC, project_id ASC)` as `initial_project_budget`. Return `project_id`, `project_name`, `start_date`, `budget`, and `initial_project_budget`. Order by `start_date` ASC, `project_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "start_date",
+        "type": "date"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "initial_project_budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Earliest project budget baseline\nSELECT project_id, project_name, start_date, budget,\n  FIRST_VALUE(budget) OVER (ORDER BY start_date ASC, project_id ASC) AS initial_project_budget\nFROM projects\nORDER BY start_date ASC, project_id ASC;",
+    "solution_query": "SELECT project_id, project_name, start_date, budget, FIRST_VALUE(budget) OVER (ORDER BY start_date ASC, project_id ASC) AS initial_project_budget FROM projects ORDER BY start_date ASC, project_id ASC;",
+    "solution_explanation": "Carries the initial baseline project budget across all subsequent chronological project rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting start_date descending instead of ascending."
+    ],
+    "interview_tip": "Unpartitioned FIRST_VALUE establishes an invariant historical anchor point.",
+    "hints": [
+      "Order by `start_date ASC, project_id ASC` in FIRST_VALUE.",
+      "Query: SELECT project_id, project_name, start_date, budget, FIRST_VALUE(budget) OVER (ORDER BY start_date ASC, project_id ASC) AS initial_project_budget FROM projects ORDER BY start_date ASC, project_id ASC;",
+      "The expected query is: SELECT project_id, project_name, start_date, budget, FIRST_VALUE(budget) OVER (ORDER BY start_date ASC, project_id ASC) AS initial_project_budget FROM projects ORDER BY start_date ASC, project_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "baseline",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-16",
+    "slug": "wof-first-value-top-major-gpa",
+    "title": "Broadcast Highest GPA Per Major via FIRST_VALUE",
+    "description_markdown": "From `students`, display each student alongside the top GPA in their major using `FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC)` as `top_major_gpa`. Return `student_id`, `first_name`, `major`, `gpa`, and `top_major_gpa`. Order by `major` ASC, `gpa` DESC, `student_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      },
+      {
+        "name": "top_major_gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Peak major GPA via FIRST_VALUE\nSELECT student_id, first_name, major, gpa,\n  FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS top_major_gpa\nFROM students\nORDER BY major ASC, gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa, FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS top_major_gpa FROM students ORDER BY major ASC, gpa DESC, student_id ASC;",
+    "solution_explanation": "Exposes the highest GPA per major on every student row.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY major."
+    ],
+    "interview_tip": "Broadcasting partition extrema via FIRST_VALUE enables immediate peer benchmarking.",
+    "hints": [
+      "Use `FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS top_major_gpa`.",
+      "Order by `major ASC, gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, major, gpa, FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) AS top_major_gpa FROM students ORDER BY major ASC, gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "partition-by",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-17",
+    "slug": "wof-gpa-deficit-from-major-top-scholar",
+    "title": "Calculate GPA Deficit from Major Valedictorian",
+    "description_markdown": "Calculate each student's GPA distance from the top-scoring scholar in their major: select `student_id`, `first_name`, `major`, `gpa`, and `ROUND(FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) - gpa, 2) AS gpa_deficit` from `students`. Order by `major` ASC, `gpa` DESC, `student_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      },
+      {
+        "name": "gpa_deficit",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- GPA deficit from top scholar\nSELECT student_id, first_name, major, gpa,\n  ROUND(FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) - gpa, 2) AS gpa_deficit\nFROM students\nORDER BY major ASC, gpa DESC, student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, major, gpa, ROUND(FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) - gpa, 2) AS gpa_deficit FROM students ORDER BY major ASC, gpa DESC, student_id ASC;",
+    "solution_explanation": "Subtracts current student GPA from the top student GPA in the major.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Rounding before difference calculation."
+    ],
+    "interview_tip": "Dynamic variance calculation without self-joins is a primary advantage of window value functions.",
+    "hints": [
+      "Subtract `gpa` from `FIRST_VALUE(gpa)` within `major` partition.",
+      "Round to 2 decimal places.",
+      "Query: SELECT student_id, first_name, major, gpa, ROUND(FIRST_VALUE(gpa) OVER (PARTITION BY major ORDER BY gpa DESC, student_id ASC) - gpa, 2) AS gpa_deficit FROM students ORDER BY major ASC, gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "delta",
+      "students"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-18",
+    "slug": "wof-spend-delta-preceding-customer-order",
+    "title": "Track Order Value Fluctuation from Preceding Purchase",
+    "description_markdown": "Calculate how each customer's order spend changed compared to their immediately preceding order: select `order_id`, `customer_id`, `order_date`, `total_amount`, and `ROUND(total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC), 2) AS spend_delta` from `orders`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "spend_delta",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Order spend delta\nSELECT order_id, customer_id, order_date, total_amount,\n  ROUND(total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC), 2) AS spend_delta\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, ROUND(total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC), 2) AS spend_delta FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "Measures order dollar amount shifts from purchase to purchase per buyer.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting in reverse order."
+    ],
+    "interview_tip": "Customer basket size expansion vs contraction is tracked with LAG deltas.",
+    "hints": [
+      "Use `ROUND(total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC), 2) AS spend_delta`.",
+      "Order by `customer_id ASC, order_date ASC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, ROUND(total_amount - LAG(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC), 2) AS spend_delta FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "delta",
+      "orders",
+      "basket-size"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-19",
+    "slug": "wof-lead-next-hired-colleague-department",
+    "title": "Identify Chronologically Next Hire Within Department",
+    "description_markdown": "From `employees` where `dept_id IS NOT NULL`, find the first name of the next employee hired in the same department using `LEAD(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC)` as `next_hired_colleague`. Return `emp_id`, `dept_id`, `first_name`, `hire_date`, and `next_hired_colleague`. Order by `dept_id` ASC, `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "next_hired_colleague",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Next hired departmental colleague\nSELECT emp_id, dept_id, first_name, hire_date,\n  LEAD(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS next_hired_colleague\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, hire_date, LEAD(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS next_hired_colleague FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, hire_date ASC, emp_id ASC;",
+    "solution_explanation": "Retrieves the subsequent team recruit using LEAD on string attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting dept_id partition."
+    ],
+    "interview_tip": "LEAD and LAG operate on string and date columns identically to numeric fields.",
+    "hints": [
+      "Use `LEAD(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS next_hired_colleague`.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, dept_id, first_name, hire_date, LEAD(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS next_hired_colleague FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "string-offset",
+      "recruiting"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-20",
+    "slug": "wof-lag-prev-hired-colleague-department",
+    "title": "Identify Chronologically Prior Hire Within Department",
+    "description_markdown": "From `employees` where `dept_id IS NOT NULL`, find the first name of the employee hired immediately before in the same department using `LAG(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC)` as `prev_hired_colleague`. Return `emp_id`, `dept_id`, `first_name`, `hire_date`, and `prev_hired_colleague`. Order by `dept_id` ASC, `hire_date` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "hire_date",
+        "type": "date"
+      },
+      {
+        "name": "prev_hired_colleague",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Preceding departmental hire\nSELECT emp_id, dept_id, first_name, hire_date,\n  LAG(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS prev_hired_colleague\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, hire_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, hire_date, LAG(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS prev_hired_colleague FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, hire_date ASC, emp_id ASC;",
+    "solution_explanation": "Uses LAG on string name attribute within departmental partition.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting dept_id IS NOT NULL guard."
+    ],
+    "interview_tip": "Historical seniority pairings are extracted using LAG on chronological dimensions.",
+    "hints": [
+      "Use `LAG(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS prev_hired_colleague`.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, dept_id, first_name, hire_date, LAG(first_name) OVER (PARTITION BY dept_id ORDER BY hire_date ASC, emp_id ASC) AS prev_hired_colleague FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, hire_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "string-offset",
+      "tenure"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-21",
+    "slug": "wof-first-value-min-category-product-price",
+    "title": "Surface Category Floor Price via FIRST_VALUE",
+    "description_markdown": "From `products`, broadcast the lowest price in each category across all product rows using `FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC)` as `min_cat_price`. Return `product_id`, `category_id`, `product_name`, `price`, and `min_cat_price`. Order by `category_id` ASC, `price` ASC, `product_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "min_cat_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Category minimum price via FIRST_VALUE\nSELECT product_id, category_id, product_name, price,\n  FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS min_cat_price\nFROM products\nORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, category_id, product_name, price, FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS min_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_explanation": "Retrieves the entry-level baseline price point for every merchandise category.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting DESC instead of ASC."
+    ],
+    "interview_tip": "Sorting ASC with FIRST_VALUE replicates MIN() while allowing simultaneous row-level access.",
+    "hints": [
+      "Use `FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS min_cat_price`.",
+      "Order by `category_id ASC, price ASC, product_id ASC`.",
+      "Query: SELECT product_id, category_id, product_name, price, FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC) AS min_cat_price FROM products ORDER BY category_id ASC, price ASC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "pricing",
+      "category"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-22",
+    "slug": "wof-price-premium-over-category-floor",
+    "title": "Calculate Product Price Premium Above Category Floor",
+    "description_markdown": "Calculate each product's price mark-up over the cheapest item in its category: select `product_id`, `category_id`, `product_name`, `price`, and `ROUND(price - FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC), 2) AS price_premium` from `products`. Order by `category_id` ASC, `price` ASC, `product_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      },
+      {
+        "name": "price_premium",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Price premium over category floor\nSELECT product_id, category_id, product_name, price,\n  ROUND(price - FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC), 2) AS price_premium\nFROM products\nORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_query": "SELECT product_id, category_id, product_name, price, ROUND(price - FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC), 2) AS price_premium FROM products ORDER BY category_id ASC, price ASC, product_id ASC;",
+    "solution_explanation": "Subtracts the category floor price from current price.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Missing rounding on price differential."
+    ],
+    "interview_tip": "Good-Better-Best merchandising models rely on price premiums computed via FIRST_VALUE.",
+    "hints": [
+      "Compute `ROUND(price - FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC), 2) AS price_premium`.",
+      "Order by `category_id ASC, price ASC, product_id ASC`.",
+      "Query: SELECT product_id, category_id, product_name, price, ROUND(price - FIRST_VALUE(price) OVER (PARTITION BY category_id ORDER BY price ASC, product_id ASC), 2) AS price_premium FROM products ORDER BY category_id ASC, price ASC, product_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "premium",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-23",
+    "slug": "wof-lead-next-order-amount-customer",
+    "title": "Access Following Order Amount for Repeat Customers",
+    "description_markdown": "From `orders`, retrieve each order along with the customer's next order value using `LEAD(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC)` as `next_order_amount`. Return `order_id`, `customer_id`, `order_date`, `total_amount`, and `next_order_amount`. Order by `customer_id` ASC, `order_date` ASC, `order_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      },
+      {
+        "name": "next_order_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Following order amount via LEAD\nSELECT order_id, customer_id, order_date, total_amount,\n  LEAD(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_amount\nFROM orders\nORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, order_date, total_amount, LEAD(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_amount FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;",
+    "solution_explanation": "Looks forward to the next transaction amount for sequential basket size tracking.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY customer_id."
+    ],
+    "interview_tip": "LEAD on revenue columns supports customer lifetime value expansion modeling.",
+    "hints": [
+      "Use `LEAD(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_amount`.",
+      "Order by `customer_id ASC, order_date ASC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, order_date, total_amount, LEAD(total_amount) OVER (PARTITION BY customer_id ORDER BY order_date ASC, order_id ASC) AS next_order_amount FROM orders ORDER BY customer_id ASC, order_date ASC, order_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "revenue",
+      "customer-orders"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-24",
+    "slug": "wof-lag-prev-prof-salary-in-department",
+    "title": "Access Preceding Professor Salary Within Department",
+    "description_markdown": "From `professors`, retrieve each instructor alongside the salary of the lower-paid faculty member immediately preceding in their department: use `LAG(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC)` as `prev_prof_salary`. Return `professor_id`, `department`, `first_name`, `salary`, and `prev_prof_salary`. Order by `department` ASC, `salary` ASC, `professor_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_prof_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Previous professor salary in department\nSELECT professor_id, department, first_name, salary,\n  LAG(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS prev_prof_salary\nFROM professors\nORDER BY department ASC, salary ASC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, department, first_name, salary, LAG(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS prev_prof_salary FROM professors ORDER BY department ASC, salary ASC, professor_id ASC;",
+    "solution_explanation": "Exposes previous salary step within academic departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting department partition."
+    ],
+    "interview_tip": "Intra-department compensation stepped bands are analyzed using LAG.",
+    "hints": [
+      "Partition by `department`.",
+      "Use `LAG(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS prev_prof_salary`.",
+      "Query: SELECT professor_id, department, first_name, salary, LAG(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS prev_prof_salary FROM professors ORDER BY department ASC, salary ASC, professor_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "faculty",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-25",
+    "slug": "wof-lead-next-prof-salary-in-department",
+    "title": "Access Following Professor Salary Within Department",
+    "description_markdown": "From `professors`, retrieve each instructor alongside the next higher faculty salary in their department: use `LEAD(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC)` as `next_prof_salary`. Return `professor_id`, `department`, `first_name`, `salary`, and `next_prof_salary`. Order by `department` ASC, `salary` ASC, `professor_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "next_prof_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Following professor salary in department\nSELECT professor_id, department, first_name, salary,\n  LEAD(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS next_prof_salary\nFROM professors\nORDER BY department ASC, salary ASC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, department, first_name, salary, LEAD(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS next_prof_salary FROM professors ORDER BY department ASC, salary ASC, professor_id ASC;",
+    "solution_explanation": "Exposes the next higher compensation rank within the academic division.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting DESC instead of ASC."
+    ],
+    "interview_tip": "LEAD highlights next-promotion salary bands for tenure tracks.",
+    "hints": [
+      "Use `LEAD(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS next_prof_salary`.",
+      "Order by `department ASC, salary ASC, professor_id ASC`.",
+      "Query: SELECT professor_id, department, first_name, salary, LEAD(salary) OVER (PARTITION BY department ORDER BY salary ASC, professor_id ASC) AS next_prof_salary FROM professors ORDER BY department ASC, salary ASC, professor_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "faculty",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-26",
+    "slug": "wof-lag-prev-assessment-score-enrollment",
+    "title": "Access Preceding Assessment Score for Same Enrollment",
+    "description_markdown": "From `marks`, retrieve each test score alongside the preceding test score for the same enrollment: use `LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC)` as `prev_score`. Return `mark_id`, `enrollment_id`, `assessment_type`, `score`, and `prev_score`. Order by `enrollment_id` ASC, `mark_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Prior assessment score via LAG\nSELECT mark_id, enrollment_id, assessment_type, score,\n  LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC) AS prev_score\nFROM marks\nORDER BY enrollment_id ASC, mark_id ASC;",
+    "solution_query": "SELECT mark_id, enrollment_id, assessment_type, score, LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC) AS prev_score FROM marks ORDER BY enrollment_id ASC, mark_id ASC;",
+    "solution_explanation": "Sequences assessment marks per course enrollment to evaluate progress over time.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting PARTITION BY enrollment_id."
+    ],
+    "interview_tip": "Sequential grading histories track student improvement trajectories.",
+    "hints": [
+      "Partition by `enrollment_id` and order by `mark_id ASC`.",
+      "Use `LAG(score) OVER (...) AS prev_score`.",
+      "Query: SELECT mark_id, enrollment_id, assessment_type, score, LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC) AS prev_score FROM marks ORDER BY enrollment_id ASC, mark_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "marks",
+      "progress"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-27",
+    "slug": "wof-score-differential-successive-tests",
+    "title": "Calculate Student Performance Change Between Successive Tests",
+    "description_markdown": "Calculate the grade gain or loss from the previous test for each enrollment: select `mark_id`, `enrollment_id`, `assessment_type`, `score`, and `ROUND(score - LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC), 2) AS score_change` from `marks`. Order by `enrollment_id` ASC, `mark_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "numeric"
+      },
+      {
+        "name": "score_change",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Test score progression delta\nSELECT mark_id, enrollment_id, assessment_type, score,\n  ROUND(score - LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC), 2) AS score_change\nFROM marks\nORDER BY enrollment_id ASC, mark_id ASC;",
+    "solution_query": "SELECT mark_id, enrollment_id, assessment_type, score, ROUND(score - LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC), 2) AS score_change FROM marks ORDER BY enrollment_id ASC, mark_id ASC;",
+    "solution_explanation": "Subtracts LAG(score) from current score to track learning curve velocity.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting score from LAG(score)."
+    ],
+    "interview_tip": "Performance deltas indicate positive or negative academic trajectory.",
+    "hints": [
+      "Use `ROUND(score - LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC), 2) AS score_change`.",
+      "Order by `enrollment_id ASC, mark_id ASC`.",
+      "Query: SELECT mark_id, enrollment_id, assessment_type, score, ROUND(score - LAG(score) OVER (PARTITION BY enrollment_id ORDER BY mark_id ASC), 2) AS score_change FROM marks ORDER BY enrollment_id ASC, mark_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "delta",
+      "assessments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-28",
+    "slug": "wof-lag-prev-project-budget-in-department",
+    "title": "Access Preceding Project Budget in Department",
+    "description_markdown": "From `projects`, find the preceding project budget within the same department when sorted ascending: use `LAG(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC)` as `prev_dept_budget`. Return `project_id`, `dept_id`, `project_name`, `budget`, and `prev_dept_budget`. Order by `dept_id` ASC, `budget` ASC, `project_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "prev_dept_budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Preceding project budget in department\nSELECT project_id, dept_id, project_name, budget,\n  LAG(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS prev_dept_budget\nFROM projects\nORDER BY dept_id ASC, budget ASC, project_id ASC;",
+    "solution_query": "SELECT project_id, dept_id, project_name, budget, LAG(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS prev_dept_budget FROM projects ORDER BY dept_id ASC, budget ASC, project_id ASC;",
+    "solution_explanation": "Partitions project budgets by department to observe intra-team funding distribution.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting dept_id partitioning."
+    ],
+    "interview_tip": "Partitioned LAG identifies funding step-ups across project portfolios.",
+    "hints": [
+      "Use `LAG(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS prev_dept_budget`.",
+      "Order by `dept_id ASC, budget ASC, project_id ASC`.",
+      "Query: SELECT project_id, dept_id, project_name, budget, LAG(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS prev_dept_budget FROM projects ORDER BY dept_id ASC, budget ASC, project_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "budget",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-29",
+    "slug": "wof-lead-next-project-budget-in-department",
+    "title": "Access Following Project Budget in Department",
+    "description_markdown": "From `projects`, find the next higher project budget in the same department: use `LEAD(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC)` as `next_dept_budget`. Return `project_id`, `dept_id`, `project_name`, `budget`, and `next_dept_budget`. Order by `dept_id` ASC, `budget` ASC, `project_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      },
+      {
+        "name": "next_dept_budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Following project budget in department\nSELECT project_id, dept_id, project_name, budget,\n  LEAD(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS next_dept_budget\nFROM projects\nORDER BY dept_id ASC, budget ASC, project_id ASC;",
+    "solution_query": "SELECT project_id, dept_id, project_name, budget, LEAD(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS next_dept_budget FROM projects ORDER BY dept_id ASC, budget ASC, project_id ASC;",
+    "solution_explanation": "Looks forward to the next budget tier in the department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering DESC instead of ASC."
+    ],
+    "interview_tip": "LEAD helps detect next-highest investment allocations in project finance.",
+    "hints": [
+      "Use `LEAD(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS next_dept_budget`.",
+      "Order by `dept_id ASC, budget ASC, project_id ASC`.",
+      "Query: SELECT project_id, dept_id, project_name, budget, LEAD(budget) OVER (PARTITION BY dept_id ORDER BY budget ASC, project_id ASC) AS next_dept_budget FROM projects ORDER BY dept_id ASC, budget ASC, project_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lead",
+      "budget",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-30",
+    "slug": "wof-lag-prev-signup-timestamp-by-country",
+    "title": "Access Preceding Customer Registration Timestamp",
+    "description_markdown": "From `customers`, track registration cadence within each country: use `LAG(created_at) OVER (PARTITION BY country ORDER BY created_at ASC, customer_id ASC)` as `prev_signup_time`. Return `customer_id`, `country`, `first_name`, `created_at`, and `prev_signup_time`. Order by `country` ASC, `created_at` ASC, `customer_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_signup_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Prior signup time via LAG\nSELECT customer_id, country, first_name, created_at,\n  LAG(created_at) OVER (PARTITION BY country ORDER BY created_at ASC, customer_id ASC) AS prev_signup_time\nFROM customers\nORDER BY country ASC, created_at ASC, customer_id ASC;",
+    "solution_query": "SELECT customer_id, country, first_name, created_at, LAG(created_at) OVER (PARTITION BY country ORDER BY created_at ASC, customer_id ASC) AS prev_signup_time FROM customers ORDER BY country ASC, created_at ASC, customer_id ASC;",
+    "solution_explanation": "Compares consecutive customer onboarding timestamps per geographic country.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting country partition key."
+    ],
+    "interview_tip": "Lagging timestamps enables inter-arrival time calculation in cohort velocity pipelines.",
+    "hints": [
+      "Use `LAG(created_at) OVER (PARTITION BY country ORDER BY created_at ASC, customer_id ASC) AS prev_signup_time`.",
+      "Order by `country ASC, created_at ASC, customer_id ASC`.",
+      "Query: SELECT customer_id, country, first_name, created_at, LAG(created_at) OVER (PARTITION BY country ORDER BY created_at ASC, customer_id ASC) AS prev_signup_time FROM customers ORDER BY country ASC, created_at ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "lag",
+      "timestamps",
+      "customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-31",
+    "slug": "wof-first-value-min-department-salary",
+    "title": "Surface Department Minimum Salary via FIRST_VALUE",
+    "description_markdown": "From `employees` where `dept_id IS NOT NULL`, broadcast the minimum salary in each department using `FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC)` as `min_dept_salary`. Return `emp_id`, `dept_id`, `first_name`, `salary`, and `min_dept_salary`. Order by `dept_id` ASC, `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "min_dept_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Department minimum salary via FIRST_VALUE\nSELECT emp_id, dept_id, first_name, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS min_dept_salary\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, salary, FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS min_dept_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_explanation": "FIRST_VALUE ordered ascending isolates the floor compensation rate per department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting descending instead of ascending."
+    ],
+    "interview_tip": "Floor broadcasting enables instant baseline wage compression calculations.",
+    "hints": [
+      "Use `FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS min_dept_salary`.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, dept_id, first_name, salary, FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC) AS min_dept_salary FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "department-floor",
+      "salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-wof-32",
+    "slug": "wof-employee-premium-over-department-floor",
+    "title": "Calculate Compensation Elevation Above Department Minimum",
+    "description_markdown": "Calculate each employee's salary premium above the lowest-paid person in their department: select `emp_id`, `dept_id`, `first_name`, `salary`, and `ROUND(salary - FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC), 2) AS dept_min_premium` from `employees` where `dept_id IS NOT NULL`. Order by `dept_id` ASC, `salary` ASC, `emp_id` ASC.",
+    "topic_id": "window-offset",
+    "subtopic_id": "win-offset",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      },
+      {
+        "name": "dept_min_premium",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Premium above department minimum\nSELECT emp_id, dept_id, first_name, salary,\n  ROUND(salary - FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC), 2) AS dept_min_premium\nFROM employees\nWHERE dept_id IS NOT NULL\nORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, dept_id, first_name, salary, ROUND(salary - FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC), 2) AS dept_min_premium FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;",
+    "solution_explanation": "Subtracts the department floor salary computed by FIRST_VALUE from each employee's actual compensation.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Subtracting employee salary from the floor, yielding negative values."
+    ],
+    "interview_tip": "Evaluating employee compensation spread relative to minimums is standard in pay equity studies.",
+    "hints": [
+      "Use `ROUND(salary - FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC), 2) AS dept_min_premium`.",
+      "Filter `WHERE dept_id IS NOT NULL`.",
+      "Query: SELECT emp_id, dept_id, first_name, salary, ROUND(salary - FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary ASC, emp_id ASC), 2) AS dept_min_premium FROM employees WHERE dept_id IS NOT NULL ORDER BY dept_id ASC, salary ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "window-functions",
+      "first-value",
+      "delta",
+      "pay-equity"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-wof-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-wof-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-wof-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

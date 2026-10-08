@@ -1,0 +1,87 @@
+services:
+  # Application Database (Users, Progress, XP Ledger, Questions)
+  app-db:
+    image: postgres:16-alpine
+    container_name: sql_platform_app_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sql_platform_app
+      POSTGRES_USER: app_admin
+      POSTGRES_PASSWORD: app_secure_password_dev_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - app_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_admin -d sql_platform_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Dedicated Sandbox Execution Database (Zero shared access with app-db)
+  execution-db:
+    image: postgres:16-alpine
+    container_name: sql_platform_exec_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sandbox_exec
+      POSTGRES_USER: exec_admin
+      POSTGRES_PASSWORD: exec_secure_password_dev_456
+    ports:
+      - "5433:5432"
+    volumes:
+      - exec_db_data:/var/lib/postgresql/data
+      - ./docker/init-sandbox.sql:/docker-entrypoint-initdb.d/init-sandbox.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exec_admin -d sandbox_exec"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Dedicated MySQL 8.4 LTS Sandbox Database
+  mysql-sandbox:
+    image: mysql:8.4
+    container_name: sql_platform_mysql_sandbox
+    restart: unless-stopped
+    command:
+      - --skip-log-bin
+      - --local-infile=OFF
+      - --secure-file-priv=NULL
+      - --skip-name-resolve
+      - --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_SANDBOX_ADMIN_PASSWORD:-sandbox_root_dev_789}
+    ports:
+      - "${MYSQL_SANDBOX_PORT:-3307}:3306"
+    volumes:
+      - mysql_sandbox_data:/var/lib/mysql
+      - ./docker/init-mysql-sandbox.sql:/docker-entrypoint-initdb.d/init-mysql-sandbox.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache and Rate Limiting
+  redis:
+    image: redis:7-alpine
+    container_name: sql_platform_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  app_db_data:
+  exec_db_data:
+  mysql_sandbox_data:
+  redis_data:

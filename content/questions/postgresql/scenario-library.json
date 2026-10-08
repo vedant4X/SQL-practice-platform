@@ -1,0 +1,2391 @@
+[
+  {
+    "id": "q-sc-lib-01",
+    "slug": "library-books-by-author",
+    "title": "Catalog Titles by Literary Author",
+    "description_markdown": "Circulation request: Join `books` with `authors` on `author_id`. Return `b.title`, `a.name AS author_name`, and `b.publication_year`. Order by `b.publication_year` ASC, `b.title` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books",
+      "authors"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "author_name",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Catalog query\nSELECT ...",
+    "solution_query": "SELECT b.title, a.name AS author_name, b.publication_year FROM books b JOIN authors a ON b.author_id = a.author_id ORDER BY b.publication_year ASC, b.title ASC;",
+    "solution_explanation": "Joins library title inventory with bibliographic author records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join on `b.author_id = a.author_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT b.title, a.name AS author_name, b.publication_year FROM books b JOIN authors a ON b.author_id = a.author_id ORDER BY b.publication_year ASC, b.title ASC;"
+    ],
+    "tags": [
+      "library",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lib-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lib-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lib-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-02",
+    "slug": "library-currently-borrowed-titles",
+    "title": "Identify Active Overdue or Borrowed Volumes",
+    "description_markdown": "Librarian request: Find all currently checked-out books that have not yet been returned (`returned_date IS NULL`). Return `b.title`, `m.name AS member_name`, `bl.loan_date`, and `bl.due_date`. Order by `bl.due_date` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books",
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "member_name",
+        "type": "varchar"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      },
+      {
+        "name": "due_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Checked-out titles\nSELECT ...",
+    "solution_query": "SELECT b.title, m.name AS member_name, bl.loan_date, bl.due_date FROM book_loans bl JOIN books b ON bl.book_id = b.book_id JOIN members m ON bl.member_id = m.member_id WHERE bl.returned_date IS NULL ORDER BY bl.due_date ASC, b.title ASC;",
+    "solution_explanation": "Filters loans where `returned_date IS NULL` to locate open loans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE bl.returned_date IS NULL`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT b.title, m.name AS member_name, bl.loan_date, bl.due_date FROM book_loans bl JOIN books b ON bl.book_id = b.book_id JOIN members m ON bl.member_id = m.member_id WHERE bl.returned_date IS NULL ORDER BY bl.due_date ASC, b.title ASC;"
+    ],
+    "tags": [
+      "library",
+      "loans"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lib-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lib-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lib-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-03",
+    "slug": "library-most-active-borrowers",
+    "title": "Member Circulation Activity Volume",
+    "description_markdown": "Patron services request: Count total book loans per library member as `total_loans`. Return `m.name`, `m.email`, and `total_loans`. Filter for members with `total_loans >= 1`. Order by `total_loans` DESC, `m.member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "total_loans",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Member loan activity\nSELECT ...",
+    "solution_query": "SELECT m.name, m.email, COUNT(bl.loan_id) AS total_loans FROM members m JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name, m.email HAVING COUNT(bl.loan_id) >= 1 ORDER BY total_loans DESC, m.member_id ASC;",
+    "solution_explanation": "Quantifies member borrowing frequency.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by member and count loans.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT m.name, m.email, COUNT(bl.loan_id) AS total_loans FROM members m JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name, m.email HAVING COUNT(bl.loan_id) >= 1 ORDER BY total_loans DESC, m.member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "circulation"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-lib-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-lib-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-lib-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-04",
+    "slug": "lib-british-literary-authors",
+    "title": "Filter British Authors in Library Catalog",
+    "description_markdown": "List all authors whose nationality is 'British'. Return `author_id`, `name`, and `nationality`. Order by `name` ASC, `author_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "nationality",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT author_id, name, nationality FROM authors WHERE nationality = 'British' ORDER BY name ASC, author_id ASC;",
+    "solution_explanation": "Filters authors where nationality = 'British'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE nationality = 'British'`.",
+      "Order by `name` ASC, `author_id` ASC.",
+      "Query: SELECT author_id, name, nationality FROM authors WHERE nationality = 'British' ORDER BY name ASC, author_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-05",
+    "slug": "lib-mid-century-classic-titles",
+    "title": "Filter Classic Literature Published Before 1950",
+    "description_markdown": "Retrieve all books published strictly before the year 1950. Return `book_id`, `title`, `publication_year`, and `category`. Order by `publication_year` ASC, `book_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT book_id, title, publication_year, category FROM books WHERE publication_year < 1950 ORDER BY publication_year ASC, book_id ASC;",
+    "solution_explanation": "Filters books where publication_year < 1950.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE publication_year < 1950`.",
+      "Order by `publication_year` ASC, `book_id` ASC.",
+      "Query: SELECT book_id, title, publication_year, category FROM books WHERE publication_year < 1950 ORDER BY publication_year ASC, book_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-06",
+    "slug": "lib-book-collection-by-genre",
+    "title": "Count Catalog Titles Grouped by Category",
+    "description_markdown": "Count total book titles for each `category` as `title_count`. Order by `title_count` DESC, `category` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "title_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT category, COUNT(*) AS title_count FROM books GROUP BY category ORDER BY title_count DESC, category ASC;",
+    "solution_explanation": "Groups books by category and counts titles.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `category`.",
+      "Count records with `COUNT(*) AS title_count`.",
+      "Query: SELECT category, COUNT(*) AS title_count FROM books GROUP BY category ORDER BY title_count DESC, category ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-07",
+    "slug": "lib-active-outstanding-book-loans",
+    "title": "Filter Currently Active Unreturned Book Loans",
+    "description_markdown": "Retrieve all active loans that have not yet been returned (`returned_date IS NULL`). Return `loan_id`, `book_id`, `member_id`, and `loan_date`. Order by `loan_date` ASC, `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, book_id, member_id, loan_date FROM book_loans WHERE returned_date IS NULL ORDER BY loan_date ASC, loan_id ASC;",
+    "solution_explanation": "Filters book_loans where returned_date IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE returned_date IS NULL`.",
+      "Order by `loan_date` ASC, `loan_id` ASC.",
+      "Query: SELECT loan_id, book_id, member_id, loan_date FROM book_loans WHERE returned_date IS NULL ORDER BY loan_date ASC, loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-08",
+    "slug": "lib-titles-authored-per-writer",
+    "title": "Count Catalog Titles Authored per Writer",
+    "description_markdown": "For each author in `authors`, count their total titles in the catalog as `book_count`. Include authors with 0 books. Return `author_name` and `book_count`. Order by `book_count` DESC, `author_name` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors",
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_name",
+        "type": "varchar"
+      },
+      {
+        "name": "book_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.name AS author_name, COUNT(b.book_id) AS book_count FROM authors a LEFT JOIN books b ON a.author_id = b.author_id GROUP BY a.author_id, a.name ORDER BY book_count DESC, author_name ASC;",
+    "solution_explanation": "LEFT JOINs authors and books, grouping by author.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `authors a` and `books b` on `a.author_id = b.author_id`.",
+      "Count books with `COUNT(b.book_id) AS book_count`.",
+      "Query: SELECT a.name AS author_name, COUNT(b.book_id) AS book_count FROM authors a LEFT JOIN books b ON a.author_id = b.author_id GROUP BY a.author_id, a.name ORDER BY book_count DESC, author_name ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-09",
+    "slug": "lib-members-registered-in-2022",
+    "title": "Filter Members Who Onboarded in 2022",
+    "description_markdown": "List library members who joined during calendar year 2022. Return `member_id`, `name`, and `membership_date`. Order by `membership_date` ASC, `member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "membership_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT member_id, name, membership_date FROM members WHERE membership_date >= '2022-01-01' AND membership_date < '2023-01-01' ORDER BY membership_date ASC, member_id ASC;",
+    "solution_explanation": "Filters members where membership_date between 2022-01-01 and 2023-01-01.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE membership_date >= '2022-01-01' AND membership_date < '2023-01-01'`.",
+      "Order by `membership_date` ASC, `member_id` ASC.",
+      "Query: SELECT member_id, name, membership_date FROM members WHERE membership_date >= '2022-01-01' AND membership_date < '2023-01-01' ORDER BY membership_date ASC, member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-10",
+    "slug": "lib-total-copies-available-by-genre",
+    "title": "Aggregate Available Copies by Literary Category",
+    "description_markdown": "Calculate total copies available across all books in each `category` as `total_copies`. Order by `total_copies` DESC, `category` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "total_copies",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT category, SUM(copies_available) AS total_copies FROM books GROUP BY category ORDER BY total_copies DESC, category ASC;",
+    "solution_explanation": "Groups books by category and sums copies_available.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `category`.",
+      "Sum with `SUM(copies_available) AS total_copies`.",
+      "Query: SELECT category, SUM(copies_available) AS total_copies FROM books GROUP BY category ORDER BY total_copies DESC, category ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-11",
+    "slug": "lib-rank-books-by-copies-available",
+    "title": "Rank Catalog Titles by Shelf Availability",
+    "description_markdown": "Rank all books by `copies_available` descending using `DENSE_RANK()` as `copies_rank`. Return `title`, `category`, `copies_available`, and `copies_rank`. Order by `copies_rank` ASC, `title` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      },
+      {
+        "name": "copies_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT title, category, copies_available, DENSE_RANK() OVER (ORDER BY copies_available DESC) AS copies_rank FROM books ORDER BY copies_rank ASC, title ASC;",
+    "solution_explanation": "Applies DENSE_RANK() OVER (ORDER BY copies_available DESC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY copies_available DESC) AS copies_rank`.",
+      "Order by `copies_rank` ASC, `title` ASC.",
+      "Query: SELECT title, category, copies_available, DENSE_RANK() OVER (ORDER BY copies_available DESC) AS copies_rank FROM books ORDER BY copies_rank ASC, title ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-12",
+    "slug": "lib-titles-never-loaned-out",
+    "title": "Audit Book Titles with Zero Circulation Loans",
+    "description_markdown": "Find all books that have never been checked out by any member. Return `book_id`, `title`, and `category`. Order by `book_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.book_id, b.title, b.category FROM books b LEFT JOIN book_loans bl ON b.book_id = bl.book_id WHERE bl.loan_id IS NULL ORDER BY b.book_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE bl.loan_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `book_loans bl` on `b.book_id = bl.book_id`.",
+      "Filter with `WHERE bl.loan_id IS NULL`.",
+      "Query: SELECT b.book_id, b.title, b.category FROM books b LEFT JOIN book_loans bl ON b.book_id = bl.book_id WHERE bl.loan_id IS NULL ORDER BY b.book_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-13",
+    "slug": "lib-members-with-unreturned-loans",
+    "title": "Identify Members with Active Borrowed Books",
+    "description_markdown": "Find members who currently have unreturned books (`returned_date IS NULL`). Return `member_id`, `name`, and total active loans as `active_loans_count`. Order by `active_loans_count` DESC, `member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "active_loans_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.member_id, m.name, COUNT(bl.loan_id) AS active_loans_count FROM members m JOIN book_loans bl ON m.member_id = bl.member_id WHERE bl.returned_date IS NULL GROUP BY m.member_id, m.name ORDER BY active_loans_count DESC, m.member_id ASC;",
+    "solution_explanation": "Joins members and book_loans where returned_date IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `members` and `book_loans`.",
+      "Filter with `WHERE bl.returned_date IS NULL`.",
+      "Query: SELECT m.member_id, m.name, COUNT(bl.loan_id) AS active_loans_count FROM members m JOIN book_loans bl ON m.member_id = bl.member_id WHERE bl.returned_date IS NULL GROUP BY m.member_id, m.name ORDER BY active_loans_count DESC, m.member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-14",
+    "slug": "lib-average-publication-year-by-nationality",
+    "title": "Calculate Average Publication Era by Author Origin",
+    "description_markdown": "For each author `nationality`, calculate the average publication year rounded to the nearest integer as `avg_pub_year`. Order by `avg_pub_year` ASC, `nationality` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors",
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "nationality",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_pub_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.nationality, ROUND(AVG(b.publication_year))::INTEGER AS avg_pub_year FROM authors a JOIN books b ON a.author_id = b.author_id GROUP BY a.nationality ORDER BY avg_pub_year ASC, a.nationality ASC;",
+    "solution_explanation": "Joins authors and books and calculates ROUND(AVG(publication_year)) cast as integer.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `authors a` and `books b` on `a.author_id = b.author_id`.",
+      "In Postgres use `ROUND(AVG(b.publication_year))::INTEGER`, in MySQL use `CAST(ROUND(AVG(b.publication_year)) AS SIGNED)`.",
+      "Query: SELECT a.nationality, ROUND(AVG(b.publication_year))::INTEGER AS avg_pub_year FROM authors a JOIN books b ON a.author_id = b.author_id GROUP BY a.nationality ORDER BY avg_pub_year ASC, a.nationality ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-15",
+    "slug": "lib-most-borrowed-catalog-book",
+    "title": "Identify Most Loaned Title in Circulation History",
+    "description_markdown": "Calculate total borrow counts (`loan_count`) for each book that has been loaned out. Return `title`, `category`, and `loan_count`. Order by `loan_count` DESC, `title` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "loan_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.title, b.category, COUNT(bl.loan_id) AS loan_count FROM books b JOIN book_loans bl ON b.book_id = bl.book_id GROUP BY b.book_id, b.title, b.category ORDER BY loan_count DESC, b.title ASC;",
+    "solution_explanation": "Joins books and book_loans, grouping by book and counting loans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `books` and `book_loans` on `b.book_id = bl.book_id`.",
+      "Group by `b.book_id, b.title, b.category` and count loans.",
+      "Query: SELECT b.title, b.category, COUNT(bl.loan_id) AS loan_count FROM books b JOIN book_loans bl ON b.book_id = bl.book_id GROUP BY b.book_id, b.title, b.category ORDER BY loan_count DESC, b.title ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-16",
+    "slug": "lib-literary-vintage-classification",
+    "title": "Classify Literary Titles by Historical Era",
+    "description_markdown": "Classify books into historical eras using CASE: 'Pre-20th Century' for year < 1900, 'Mid-20th Century' for year < 1970, and 'Contemporary' otherwise as `era`. Return `title`, `publication_year`, and `era`. Order by `publication_year` ASC, `title` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      },
+      {
+        "name": "era",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT title, publication_year, CASE WHEN publication_year < 1900 THEN 'Pre-20th Century' WHEN publication_year < 1970 THEN 'Mid-20th Century' ELSE 'Contemporary' END AS era FROM books ORDER BY publication_year ASC, title ASC;",
+    "solution_explanation": "Uses CASE expression to map publication_year into eras.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN publication_year < 1900 THEN 'Pre-20th Century' ... END`.",
+      "Order by `publication_year` ASC, `title` ASC.",
+      "Query: SELECT title, publication_year, CASE WHEN publication_year < 1900 THEN 'Pre-20th Century' WHEN publication_year < 1970 THEN 'Mid-20th Century' ELSE 'Contemporary' END AS era FROM books ORDER BY publication_year ASC, title ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-17",
+    "slug": "lib-cumulative-loan-issuance-timeline",
+    "title": "Calculate Cumulative Book Loans Issued Over Time",
+    "description_markdown": "Calculate the running total count of book loans issued chronologically as `cumulative_loans`. Return `loan_id`, `loan_date`, and `cumulative_loans`. Order by `loan_date` ASC, `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      },
+      {
+        "name": "cumulative_loans",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, loan_date, COUNT(*) OVER (ORDER BY loan_date ASC, loan_id ASC) AS cumulative_loans FROM book_loans ORDER BY loan_date ASC, loan_id ASC;",
+    "solution_explanation": "Uses window function COUNT(*) OVER (ORDER BY loan_date ASC, loan_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(*) OVER (ORDER BY loan_date ASC, loan_id ASC) AS cumulative_loans`.",
+      "Order by `loan_date` ASC, `loan_id` ASC.",
+      "Query: SELECT loan_id, loan_date, COUNT(*) OVER (ORDER BY loan_date ASC, loan_id ASC) AS cumulative_loans FROM book_loans ORDER BY loan_date ASC, loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-18",
+    "slug": "lib-punctual-book-returns-audit",
+    "title": "Audit Punctual Returns Completed on or Before Due Date",
+    "description_markdown": "Find loans where the book was returned on or before its designated due date (`returned_date <= due_date`). Return `loan_id`, `due_date`, and `returned_date`. Order by `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "due_date",
+        "type": "date"
+      },
+      {
+        "name": "returned_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, due_date, returned_date FROM book_loans WHERE returned_date IS NOT NULL AND returned_date <= due_date ORDER BY loan_id ASC;",
+    "solution_explanation": "Filters book_loans where returned_date <= due_date.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE returned_date IS NOT NULL AND returned_date <= due_date`.",
+      "Order by `loan_id` ASC.",
+      "Query: SELECT loan_id, due_date, returned_date FROM book_loans WHERE returned_date IS NOT NULL AND returned_date <= due_date ORDER BY loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-19",
+    "slug": "lib-frequent-borrowers-multiple-titles",
+    "title": "Identify Avid Readers Borrowing Multiple Books",
+    "description_markdown": "Find members who have checked out at least 2 books across their borrowing history. Return `member_id`, `name`, and `total_loans_count`. Order by `total_loans_count` DESC, `member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_loans_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.member_id, m.name, COUNT(bl.loan_id) AS total_loans_count FROM members m JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name HAVING COUNT(bl.loan_id) >= 2 ORDER BY total_loans_count DESC, m.member_id ASC;",
+    "solution_explanation": "Joins members and book_loans with HAVING COUNT(bl.loan_id) >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `members` and `book_loans`.",
+      "Filter with `HAVING COUNT(bl.loan_id) >= 2`.",
+      "Query: SELECT m.member_id, m.name, COUNT(bl.loan_id) AS total_loans_count FROM members m JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name HAVING COUNT(bl.loan_id) >= 2 ORDER BY total_loans_count DESC, m.member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-20",
+    "slug": "lib-titles-above-average-available-copies",
+    "title": "Identify Books with Above-Average Shelf Stock",
+    "description_markdown": "Find books whose available copy count strictly exceeds the average available copies across all books in the library. Return `book_id`, `title`, and `copies_available`. Order by `copies_available` DESC, `book_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT book_id, title, copies_available FROM books WHERE copies_available > (SELECT AVG(copies_available) FROM books) ORDER BY copies_available DESC, book_id ASC;",
+    "solution_explanation": "Filters books using a scalar subquery with AVG(copies_available).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE copies_available > (SELECT AVG(copies_available) FROM books)`.",
+      "Order by `copies_available` DESC, `book_id` ASC.",
+      "Query: SELECT book_id, title, copies_available FROM books WHERE copies_available > (SELECT AVG(copies_available) FROM books) ORDER BY copies_available DESC, book_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-21",
+    "slug": "lib-lead-loan-checkout-date",
+    "title": "Track Successive Member Checkout Dates Using LEAD",
+    "description_markdown": "For each loan, determine the checkout date of the member's next subsequent loan as `next_loan_date` using `LEAD()`. Return `loan_id`, `member_id`, `loan_date`, and `next_loan_date`. Order by `member_id` ASC, `loan_date` ASC, `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      },
+      {
+        "name": "next_loan_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, member_id, loan_date, LEAD(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC) AS next_loan_date FROM book_loans ORDER BY member_id ASC, loan_date ASC, loan_id ASC;",
+    "solution_explanation": "Applies LEAD(loan_date, 1) partitioned by member_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC)`.",
+      "Order by `member_id` ASC, `loan_date` ASC, `loan_id` ASC.",
+      "Query: SELECT loan_id, member_id, loan_date, LEAD(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC) AS next_loan_date FROM book_loans ORDER BY member_id ASC, loan_date ASC, loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-22",
+    "slug": "lib-circulation-log-manifest-roster",
+    "title": "Assemble Circulation Roster with Author and Borrower",
+    "description_markdown": "Generate a complete circulation log showing `loan_id`, `book_title`, `author_name`, `member_name`, and `loan_date`. Order by `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans",
+      "books",
+      "authors",
+      "members"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_title",
+        "type": "varchar"
+      },
+      {
+        "name": "author_name",
+        "type": "varchar"
+      },
+      {
+        "name": "member_name",
+        "type": "varchar"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT bl.loan_id, b.title AS book_title, a.name AS author_name, m.name AS member_name, bl.loan_date FROM book_loans bl JOIN books b ON bl.book_id = b.book_id JOIN authors a ON b.author_id = a.author_id JOIN members m ON bl.member_id = m.member_id ORDER BY bl.loan_id ASC;",
+    "solution_explanation": "Four-table join connecting book_loans, books, authors, and members.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `book_loans bl`, `books b`, `authors a`, and `members m`.",
+      "Order by `bl.loan_id` ASC.",
+      "Query: SELECT bl.loan_id, b.title AS book_title, a.name AS author_name, m.name AS member_name, bl.loan_date FROM book_loans bl JOIN books b ON bl.book_id = b.book_id JOIN authors a ON b.author_id = a.author_id JOIN members m ON bl.member_id = m.member_id ORDER BY bl.loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-23",
+    "slug": "lib-authors-with-circulating-loans",
+    "title": "Filter Authors Whose Works Have Active or Past Loans",
+    "description_markdown": "Identify authors whose books have circulated on loan at least once as `circulation_count`. Return `author_id`, `name`, and `circulation_count`. Order by `circulation_count` DESC, `name` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors",
+      "books",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "circulation_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.author_id, a.name, COUNT(bl.loan_id) AS circulation_count FROM authors a JOIN books b ON a.author_id = b.author_id JOIN book_loans bl ON b.book_id = bl.book_id GROUP BY a.author_id, a.name HAVING COUNT(bl.loan_id) >= 1 ORDER BY circulation_count DESC, a.name ASC;",
+    "solution_explanation": "Joins authors, books, and book_loans, grouping by author with HAVING COUNT >= 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `authors`, `books`, and `book_loans`.",
+      "Group by `a.author_id, a.name` and count `bl.loan_id`.",
+      "Query: SELECT a.author_id, a.name, COUNT(bl.loan_id) AS circulation_count FROM authors a JOIN books b ON a.author_id = b.author_id JOIN book_loans bl ON b.book_id = bl.book_id GROUP BY a.author_id, a.name HAVING COUNT(bl.loan_id) >= 1 ORDER BY circulation_count DESC, a.name ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-24",
+    "slug": "lib-book-title-keyword-search",
+    "title": "Filter Books by Title Keywords",
+    "description_markdown": "Find books whose `title` contains either 'Wood' or 'Farm'. Return `book_id`, `title`, and `category`. Order by `book_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT book_id, title, category FROM books WHERE title LIKE '%Wood%' OR title LIKE '%Farm%' ORDER BY book_id ASC;",
+    "solution_explanation": "Filters books with pattern matching on title.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE title LIKE '%Wood%' OR title LIKE '%Farm%'`.",
+      "Order by `book_id` ASC.",
+      "Query: SELECT book_id, title, category FROM books WHERE title LIKE '%Wood%' OR title LIKE '%Farm%' ORDER BY book_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-25",
+    "slug": "lib-copies-variance-from-category-average",
+    "title": "Calculate Inventory Variance from Genre Average",
+    "description_markdown": "For each book, display `book_id`, `category`, `copies_available`, and the average copies available in its category rounded to 2 decimals as `category_avg_copies`. Order by `category` ASC, `copies_available` DESC, `book_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      },
+      {
+        "name": "category_avg_copies",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT book_id, category, copies_available, ROUND(AVG(copies_available) OVER (PARTITION BY category), 2) AS category_avg_copies FROM books ORDER BY category ASC, copies_available DESC, book_id ASC;",
+    "solution_explanation": "Uses window function ROUND(AVG(copies_available) OVER (PARTITION BY category), 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(AVG(copies_available) OVER (PARTITION BY category), 2) AS category_avg_copies`.",
+      "Order by `category` ASC, `copies_available` DESC, `book_id` ASC.",
+      "Query: SELECT book_id, category, copies_available, ROUND(AVG(copies_available) OVER (PARTITION BY category), 2) AS category_avg_copies FROM books ORDER BY category ASC, copies_available DESC, book_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-26",
+    "slug": "lib-oldest-title-in-circulation-catalog",
+    "title": "Identify Oldest Book in the Library Collection",
+    "description_markdown": "Find the single oldest book title based on publication year. Return `book_id`, `title`, and `publication_year`.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 1;",
+    "solution_explanation": "Orders books by publication_year ASC and limits to 1 row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Order by `publication_year ASC, book_id ASC`.",
+      "Limit results to 1 row.",
+      "Query: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC LIMIT 1;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-27",
+    "slug": "lib-authors-without-book-loans",
+    "title": "Identify Authors with Zero Works Loaned Out",
+    "description_markdown": "Find authors who have zero books currently or historically loaned out. Return `author_id` and `name`. Order by `author_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors",
+      "books",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "author_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.author_id, a.name FROM authors a WHERE NOT EXISTS (SELECT 1 FROM books b JOIN book_loans bl ON b.book_id = bl.book_id WHERE b.author_id = a.author_id) ORDER BY a.author_id ASC;",
+    "solution_explanation": "Uses NOT EXISTS to find authors whose books have never appeared in book_loans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `NOT EXISTS (SELECT 1 FROM books b JOIN book_loans bl ...)`.",
+      "Order by `a.author_id` ASC.",
+      "Query: SELECT a.author_id, a.name FROM authors a WHERE NOT EXISTS (SELECT 1 FROM books b JOIN book_loans bl ON b.book_id = bl.book_id WHERE b.author_id = a.author_id) ORDER BY a.author_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-28",
+    "slug": "lib-loan-duration-days-audit",
+    "title": "Calculate Loan Duration in Days for Returned Titles",
+    "description_markdown": "Calculate borrowing duration in days (`returned_date - loan_date`) for all returned books as `duration_days`. Return `loan_id`, `book_id`, and `duration_days`. Order by `duration_days` DESC, `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "duration_days",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, book_id, (returned_date - loan_date) AS duration_days FROM book_loans WHERE returned_date IS NOT NULL ORDER BY duration_days DESC, loan_id ASC;",
+    "solution_explanation": "Calculates difference in days between returned_date and loan_date.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "In Postgres use `(returned_date - loan_date)`, in MySQL use `DATEDIFF(returned_date, loan_date)`.",
+      "Filter with `WHERE returned_date IS NOT NULL`.",
+      "Query: SELECT loan_id, book_id, (returned_date - loan_date) AS duration_days FROM book_loans WHERE returned_date IS NOT NULL ORDER BY duration_days DESC, loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-29",
+    "slug": "lib-lag-member-previous-loan-date",
+    "title": "Track Previous Borrowing Date per Member Using LAG",
+    "description_markdown": "For each loan, determine the member's previous borrowing date as `prev_loan_date` using `LAG()`. Return `loan_id`, `member_id`, `loan_date`, and `prev_loan_date`. Order by `member_id` ASC, `loan_date` ASC, `loan_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "loan_date",
+        "type": "date"
+      },
+      {
+        "name": "prev_loan_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT loan_id, member_id, loan_date, LAG(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC) AS prev_loan_date FROM book_loans ORDER BY member_id ASC, loan_date ASC, loan_id ASC;",
+    "solution_explanation": "Applies LAG(loan_date, 1) partitioned by member_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC)`.",
+      "Order by `member_id` ASC, `loan_date` ASC, `loan_id` ASC.",
+      "Query: SELECT loan_id, member_id, loan_date, LAG(loan_date, 1) OVER (PARTITION BY member_id ORDER BY loan_date ASC, loan_id ASC) AS prev_loan_date FROM book_loans ORDER BY member_id ASC, loan_date ASC, loan_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-30",
+    "slug": "lib-active-registered-members-roster",
+    "title": "List Active Library Members Directory",
+    "description_markdown": "Retrieve all members whose account status is 'active'. Return `member_id`, `name`, `email`, and `status`. Order by `member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT member_id, name, email, status FROM members WHERE status = 'active' ORDER BY member_id ASC;",
+    "solution_explanation": "Filters members where status = 'active'.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE status = 'active'`.",
+      "Order by `member_id` ASC.",
+      "Query: SELECT member_id, name, email, status FROM members WHERE status = 'active' ORDER BY member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-31",
+    "slug": "lib-member-complete-borrowing-summary",
+    "title": "Compile Member Global Borrowing Activity Scorecard",
+    "description_markdown": "For each member, calculate `total_loans`, `returned_loans`, and `active_loans`. Return `member_id`, `name`, `total_loans`, `returned_loans`, and `active_loans`. Order by `total_loans` DESC, `active_loans` DESC, `member_id` ASC.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_loans",
+        "type": "bigint"
+      },
+      {
+        "name": "returned_loans",
+        "type": "bigint"
+      },
+      {
+        "name": "active_loans",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT m.member_id, m.name, COUNT(bl.loan_id) AS total_loans, COUNT(CASE WHEN bl.returned_date IS NOT NULL THEN 1 END) AS returned_loans, COUNT(CASE WHEN bl.returned_date IS NULL AND bl.loan_id IS NOT NULL THEN 1 END) AS active_loans FROM members m LEFT JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name ORDER BY total_loans DESC, active_loans DESC, m.member_id ASC;",
+    "solution_explanation": "Joins members and book_loans with conditional aggregations for returned and active loans.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `book_loans bl` on `m.member_id = bl.member_id`.",
+      "Compute `COUNT(CASE WHEN bl.returned_date IS NOT NULL THEN 1 END)`.",
+      "Query: SELECT m.member_id, m.name, COUNT(bl.loan_id) AS total_loans, COUNT(CASE WHEN bl.returned_date IS NOT NULL THEN 1 END) AS returned_loans, COUNT(CASE WHEN bl.returned_date IS NULL AND bl.loan_id IS NOT NULL THEN 1 END) AS active_loans FROM members m LEFT JOIN book_loans bl ON m.member_id = bl.member_id GROUP BY m.member_id, m.name ORDER BY total_loans DESC, active_loans DESC, m.member_id ASC;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-lib-32",
+    "slug": "lib-library-network-executive-kpi-summary",
+    "title": "Compile Library System Operations Executive KPI Scorecard",
+    "description_markdown": "Compile single-row library administrative scorecard metrics: `total_authors`, `total_books`, `total_members`, and `total_loans`.",
+    "topic_id": "scenario-library",
+    "subtopic_id": "sc-lib",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "authors",
+      "books",
+      "members",
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_authors",
+        "type": "bigint"
+      },
+      {
+        "name": "total_books",
+        "type": "bigint"
+      },
+      {
+        "name": "total_members",
+        "type": "bigint"
+      },
+      {
+        "name": "total_loans",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM authors) AS total_authors, (SELECT COUNT(*) FROM books) AS total_books, (SELECT COUNT(*) FROM members) AS total_members, (SELECT COUNT(*) FROM book_loans) AS total_loans;",
+    "solution_explanation": "Uses scalar subqueries to create a comprehensive library KPI scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each entity count.",
+      "Select all four metrics in a single row.",
+      "Query: SELECT (SELECT COUNT(*) FROM authors) AS total_authors, (SELECT COUNT(*) FROM books) AS total_books, (SELECT COUNT(*) FROM members) AS total_members, (SELECT COUNT(*) FROM book_loans) AS total_loans;"
+    ],
+    "tags": [
+      "library",
+      "sc-lib"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-lib-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-lib-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-lib-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

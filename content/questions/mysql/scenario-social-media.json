@@ -1,0 +1,2351 @@
+[
+  {
+    "id": "q-my-sc-soc-01",
+    "slug": "social-media-top-liked-posts",
+    "title": "Identify Most Liked Content Posts",
+    "description_markdown": "Engagement team request: For each post in `posts`, count total likes received in `likes` as `like_count`. Return `p.post_id`, `u.handle AS author_handle`, and `like_count`. Filter for `like_count >= 1`. Order by `like_count` DESC, `p.post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "social_users",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "author_handle",
+        "type": "varchar"
+      },
+      {
+        "name": "like_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Most liked posts\nSELECT ...",
+    "solution_query": "SELECT p.post_id, u.handle AS author_handle, COUNT(l.like_id) AS like_count FROM posts p JOIN social_users u ON p.user_id = u.user_id JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, u.handle HAVING COUNT(l.like_id) >= 1 ORDER BY like_count DESC, p.post_id ASC;",
+    "solution_explanation": "Joins posts to reactions and user handles.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join posts -> users and posts -> likes.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.post_id, u.handle AS author_handle, COUNT(l.like_id) AS like_count FROM posts p JOIN social_users u ON p.user_id = u.user_id JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, u.handle HAVING COUNT(l.like_id) >= 1 ORDER BY like_count DESC, p.post_id ASC;"
+    ],
+    "tags": [
+      "social-media",
+      "likes"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-soc-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-soc-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-soc-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-02",
+    "slug": "social-media-user-follower-counts",
+    "title": "Calculate User Follower Popularity",
+    "description_markdown": "Growth team request: Count how many followers each user has in `follows` as `follower_count`. Return `u.user_id`, `u.handle`, and `follower_count`. Order by `follower_count` DESC, `u.user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "follower_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Follower count per user\nSELECT ...",
+    "solution_query": "SELECT u.user_id, u.handle, COUNT(f.follower_id) AS follower_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.following_id GROUP BY u.user_id, u.handle ORDER BY follower_count DESC, u.user_id ASC;",
+    "solution_explanation": "LEFT JOIN on `f.following_id` counts how many other profiles follow this user.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `ON u.user_id = f.following_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT u.user_id, u.handle, COUNT(f.follower_id) AS follower_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.following_id GROUP BY u.user_id, u.handle ORDER BY follower_count DESC, u.user_id ASC;"
+    ],
+    "tags": [
+      "social-media",
+      "followers"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-soc-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-soc-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-soc-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-03",
+    "slug": "social-media-mutual-following-pairs",
+    "title": "Detect Bidirectional Mutual Follow Relationships",
+    "description_markdown": "Graph network request: Find all pairs of users who mutually follow each other. Return `f1.follower_id AS user_a`, `f1.following_id AS user_b`. Ensure `user_a < user_b` to eliminate reciprocal duplicates. Order by `user_a` ASC, `user_b` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_a",
+        "type": "integer"
+      },
+      {
+        "name": "user_b",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Mutual follow self-join\nSELECT ...",
+    "solution_query": "SELECT f1.follower_id AS user_a, f1.following_id AS user_b FROM follows f1 JOIN follows f2 ON f1.follower_id = f2.following_id AND f1.following_id = f2.follower_id WHERE f1.follower_id < f1.following_id ORDER BY user_a ASC, user_b ASC;",
+    "solution_explanation": "Self-joins the graph adjacency table to locate symmetric edges `(A -> B AND B -> A)`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `ON f1.follower_id = f2.following_id AND f1.following_id = f2.follower_id`.",
+      "Filter `f1.follower_id < f1.following_id`.",
+      "Query: SELECT f1.follower_id AS user_a, f1.following_id AS user_b FROM follows f1 JOIN follows f2 ON f1.follower_id = f2.following_id AND f1.following_id = f2.follower_id WHERE f1.follower_id < f1.following_id ORDER BY user_a ASC, user_b ASC;"
+    ],
+    "tags": [
+      "social-media",
+      "mutual-friends",
+      "graph"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-soc-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-soc-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-soc-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-04",
+    "slug": "soc-early-adopter-users-2021",
+    "title": "Filter Early Platform Adopters from 2021",
+    "description_markdown": "List users who registered in the calendar year 2021. Return `user_id`, `handle`, and `full_name`. Order by `created_at` ASC, `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT user_id, handle, full_name FROM social_users WHERE created_at >= '2021-01-01' AND created_at < '2022-01-01' ORDER BY created_at ASC, user_id ASC;",
+    "solution_explanation": "Filters social_users with created_at between 2021-01-01 and 2022-01-01.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE created_at >= '2021-01-01' AND created_at < '2022-01-01'`.",
+      "Order by `created_at` ASC, `user_id` ASC.",
+      "Query: SELECT user_id, handle, full_name FROM social_users WHERE created_at >= '2021-01-01' AND created_at < '2022-01-01' ORDER BY created_at ASC, user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-05",
+    "slug": "soc-posts-with-multiple-likes",
+    "title": "Filter Engaging Posts with Multiple Likes",
+    "description_markdown": "Find posts that have received at least 2 likes. Return `post_id`, `content`, and `like_count`. Order by `like_count` DESC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      },
+      {
+        "name": "like_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, p.content, COUNT(l.like_id) AS like_count FROM posts p JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, p.content HAVING COUNT(l.like_id) >= 2 ORDER BY like_count DESC, p.post_id ASC;",
+    "solution_explanation": "Joins posts and likes, grouping by post with HAVING COUNT >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `posts` and `likes` on `p.post_id = l.post_id`.",
+      "Filter with `HAVING COUNT(l.like_id) >= 2`.",
+      "Query: SELECT p.post_id, p.content, COUNT(l.like_id) AS like_count FROM posts p JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, p.content HAVING COUNT(l.like_id) >= 2 ORDER BY like_count DESC, p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-06",
+    "slug": "soc-follower-count-per-user",
+    "title": "Calculate Total Followers per Account",
+    "description_markdown": "Calculate total followers for each user as `follower_count`. Include users with 0 followers. Return `handle` and `follower_count`. Order by `follower_count` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "follower_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.handle, COUNT(f.follower_id) AS follower_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.following_id GROUP BY u.user_id, u.handle ORDER BY follower_count DESC, u.handle ASC;",
+    "solution_explanation": "LEFT JOINs social_users and follows on u.user_id = f.following_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `follows f` on `u.user_id = f.following_id`.",
+      "Count with `COUNT(f.follower_id) AS follower_count`.",
+      "Query: SELECT u.handle, COUNT(f.follower_id) AS follower_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.following_id GROUP BY u.user_id, u.handle ORDER BY follower_count DESC, u.handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-07",
+    "slug": "soc-followers-of-top-creator",
+    "title": "List Followers of the Lead Creator Account",
+    "description_markdown": "List users who follow account `user_id = 1`. Return `follower_id`, `handle`, and `full_name`. Order by `follower_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "follower_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.user_id AS follower_id, u.handle, u.full_name FROM follows f JOIN social_users u ON f.follower_id = u.user_id WHERE f.following_id = 1 ORDER BY u.user_id ASC;",
+    "solution_explanation": "Joins follows with social_users filtering on following_id = 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE f.following_id = 1`.",
+      "Join `follows` with `social_users` on `f.follower_id = u.user_id`.",
+      "Query: SELECT u.user_id AS follower_id, u.handle, u.full_name FROM follows f JOIN social_users u ON f.follower_id = u.user_id WHERE f.following_id = 1 ORDER BY u.user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-08",
+    "slug": "soc-comments-published-per-user",
+    "title": "Aggregate Comments Authored per Community Member",
+    "description_markdown": "Calculate total comments published by each user as `comment_count`. Include users with 0 comments. Return `handle` and `comment_count`. Order by `comment_count` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "comment_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.handle, COUNT(c.comment_id) AS comment_count FROM social_users u LEFT JOIN comments c ON u.user_id = c.user_id GROUP BY u.user_id, u.handle ORDER BY comment_count DESC, u.handle ASC;",
+    "solution_explanation": "LEFT JOINs social_users and comments, grouping by user.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `comments c` on `u.user_id = c.user_id`.",
+      "Group by user and count comments.",
+      "Query: SELECT u.handle, COUNT(c.comment_id) AS comment_count FROM social_users u LEFT JOIN comments c ON u.user_id = c.user_id GROUP BY u.user_id, u.handle ORDER BY comment_count DESC, u.handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-09",
+    "slug": "soc-posts-with-zero-comments",
+    "title": "Identify Unanswered Posts with Zero Comments",
+    "description_markdown": "Find all posts that have never received any comments. Return `post_id` and `content`. Order by `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, p.content FROM posts p LEFT JOIN comments c ON p.post_id = c.post_id WHERE c.comment_id IS NULL ORDER BY p.post_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE c.comment_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `comments c` on `p.post_id = c.post_id`.",
+      "Filter with `WHERE c.comment_id IS NULL`.",
+      "Query: SELECT p.post_id, p.content FROM posts p LEFT JOIN comments c ON p.post_id = c.post_id WHERE c.comment_id IS NULL ORDER BY p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-10",
+    "slug": "soc-active-post-creators-multiple-posts",
+    "title": "Identify Active Content Authors with Multiple Posts",
+    "description_markdown": "Find users who have published at least 2 posts. Return `user_id`, `handle`, and `post_count`. Order by `post_count` DESC, `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "post_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.user_id, u.handle, COUNT(p.post_id) AS post_count FROM social_users u JOIN posts p ON u.user_id = p.user_id GROUP BY u.user_id, u.handle HAVING COUNT(p.post_id) >= 2 ORDER BY post_count DESC, u.user_id ASC;",
+    "solution_explanation": "Joins social_users and posts with HAVING COUNT(p.post_id) >= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `social_users` and `posts`.",
+      "Filter with `HAVING COUNT(p.post_id) >= 2`.",
+      "Query: SELECT u.user_id, u.handle, COUNT(p.post_id) AS post_count FROM social_users u JOIN posts p ON u.user_id = p.user_id GROUP BY u.user_id, u.handle HAVING COUNT(p.post_id) >= 2 ORDER BY post_count DESC, u.user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-11",
+    "slug": "soc-rank-posts-by-likes-received",
+    "title": "Rank Posts Globally by Total Likes Received",
+    "description_markdown": "Rank all posts by total likes received using `DENSE_RANK()` as `like_rank`. Return `post_id`, `like_count`, and `like_rank`. Order by `like_rank` ASC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "like_count",
+        "type": "bigint"
+      },
+      {
+        "name": "like_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, COUNT(l.like_id) AS like_count, DENSE_RANK() OVER (ORDER BY COUNT(l.like_id) DESC) AS like_rank FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id ORDER BY like_rank ASC, p.post_id ASC;",
+    "solution_explanation": "Groups by post_id and applies DENSE_RANK() OVER (ORDER BY COUNT(l.like_id) DESC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY COUNT(l.like_id) DESC) AS like_rank`.",
+      "Group by `p.post_id`.",
+      "Query: SELECT p.post_id, COUNT(l.like_id) AS like_count, DENSE_RANK() OVER (ORDER BY COUNT(l.like_id) DESC) AS like_rank FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id ORDER BY like_rank ASC, p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-12",
+    "slug": "soc-posts-with-zero-likes",
+    "title": "Identify Community Posts with Zero Reaction Likes",
+    "description_markdown": "Identify posts in the social feed that have never received any likes. Return `post_id`, `user_id`, and `content`. Order by `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, p.user_id, p.content FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id WHERE l.like_id IS NULL ORDER BY p.post_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE l.like_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `likes l` on `p.post_id = l.post_id`.",
+      "Filter with `WHERE l.like_id IS NULL`.",
+      "Query: SELECT p.post_id, p.user_id, p.content FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id WHERE l.like_id IS NULL ORDER BY p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-13",
+    "slug": "soc-posts-with-sql-keywords",
+    "title": "Search Posts Mentioning Database and SQL Keywords",
+    "description_markdown": "Find posts whose `content` contains either 'SQL' or 'PostgreSQL'. Return `post_id` and `content`. Order by `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT post_id, content FROM posts WHERE content LIKE '%SQL%' OR content LIKE '%PostgreSQL%' ORDER BY post_id ASC;",
+    "solution_explanation": "Filters posts with pattern matching on SQL keywords.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE content LIKE '%SQL%' OR content LIKE '%PostgreSQL%'`.",
+      "Order by `post_id` ASC.",
+      "Query: SELECT post_id, content FROM posts WHERE content LIKE '%SQL%' OR content LIKE '%PostgreSQL%' ORDER BY post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-14",
+    "slug": "soc-total-engagements-per-post",
+    "title": "Aggregate Total Engagements Across Likes and Comments",
+    "description_markdown": "For each post, compute `total_likes`, `total_comments`, and `total_engagements` (likes + comments) using `COUNT(DISTINCT)`. Return `post_id`, `total_likes`, `total_comments`, and `total_engagements`. Order by `total_engagements` DESC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes",
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_likes",
+        "type": "bigint"
+      },
+      {
+        "name": "total_comments",
+        "type": "bigint"
+      },
+      {
+        "name": "total_engagements",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, COUNT(DISTINCT l.like_id) AS total_likes, COUNT(DISTINCT c.comment_id) AS total_comments, (COUNT(DISTINCT l.like_id) + COUNT(DISTINCT c.comment_id)) AS total_engagements FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id LEFT JOIN comments c ON p.post_id = c.post_id GROUP BY p.post_id ORDER BY total_engagements DESC, p.post_id ASC;",
+    "solution_explanation": "LEFT JOINs likes and comments, uses COUNT(DISTINCT) to prevent Cartesian duplication.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(DISTINCT l.like_id)` and `COUNT(DISTINCT c.comment_id)`.",
+      "Sum both counts for `total_engagements`.",
+      "Query: SELECT p.post_id, COUNT(DISTINCT l.like_id) AS total_likes, COUNT(DISTINCT c.comment_id) AS total_comments, (COUNT(DISTINCT l.like_id) + COUNT(DISTINCT c.comment_id)) AS total_engagements FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id LEFT JOIN comments c ON p.post_id = c.post_id GROUP BY p.post_id ORDER BY total_engagements DESC, p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-15",
+    "slug": "soc-lurker-accounts-zero-posts",
+    "title": "Identify Lurker Members with Zero Posts Published",
+    "description_markdown": "Find users who have never authored any posts. Return `user_id`, `handle`, and `full_name`. Order by `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.user_id, u.handle, u.full_name FROM social_users u LEFT JOIN posts p ON u.user_id = p.user_id WHERE p.post_id IS NULL ORDER BY u.user_id ASC;",
+    "solution_explanation": "Anti-join using LEFT JOIN and filtering WHERE p.post_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `posts p` on `u.user_id = p.user_id`.",
+      "Filter with `WHERE p.post_id IS NULL`.",
+      "Query: SELECT u.user_id, u.handle, u.full_name FROM social_users u LEFT JOIN posts p ON u.user_id = p.user_id WHERE p.post_id IS NULL ORDER BY u.user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-16",
+    "slug": "soc-accounts-followed-count-per-user",
+    "title": "Count Accounts Followed per Community Member",
+    "description_markdown": "For each user, count the number of other accounts they are following as `following_count`. Include users following 0 accounts. Return `handle` and `following_count`. Order by `following_count` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "following_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.handle, COUNT(f.following_id) AS following_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.follower_id GROUP BY u.user_id, u.handle ORDER BY following_count DESC, u.handle ASC;",
+    "solution_explanation": "LEFT JOINs social_users and follows on u.user_id = f.follower_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `follows f` on `u.user_id = f.follower_id`.",
+      "Count following targets with `COUNT(f.following_id)`.",
+      "Query: SELECT u.handle, COUNT(f.following_id) AS following_count FROM social_users u LEFT JOIN follows f ON u.user_id = f.follower_id GROUP BY u.user_id, u.handle ORDER BY following_count DESC, u.handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-17",
+    "slug": "soc-cumulative-post-volume-timeline",
+    "title": "Compute Cumulative Platform Post Creation Timeline",
+    "description_markdown": "Calculate the running total count of posts authored over time as `running_post_count`. Return `post_id`, `created_at`, and `running_post_count`. Order by `created_at` ASC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "running_post_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT post_id, created_at, COUNT(*) OVER (ORDER BY created_at ASC, post_id ASC) AS running_post_count FROM posts ORDER BY created_at ASC, post_id ASC;",
+    "solution_explanation": "Uses window COUNT(*) OVER (ORDER BY created_at ASC, post_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(*) OVER (ORDER BY created_at ASC, post_id ASC) AS running_post_count`.",
+      "Order by `created_at` ASC, `post_id` ASC.",
+      "Query: SELECT post_id, created_at, COUNT(*) OVER (ORDER BY created_at ASC, post_id ASC) AS running_post_count FROM posts ORDER BY created_at ASC, post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-18",
+    "slug": "soc-average-comment-count-benchmark",
+    "title": "Calculate Platform Average Comment Count Benchmark",
+    "description_markdown": "Calculate the platform-wide average number of comments per post, rounded to 2 decimal places as `avg_comments_per_post`.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "avg_comments_per_post",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH post_comments AS (SELECT p.post_id, COUNT(c.comment_id) AS c_count FROM posts p LEFT JOIN comments c ON p.post_id = c.post_id GROUP BY p.post_id) SELECT ROUND(AVG(c_count), 2) AS avg_comments_per_post FROM post_comments;",
+    "solution_explanation": "Uses CTE to count comments per post and computes ROUND(AVG(), 2).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Count comments per post in a CTE.",
+      "Compute `ROUND(AVG(c_count), 2) AS avg_comments_per_post`.",
+      "Query: WITH post_comments AS (SELECT p.post_id, COUNT(c.comment_id) AS c_count FROM posts p LEFT JOIN comments c ON p.post_id = c.post_id GROUP BY p.post_id) SELECT ROUND(AVG(c_count), 2) AS avg_comments_per_post FROM post_comments;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-19",
+    "slug": "soc-top-liked-post-per-creator",
+    "title": "Determine Most Liked Post per Content Creator",
+    "description_markdown": "For each user who authored posts, find their single most liked post. If tied, pick lowest `post_id`. Return `handle`, `post_id`, and `like_count`. Order by `like_count` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes",
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "like_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH ranked_posts AS (SELECT u.handle, p.post_id, COUNT(l.like_id) AS like_count, ROW_NUMBER() OVER (PARTITION BY u.user_id ORDER BY COUNT(l.like_id) DESC, p.post_id ASC) AS rn FROM social_users u JOIN posts p ON u.user_id = p.user_id LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY u.user_id, u.handle, p.post_id) SELECT handle, post_id, like_count FROM ranked_posts WHERE rn = 1 ORDER BY like_count DESC, handle ASC;",
+    "solution_explanation": "Uses a CTE with ROW_NUMBER() partitioned by user_id ordered by like_count DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Partition ROW_NUMBER() by `u.user_id` ordered by `COUNT(l.like_id) DESC`.",
+      "Filter with `WHERE rn = 1`.",
+      "Query: WITH ranked_posts AS (SELECT u.handle, p.post_id, COUNT(l.like_id) AS like_count, ROW_NUMBER() OVER (PARTITION BY u.user_id ORDER BY COUNT(l.like_id) DESC, p.post_id ASC) AS rn FROM social_users u JOIN posts p ON u.user_id = p.user_id LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY u.user_id, u.handle, p.post_id) SELECT handle, post_id, like_count FROM ranked_posts WHERE rn = 1 ORDER BY like_count DESC, handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-20",
+    "slug": "soc-users-who-liked-and-commented",
+    "title": "Identify Users Who Both Liked and Commented on Post 1",
+    "description_markdown": "Find users who have BOTH liked AND commented on `post_id = 1`. Return `user_id` and `handle`. Order by `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "likes",
+      "comments",
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.user_id, u.handle FROM social_users u WHERE EXISTS (SELECT 1 FROM likes l WHERE l.user_id = u.user_id AND l.post_id = 1) AND EXISTS (SELECT 1 FROM comments c WHERE c.user_id = u.user_id AND c.post_id = 1) ORDER BY u.user_id ASC;",
+    "solution_explanation": "Uses double EXISTS subqueries for likes and comments on post 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `EXISTS (SELECT 1 FROM likes l WHERE l.user_id = u.user_id AND l.post_id = 1)`.",
+      "Combine with `AND EXISTS (SELECT 1 FROM comments c WHERE ...)`.",
+      "Query: SELECT u.user_id, u.handle FROM social_users u WHERE EXISTS (SELECT 1 FROM likes l WHERE l.user_id = u.user_id AND l.post_id = 1) AND EXISTS (SELECT 1 FROM comments c WHERE c.user_id = u.user_id AND c.post_id = 1) ORDER BY u.user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-21",
+    "slug": "soc-chronological-post-interval-lag",
+    "title": "Track Successive Post Publication Interval Using LAG",
+    "description_markdown": "For each post, retrieve the user's previous post timestamp as `prev_post_time` using `LAG()`. Return `post_id`, `user_id`, `created_at`, and `prev_post_time`. Order by `user_id` ASC, `created_at` ASC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_post_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT post_id, user_id, created_at, LAG(created_at, 1) OVER (PARTITION BY user_id ORDER BY created_at ASC, post_id ASC) AS prev_post_time FROM posts ORDER BY user_id ASC, created_at ASC, post_id ASC;",
+    "solution_explanation": "Applies LAG(created_at, 1) partitioned by user_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(created_at, 1) OVER (PARTITION BY user_id ORDER BY created_at ASC, post_id ASC)`.",
+      "Order by `user_id` ASC, `created_at` ASC, `post_id` ASC.",
+      "Query: SELECT post_id, user_id, created_at, LAG(created_at, 1) OVER (PARTITION BY user_id ORDER BY created_at ASC, post_id ASC) AS prev_post_time FROM posts ORDER BY user_id ASC, created_at ASC, post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-22",
+    "slug": "soc-posts-exceeding-average-likes",
+    "title": "Identify Posts Exceeding Catalog Average Likes",
+    "description_markdown": "Find posts that have received strictly more likes than the average number of likes per post across all posts. Return `post_id`, `content`, and `like_count`. Order by `like_count` DESC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      },
+      {
+        "name": "like_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH post_likes AS (SELECT p.post_id, p.content, COUNT(l.like_id) AS like_count FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, p.content) SELECT post_id, content, like_count FROM post_likes WHERE like_count > (SELECT AVG(like_count) FROM post_likes) ORDER BY like_count DESC, post_id ASC;",
+    "solution_explanation": "Uses a CTE to aggregate likes per post, then filters above average.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Calculate like counts in a CTE: `WITH post_likes AS (...)`.",
+      "Filter `WHERE like_count > (SELECT AVG(like_count) FROM post_likes)`.",
+      "Query: WITH post_likes AS (SELECT p.post_id, p.content, COUNT(l.like_id) AS like_count FROM posts p LEFT JOIN likes l ON p.post_id = l.post_id GROUP BY p.post_id, p.content) SELECT post_id, content, like_count FROM post_likes WHERE like_count > (SELECT AVG(like_count) FROM post_likes) ORDER BY like_count DESC, post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-23",
+    "slug": "soc-user-account-seniority-classification",
+    "title": "Classify Users by Registration Cohort",
+    "description_markdown": "Classify users into registration cohorts using CASE: 'Founding Class' for created_at < '2021-07-01', 'Early 2021' for created_at < '2022-01-01', and 'Modern Wave' otherwise as `cohort`. Order by `created_at` ASC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "cohort",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT handle, created_at, CASE WHEN created_at < '2021-07-01' THEN 'Founding Class' WHEN created_at < '2022-01-01' THEN 'Early 2021' ELSE 'Modern Wave' END AS cohort FROM social_users ORDER BY created_at ASC, handle ASC;",
+    "solution_explanation": "Uses CASE expression to segment users into registration cohorts.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN created_at < '2021-07-01' THEN 'Founding Class' ... END`.",
+      "Order by `created_at` ASC, `handle` ASC.",
+      "Query: SELECT handle, created_at, CASE WHEN created_at < '2021-07-01' THEN 'Founding Class' WHEN created_at < '2022-01-01' THEN 'Early 2021' ELSE 'Modern Wave' END AS cohort FROM social_users ORDER BY created_at ASC, handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-24",
+    "slug": "soc-most-active-discussion-commenters",
+    "title": "Identify Top Contributing Discussion Commenters",
+    "description_markdown": "Find users who have posted at least one comment, sorted by `comments_written` descending. Return `handle`, `full_name`, and `comments_written`. Order by `comments_written` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "comments_written",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.handle, u.full_name, COUNT(c.comment_id) AS comments_written FROM social_users u JOIN comments c ON u.user_id = c.user_id GROUP BY u.user_id, u.handle, u.full_name ORDER BY comments_written DESC, u.handle ASC;",
+    "solution_explanation": "Joins social_users and comments, grouping by user and counting comments.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `social_users` and `comments`.",
+      "Count comments with `COUNT(c.comment_id) AS comments_written`.",
+      "Query: SELECT u.handle, u.full_name, COUNT(c.comment_id) AS comments_written FROM social_users u JOIN comments c ON u.user_id = c.user_id GROUP BY u.user_id, u.handle, u.full_name ORDER BY comments_written DESC, u.handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-25",
+    "slug": "soc-content-feed-with-author-profiles",
+    "title": "Assemble Content Feed Roster with Author Handles",
+    "description_markdown": "Assemble a chronological timeline feed of posts showing `post_id`, author `handle`, `content`, and `created_at`. Order by `created_at` DESC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts",
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT p.post_id, u.handle, p.content, p.created_at FROM posts p JOIN social_users u ON p.user_id = u.user_id ORDER BY p.created_at DESC, p.post_id ASC;",
+    "solution_explanation": "Joins posts and social_users on user_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `posts` and `social_users`.",
+      "Order by `p.created_at` DESC, `p.post_id` ASC.",
+      "Query: SELECT p.post_id, u.handle, p.content, p.created_at FROM posts p JOIN social_users u ON p.user_id = u.user_id ORDER BY p.created_at DESC, p.post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-26",
+    "slug": "soc-users-liking-content-from-tech-guru",
+    "title": "Identify Users Who Liked Content Authored by tech_guru",
+    "description_markdown": "Find distinct users who liked any post authored by user_id 1 ('tech_guru'). Return `user_id` and `handle`. Order by `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "posts",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT u.user_id, u.handle FROM likes l JOIN social_users u ON l.user_id = u.user_id JOIN posts p ON l.post_id = p.post_id WHERE p.user_id = 1 ORDER BY u.user_id ASC;",
+    "solution_explanation": "Joins likes, users, and posts filtering WHERE p.user_id = 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `likes`, `social_users`, and `posts`.",
+      "Filter with `WHERE p.user_id = 1`.",
+      "Query: SELECT DISTINCT u.user_id, u.handle FROM likes l JOIN social_users u ON l.user_id = u.user_id JOIN posts p ON l.post_id = p.post_id WHERE p.user_id = 1 ORDER BY u.user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-27",
+    "slug": "soc-posts-published-in-february-2023",
+    "title": "Filter Posts Published During February 2023",
+    "description_markdown": "Retrieve posts created during February 2023. Return `post_id`, `content`, and `created_at`. Order by `created_at` ASC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "text"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT post_id, content, created_at FROM posts WHERE created_at >= '2023-02-01' AND created_at < '2023-03-01' ORDER BY created_at ASC, post_id ASC;",
+    "solution_explanation": "Filters posts with created_at in Feb 2023.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE created_at >= '2023-02-01' AND created_at < '2023-03-01'`.",
+      "Order by `created_at` ASC, `post_id` ASC.",
+      "Query: SELECT post_id, content, created_at FROM posts WHERE created_at >= '2023-02-01' AND created_at < '2023-03-01' ORDER BY created_at ASC, post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-28",
+    "slug": "soc-content-character-length-analysis",
+    "title": "Analyze Post Length by Character Count",
+    "description_markdown": "Calculate character length for each post as `char_length` using `LENGTH()`. Return `post_id` and `char_length`. Order by `char_length` DESC, `post_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "char_length",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT post_id, LENGTH(content) AS char_length FROM posts ORDER BY char_length DESC, post_id ASC;",
+    "solution_explanation": "Computes LENGTH(content) for each post.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LENGTH(content) AS char_length`.",
+      "Order by `char_length` DESC, `post_id` ASC.",
+      "Query: SELECT post_id, LENGTH(content) AS char_length FROM posts ORDER BY char_length DESC, post_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-29",
+    "slug": "soc-users-with-comprehensive-bios",
+    "title": "Filter User Profiles with Detailed Bio Descriptions",
+    "description_markdown": "List users whose `bio` is not null and contains at least 20 characters. Return `user_id`, `handle`, and `bio`. Order by `user_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "bio",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT user_id, handle, bio FROM social_users WHERE bio IS NOT NULL AND LENGTH(bio) >= 20 ORDER BY user_id ASC;",
+    "solution_explanation": "Filters social_users with bio IS NOT NULL and LENGTH(bio) >= 20.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE bio IS NOT NULL AND LENGTH(bio) >= 20`.",
+      "Order by `user_id` ASC.",
+      "Query: SELECT user_id, handle, bio FROM social_users WHERE bio IS NOT NULL AND LENGTH(bio) >= 20 ORDER BY user_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-30",
+    "slug": "soc-lead-comment-timestamp-audit",
+    "title": "Track Successive Comment Timestamp per Post Using LEAD",
+    "description_markdown": "For each comment, retrieve the timestamp of the next subsequent comment on that same post as `next_comment_time` using `LEAD()`. Return `comment_id`, `post_id`, `created_at`, and `next_comment_time`. Order by `post_id` ASC, `created_at` ASC, `comment_id` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "comments"
+    ],
+    "expected_columns": [
+      {
+        "name": "comment_id",
+        "type": "integer"
+      },
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "next_comment_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT comment_id, post_id, created_at, LEAD(created_at, 1) OVER (PARTITION BY post_id ORDER BY created_at ASC, comment_id ASC) AS next_comment_time FROM comments ORDER BY post_id ASC, created_at ASC, comment_id ASC;",
+    "solution_explanation": "Uses LEAD(created_at, 1) partitioned by post_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEAD(created_at, 1) OVER (PARTITION BY post_id ORDER BY created_at ASC, comment_id ASC)`.",
+      "Order by `post_id` ASC, `created_at` ASC, `comment_id` ASC.",
+      "Query: SELECT comment_id, post_id, created_at, LEAD(created_at, 1) OVER (PARTITION BY post_id ORDER BY created_at ASC, comment_id ASC) AS next_comment_time FROM comments ORDER BY post_id ASC, created_at ASC, comment_id ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-31",
+    "slug": "soc-user-engagement-activity-scorecard",
+    "title": "Compile User Engagement Activity Scorecard",
+    "description_markdown": "Compile user activity metrics: `handle`, `posts_count`, `comments_count`, and `likes_given` using `COUNT(DISTINCT)`. Order by `posts_count` DESC, `comments_count` DESC, `likes_given` DESC, `handle` ASC.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "posts",
+      "comments",
+      "likes"
+    ],
+    "expected_columns": [
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "posts_count",
+        "type": "bigint"
+      },
+      {
+        "name": "comments_count",
+        "type": "bigint"
+      },
+      {
+        "name": "likes_given",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT u.handle, COUNT(DISTINCT p.post_id) AS posts_count, COUNT(DISTINCT c.comment_id) AS comments_count, COUNT(DISTINCT l.like_id) AS likes_given FROM social_users u LEFT JOIN posts p ON u.user_id = p.user_id LEFT JOIN comments c ON u.user_id = c.user_id LEFT JOIN likes l ON u.user_id = l.user_id GROUP BY u.user_id, u.handle ORDER BY posts_count DESC, comments_count DESC, likes_given DESC, u.handle ASC;",
+    "solution_explanation": "LEFT JOINs posts, comments, and likes with COUNT(DISTINCT) to prevent multiplicative joins.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(DISTINCT p.post_id)`, `COUNT(DISTINCT c.comment_id)`, and `COUNT(DISTINCT l.like_id)`.",
+      "Group by `u.user_id, u.handle`.",
+      "Query: SELECT u.handle, COUNT(DISTINCT p.post_id) AS posts_count, COUNT(DISTINCT c.comment_id) AS comments_count, COUNT(DISTINCT l.like_id) AS likes_given FROM social_users u LEFT JOIN posts p ON u.user_id = p.user_id LEFT JOIN comments c ON u.user_id = c.user_id LEFT JOIN likes l ON u.user_id = l.user_id GROUP BY u.user_id, u.handle ORDER BY posts_count DESC, comments_count DESC, likes_given DESC, u.handle ASC;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-soc-32",
+    "slug": "soc-network-platform-executive-kpi-summary",
+    "title": "Compile Social Network Ecosystem Executive KPI Scorecard",
+    "description_markdown": "Compile single-row social network summary metrics: `total_users`, `total_posts`, `total_comments`, and `total_likes`.",
+    "topic_id": "scenario-social-media",
+    "subtopic_id": "sc-social",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users",
+      "posts",
+      "comments",
+      "likes",
+      "follows"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_users",
+        "type": "bigint"
+      },
+      {
+        "name": "total_posts",
+        "type": "bigint"
+      },
+      {
+        "name": "total_comments",
+        "type": "bigint"
+      },
+      {
+        "name": "total_likes",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM social_users) AS total_users, (SELECT COUNT(*) FROM posts) AS total_posts, (SELECT COUNT(*) FROM comments) AS total_comments, (SELECT COUNT(*) FROM likes) AS total_likes;",
+    "solution_explanation": "Uses scalar subqueries to create a social platform scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries for each entity count.",
+      "Alias each subquery cleanly.",
+      "Query: SELECT (SELECT COUNT(*) FROM social_users) AS total_users, (SELECT COUNT(*) FROM posts) AS total_posts, (SELECT COUNT(*) FROM comments) AS total_comments, (SELECT COUNT(*) FROM likes) AS total_likes;"
+    ],
+    "tags": [
+      "social_media",
+      "sc-social"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-soc-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-soc-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-soc-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

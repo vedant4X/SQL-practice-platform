@@ -1,0 +1,2521 @@
+[
+  {
+    "id": "q-my-cor-01",
+    "slug": "employees-earning-above-department-average",
+    "title": "Correlated Departmental Average Comparison",
+    "description_markdown": "Find all employees who earn more than the average salary of their own department using a correlated subquery. Return `e.first_name`, `e.salary`, and `e.dept_id`. Exclude NULL `dept_id`. Order by `e.dept_id` ASC, `e.salary` DESC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Correlated subquery\nSELECT e.first_name, e.salary, e.dept_id\nFROM employees e\nWHERE e.salary > (SELECT AVG(e2.salary) FROM employees e2 WHERE ...)",
+    "solution_query": "SELECT e.first_name, e.salary, e.dept_id FROM employees e WHERE e.dept_id IS NOT NULL AND e.salary > (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e.dept_id) ORDER BY e.dept_id ASC, e.salary DESC, e.emp_id ASC;",
+    "solution_explanation": "The inner query references `e.dept_id` from the outer query, evaluating departmental averages per row.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Correlate with `WHERE e2.dept_id = e.dept_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT e.first_name, e.salary, e.dept_id FROM employees e WHERE e.dept_id IS NOT NULL AND e.salary > (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e.dept_id) ORDER BY e.dept_id ASC, e.salary DESC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-02",
+    "slug": "products-most-expensive-in-category",
+    "title": "Flag Category-Leading Expensive Products",
+    "description_markdown": "Find the product(s) that have the highest price within their respective `category_id` using a correlated subquery. Return `product_name`, `category_id`, and `price`. Order by `category_id` ASC, `product_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Correlated subquery for max category price\nSELECT ...",
+    "solution_query": "SELECT p.product_name, p.category_id, p.price FROM products p WHERE p.price = (SELECT MAX(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.product_id ASC;",
+    "solution_explanation": "Computes the maximum price dynamically per category in the correlated subquery.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Match categories: `WHERE p2.category_id = p.category_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT p.product_name, p.category_id, p.price FROM products p WHERE p.price = (SELECT MAX(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.product_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "max-per-group"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-03",
+    "slug": "students-with-above-average-major-gpa",
+    "title": "Students Exceeding Departmental Major GPA",
+    "description_markdown": "Find students whose GPA is strictly above the average GPA of all students in their same `major`. Return `first_name`, `major`, and `gpa`. Order by `major` ASC, `gpa` DESC, `student_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Correlate on student major\nSELECT ...",
+    "solution_query": "SELECT s.first_name, s.major, s.gpa FROM students s WHERE s.gpa > (SELECT AVG(s2.gpa) FROM students s2 WHERE s2.major = s.major) ORDER BY s.major ASC, s.gpa DESC, s.student_id ASC;",
+    "solution_explanation": "Calculates major-specific benchmarks and filters higher-performing scholars.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Correlate on `s2.major = s.major`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT s.first_name, s.major, s.gpa FROM students s WHERE s.gpa > (SELECT AVG(s2.gpa) FROM students s2 WHERE s2.major = s.major) ORDER BY s.major ASC, s.gpa DESC, s.student_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "college"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-04",
+    "slug": "employees-earning-more-than-direct-manager",
+    "title": "Find Employees Earning More Than Their Direct Manager",
+    "description_markdown": "Use a correlated subquery to find all employees who earn strictly more than their direct manager (`e.manager_id IS NOT NULL AND e.salary > (SELECT m.salary FROM employees m WHERE m.emp_id = e.manager_id)`). Return `e.emp_id`, `e.first_name`, `e.salary`, and `e.manager_id`. Order by `e.emp_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "manager_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery comparing employee to manager\nSELECT e.emp_id, e.first_name, e.salary, e.manager_id\nFROM employees e\nWHERE e.manager_id IS NOT NULL\n  AND e.salary > (SELECT ...)\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary, e.manager_id FROM employees e WHERE e.manager_id IS NOT NULL AND e.salary > (SELECT m.salary FROM employees m WHERE m.emp_id = e.manager_id) ORDER BY e.emp_id ASC;",
+    "solution_explanation": "For each employee row with a non-null manager_id, the subquery looks up that specific manager's salary and checks if the employee's salary exceeds it.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to check e.manager_id IS NOT NULL, which may produce unwanted results for top executives."
+    ],
+    "interview_tip": "This is a classic SQL interview pattern often solved with self-joins or correlated subqueries.",
+    "hints": [
+      "Correlate the inner query on `m.emp_id = e.manager_id`.",
+      "Ensure `e.manager_id IS NOT NULL` is included in the outer filter.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary, e.manager_id FROM employees e WHERE e.manager_id IS NOT NULL AND e.salary > (SELECT m.salary FROM employees m WHERE m.emp_id = e.manager_id) ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "compensation",
+      "self-reference"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-05",
+    "slug": "products-cheapest-in-category",
+    "title": "Find Lowest Priced Product per Category",
+    "description_markdown": "Use a correlated subquery to find product(s) that have the lowest price within their respective `category_id`. Return `product_id`, `product_name`, `category_id`, and `price`. Order by `category_id` ASC, `product_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for minimum category price\nSELECT p.product_id, p.product_name, p.category_id, p.price\nFROM products p\nWHERE p.price = (SELECT MIN(p2.price) FROM products p2 WHERE ...)\nORDER BY p.category_id ASC, p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.category_id, p.price FROM products p WHERE p.price = (SELECT MIN(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.product_id ASC;",
+    "solution_explanation": "For each outer product, the subquery calculates the minimum price for that product's specific category_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Matching on category name instead of the foreign key category_id."
+    ],
+    "interview_tip": "Correlated subqueries for group extrema are standard when window functions are disallowed or before SQL:1999 support.",
+    "hints": [
+      "Correlate on `p2.category_id = p.category_id` inside `SELECT MIN(p2.price)`.",
+      "Order by `p.category_id ASC, p.product_id ASC`.",
+      "Query: SELECT p.product_id, p.product_name, p.category_id, p.price FROM products p WHERE p.price = (SELECT MIN(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.product_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "min-per-group"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-06",
+    "slug": "professors-salary-above-department-average",
+    "title": "Professors Earning Above Departmental Average",
+    "description_markdown": "Find professors whose salary is strictly above the average salary of all professors in their same `department` using a correlated subquery. Return `professor_id`, `first_name`, `department`, and `salary`. Order by `department` ASC, `salary` DESC, `professor_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated departmental average comparison\nSELECT p.professor_id, p.first_name, p.department, p.salary\nFROM professors p\nWHERE p.salary > (SELECT AVG(p2.salary) FROM professors p2 WHERE ...)\nORDER BY p.department ASC, p.salary DESC, p.professor_id ASC;",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.department, p.salary FROM professors p WHERE p.salary > (SELECT AVG(p2.salary) FROM professors p2 WHERE p2.department = p.department) ORDER BY p.department ASC, p.salary DESC, p.professor_id ASC;",
+    "solution_explanation": "The subquery dynamically calculates the departmental mean for each professor's department and compares their salary against it.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= instead of strictly >."
+    ],
+    "interview_tip": "Group-relative benchmarks are one of the most frequent uses of correlated subqueries.",
+    "hints": [
+      "Correlate with `WHERE p2.department = p.department`.",
+      "Filter with `p.salary > (SELECT AVG(p2.salary) ...)`.",
+      "Query: SELECT p.professor_id, p.first_name, p.department, p.salary FROM professors p WHERE p.salary > (SELECT AVG(p2.salary) FROM professors p2 WHERE p2.department = p.department) ORDER BY p.department ASC, p.salary DESC, p.professor_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "faculty",
+      "average"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-07",
+    "slug": "employees-highest-paid-in-job-title",
+    "title": "Highest Paid Employee Within Each Job Title",
+    "description_markdown": "Using a correlated subquery, retrieve the employee(s) who earn the highest salary for their specific `job_title`. Return `emp_id`, `first_name`, `job_title`, and `salary`. Order by `job_title` ASC, `emp_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for top earner per role\nSELECT e.emp_id, e.first_name, e.job_title, e.salary\nFROM employees e\nWHERE e.salary = (SELECT MAX(e2.salary) FROM employees e2 WHERE ...)\nORDER BY e.job_title ASC, e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.job_title, e.salary FROM employees e WHERE e.salary = (SELECT MAX(e2.salary) FROM employees e2 WHERE e2.job_title = e.job_title) ORDER BY e.job_title ASC, e.emp_id ASC;",
+    "solution_explanation": "For each candidate employee, the subquery checks if their salary equals the maximum salary across all employees sharing the exact same job title.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Grouping by job title in outer query without necessary aggregates."
+    ],
+    "interview_tip": "This pattern handles ties gracefully by naturally returning all employees who share the top salary.",
+    "hints": [
+      "Correlate on `e2.job_title = e.job_title`.",
+      "Check `e.salary = (SELECT MAX(e2.salary) ...)`.",
+      "Query: SELECT e.emp_id, e.first_name, e.job_title, e.salary FROM employees e WHERE e.salary = (SELECT MAX(e2.salary) FROM employees e2 WHERE e2.job_title = e.job_title) ORDER BY e.job_title ASC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "job-title",
+      "max"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-08",
+    "slug": "orders-above-customer-average-order-value",
+    "title": "Customer Orders Exceeding Their Personal Average Spend",
+    "description_markdown": "Identify orders whose `total_amount` is strictly greater than the average `total_amount` of all orders placed by that specific customer. Return `order_id`, `customer_id`, and `total_amount`. Order by `customer_id` ASC, `order_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for above-average customer orders\nSELECT o.order_id, o.customer_id, o.total_amount\nFROM orders o\nWHERE o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE ...)\nORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_explanation": "Calculates each customer's individual historical average order amount and compares each of their orders against that personal threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Calculating the global average order amount instead of the per-customer average."
+    ],
+    "interview_tip": "Personal baseline comparison is common in fraud detection and VIP customer analytics.",
+    "hints": [
+      "Correlate on `o2.customer_id = o.customer_id`.",
+      "Use `o.total_amount > (SELECT AVG(o2.total_amount) ...)`.",
+      "Query: SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "ecommerce",
+      "personal-average"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-09",
+    "slug": "students-lowest-gpa-in-major",
+    "title": "Identify Lowest GPA in Each College Major",
+    "description_markdown": "Use a correlated subquery to find student(s) who hold the lowest GPA within their respective `major`. Return `student_id`, `first_name`, `major`, and `gpa`. Order by `major` ASC, `student_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for minimum GPA per major\nSELECT s.student_id, s.first_name, s.major, s.gpa\nFROM students s\nWHERE s.gpa = (SELECT MIN(s2.gpa) FROM students s2 WHERE ...)\nORDER BY s.major ASC, s.student_id ASC;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.major, s.gpa FROM students s WHERE s.gpa = (SELECT MIN(s2.gpa) FROM students s2 WHERE s2.major = s.major) ORDER BY s.major ASC, s.student_id ASC;",
+    "solution_explanation": "For each student, the subquery determines the minimum GPA for students in that major and tests equality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 which can only return one student even if there are ties."
+    ],
+    "interview_tip": "Correlated equality with MIN/MAX naturally handles ties in group extrema problems.",
+    "hints": [
+      "Correlate on `s2.major = s.major`.",
+      "Check `s.gpa = (SELECT MIN(s2.gpa) ...)`.",
+      "Query: SELECT s.student_id, s.first_name, s.major, s.gpa FROM students s WHERE s.gpa = (SELECT MIN(s2.gpa) FROM students s2 WHERE s2.major = s.major) ORDER BY s.major ASC, s.student_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "academic",
+      "min-gpa"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-10",
+    "slug": "customers-latest-order-record",
+    "title": "Find Most Recent Order Placed by Each Customer",
+    "description_markdown": "Use a correlated subquery to retrieve each customer's most recent order based on `order_date`. Return `order_id`, `customer_id`, `order_date`, and `total_amount`. Order by `customer_id` ASC, `order_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for most recent order date\nSELECT o.order_id, o.customer_id, o.order_date, o.total_amount\nFROM orders o\nWHERE o.order_date = (SELECT MAX(o2.order_date) FROM orders o2 WHERE ...)\nORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.order_date, o.total_amount FROM orders o WHERE o.order_date = (SELECT MAX(o2.order_date) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_explanation": "For each order record, the subquery checks if its date matches the customer's maximum order date.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining to orders without correlating on customer_id."
+    ],
+    "interview_tip": "Finding the latest event per entity is an ubiquitous SQL pattern in CRM and auditing pipelines.",
+    "hints": [
+      "Correlate on `o2.customer_id = o.customer_id`.",
+      "Filter with `o.order_date = (SELECT MAX(o2.order_date) ...)`.",
+      "Query: SELECT o.order_id, o.customer_id, o.order_date, o.total_amount FROM orders o WHERE o.order_date = (SELECT MAX(o2.order_date) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "latest-record",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-11",
+    "slug": "projects-budget-exceeding-department-avg",
+    "title": "Projects with Budget Above Departmental Average",
+    "description_markdown": "Using a correlated subquery, find all projects whose `budget` exceeds the average budget of projects in the same department (`dept_id`). Exclude projects with NULL `dept_id`. Return `project_id`, `project_name`, `dept_id`, and `budget`. Order by `dept_id` ASC, `project_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for project budget above department average\nSELECT p.project_id, p.project_name, p.dept_id, p.budget\nFROM projects p\nWHERE p.dept_id IS NOT NULL\n  AND p.budget > (SELECT ...)\nORDER BY p.dept_id ASC, p.project_id ASC;",
+    "solution_query": "SELECT p.project_id, p.project_name, p.dept_id, p.budget FROM projects p WHERE p.dept_id IS NOT NULL AND p.budget > (SELECT AVG(p2.budget) FROM projects p2 WHERE p2.dept_id = p.dept_id) ORDER BY p.dept_id ASC, p.project_id ASC;",
+    "solution_explanation": "Computes the mean project budget per department and filters outer project rows whose budget surpasses that average.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to correlate on p2.dept_id = p.dept_id."
+    ],
+    "interview_tip": "Departmental project portfolio analysis frequently relies on this exact pattern.",
+    "hints": [
+      "Correlate on `p2.dept_id = p.dept_id`.",
+      "Filter with `p.budget > (SELECT AVG(p2.budget) ...)`.",
+      "Query: SELECT p.project_id, p.project_name, p.dept_id, p.budget FROM projects p WHERE p.dept_id IS NOT NULL AND p.budget > (SELECT AVG(p2.budget) FROM projects p2 WHERE p2.dept_id = p.dept_id) ORDER BY p.dept_id ASC, p.project_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "projects",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-12",
+    "slug": "courses-maximum-credits-in-department",
+    "title": "Identify Course with Highest Credit Hours per Department",
+    "description_markdown": "Find all courses that offer the maximum credit count (`credits`) within their academic `department` using a correlated subquery. Return `course_id`, `course_code`, `department`, and `credits`. Order by `department` ASC, `course_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "credits",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for max credits per department\nSELECT c.course_id, c.course_code, c.department, c.credits\nFROM courses c\nWHERE c.credits = (SELECT MAX(c2.credits) FROM courses c2 WHERE ...)\nORDER BY c.department ASC, c.course_id ASC;",
+    "solution_query": "SELECT c.course_id, c.course_code, c.department, c.credits FROM courses c WHERE c.credits = (SELECT MAX(c2.credits) FROM courses c2 WHERE c2.department = c.department) ORDER BY c.department ASC, c.course_id ASC;",
+    "solution_explanation": "For each course, the subquery gets the maximum credit load in that specific department.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting from professors instead of courses."
+    ],
+    "interview_tip": "Group extrema with multiple ties are solved cleanly using correlated subqueries.",
+    "hints": [
+      "Correlate on `c2.department = c.department`.",
+      "Test equality against `MAX(c2.credits)`.",
+      "Query: SELECT c.course_id, c.course_code, c.department, c.credits FROM courses c WHERE c.credits = (SELECT MAX(c2.credits) FROM courses c2 WHERE c2.department = c.department) ORDER BY c.department ASC, c.course_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "curriculum",
+      "max-credits"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-13",
+    "slug": "assignments-max-hours-per-project",
+    "title": "Find Project Assignment with Most Hours Logged",
+    "description_markdown": "Using a correlated subquery, find assignment(s) that logged the maximum `hours_worked` for each `project_id`. Return `assignment_id`, `project_id`, `emp_id`, and `hours_worked`. Order by `project_id` ASC, `assignment_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "hours_worked",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for highest hours worked per project\nSELECT a.assignment_id, a.project_id, a.emp_id, a.hours_worked\nFROM assignments a\nWHERE a.hours_worked = (SELECT MAX(a2.hours_worked) FROM assignments a2 WHERE ...)\nORDER BY a.project_id ASC, a.assignment_id ASC;",
+    "solution_query": "SELECT a.assignment_id, a.project_id, a.emp_id, a.hours_worked FROM assignments a WHERE a.hours_worked = (SELECT MAX(a2.hours_worked) FROM assignments a2 WHERE a2.project_id = a.project_id) ORDER BY a.project_id ASC, a.assignment_id ASC;",
+    "solution_explanation": "Determines the assignment record with peak logged effort for each project.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering by emp_id instead of project_id."
+    ],
+    "interview_tip": "Correlated subqueries excel at finding the row containing the maximum value per partition.",
+    "hints": [
+      "Correlate on `a2.project_id = a.project_id`.",
+      "Check `a.hours_worked = (SELECT MAX(a2.hours_worked) ...)`.",
+      "Query: SELECT a.assignment_id, a.project_id, a.emp_id, a.hours_worked FROM assignments a WHERE a.hours_worked = (SELECT MAX(a2.hours_worked) FROM assignments a2 WHERE a2.project_id = a.project_id) ORDER BY a.project_id ASC, a.assignment_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "workload",
+      "max"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-14",
+    "slug": "order-items-highest-priced-item-in-order",
+    "title": "Highest Priced Item in Each Order",
+    "description_markdown": "Use a correlated subquery to find the line item(s) in `order_items` that have the highest `unit_price` within their `order_id`. Return `order_item_id`, `order_id`, `product_id`, and `unit_price`. Order by `order_id` ASC, `order_item_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_item_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "unit_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for highest unit price in order\nSELECT oi.order_item_id, oi.order_id, oi.product_id, oi.unit_price\nFROM order_items oi\nWHERE oi.unit_price = (SELECT MAX(oi2.unit_price) FROM order_items oi2 WHERE ...)\nORDER BY oi.order_id ASC, oi.order_item_id ASC;",
+    "solution_query": "SELECT oi.order_item_id, oi.order_id, oi.product_id, oi.unit_price FROM order_items oi WHERE oi.unit_price = (SELECT MAX(oi2.unit_price) FROM order_items oi2 WHERE oi2.order_id = oi.order_id) ORDER BY oi.order_id ASC, oi.order_item_id ASC;",
+    "solution_explanation": "Calculates the maximum item price per basket and returns the item row(s) matching that highest price.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Correlating by product_id rather than order_id."
+    ],
+    "interview_tip": "E-commerce order breakdown queries commonly identify hero items using this technique.",
+    "hints": [
+      "Correlate on `oi2.order_id = oi.order_id`.",
+      "Check `oi.unit_price = (SELECT MAX(oi2.unit_price) ...)`.",
+      "Query: SELECT oi.order_item_id, oi.order_id, oi.product_id, oi.unit_price FROM order_items oi WHERE oi.unit_price = (SELECT MAX(oi2.unit_price) FROM order_items oi2 WHERE oi2.order_id = oi.order_id) ORDER BY oi.order_id ASC, oi.order_item_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "order-items",
+      "max-price"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-15",
+    "slug": "assignments-above-project-average-rating",
+    "title": "Assignments with Performance Rating Above Project Average",
+    "description_markdown": "Using a correlated subquery, find assignment records where `rating` is strictly greater than the average rating for that same `project_id`. Exclude assignments with NULL `rating`. Return `assignment_id`, `project_id`, `emp_id`, and `rating`. Order by `project_id` ASC, `assignment_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "assignment_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for above-average assignment ratings\nSELECT a.assignment_id, a.project_id, a.emp_id, a.rating\nFROM assignments a\nWHERE a.rating IS NOT NULL\n  AND a.rating > (SELECT ...)\nORDER BY a.project_id ASC, a.assignment_id ASC;",
+    "solution_query": "SELECT a.assignment_id, a.project_id, a.emp_id, a.rating FROM assignments a WHERE a.rating IS NOT NULL AND a.rating > (SELECT AVG(a2.rating) FROM assignments a2 WHERE a2.project_id = a.project_id AND a2.rating IS NOT NULL) ORDER BY a.project_id ASC, a.assignment_id ASC;",
+    "solution_explanation": "For each assignment, compares its performance rating to the average of rated assignments on that project.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to check rating IS NOT NULL in both outer and inner queries."
+    ],
+    "interview_tip": "NULL handling is critical in aggregation subqueries to maintain predictable arithmetic.",
+    "hints": [
+      "Correlate on `a2.project_id = a.project_id` and ensure `a2.rating IS NOT NULL`.",
+      "Filter with `a.rating > (SELECT AVG(a2.rating) ...)`.",
+      "Query: SELECT a.assignment_id, a.project_id, a.emp_id, a.rating FROM assignments a WHERE a.rating IS NOT NULL AND a.rating > (SELECT AVG(a2.rating) FROM assignments a2 WHERE a2.project_id = a.project_id AND a2.rating IS NOT NULL) ORDER BY a.project_id ASC, a.assignment_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "ratings",
+      "performance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-16",
+    "slug": "customer-total-orders-scalar-projection",
+    "title": "Project Total Order Count per Customer via Correlated Subquery",
+    "description_markdown": "In the SELECT projection list, use a correlated scalar subquery `(SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS total_orders` to compute the number of orders for every customer. Return `c.customer_id`, `c.first_name`, and `total_orders`. Order by `c.customer_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_orders",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery in SELECT projection\nSELECT c.customer_id, c.first_name,\n       (SELECT COUNT(*) FROM orders o WHERE ...) AS total_orders\nFROM customers c\nORDER BY c.customer_id ASC;",
+    "solution_query": "SELECT c.customer_id, c.first_name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS total_orders FROM customers c ORDER BY c.customer_id ASC;",
+    "solution_explanation": "A correlated subquery in the SELECT list executes for each customer row, returning their specific order count (including 0 for inactive customers).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN and GROUP BY when explicitly asked for a subquery in SELECT."
+    ],
+    "interview_tip": "Subqueries in SELECT are an alternative to LEFT JOIN + GROUP BY, especially when keeping customer rows distinct without grouping.",
+    "hints": [
+      "Project `(SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS total_orders`.",
+      "Order by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id) AS total_orders FROM customers c ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "select-clause",
+      "projection"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-17",
+    "slug": "department-employee-headcount-projection",
+    "title": "Calculate Department Staff Headcount in SELECT Clause",
+    "description_markdown": "Using a correlated subquery in the SELECT list, compute the total number of employees in each department: `(SELECT COUNT(*) FROM employees e WHERE e.dept_id = d.dept_id) AS employee_count`. Return `d.dept_id`, `d.dept_name`, and `employee_count`. Order by `d.dept_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for department headcount\nSELECT d.dept_id, d.dept_name,\n       (SELECT COUNT(*) FROM employees e WHERE ...) AS employee_count\nFROM departments d\nORDER BY d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, (SELECT COUNT(*) FROM employees e WHERE e.dept_id = d.dept_id) AS employee_count FROM departments d ORDER BY d.dept_id ASC;",
+    "solution_explanation": "For each department, the correlated subquery counts matching employee rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering out departments with 0 employees instead of showing 0."
+    ],
+    "interview_tip": "A correlated COUNT(*) in SELECT naturally preserves all parent rows and returns 0 when no child rows exist.",
+    "hints": [
+      "Correlate on `e.dept_id = d.dept_id`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name, (SELECT COUNT(*) FROM employees e WHERE e.dept_id = d.dept_id) AS employee_count FROM departments d ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "headcount",
+      "select-subquery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-18",
+    "slug": "products-review-count-projection",
+    "title": "Count Product Reviews Using Correlated Projection",
+    "description_markdown": "Calculate the total number of reviews submitted for each product using a correlated scalar subquery in the SELECT list (`(SELECT COUNT(*) FROM reviews r WHERE r.product_id = p.product_id) AS review_count`). Return `p.product_id`, `p.product_name`, and `review_count`. Order by `p.product_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "review_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for review count\nSELECT p.product_id, p.product_name,\n       (SELECT COUNT(*) FROM reviews r WHERE ...) AS review_count\nFROM products p\nORDER BY p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, (SELECT COUNT(*) FROM reviews r WHERE r.product_id = p.product_id) AS review_count FROM products p ORDER BY p.product_id ASC;",
+    "solution_explanation": "Dynamically looks up total review submissions per product without requiring an explicit GROUP BY in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the table alias correlation in the subquery."
+    ],
+    "interview_tip": "When displaying a product catalog with badges/counters, correlated scalar subqueries or lateral joins are frequently used.",
+    "hints": [
+      "Correlate on `r.product_id = p.product_id`.",
+      "Order by `p.product_id ASC`.",
+      "Query: SELECT p.product_id, p.product_name, (SELECT COUNT(*) FROM reviews r WHERE r.product_id = p.product_id) AS review_count FROM products p ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "reviews",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-19",
+    "slug": "professors-course-count-projection",
+    "title": "Count Courses Taught per Professor via SELECT Subquery",
+    "description_markdown": "Using a correlated subquery in the SELECT list, count how many courses are assigned to each professor (`(SELECT COUNT(*) FROM courses c WHERE c.professor_id = p.professor_id) AS course_count`). Return `p.professor_id`, `p.first_name`, `p.department`, and `course_count`. Order by `p.professor_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "course_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for courses taught\nSELECT p.professor_id, p.first_name, p.department,\n       (SELECT COUNT(*) FROM courses c WHERE ...) AS course_count\nFROM professors p\nORDER BY p.professor_id ASC;",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.department, (SELECT COUNT(*) FROM courses c WHERE c.professor_id = p.professor_id) AS course_count FROM professors p ORDER BY p.professor_id ASC;",
+    "solution_explanation": "For each faculty record, evaluates the number of courses mapped via foreign key professor_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which would drop professors who teach 0 courses."
+    ],
+    "interview_tip": "Scalar correlated subqueries preserve all rows from the primary table even if count is zero.",
+    "hints": [
+      "Correlate on `c.professor_id = p.professor_id`.",
+      "Order by `p.professor_id ASC`.",
+      "Query: SELECT p.professor_id, p.first_name, p.department, (SELECT COUNT(*) FROM courses c WHERE c.professor_id = p.professor_id) AS course_count FROM professors p ORDER BY p.professor_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "faculty",
+      "courses"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-20",
+    "slug": "customers-lifetime-spend-projection",
+    "title": "Calculate Customer Lifetime Spend via Correlated Subquery",
+    "description_markdown": "Calculate each customer's lifetime total spending on completed orders (`order_status = 'completed'`) using a correlated subquery in the SELECT list. Wrap the subquery with `COALESCE(..., 0.00)` to handle customers with no completed purchases as `lifetime_spend`. Return `c.customer_id`, `c.first_name`, and `lifetime_spend`. Order by `c.customer_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "lifetime_spend",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for lifetime spend\nSELECT c.customer_id, c.first_name,\n       COALESCE((SELECT SUM(o.total_amount) FROM orders o WHERE ...), 0.00) AS lifetime_spend\nFROM customers c\nORDER BY c.customer_id ASC;",
+    "solution_query": "SELECT c.customer_id, c.first_name, COALESCE((SELECT SUM(o.total_amount) FROM orders o WHERE o.customer_id = c.customer_id AND o.order_status = 'completed'), 0.00) AS lifetime_spend FROM customers c ORDER BY c.customer_id ASC;",
+    "solution_explanation": "The correlated subquery sums completed orders per customer; COALESCE converts NULL sums into 0.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting the filter o.order_status = 'completed'."
+    ],
+    "interview_tip": "Always consider COALESCE when aggregating nullable sets in correlated scalar subqueries.",
+    "hints": [
+      "Correlate on `o.customer_id = c.customer_id AND o.order_status = 'completed'`.",
+      "Wrap with `COALESCE(..., 0.00)`.",
+      "Query: SELECT c.customer_id, c.first_name, COALESCE((SELECT SUM(o.total_amount) FROM orders o WHERE o.customer_id = c.customer_id AND o.order_status = 'completed'), 0.00) AS lifetime_spend FROM customers c ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "lifetime-value",
+      "coalesce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-21",
+    "slug": "departments-total-payroll-projection",
+    "title": "Calculate Department Payroll with Correlated Scalar Subquery",
+    "description_markdown": "Using a correlated scalar subquery in SELECT, compute the total salary expenditure (`total_payroll`) for each department from `employees`. Use `COALESCE(..., 0.00)` to return 0.00 for departments with no active employees. Return `d.dept_id`, `d.dept_name`, and `total_payroll`. Order by `d.dept_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_payroll",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for total departmental payroll\nSELECT d.dept_id, d.dept_name,\n       COALESCE((SELECT SUM(e.salary) FROM employees e WHERE ...), 0.00) AS total_payroll\nFROM departments d\nORDER BY d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, COALESCE((SELECT SUM(e.salary) FROM employees e WHERE e.dept_id = d.dept_id), 0.00) AS total_payroll FROM departments d ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Computes total salary sum for each department via correlated subquery, replacing NULL with 0.00 for empty departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving empty departments as NULL."
+    ],
+    "interview_tip": "Correlated subqueries in SELECT are an effective way to generate roll-up summaries without outer GROUP BY constraints.",
+    "hints": [
+      "Correlate on `e.dept_id = d.dept_id`.",
+      "Use `COALESCE((SELECT SUM(e.salary) ...), 0.00) AS total_payroll`.",
+      "Query: SELECT d.dept_id, d.dept_name, COALESCE((SELECT SUM(e.salary) FROM employees e WHERE e.dept_id = d.dept_id), 0.00) AS total_payroll FROM departments d ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "payroll",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-22",
+    "slug": "products-average-rating-projection",
+    "title": "Calculate Product Average Review Rating in SELECT",
+    "description_markdown": "For each product, project its average customer review rating rounded to 2 decimal places (`ROUND(AVG(r.rating), 2) AS avg_rating`) using a correlated subquery in the SELECT list. Filter out products that have no reviews (where `avg_rating IS NOT NULL` in the main query or via `WHERE (SELECT COUNT(*) FROM reviews r2 WHERE r2.product_id = p.product_id) > 0`). Return `product_id`, `product_name`, and `avg_rating`. Order by `product_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for average product rating\nSELECT p.product_id, p.product_name,\n       (SELECT ROUND(AVG(r.rating), 2) FROM reviews r WHERE r.product_id = p.product_id) AS avg_rating\nFROM products p\nWHERE EXISTS (SELECT 1 FROM reviews r2 WHERE r2.product_id = p.product_id)\nORDER BY p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, (SELECT ROUND(AVG(r.rating), 2) FROM reviews r WHERE r.product_id = p.product_id) AS avg_rating FROM products p WHERE EXISTS (SELECT 1 FROM reviews r2 WHERE r2.product_id = p.product_id) ORDER BY p.product_id ASC;",
+    "solution_explanation": "Computes average rating for reviewed products using a correlated subquery and filters out unreviewed items using EXISTS.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the ROUND function to 2 decimal places."
+    ],
+    "interview_tip": "Combining a SELECT scalar subquery with an EXISTS filter in WHERE guarantees non-null scalar metrics.",
+    "hints": [
+      "Use `EXISTS (SELECT 1 FROM reviews r2 WHERE r2.product_id = p.product_id)`.",
+      "Round the average rating with `ROUND(AVG(r.rating), 2)`.",
+      "Query: SELECT p.product_id, p.product_name, (SELECT ROUND(AVG(r.rating), 2) FROM reviews r WHERE r.product_id = p.product_id) AS avg_rating FROM products p WHERE EXISTS (SELECT 1 FROM reviews r2 WHERE r2.product_id = p.product_id) ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "ratings",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-23",
+    "slug": "students-completed-enrollment-count",
+    "title": "Count Completed Course Registrations per Student",
+    "description_markdown": "Calculate the total number of completed courses (`status = 'completed'`) for each student using a correlated subquery in the SELECT list (`(SELECT COUNT(*) FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'completed') AS completed_courses`). Return `s.student_id`, `s.first_name`, and `completed_courses`. Order by `s.student_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_courses",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for completed enrollments\nSELECT s.student_id, s.first_name,\n       (SELECT COUNT(*) FROM enrollments e WHERE ...) AS completed_courses\nFROM students s\nORDER BY s.student_id ASC;",
+    "solution_query": "SELECT s.student_id, s.first_name, (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'completed') AS completed_courses FROM students s ORDER BY s.student_id ASC;",
+    "solution_explanation": "For each student record, the subquery counts only enrollments whose status is marked 'completed'.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Counting all enrollments without filtering by status = 'completed'."
+    ],
+    "interview_tip": "Conditional counts inside correlated subqueries let you pull specific subsets per row without complex outer groupings.",
+    "hints": [
+      "Correlate on `e.student_id = s.student_id AND e.status = 'completed'`.",
+      "Order by `s.student_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = s.student_id AND e.status = 'completed') AS completed_courses FROM students s ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "academic",
+      "enrollments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-24",
+    "slug": "employees-earning-below-department-average",
+    "title": "Identify Employees Earning Below Departmental Mean",
+    "description_markdown": "Use a correlated subquery to find all employees who earn strictly less than the average salary of their own department (`e.salary < (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e.dept_id)`). Exclude employees with NULL `dept_id`. Return `e.emp_id`, `e.first_name`, `e.dept_id`, and `e.salary`. Order by `e.dept_id` ASC, `e.salary` ASC, `e.emp_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for below department average\nSELECT e.emp_id, e.first_name, e.dept_id, e.salary\nFROM employees e\nWHERE e.dept_id IS NOT NULL\n  AND e.salary < (SELECT ...)\nORDER BY e.dept_id ASC, e.salary ASC, e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.dept_id, e.salary FROM employees e WHERE e.dept_id IS NOT NULL AND e.salary < (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e.dept_id) ORDER BY e.dept_id ASC, e.salary ASC, e.emp_id ASC;",
+    "solution_explanation": "Calculates the average salary dynamically for each employee's department and filters rows below that benchmark.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using <= instead of strictly <."
+    ],
+    "interview_tip": "This is the inverse of the common 'above average' query, equally prominent in compensation review analytics.",
+    "hints": [
+      "Correlate on `e2.dept_id = e.dept_id`.",
+      "Filter with `e.salary < (SELECT AVG(e2.salary) ...)`.",
+      "Query: SELECT e.emp_id, e.first_name, e.dept_id, e.salary FROM employees e WHERE e.dept_id IS NOT NULL AND e.salary < (SELECT AVG(e2.salary) FROM employees e2 WHERE e2.dept_id = e.dept_id) ORDER BY e.dept_id ASC, e.salary ASC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "below-average",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-25",
+    "slug": "products-priced-higher-than-category-norm",
+    "title": "Products Priced Above Category Benchmark",
+    "description_markdown": "Find all products whose `price` is strictly above the average price of products in that same `category_id` using a correlated subquery. Return `product_id`, `product_name`, `category_id`, and `price`. Order by `category_id` ASC, `price` DESC, `product_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for above category average price\nSELECT p.product_id, p.product_name, p.category_id, p.price\nFROM products p\nWHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE ...)\nORDER BY p.category_id ASC, p.price DESC, p.product_id ASC;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.category_id, p.price FROM products p WHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.price DESC, p.product_id ASC;",
+    "solution_explanation": "For each product, calculates the category average price and filters for items priced higher than the category norm.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Comparing with global product average instead of category average."
+    ],
+    "interview_tip": "Merchandising teams use this to identify premium tier items across varied product categories.",
+    "hints": [
+      "Correlate on `p2.category_id = p.category_id`.",
+      "Check `p.price > (SELECT AVG(p2.price) ...)`.",
+      "Query: SELECT p.product_id, p.product_name, p.category_id, p.price FROM products p WHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE p2.category_id = p.category_id) ORDER BY p.category_id ASC, p.price DESC, p.product_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "pricing",
+      "category-average"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-26",
+    "slug": "professors-lowest-salary-in-department",
+    "title": "Identify Faculty with Lowest Department Salary",
+    "description_markdown": "Using a correlated subquery, retrieve the professor(s) who earn the lowest salary in each academic `department`. Return `professor_id`, `first_name`, `department`, and `salary`. Order by `department` ASC, `professor_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for minimum department salary\nSELECT p.professor_id, p.first_name, p.department, p.salary\nFROM professors p\nWHERE p.salary = (SELECT MIN(p2.salary) FROM professors p2 WHERE ...)\nORDER BY p.department ASC, p.professor_id ASC;",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.department, p.salary FROM professors p WHERE p.salary = (SELECT MIN(p2.salary) FROM professors p2 WHERE p2.department = p.department) ORDER BY p.department ASC, p.professor_id ASC;",
+    "solution_explanation": "For each department, the subquery calculates the minimum salary and checks outer professor rows for equality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Correlating by professor_id instead of department."
+    ],
+    "interview_tip": "Group minimums naturally surface entry-level and minimum pay floors.",
+    "hints": [
+      "Correlate on `p2.department = p.department`.",
+      "Test `p.salary = (SELECT MIN(p2.salary) ...)`.",
+      "Query: SELECT p.professor_id, p.first_name, p.department, p.salary FROM professors p WHERE p.salary = (SELECT MIN(p2.salary) FROM professors p2 WHERE p2.department = p.department) ORDER BY p.department ASC, p.professor_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "faculty",
+      "min-salary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-27",
+    "slug": "employees-with-most-recent-salary-change",
+    "title": "Retrieve Each Employee's Most Recent Salary Record",
+    "description_markdown": "From `salaries_history`, retrieve each employee's latest record based on `effective_date` using a correlated subquery. Return `history_id`, `emp_id`, `effective_date`, and `salary`. Order by `emp_id` ASC, `history_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "history_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "effective_date",
+        "type": "date"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for latest salary history record\nSELECT sh.history_id, sh.emp_id, sh.effective_date, sh.salary\nFROM salaries_history sh\nWHERE sh.effective_date = (SELECT MAX(sh2.effective_date) FROM salaries_history sh2 WHERE ...)\nORDER BY sh.emp_id ASC, sh.history_id ASC;",
+    "solution_query": "SELECT sh.history_id, sh.emp_id, sh.effective_date, sh.salary FROM salaries_history sh WHERE sh.effective_date = (SELECT MAX(sh2.effective_date) FROM salaries_history sh2 WHERE sh2.emp_id = sh.emp_id) ORDER BY sh.emp_id ASC, sh.history_id ASC;",
+    "solution_explanation": "For each historical salary entry, determines if its effective date is the maximum recorded for that employee.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Grouping by emp_id without a way to select the corresponding history_id."
+    ],
+    "interview_tip": "This is the canonical pattern for Point-In-Time or Latest-Record queries in slowly changing dimensional histories.",
+    "hints": [
+      "Correlate on `sh2.emp_id = sh.emp_id`.",
+      "Check `sh.effective_date = (SELECT MAX(sh2.effective_date) ...)`.",
+      "Query: SELECT sh.history_id, sh.emp_id, sh.effective_date, sh.salary FROM salaries_history sh WHERE sh.effective_date = (SELECT MAX(sh2.effective_date) FROM salaries_history sh2 WHERE sh2.emp_id = sh.emp_id) ORDER BY sh.emp_id ASC, sh.history_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "audit-history",
+      "point-in-time"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-28",
+    "slug": "customers-single-largest-order-details",
+    "title": "Find Largest Transaction per Customer",
+    "description_markdown": "Using a correlated subquery, find the order(s) having the highest `total_amount` for each customer in `orders`. Return `order_id`, `customer_id`, and `total_amount`. Order by `customer_id` ASC, `order_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for peak order per customer\nSELECT o.order_id, o.customer_id, o.total_amount\nFROM orders o\nWHERE o.total_amount = (SELECT MAX(o2.total_amount) FROM orders o2 WHERE ...)\nORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount = (SELECT MAX(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_explanation": "For each order, calculates the customer's maximum purchase amount and keeps matching orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LIMIT 1 on the outer query."
+    ],
+    "interview_tip": "Correlated subqueries cleanly extract full row details associated with an aggregate extreme.",
+    "hints": [
+      "Correlate on `o2.customer_id = o.customer_id`.",
+      "Check `o.total_amount = (SELECT MAX(o2.total_amount) ...)`.",
+      "Query: SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE o.total_amount = (SELECT MAX(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.customer_id ASC, o.order_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "peak-order",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-29",
+    "slug": "students-highest-score-in-enrollment",
+    "title": "Highest Assessment Score Achieved per Enrollment",
+    "description_markdown": "From the `marks` table, find the assessment score record(s) with the highest `score` for each `enrollment_id` using a correlated subquery. Return `mark_id`, `enrollment_id`, `assessment_type`, and `score`. Order by `enrollment_id` ASC, `mark_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "score",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for top score per enrollment\nSELECT m.mark_id, m.enrollment_id, m.assessment_type, m.score\nFROM marks m\nWHERE m.score = (SELECT MAX(m2.score) FROM marks m2 WHERE ...)\nORDER BY m.enrollment_id ASC, m.mark_id ASC;",
+    "solution_query": "SELECT m.mark_id, m.enrollment_id, m.assessment_type, m.score FROM marks m WHERE m.score = (SELECT MAX(m2.score) FROM marks m2 WHERE m2.enrollment_id = m.enrollment_id) ORDER BY m.enrollment_id ASC, m.mark_id ASC;",
+    "solution_explanation": "Calculates the maximum score achieved across assessments for each individual enrollment and filters for matching rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Correlating by assessment_type instead of enrollment_id."
+    ],
+    "interview_tip": "Grouping and joining back to the source table can often be expressed more concisely with a correlated subquery.",
+    "hints": [
+      "Correlate on `m2.enrollment_id = m.enrollment_id`.",
+      "Check `m.score = (SELECT MAX(m2.score) ...)`.",
+      "Query: SELECT m.mark_id, m.enrollment_id, m.assessment_type, m.score FROM marks m WHERE m.score = (SELECT MAX(m2.score) FROM marks m2 WHERE m2.enrollment_id = m.enrollment_id) ORDER BY m.enrollment_id ASC, m.mark_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "academic",
+      "top-score"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-30",
+    "slug": "employees-earning-more-than-all-subordinates",
+    "title": "Managers Earning More Than All Their Direct Subordinates",
+    "description_markdown": "Find all employees who have at least one direct report (`EXISTS (SELECT 1 FROM employees e2 WHERE e2.manager_id = e.emp_id)`) and whose salary is strictly greater than the maximum salary of all their direct subordinates (`e.salary > (SELECT MAX(e3.salary) FROM employees e3 WHERE e3.manager_id = e.emp_id)`). Return `emp_id`, `first_name`, and `salary`. Order by `emp_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for managers exceeding subordinate salaries\nSELECT e.emp_id, e.first_name, e.salary\nFROM employees e\nWHERE EXISTS (SELECT 1 FROM employees e2 WHERE e2.manager_id = e.emp_id)\n  AND e.salary > (SELECT MAX(e3.salary) FROM employees e3 WHERE ...)\nORDER BY e.emp_id ASC;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary FROM employees e WHERE EXISTS (SELECT 1 FROM employees e2 WHERE e2.manager_id = e.emp_id) AND e.salary > (SELECT MAX(e3.salary) FROM employees e3 WHERE e3.manager_id = e.emp_id) ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Combines an EXISTS check ensuring the employee actually manages someone with a correlated scalar comparison against their subordinates' peak salary.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the EXISTS check, which would include individual contributors with no direct reports."
+    ],
+    "interview_tip": "Combining EXISTS with scalar subqueries is a standard way to express 'is an X and satisfies property Y regarding its children'.",
+    "hints": [
+      "Ensure the employee has subordinates with `EXISTS (SELECT 1 FROM employees e2 WHERE e2.manager_id = e.emp_id)`.",
+      "Check `e.salary > (SELECT MAX(e3.salary) FROM employees e3 WHERE e3.manager_id = e.emp_id)`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary FROM employees e WHERE EXISTS (SELECT 1 FROM employees e2 WHERE e2.manager_id = e.emp_id) AND e.salary > (SELECT MAX(e3.salary) FROM employees e3 WHERE e3.manager_id = e.emp_id) ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "management",
+      "hierarchy"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-31",
+    "slug": "departments-with-highest-paid-single-employee",
+    "title": "Find Maximum Employee Salary per Staffed Department",
+    "description_markdown": "For each department that has at least one employee (`EXISTS (SELECT 1 FROM employees e2 WHERE e2.dept_id = d.dept_id)`), project the department's top individual salary using a correlated subquery `(SELECT MAX(e.salary) FROM employees e WHERE e.dept_id = d.dept_id) AS max_employee_salary`. Return `d.dept_id`, `d.dept_name`, and `max_employee_salary`. Order by `d.dept_id` ascending.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_employee_salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery for max salary per staffed department\nSELECT d.dept_id, d.dept_name,\n       (SELECT MAX(e.salary) FROM employees e WHERE ...) AS max_employee_salary\nFROM departments d\nWHERE EXISTS (SELECT 1 FROM employees e2 WHERE ...)\nORDER BY d.dept_id ASC;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, (SELECT MAX(e.salary) FROM employees e WHERE e.dept_id = d.dept_id) AS max_employee_salary FROM departments d WHERE EXISTS (SELECT 1 FROM employees e2 WHERE e2.dept_id = d.dept_id) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Filters for departments having active employees with EXISTS and projects the maximum salary using a correlated subquery in SELECT.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including empty departments whose max salary would be NULL."
+    ],
+    "interview_tip": "Correlated subqueries in SELECT paired with EXISTS in WHERE allow fine-grained filtering without grouping collisions.",
+    "hints": [
+      "Correlate in SELECT on `e.dept_id = d.dept_id`.",
+      "Filter with `EXISTS (SELECT 1 FROM employees e2 WHERE e2.dept_id = d.dept_id)`.",
+      "Query: SELECT d.dept_id, d.dept_name, (SELECT MAX(e.salary) FROM employees e WHERE e.dept_id = d.dept_id) AS max_employee_salary FROM departments d WHERE EXISTS (SELECT 1 FROM employees e2 WHERE e2.dept_id = d.dept_id) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "department-ceiling",
+      "exists"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-cor-32",
+    "slug": "orders-exceeding-customer-other-orders-average",
+    "title": "Orders Exceeding Customer's Remaining Orders Average",
+    "description_markdown": "Using a correlated subquery, find orders whose `total_amount` is strictly greater than the average `total_amount` of all other orders placed by the same customer (`o2.customer_id = o.customer_id AND o2.order_id != o.order_id`). Only include orders where the customer has at least one other order (`EXISTS (SELECT 1 FROM orders o3 WHERE o3.customer_id = o.customer_id AND o3.order_id != o.order_id)`). Return `order_id`, `customer_id`, and `total_amount`. Order by `customer_id` ASC, `order_id` ASC.",
+    "topic_id": "correlated-subqueries",
+    "subtopic_id": "sub-corr",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Correlated subquery excluding current row\nSELECT o.order_id, o.customer_id, o.total_amount\nFROM orders o\nWHERE EXISTS (SELECT 1 FROM orders o3 WHERE o3.customer_id = o.customer_id AND o3.order_id != o.order_id)\n  AND o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id AND o2.order_id != o.order_id)\nORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE EXISTS (SELECT 1 FROM orders o3 WHERE o3.customer_id = o.customer_id AND o3.order_id != o.order_id) AND o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id AND o2.order_id != o.order_id) ORDER BY o.customer_id ASC, o.order_id ASC;",
+    "solution_explanation": "Excludes the current order row from the calculated benchmark to see if this particular order is an outlier compared to the rest of the customer's history.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including the current order in the benchmark average, which drags the average up."
+    ],
+    "interview_tip": "Leave-one-out metrics are a hallmark of anomaly detection algorithms in SQL.",
+    "hints": [
+      "Exclude the current order in the subquery using `o2.order_id != o.order_id`.",
+      "Check `EXISTS` to ensure other orders exist for that customer.",
+      "Query: SELECT o.order_id, o.customer_id, o.total_amount FROM orders o WHERE EXISTS (SELECT 1 FROM orders o3 WHERE o3.customer_id = o.customer_id AND o3.order_id != o.order_id) AND o.total_amount > (SELECT AVG(o2.total_amount) FROM orders o2 WHERE o2.customer_id = o.customer_id AND o2.order_id != o.order_id) ORDER BY o.customer_id ASC, o.order_id ASC;"
+    ],
+    "tags": [
+      "correlated",
+      "subqueries",
+      "outlier-detection",
+      "leave-one-out"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-cor-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-cor-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-cor-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

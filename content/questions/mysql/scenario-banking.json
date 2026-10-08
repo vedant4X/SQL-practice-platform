@@ -1,0 +1,2368 @@
+[
+  {
+    "id": "q-my-sc-bnk-01",
+    "slug": "banking-high-net-worth-customers",
+    "title": "Identify High-Net-Worth Customers with Multiple Accounts",
+    "description_markdown": "Business request: Identify customers who have an aggregated bank balance across all their accounts strictly greater than $50,000. Return `c.name`, `c.email`, and their total balance `SUM(a.balance)` as `total_balance`. Order by `total_balance` DESC, `c.customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "total_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Sum balances per customer with HAVING > 50000\nSELECT ...",
+    "solution_query": "SELECT c.name, c.email, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name, c.email HAVING SUM(a.balance) > 50000.00 ORDER BY total_balance DESC, c.customer_id ASC;",
+    "solution_explanation": "Joins accounts to customer master and filters combined balances using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `bank_customers c` and `accounts a` on `c.customer_id = a.customer_id`.",
+      "Filter with `HAVING SUM(a.balance) > 50000.00`.",
+      "Query: SELECT c.name, c.email, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name, c.email HAVING SUM(a.balance) > 50000.00 ORDER BY total_balance DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "liquidity",
+      "aggregation"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-bnk-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-bnk-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-bnk-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-02",
+    "slug": "banking-branch-deposit-volume",
+    "title": "Calculate Branch Total Deposits and Account Liquidity",
+    "description_markdown": "Business request: For each branch in `branches`, calculate the total number of accounts managed as `account_count`, and the total customer deposits held as `total_deposits`. Return `b.branch_name`, `b.city`, `account_count`, and `total_deposits`. Order by `total_deposits` DESC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "account_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_deposits",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Aggregate accounts by branch\nSELECT ...",
+    "solution_query": "SELECT b.branch_name, b.city, COUNT(a.account_id) AS account_count, COALESCE(SUM(a.balance), 0) AS total_deposits FROM branches b LEFT JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name, b.city ORDER BY total_deposits DESC, b.branch_id ASC;",
+    "solution_explanation": "Uses LEFT JOIN to ensure branches with zero accounts report zero balance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN accounts a ON b.branch_id = a.branch_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT b.branch_name, b.city, COUNT(a.account_id) AS account_count, COALESCE(SUM(a.balance), 0) AS total_deposits FROM branches b LEFT JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name, b.city ORDER BY total_deposits DESC, b.branch_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "branch-analytics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-bnk-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-bnk-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-bnk-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-03",
+    "slug": "banking-large-transaction-audit",
+    "title": "Flag Transactions Exceeding Account Balance Threshold",
+    "description_markdown": "Compliance audit request: Find all completed transactions where the transaction amount is strictly greater than $5,000. Join with `accounts` and `bank_customers`. Return `t.transaction_id`, `c.name AS customer_name`, `t.transaction_type`, and `t.amount`. Order by `t.amount` DESC, `t.transaction_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions",
+      "accounts",
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Audit large transactions > 5000\nSELECT ...",
+    "solution_query": "SELECT t.transaction_id, c.name AS customer_name, t.transaction_type, t.amount FROM transactions t JOIN accounts a ON t.account_id = a.account_id JOIN bank_customers c ON a.customer_id = c.customer_id WHERE t.amount > 5000.00 AND t.status = 'completed' ORDER BY t.amount DESC, t.transaction_id ASC;",
+    "solution_explanation": "Filters for AML compliance reporting on large transaction velocity.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join transactions -> accounts -> bank_customers.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT t.transaction_id, c.name AS customer_name, t.transaction_type, t.amount FROM transactions t JOIN accounts a ON t.account_id = a.account_id JOIN bank_customers c ON a.customer_id = c.customer_id WHERE t.amount > 5000.00 AND t.status = 'completed' ORDER BY t.amount DESC, t.transaction_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "compliance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-bnk-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-bnk-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-bnk-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-04",
+    "slug": "bnk-active-checking-accounts",
+    "title": "Find Active Checking Accounts with High Balance",
+    "description_markdown": "Query customer names, account IDs, and balances for all checking accounts with a balance of at least $1,000.00. Order by `balance` DESC, then `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.name, a.account_id, a.balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE a.account_type = 'checking' AND a.balance >= 1000.00 ORDER BY a.balance DESC, a.account_id ASC;",
+    "solution_explanation": "Joins bank_customers to accounts filtering by checking account_type and minimum balance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `bank_customers c` and `accounts a` on `c.customer_id = a.customer_id`.",
+      "Filter with `WHERE a.account_type = 'checking' AND a.balance >= 1000.00`.",
+      "Query: SELECT c.name, a.account_id, a.balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE a.account_type = 'checking' AND a.balance >= 1000.00 ORDER BY a.balance DESC, a.account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-05",
+    "slug": "bnk-account-type-summary",
+    "title": "Summarize Account Holdings by Account Type",
+    "description_markdown": "Aggregate total accounts and sum of balances grouped by `account_type`. Order by `total_balance` DESC, `account_type` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "account_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY account_type ORDER BY total_balance DESC, account_type ASC;",
+    "solution_explanation": "Groups accounts by account_type and aggregates count and total balance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `GROUP BY account_type`.",
+      "Aggregate with `COUNT(*) AS account_count` and `SUM(balance) AS total_balance`.",
+      "Query: SELECT account_type, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY account_type ORDER BY total_balance DESC, account_type ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-06",
+    "slug": "bnk-customers-joined-2021",
+    "title": "Filter Customers Who Onboarded in 2021",
+    "description_markdown": "Retrieve `customer_id`, `name`, and `joined_date` for all customers who joined between January 1, 2021 and December 31, 2021 inclusive. Order by `joined_date` ASC, `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "joined_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT customer_id, name, joined_date FROM bank_customers WHERE joined_date >= '2021-01-01' AND joined_date <= '2021-12-31' ORDER BY joined_date ASC, customer_id ASC;",
+    "solution_explanation": "Filters bank_customers by date boundary conditions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter using `joined_date >= '2021-01-01' AND joined_date <= '2021-12-31'`.",
+      "Select `customer_id`, `name`, and `joined_date`.",
+      "Query: SELECT customer_id, name, joined_date FROM bank_customers WHERE joined_date >= '2021-01-01' AND joined_date <= '2021-12-31' ORDER BY joined_date ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-07",
+    "slug": "bnk-highest-account-balance-per-branch",
+    "title": "Find Highest Single Account Balance per Branch",
+    "description_markdown": "For each branch, calculate the maximum individual account balance maintained at that branch as `max_balance`. Order by `max_balance` DESC, `branch_name` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.branch_name, MAX(a.balance) AS max_balance FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name ORDER BY max_balance DESC, b.branch_name ASC;",
+    "solution_explanation": "Joins branches and accounts and computes MAX(balance) grouped by branch.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `branches b` and `accounts a` on `b.branch_id = a.branch_id`.",
+      "Group by branch and compute `MAX(a.balance)`.",
+      "Query: SELECT b.branch_name, MAX(a.balance) AS max_balance FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name ORDER BY max_balance DESC, b.branch_name ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-08",
+    "slug": "bnk-transaction-volume-by-type",
+    "title": "Analyze Completed Transaction Volumes by Transaction Type",
+    "description_markdown": "Calculate total completed transaction count (`tx_count`) and total sum of amounts (`total_amount`) for each `transaction_type`. Order by `total_amount` DESC, `transaction_type` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_type",
+        "type": "varchar"
+      },
+      {
+        "name": "tx_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount FROM transactions WHERE status = 'completed' GROUP BY transaction_type ORDER BY total_amount DESC, transaction_type ASC;",
+    "solution_explanation": "Filters completed transactions and groups by transaction_type.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE status = 'completed'`.",
+      "Group by `transaction_type` and aggregate count and sum.",
+      "Query: SELECT transaction_type, COUNT(*) AS tx_count, SUM(amount) AS total_amount FROM transactions WHERE status = 'completed' GROUP BY transaction_type ORDER BY total_amount DESC, transaction_type ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-09",
+    "slug": "bnk-credit-score-tiers",
+    "title": "Classify Customers into Credit Risk Tiers",
+    "description_markdown": "Classify each customer's credit score using CASE: 'Excellent' for >= 750, 'Good' for >= 680, and 'Fair' otherwise as `credit_tier`. Order by `credit_score` DESC, `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "credit_score",
+        "type": "integer"
+      },
+      {
+        "name": "credit_tier",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT customer_id, name, credit_score, CASE WHEN credit_score >= 750 THEN 'Excellent' WHEN credit_score >= 680 THEN 'Good' ELSE 'Fair' END AS credit_tier FROM bank_customers ORDER BY credit_score DESC, customer_id ASC;",
+    "solution_explanation": "Uses conditional CASE statement to map credit scores into tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN credit_score >= 750 THEN 'Excellent' ... END`.",
+      "Select `customer_id`, `name`, `credit_score`, and the alias `credit_tier`.",
+      "Query: SELECT customer_id, name, credit_score, CASE WHEN credit_score >= 750 THEN 'Excellent' WHEN credit_score >= 680 THEN 'Good' ELSE 'Fair' END AS credit_tier FROM bank_customers ORDER BY credit_score DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-10",
+    "slug": "bnk-accounts-with-no-transactions",
+    "title": "Detect Dormant Accounts with Zero Transactions",
+    "description_markdown": "Identify all bank accounts that have never recorded a single transaction. Return `account_id`, `account_type`, and `balance`. Order by `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts",
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.account_id, a.account_type, a.balance FROM accounts a LEFT JOIN transactions t ON a.account_id = t.account_id WHERE t.transaction_id IS NULL ORDER BY a.account_id ASC;",
+    "solution_explanation": "Performs an anti-join using LEFT JOIN and filtering WHERE t.transaction_id IS NULL.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `transactions t` on `a.account_id = t.account_id`.",
+      "Filter with `WHERE t.transaction_id IS NULL`.",
+      "Query: SELECT a.account_id, a.account_type, a.balance FROM accounts a LEFT JOIN transactions t ON a.account_id = t.account_id WHERE t.transaction_id IS NULL ORDER BY a.account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-11",
+    "slug": "bnk-customers-with-multiple-account-types",
+    "title": "Identify Customers Holding Both Checking and Savings Accounts",
+    "description_markdown": "Find customers who own both a 'checking' and a 'savings' account. Return `customer_id` and `name`. Order by `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.customer_id, c.name FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE a.account_type IN ('checking', 'savings') GROUP BY c.customer_id, c.name HAVING COUNT(DISTINCT a.account_type) = 2 ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Groups customer accounts and requires COUNT(DISTINCT account_type) = 2 for checking and savings.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter `account_type IN ('checking', 'savings')`.",
+      "Group by customer and filter with `HAVING COUNT(DISTINCT a.account_type) = 2`.",
+      "Query: SELECT c.customer_id, c.name FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE a.account_type IN ('checking', 'savings') GROUP BY c.customer_id, c.name HAVING COUNT(DISTINCT a.account_type) = 2 ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-12",
+    "slug": "bnk-rank-accounts-within-branch",
+    "title": "Rank Accounts Within Each Branch by Liquidity",
+    "description_markdown": "For each branch, rank its accounts from highest balance to lowest balance using `DENSE_RANK()` as `balance_rank`. Return `branch_name`, `account_id`, `balance`, and `balance_rank`. Order by `branch_name` ASC, `balance_rank` ASC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      },
+      {
+        "name": "balance_rank",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.branch_name, a.account_id, a.balance, DENSE_RANK() OVER (PARTITION BY a.branch_id ORDER BY a.balance DESC) AS balance_rank FROM accounts a JOIN branches b ON a.branch_id = b.branch_id ORDER BY b.branch_name ASC, balance_rank ASC, a.account_id ASC;",
+    "solution_explanation": "Uses DENSE_RANK() partitioned by branch_id ordered by balance DESC.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (PARTITION BY a.branch_id ORDER BY a.balance DESC)`.",
+      "Join `accounts` to `branches` on `branch_id`.",
+      "Query: SELECT b.branch_name, a.account_id, a.balance, DENSE_RANK() OVER (PARTITION BY a.branch_id ORDER BY a.balance DESC) AS balance_rank FROM accounts a JOIN branches b ON a.branch_id = b.branch_id ORDER BY b.branch_name ASC, balance_rank ASC, a.account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-13",
+    "slug": "bnk-cumulative-deposit-volume",
+    "title": "Calculate Cumulative Account Deposit Volume Over Time",
+    "description_markdown": "For all completed deposits, calculate the running total of deposited money per account as `cumulative_deposits`. Return `transaction_id`, `account_id`, `amount`, and `cumulative_deposits`. Order by `account_id` ASC, `tx_time` ASC, `transaction_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "cumulative_deposits",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT transaction_id, account_id, amount, SUM(amount) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC) AS cumulative_deposits FROM transactions WHERE transaction_type = 'deposit' ORDER BY account_id ASC, tx_time ASC, transaction_id ASC;",
+    "solution_explanation": "Calculates cumulative deposits using window SUM() partitioned by account_id.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE transaction_type = 'deposit'`.",
+      "Use `SUM(amount) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC)`.",
+      "Query: SELECT transaction_id, account_id, amount, SUM(amount) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC) AS cumulative_deposits FROM transactions WHERE transaction_type = 'deposit' ORDER BY account_id ASC, tx_time ASC, transaction_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-14",
+    "slug": "bnk-branches-metropolitan-assets",
+    "title": "Filter Metropolitan Branches with High Asset Base",
+    "description_markdown": "List branches with `total_assets` of at least $70,000,000.00. Return `branch_id`, `branch_name`, `city`, and `total_assets`. Order by `total_assets` DESC, `branch_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_id",
+        "type": "integer"
+      },
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "total_assets",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT branch_id, branch_name, city, total_assets FROM branches WHERE total_assets >= 70000000.00 ORDER BY total_assets DESC, branch_id ASC;",
+    "solution_explanation": "Filters branches by asset threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE total_assets >= 70000000.00`.",
+      "Order by `total_assets` DESC, `branch_id` ASC.",
+      "Query: SELECT branch_id, branch_name, city, total_assets FROM branches WHERE total_assets >= 70000000.00 ORDER BY total_assets DESC, branch_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-15",
+    "slug": "bnk-average-customer-balance-exceeds-threshold",
+    "title": "Find Customers with Average Account Balance Above $20,000",
+    "description_markdown": "Compute the average account balance across all accounts owned by each customer. Return `customer_id`, `name`, and `avg_balance` for customers whose average balance strictly exceeds $20,000.00. Order by `avg_balance` DESC, `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.customer_id, c.name, AVG(a.balance) AS avg_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name HAVING AVG(a.balance) > 20000.00 ORDER BY avg_balance DESC, c.customer_id ASC;",
+    "solution_explanation": "Groups accounts by customer and applies HAVING AVG(balance) > 20000.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `bank_customers` with `accounts`.",
+      "Use `HAVING AVG(a.balance) > 20000.00`.",
+      "Query: SELECT c.customer_id, c.name, AVG(a.balance) AS avg_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name HAVING AVG(a.balance) > 20000.00 ORDER BY avg_balance DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-16",
+    "slug": "bnk-largest-single-transaction-per-customer",
+    "title": "Determine the Largest Transaction Processed per Customer",
+    "description_markdown": "Identify the maximum completed transaction amount executed by each customer as `max_amount`. Return `name` and `max_amount`. Order by `max_amount` DESC, `name` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts",
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "max_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.name, MAX(t.amount) AS max_amount FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id JOIN transactions t ON a.account_id = t.account_id WHERE t.status = 'completed' GROUP BY c.customer_id, c.name ORDER BY max_amount DESC, c.name ASC;",
+    "solution_explanation": "Joins bank_customers, accounts, and transactions to find MAX(amount) per customer.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `bank_customers`, `accounts`, and `transactions`.",
+      "Group by customer and use `MAX(t.amount)`.",
+      "Query: SELECT c.name, MAX(t.amount) AS max_amount FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id JOIN transactions t ON a.account_id = t.account_id WHERE t.status = 'completed' GROUP BY c.customer_id, c.name ORDER BY max_amount DESC, c.name ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-17",
+    "slug": "bnk-net-cashflow-per-account",
+    "title": "Compute Net Transaction Cashflow by Account",
+    "description_markdown": "Calculate net cashflow per account (deposits minus withdrawals) for completed transactions as `net_cashflow`. Return `account_id` and `net_cashflow`. Order by `net_cashflow` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "net_cashflow",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_id, SUM(CASE WHEN transaction_type = 'deposit' THEN amount ELSE -amount END) AS net_cashflow FROM transactions WHERE status = 'completed' GROUP BY account_id ORDER BY net_cashflow DESC, account_id ASC;",
+    "solution_explanation": "Uses conditional SUM with CASE statement to subtract withdrawals from deposits.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(CASE WHEN transaction_type = 'deposit' THEN amount ELSE -amount END)`.",
+      "Group by `account_id`.",
+      "Query: SELECT account_id, SUM(CASE WHEN transaction_type = 'deposit' THEN amount ELSE -amount END) AS net_cashflow FROM transactions WHERE status = 'completed' GROUP BY account_id ORDER BY net_cashflow DESC, account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-18",
+    "slug": "bnk-accounts-above-overall-average-balance",
+    "title": "Identify Accounts Exceeding Platform Average Balance",
+    "description_markdown": "Find accounts whose balance is strictly above the bank-wide average account balance. Return `account_id`, `account_type`, and `balance`. Order by `balance` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts WHERE balance > (SELECT AVG(balance) FROM accounts) ORDER BY balance DESC, account_id ASC;",
+    "solution_explanation": "Uses a scalar subquery to compare balance with bank-wide average balance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Compare balance using `WHERE balance > (SELECT AVG(balance) FROM accounts)`.",
+      "Order by `balance` DESC, `account_id` ASC.",
+      "Query: SELECT account_id, account_type, balance FROM accounts WHERE balance > (SELECT AVG(balance) FROM accounts) ORDER BY balance DESC, account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-19",
+    "slug": "bnk-total-liquidity-by-city",
+    "title": "Aggregate Banking Customer Liquidity by Metropolitan City",
+    "description_markdown": "Calculate total customer deposits (`total_liquidity`) managed across branches in each city. Return `city` and `total_liquidity`. Order by `total_liquidity` DESC, `city` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "total_liquidity",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.city, SUM(a.balance) AS total_liquidity FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.city ORDER BY total_liquidity DESC, b.city ASC;",
+    "solution_explanation": "Joins branches and accounts, sums balance, and groups by city.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `branches b` and `accounts a` on `b.branch_id = a.branch_id`.",
+      "Group by `b.city` and calculate `SUM(a.balance)`.",
+      "Query: SELECT b.city, SUM(a.balance) AS total_liquidity FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.city ORDER BY total_liquidity DESC, b.city ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-20",
+    "slug": "bnk-recent-transaction-lag-audit",
+    "title": "Track Previous Transaction Amount per Account Using LAG",
+    "description_markdown": "For each transaction, display the previous transaction's amount on that same account as `prev_amount` using `LAG()`. Return `transaction_id`, `account_id`, `amount`, and `prev_amount`. Order by `account_id` ASC, `tx_time` ASC, `transaction_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "prev_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT transaction_id, account_id, amount, LAG(amount, 1) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC) AS prev_amount FROM transactions ORDER BY account_id ASC, tx_time ASC, transaction_id ASC;",
+    "solution_explanation": "Applies LAG(amount, 1) partitioned by account_id ordered chronologically.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(amount, 1) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC)`.",
+      "Preserve NULL for the initial transaction in each account.",
+      "Query: SELECT transaction_id, account_id, amount, LAG(amount, 1) OVER (PARTITION BY account_id ORDER BY tx_time ASC, transaction_id ASC) AS prev_amount FROM transactions ORDER BY account_id ASC, tx_time ASC, transaction_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-21",
+    "slug": "bnk-accounts-with-withdrawals-exceeding-threshold",
+    "title": "Filter Accounts with Substantial Withdrawal History",
+    "description_markdown": "Find accounts where the total completed withdrawals sum to at least $500.00 as `total_withdrawn`. Return `account_id` and `total_withdrawn`. Order by `total_withdrawn` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_withdrawn",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_id, SUM(amount) AS total_withdrawn FROM transactions WHERE transaction_type = 'withdrawal' AND status = 'completed' GROUP BY account_id HAVING SUM(amount) >= 500.00 ORDER BY total_withdrawn DESC, account_id ASC;",
+    "solution_explanation": "Filters completed withdrawals and groups by account_id with HAVING SUM(amount) >= 500.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE transaction_type = 'withdrawal' AND status = 'completed'`.",
+      "Group by `account_id` with `HAVING SUM(amount) >= 500.00`.",
+      "Query: SELECT account_id, SUM(amount) AS total_withdrawn FROM transactions WHERE transaction_type = 'withdrawal' AND status = 'completed' GROUP BY account_id HAVING SUM(amount) >= 500.00 ORDER BY total_withdrawn DESC, account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-22",
+    "slug": "bnk-customer-account-count-and-wealth",
+    "title": "Assess Customer Total Portfolio Across All Accounts",
+    "description_markdown": "For all customers with accounts, return `name`, total number of accounts owned as `num_accounts`, and total aggregated balance as `total_balance`. Order by `total_balance` DESC, `name` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "num_accounts",
+        "type": "bigint"
+      },
+      {
+        "name": "total_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.name, COUNT(a.account_id) AS num_accounts, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name ORDER BY total_balance DESC, c.name ASC;",
+    "solution_explanation": "Joins bank_customers and accounts and groups by customer.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `bank_customers` and `accounts`.",
+      "Group by `c.customer_id, c.name` and aggregate count and sum.",
+      "Query: SELECT c.name, COUNT(a.account_id) AS num_accounts, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id GROUP BY c.customer_id, c.name ORDER BY total_balance DESC, c.name ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-23",
+    "slug": "bnk-branch-customer-reach",
+    "title": "Count Distinct Customers Served per Branch",
+    "description_markdown": "Calculate the count of distinct customers having accounts at each branch as `unique_customers`. Return `branch_name` and `unique_customers`. Order by `unique_customers` DESC, `branch_name` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "unique_customers",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.branch_name, COUNT(DISTINCT a.customer_id) AS unique_customers FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name ORDER BY unique_customers DESC, b.branch_name ASC;",
+    "solution_explanation": "Counts distinct customer_ids per branch.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(DISTINCT a.customer_id)`.",
+      "Group by `b.branch_id, b.branch_name`.",
+      "Query: SELECT b.branch_name, COUNT(DISTINCT a.customer_id) AS unique_customers FROM branches b JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name ORDER BY unique_customers DESC, b.branch_name ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-24",
+    "slug": "bnk-account-balance-deviation-from-branch-average",
+    "title": "Calculate Balance Variance from Branch Average",
+    "description_markdown": "For each account, display its `account_id`, `branch_id`, `balance`, and the average balance of all accounts in the same branch as `branch_avg_balance` using window functions. Order by `branch_id` ASC, `balance` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "branch_id",
+        "type": "integer"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      },
+      {
+        "name": "branch_avg_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_id, branch_id, balance, AVG(balance) OVER (PARTITION BY branch_id) AS branch_avg_balance FROM accounts ORDER BY branch_id ASC, balance DESC, account_id ASC;",
+    "solution_explanation": "Computes AVG(balance) OVER (PARTITION BY branch_id).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `AVG(balance) OVER (PARTITION BY branch_id) AS branch_avg_balance`.",
+      "Order by `branch_id` ASC, `balance` DESC, `account_id` ASC.",
+      "Query: SELECT account_id, branch_id, balance, AVG(balance) OVER (PARTITION BY branch_id) AS branch_avg_balance FROM accounts ORDER BY branch_id ASC, balance DESC, account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-25",
+    "slug": "bnk-top-credit-rated-customers",
+    "title": "List Top Credit Rated Customers",
+    "description_markdown": "List all customers whose credit score is 700 or greater. Return `customer_id`, `name`, and `credit_score`. Order by `credit_score` DESC, `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "credit_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT customer_id, name, credit_score FROM bank_customers WHERE credit_score >= 700 ORDER BY credit_score DESC, customer_id ASC;",
+    "solution_explanation": "Filters bank_customers where credit_score >= 700.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE credit_score >= 700`.",
+      "Order by `credit_score` DESC, `customer_id` ASC.",
+      "Query: SELECT customer_id, name, credit_score FROM bank_customers WHERE credit_score >= 700 ORDER BY credit_score DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-26",
+    "slug": "bnk-accounts-with-large-single-deposit",
+    "title": "Find Accounts Benefiting from Large Single Deposits",
+    "description_markdown": "Find all completed deposit transactions where the deposit amount is at least $10,000.00. Return `account_id`, `account_type`, and `amount`. Order by `amount` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts",
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.account_id, a.account_type, t.amount FROM accounts a JOIN transactions t ON a.account_id = t.account_id WHERE t.transaction_type = 'deposit' AND t.amount >= 10000.00 AND t.status = 'completed' ORDER BY t.amount DESC, a.account_id ASC;",
+    "solution_explanation": "Joins accounts with transactions filtering on completed deposit >= 10000.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `accounts` and `transactions`.",
+      "Filter with `t.transaction_type = 'deposit' AND t.amount >= 10000.00 AND t.status = 'completed'`.",
+      "Query: SELECT a.account_id, a.account_type, t.amount FROM accounts a JOIN transactions t ON a.account_id = t.account_id WHERE t.transaction_type = 'deposit' AND t.amount >= 10000.00 AND t.status = 'completed' ORDER BY t.amount DESC, a.account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-27",
+    "slug": "bnk-customer-joined-year-and-month-distribution",
+    "title": "Analyze Customer Onboarding Velocity by Year",
+    "description_markdown": "Calculate total customers onboarded per year as `joined_year` and `customer_count`. Order by `joined_year` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "joined_year",
+        "type": "integer"
+      },
+      {
+        "name": "customer_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT YEAR(joined_date) AS joined_year, COUNT(*) AS customer_count FROM bank_customers GROUP BY YEAR(joined_date) ORDER BY joined_year ASC;",
+    "solution_explanation": "Extracts year from joined_date and groups by year.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "In Postgres use `EXTRACT(YEAR FROM joined_date)::INTEGER`, in MySQL use `YEAR(joined_date)`.",
+      "Group by the year and count customers.",
+      "Query: SELECT EXTRACT(YEAR FROM joined_date)::INTEGER AS joined_year, COUNT(*) AS customer_count FROM bank_customers GROUP BY EXTRACT(YEAR FROM joined_date) ORDER BY joined_year ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-28",
+    "slug": "bnk-running-total-completed-transactions",
+    "title": "Compute Global Running Total of Completed Transactions",
+    "description_markdown": "Calculate the running total of transaction amounts across all completed transactions as `running_total`. Return `transaction_id`, `amount`, and `running_total`. Order by `tx_time` ASC, `transaction_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "running_total",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT transaction_id, amount, SUM(amount) OVER (ORDER BY tx_time ASC, transaction_id ASC) AS running_total FROM transactions WHERE status = 'completed' ORDER BY tx_time ASC, transaction_id ASC;",
+    "solution_explanation": "Calculates running total using SUM() OVER (ORDER BY tx_time ASC, transaction_id ASC).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter completed transactions with `WHERE status = 'completed'`.",
+      "Use window function `SUM(amount) OVER (ORDER BY tx_time ASC, transaction_id ASC)`.",
+      "Query: SELECT transaction_id, amount, SUM(amount) OVER (ORDER BY tx_time ASC, transaction_id ASC) AS running_total FROM transactions WHERE status = 'completed' ORDER BY tx_time ASC, transaction_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-29",
+    "slug": "bnk-high-credit-score-liquidity",
+    "title": "Assess Total Liquidity from Premium Credit Score Customers",
+    "description_markdown": "Calculate total balance across all accounts for customers with a credit score of 720 or higher. Return `customer_id`, `name`, `credit_score`, and `total_balance`. Order by `credit_score` DESC, `total_balance` DESC, `customer_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "credit_score",
+        "type": "integer"
+      },
+      {
+        "name": "total_balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT c.customer_id, c.name, c.credit_score, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE c.credit_score >= 720 GROUP BY c.customer_id, c.name, c.credit_score ORDER BY c.credit_score DESC, total_balance DESC, c.customer_id ASC;",
+    "solution_explanation": "Joins bank_customers and accounts, filters by credit_score >= 720, and aggregates total balance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE c.credit_score >= 720`.",
+      "Aggregate with `SUM(a.balance) AS total_balance`.",
+      "Query: SELECT c.customer_id, c.name, c.credit_score, SUM(a.balance) AS total_balance FROM bank_customers c JOIN accounts a ON c.customer_id = a.customer_id WHERE c.credit_score >= 720 GROUP BY c.customer_id, c.name, c.credit_score ORDER BY c.credit_score DESC, total_balance DESC, c.customer_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-30",
+    "slug": "bnk-accounts-exceeding-fifty-thousand",
+    "title": "Audit Accounts Holding Balances Exceeding $50,000",
+    "description_markdown": "Audit accounts holding a balance of at least $50,000.00. Return `account_id`, `customer_id`, `account_type`, and `balance`. Order by `balance` DESC, `account_id` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT account_id, customer_id, account_type, balance FROM accounts WHERE balance >= 50000.00 ORDER BY balance DESC, account_id ASC;",
+    "solution_explanation": "Filters accounts where balance >= 50000.00.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE balance >= 50000.00`.",
+      "Order by `balance` DESC, `account_id` ASC.",
+      "Query: SELECT account_id, customer_id, account_type, balance FROM accounts WHERE balance >= 50000.00 ORDER BY balance DESC, account_id ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-31",
+    "slug": "bnk-branches-below-threshold-accounts",
+    "title": "Identify Underperforming Branches with Limited Accounts",
+    "description_markdown": "List branches managing at most 2 accounts. Return `branch_name` and `account_count`. Order by `account_count` ASC, `branch_name` ASC.",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches",
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "account_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT b.branch_name, COUNT(a.account_id) AS account_count FROM branches b LEFT JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name HAVING COUNT(a.account_id) <= 2 ORDER BY account_count ASC, b.branch_name ASC;",
+    "solution_explanation": "Uses LEFT JOIN and HAVING COUNT(a.account_id) <= 2.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "LEFT JOIN `branches` with `accounts`.",
+      "Filter with `HAVING COUNT(a.account_id) <= 2`.",
+      "Query: SELECT b.branch_name, COUNT(a.account_id) AS account_count FROM branches b LEFT JOIN accounts a ON b.branch_id = a.branch_id GROUP BY b.branch_id, b.branch_name HAVING COUNT(a.account_id) <= 2 ORDER BY account_count ASC, b.branch_name ASC;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-bnk-32",
+    "slug": "bnk-enterprise-banking-kpi-summary",
+    "title": "Compile Bank Platform Core KPI Metrics Summary",
+    "description_markdown": "Compute single-row corporate overview metrics: `total_customers`, `total_accounts`, `total_deposits` (sum of all account balances), and `total_tx_volume` (sum of completed transactions).",
+    "topic_id": "scenario-banking",
+    "subtopic_id": "sc-bank",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "bank_customers",
+      "accounts",
+      "transactions",
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_customers",
+        "type": "bigint"
+      },
+      {
+        "name": "total_accounts",
+        "type": "bigint"
+      },
+      {
+        "name": "total_deposits",
+        "type": "decimal"
+      },
+      {
+        "name": "total_tx_volume",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT (SELECT COUNT(*) FROM bank_customers) AS total_customers, (SELECT COUNT(*) FROM accounts) AS total_accounts, (SELECT SUM(balance) FROM accounts) AS total_deposits, (SELECT SUM(amount) FROM transactions WHERE status = 'completed') AS total_tx_volume;",
+    "solution_explanation": "Uses scalar subqueries in the SELECT clause to produce a single-row executive KPI scorecard.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subqueries: `(SELECT COUNT(*) FROM bank_customers) AS total_customers`, etc.",
+      "Sum account balances and completed transaction amounts.",
+      "Query: SELECT (SELECT COUNT(*) FROM bank_customers) AS total_customers, (SELECT COUNT(*) FROM accounts) AS total_accounts, (SELECT SUM(balance) FROM accounts) AS total_deposits, (SELECT SUM(amount) FROM transactions WHERE status = 'completed') AS total_tx_volume;"
+    ],
+    "tags": [
+      "banking",
+      "sc-bank"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-bnk-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-bnk-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-bnk-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

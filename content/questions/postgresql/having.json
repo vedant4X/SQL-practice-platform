@@ -1,0 +1,2358 @@
+[
+  {
+    "id": "q-hav-01",
+    "slug": "departments-with-multiple-employees",
+    "title": "Filter Departments with More Than 2 Employees",
+    "description_markdown": "Find departments (`dept_id`) that have strictly more than 2 employees. Return `dept_id` and `COUNT(*) AS emp_count`. Exclude NULL `dept_id`. Order by `emp_count` DESC, then `dept_id`.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "emp_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter aggregate groups with HAVING\nSELECT dept_id, COUNT(*) AS emp_count\nFROM employees\nWHERE dept_id IS NOT NULL\nGROUP BY dept_id\nHAVING ...",
+    "solution_query": "SELECT dept_id, COUNT(*) AS emp_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) > 2 ORDER BY emp_count DESC, dept_id ASC;",
+    "solution_explanation": "The HAVING clause filters grouped rows after aggregation, selecting only groups where `COUNT(*) > 2`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `HAVING COUNT(*) > 2` after `GROUP BY dept_id`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_id, COUNT(*) AS emp_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING COUNT(*) > 2 ORDER BY emp_count DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-02",
+    "slug": "high-spending-repeat-customers",
+    "title": "Customers with Multiple Orders Exceeding $1000 Total",
+    "description_markdown": "Find customers who have placed at least 2 orders AND have a cumulative order total (`SUM(total_amount)`) greater than 1000.00. Return `customer_id`, `COUNT(*) AS order_count`, and `SUM(total_amount) AS total_spent`. Order by `total_spent` DESC.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Compound HAVING condition\nSELECT ...",
+    "solution_query": "SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id HAVING COUNT(*) >= 2 AND SUM(total_amount) > 1000.00 ORDER BY total_spent DESC, customer_id ASC;",
+    "solution_explanation": "Demonstrates compound boolean logic inside HAVING to target VIP recurring spenders.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Combine conditions in HAVING: `HAVING COUNT(*) >= 2 AND SUM(total_amount) > 1000.00`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id HAVING COUNT(*) >= 2 AND SUM(total_amount) > 1000.00 ORDER BY total_spent DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "vip-customers"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-03",
+    "slug": "departments-with-high-payroll-burdens",
+    "title": "Flag Departments with High Average Compensation",
+    "description_markdown": "Find departments where the average employee salary is at least 130,000. Return `dept_id`, `ROUND(AVG(salary), 2) AS avg_salary`, and `COUNT(*) AS employee_count`. Exclude NULL `dept_id`. Order by `avg_salary` DESC.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "avg_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "employee_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter on AVG in HAVING\nSELECT ...",
+    "solution_query": "SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary, COUNT(*) AS employee_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING AVG(salary) >= 130000 ORDER BY avg_salary DESC, dept_id ASC;",
+    "solution_explanation": "Filters grouped departments on calculated average salary benchmark using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `HAVING AVG(salary) >= 130000`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary, COUNT(*) AS employee_count FROM employees WHERE dept_id IS NOT NULL GROUP BY dept_id HAVING AVG(salary) >= 130000 ORDER BY avg_salary DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "salary-benchmark"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-04",
+    "slug": "ecommercedb-orders-repeat-customers-having",
+    "title": "Filter High-Frequency Repeat Customers with HAVING",
+    "description_markdown": "Find customers who placed strictly more than 1 order (`COUNT(*) > 1`). Return `customer_id`, `COUNT(*) AS order_count`, and `SUM(total_amount) AS total_spent`. Group by `customer_id` with a HAVING clause. Order by `total_spent` descending, then `customer_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter grouped orders using HAVING\nSELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent\nFROM orders\nGROUP BY customer_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id HAVING COUNT(*) > 1 ORDER BY total_spent DESC, customer_id ASC;",
+    "solution_explanation": "HAVING evaluates aggregated group counts post-calculation, isolating repeat customer accounts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing COUNT(*) > 1 in the WHERE clause instead of HAVING."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1 after GROUP BY customer_id.",
+      "Order by total_spent DESC, customer_id ASC.",
+      "Query: SELECT customer_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent FROM orders GROUP BY customer_id HAVING COUNT(*) > 1 ORDER BY total_spent DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-05",
+    "slug": "collegedb-students-majors-multi-enrollment",
+    "title": "Filter Academic Majors with Minimum Student Threshold",
+    "description_markdown": "From `students`, find majors with at least 2 students (`COUNT(*) >= 2`). Return `major`, `COUNT(*) AS student_count`, and `ROUND(AVG(gpa), 2) AS avg_gpa`. Group by `major` HAVING `COUNT(*) >= 2`. Order by `student_count` descending, then `major` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "student_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter majors by student count with HAVING\nSELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa\nFROM students\nGROUP BY major\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa FROM students GROUP BY major HAVING COUNT(*) >= 2 ORDER BY student_count DESC, major ASC;",
+    "solution_explanation": "Filters grouped majors to exclude under-enrolled cohorts using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > 2 instead of >= 2."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) >= 2.",
+      "Query: SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa FROM students GROUP BY major HAVING COUNT(*) >= 2 ORDER BY student_count DESC, major ASC;",
+      "The expected query is: SELECT major, COUNT(*) AS student_count, ROUND(AVG(gpa), 2) AS avg_gpa FROM students GROUP BY major HAVING COUNT(*) >= 2 ORDER BY student_count DESC, major ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-06",
+    "slug": "banking-accounts-high-balance-customers",
+    "title": "Filter Customers with Cumulative Balance Exceeding Ten Thousand",
+    "description_markdown": "From `accounts`, find customers whose total balance across all accounts is at least 10,000 (`SUM(balance) >= 10000.0`). Return `customer_id`, `COUNT(*) AS account_count`, and `SUM(balance) AS total_balance`. Group by `customer_id` HAVING `SUM(balance) >= 10000.0`. Order by `total_balance` descending, then `customer_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_balance",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter customers by total balance with HAVING\nSELECT customer_id, COUNT(*) AS account_count, SUM(balance) AS total_balance\nFROM accounts\nGROUP BY customer_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT customer_id, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY customer_id HAVING SUM(balance) >= 10000.0 ORDER BY total_balance DESC, customer_id ASC;",
+    "solution_explanation": "Applies HAVING SUM(balance) >= 10000.0 to filter high-net-worth customer relationships.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the sum condition in WHERE."
+    ],
+    "hints": [
+      "Use HAVING SUM(balance) >= 10000.0.",
+      "Query: SELECT customer_id, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY customer_id HAVING SUM(balance) >= 10000.0 ORDER BY total_balance DESC, customer_id ASC;",
+      "The expected query is: SELECT customer_id, COUNT(*) AS account_count, SUM(balance) AS total_balance FROM accounts GROUP BY customer_id HAVING SUM(balance) >= 10000.0 ORDER BY total_balance DESC, customer_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-07",
+    "slug": "hospital-doctors-high-experience-depts",
+    "title": "Filter Clinical Departments by Average Physician Experience",
+    "description_markdown": "From `doctors`, find departments where average physician experience is at least 10.0 years (`AVG(experience_years) >= 10.0`). Return `department`, `COUNT(*) AS doctor_count`, and `ROUND(AVG(experience_years), 1) AS avg_experience`. Group by `department` HAVING `AVG(experience_years) >= 10.0`. Order by `avg_experience` descending, then `department` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "doctor_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_experience",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter departments by mean experience with HAVING\nSELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience\nFROM doctors\nGROUP BY department\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department HAVING AVG(experience_years) >= 10.0 ORDER BY avg_experience DESC, department ASC;",
+    "solution_explanation": "Applies aggregate average predicate in the HAVING clause.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE AVG(...) which is invalid SQL syntax."
+    ],
+    "hints": [
+      "Use HAVING AVG(experience_years) >= 10.0.",
+      "Query: SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department HAVING AVG(experience_years) >= 10.0 ORDER BY avg_experience DESC, department ASC;",
+      "The expected query is: SELECT department, COUNT(*) AS doctor_count, ROUND(AVG(experience_years), 1) AS avg_experience FROM doctors GROUP BY department HAVING AVG(experience_years) >= 10.0 ORDER BY avg_experience DESC, department ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-08",
+    "slug": "hotel-rooms-premium-room-types-having",
+    "title": "Filter Premium Room Categories Exceeding Rate Threshold",
+    "description_markdown": "From `rooms`, find room types where average nightly rate exceeds 150.0 (`AVG(price_per_night) > 150.0`). Return `room_type`, `COUNT(*) AS room_count`, and `ROUND(AVG(price_per_night), 2) AS avg_price`. Group by `room_type` HAVING `AVG(price_per_night) > 150.0`. Order by `avg_price` descending, then `room_type` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "room_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter room categories by average price with HAVING\nSELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price\nFROM rooms\nGROUP BY room_type\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type HAVING AVG(price_per_night) > 150.0 ORDER BY avg_price DESC, room_type ASC;",
+    "solution_explanation": "Filters hotel room tiers using HAVING on average pricing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE instead of HAVING."
+    ],
+    "hints": [
+      "Use HAVING AVG(price_per_night) > 150.0.",
+      "Query: SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type HAVING AVG(price_per_night) > 150.0 ORDER BY avg_price DESC, room_type ASC;",
+      "The expected query is: SELECT room_type, COUNT(*) AS room_count, ROUND(AVG(price_per_night), 2) AS avg_price FROM rooms GROUP BY room_type HAVING AVG(price_per_night) > 150.0 ORDER BY avg_price DESC, room_type ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-09",
+    "slug": "library-books-large-inventory-categories",
+    "title": "Filter Book Categories by Minimum Circulation Inventory",
+    "description_markdown": "From `books`, find categories with at least 5 total copies in stock (`SUM(copies_available) >= 5`). Return `category`, `COUNT(*) AS title_count`, and `SUM(copies_available) AS total_copies`. Group by `category` HAVING `SUM(copies_available) >= 5`. Order by `total_copies` descending, then `category` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "title_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_copies",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter categories by total inventory with HAVING\nSELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies\nFROM books\nGROUP BY category\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category HAVING SUM(copies_available) >= 5 ORDER BY total_copies DESC, category ASC;",
+    "solution_explanation": "Applies HAVING SUM to filter catalog categories by minimum inventory depth.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using COUNT instead of SUM for total_copies condition."
+    ],
+    "hints": [
+      "Use HAVING SUM(copies_available) >= 5.",
+      "Query: SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category HAVING SUM(copies_available) >= 5 ORDER BY total_copies DESC, category ASC;",
+      "The expected query is: SELECT category, COUNT(*) AS title_count, SUM(copies_available) AS total_copies FROM books GROUP BY category HAVING SUM(copies_available) >= 5 ORDER BY total_copies DESC, category ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-10",
+    "slug": "movie-streaming-movies-popular-genres",
+    "title": "Filter Movie Genres with Multiple Catalog Releases",
+    "description_markdown": "From `movies`, find genres that include at least 2 films (`COUNT(*) >= 2`). Return `genre`, `COUNT(*) AS movie_count`, and `ROUND(AVG(imdb_rating), 2) AS avg_rating`. Group by `genre` HAVING `COUNT(*) >= 2`. Order by `movie_count` descending, then `genre` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "genre",
+        "type": "varchar"
+      },
+      {
+        "name": "movie_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter genres by release count with HAVING\nSELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating\nFROM movies\nGROUP BY genre\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre HAVING COUNT(*) >= 2 ORDER BY movie_count DESC, genre ASC;",
+    "solution_explanation": "Restricts genre summaries to categories meeting a catalog size threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the HAVING clause."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) >= 2.",
+      "Query: SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre HAVING COUNT(*) >= 2 ORDER BY movie_count DESC, genre ASC;",
+      "The expected query is: SELECT genre, COUNT(*) AS movie_count, ROUND(AVG(imdb_rating), 2) AS avg_rating FROM movies GROUP BY genre HAVING COUNT(*) >= 2 ORDER BY movie_count DESC, genre ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-11",
+    "slug": "sales-leads-active-representatives",
+    "title": "Filter Sales Reps Managing Multiple Active Leads",
+    "description_markdown": "From `leads`, find sales reps who manage strictly more than 1 lead (`COUNT(*) > 1`). Return `rep_id` and `COUNT(*) AS lead_count`. Group by `rep_id` HAVING `COUNT(*) > 1`. Order by `lead_count` descending, then `rep_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter sales reps with multiple leads\nSELECT rep_id, COUNT(*) AS lead_count\nFROM leads\nGROUP BY rep_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT rep_id, COUNT(*) AS lead_count FROM leads GROUP BY rep_id HAVING COUNT(*) > 1 ORDER BY lead_count DESC, rep_id ASC;",
+    "solution_explanation": "Filters grouped sales accounts using HAVING COUNT(*) > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 1 instead of > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT rep_id, COUNT(*) AS lead_count FROM leads GROUP BY rep_id HAVING COUNT(*) > 1 ORDER BY lead_count DESC, rep_id ASC;",
+      "The expected query is: SELECT rep_id, COUNT(*) AS lead_count FROM leads GROUP BY rep_id HAVING COUNT(*) > 1 ORDER BY lead_count DESC, rep_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-12",
+    "slug": "food-delivery-restaurants-high-rated-cuisines",
+    "title": "Filter Cuisines with Benchmark Customer Satisfaction",
+    "description_markdown": "From `restaurants`, find cuisines whose average restaurant rating is at least 4.0 (`AVG(rating) >= 4.0`). Return `cuisine`, `COUNT(*) AS restaurant_count`, and `ROUND(AVG(rating), 2) AS avg_rating`. Group by `cuisine` HAVING `AVG(rating) >= 4.0`. Order by `avg_rating` descending, then `cuisine` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "restaurant_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_rating",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter cuisines by mean rating with HAVING\nSELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating\nFROM restaurants\nGROUP BY cuisine\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine HAVING AVG(rating) >= 4.0 ORDER BY avg_rating DESC, cuisine ASC;",
+    "solution_explanation": "Filters restaurant groups post-aggregation by rating quality.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE AVG(rating) >= 4.0."
+    ],
+    "hints": [
+      "Use HAVING AVG(rating) >= 4.0.",
+      "Query: SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine HAVING AVG(rating) >= 4.0 ORDER BY avg_rating DESC, cuisine ASC;",
+      "The expected query is: SELECT cuisine, COUNT(*) AS restaurant_count, ROUND(AVG(rating), 2) AS avg_rating FROM restaurants GROUP BY cuisine HAVING AVG(rating) >= 4.0 ORDER BY avg_rating DESC, cuisine ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-13",
+    "slug": "airline-flights-busy-origins-having",
+    "title": "Filter High-Frequency Hub Airport Departure Origins",
+    "description_markdown": "From `flights`, find origin airports that operate strictly more than 1 flight (`COUNT(*) > 1`). Return `origin` and `COUNT(*) AS flight_count`. Group by `origin` HAVING `COUNT(*) > 1`. Order by `flight_count` descending, then `origin` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "flight_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter flight origins by flight frequency\nSELECT origin, COUNT(*) AS flight_count\nFROM flights\nGROUP BY origin\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT origin, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING COUNT(*) > 1 ORDER BY flight_count DESC, origin ASC;",
+    "solution_explanation": "Isolates active airport origin hubs using HAVING COUNT(*) > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using WHERE COUNT(*) > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT origin, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING COUNT(*) > 1 ORDER BY flight_count DESC, origin ASC;",
+      "The expected query is: SELECT origin, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING COUNT(*) > 1 ORDER BY flight_count DESC, origin ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-14",
+    "slug": "inventory-stock-items-high-volume-warehouses",
+    "title": "Filter Warehouses Storing High Inventory Unit Volumes",
+    "description_markdown": "From `stock_items`, find warehouses where total quantity on hand strictly exceeds 100 units (`SUM(quantity_on_hand) > 100`). Return `warehouse_id`, `COUNT(*) AS item_count`, and `SUM(quantity_on_hand) AS total_stock`. Group by `warehouse_id` HAVING `SUM(quantity_on_hand) > 100`. Order by `total_stock` descending, then `warehouse_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "item_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_stock",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter warehouses by total inventory volume\nSELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_stock\nFROM stock_items\nGROUP BY warehouse_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_stock FROM stock_items GROUP BY warehouse_id HAVING SUM(quantity_on_hand) > 100 ORDER BY total_stock DESC, warehouse_id ASC;",
+    "solution_explanation": "Filters facilities by aggregated stock quantity using HAVING SUM.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 100 instead of > 100."
+    ],
+    "hints": [
+      "Use HAVING SUM(quantity_on_hand) > 100.",
+      "Query: SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_stock FROM stock_items GROUP BY warehouse_id HAVING SUM(quantity_on_hand) > 100 ORDER BY total_stock DESC, warehouse_id ASC;",
+      "The expected query is: SELECT warehouse_id, COUNT(*) AS item_count, SUM(quantity_on_hand) AS total_stock FROM stock_items GROUP BY warehouse_id HAVING SUM(quantity_on_hand) > 100 ORDER BY total_stock DESC, warehouse_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-15",
+    "slug": "finance-stocks-high-valuation-sectors",
+    "title": "Filter Sectors with Benchmark Share Prices",
+    "description_markdown": "From `stocks`, find sectors where average stock price is at least 100.0 (`AVG(current_price) >= 100.0`). Return `sector`, `COUNT(*) AS stock_count`, and `ROUND(AVG(current_price), 2) AS avg_price`. Group by `sector` HAVING `AVG(current_price) >= 100.0`. Order by `avg_price` descending, then `sector` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter sectors by average share valuation with HAVING\nSELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price\nFROM stocks\nGROUP BY sector\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector HAVING AVG(current_price) >= 100.0 ORDER BY avg_price DESC, sector ASC;",
+    "solution_explanation": "Filters stock sectors according to average equity price.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting ROUND on avg_price."
+    ],
+    "hints": [
+      "Use HAVING AVG(current_price) >= 100.0.",
+      "Query: SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector HAVING AVG(current_price) >= 100.0 ORDER BY avg_price DESC, sector ASC;",
+      "The expected query is: SELECT sector, COUNT(*) AS stock_count, ROUND(AVG(current_price), 2) AS avg_price FROM stocks GROUP BY sector HAVING AVG(current_price) >= 100.0 ORDER BY avg_price DESC, sector ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-16",
+    "slug": "hr-job-postings-active-departments-having",
+    "title": "Filter Departments with Multiple Open Hiring Postings",
+    "description_markdown": "From `job_postings`, find departments with strictly more than 1 posting (`COUNT(*) > 1`). Return `department`, `COUNT(*) AS posting_count`, and `ROUND(AVG(base_salary_max), 2) AS avg_max_salary`. Group by `department` HAVING `COUNT(*) > 1`. Order by `posting_count` descending, then `department` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "posting_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_max_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter departments with multiple openings\nSELECT department, COUNT(*) AS posting_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary\nFROM job_postings\nGROUP BY department\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT department, COUNT(*) AS posting_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department HAVING COUNT(*) > 1 ORDER BY posting_count DESC, department ASC;",
+    "solution_explanation": "Filters organizational units with multiple active requisition slots.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using base_salary instead of base_salary_max."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT department, COUNT(*) AS posting_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department HAVING COUNT(*) > 1 ORDER BY posting_count DESC, department ASC;",
+      "The expected query is: SELECT department, COUNT(*) AS posting_count, ROUND(AVG(base_salary_max), 2) AS avg_max_salary FROM job_postings GROUP BY department HAVING COUNT(*) > 1 ORDER BY posting_count DESC, department ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-17",
+    "slug": "employeedb-assignments-projects-over-200-hours",
+    "title": "Filter Major Projects with Cumulative Hours Over 200",
+    "description_markdown": "From `assignments`, find projects where cumulative hours worked is at least 200.0 (`SUM(hours_worked) >= 200.0`). Return `project_id`, `COUNT(*) AS assignment_count`, and `SUM(hours_worked) AS total_hours`. Group by `project_id` HAVING `SUM(hours_worked) >= 200.0`. Order by `total_hours` descending, then `project_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "assignment_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_hours",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter projects by cumulative hours worked\nSELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours\nFROM assignments\nGROUP BY project_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id HAVING SUM(hours_worked) >= 200.0 ORDER BY total_hours DESC, project_id ASC;",
+    "solution_explanation": "Filters engineering initiatives with significant resource investment.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing hours condition in WHERE instead of HAVING."
+    ],
+    "hints": [
+      "Use HAVING SUM(hours_worked) >= 200.0.",
+      "Query: SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id HAVING SUM(hours_worked) >= 200.0 ORDER BY total_hours DESC, project_id ASC;",
+      "The expected query is: SELECT project_id, COUNT(*) AS assignment_count, SUM(hours_worked) AS total_hours FROM assignments GROUP BY project_id HAVING SUM(hours_worked) >= 200.0 ORDER BY total_hours DESC, project_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-18",
+    "slug": "ecommercedb-products-categories-multiple-active",
+    "title": "Filter Categories by Multiple Active Catalog Offerings",
+    "description_markdown": "From `products`, find categories containing at least 2 active products (`is_active = true`). Return `category_id` and `COUNT(*) AS active_products`. Filter rows where `is_active = true` before grouping by `category_id`, and filter groups with HAVING `COUNT(*) >= 2`. Order by `active_products` descending, then `category_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "active_products",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combining WHERE row filter with HAVING group filter\nSELECT category_id, COUNT(*) AS active_products\nFROM products\nWHERE is_active = true\nGROUP BY category_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT category_id, COUNT(*) AS active_products FROM products WHERE is_active = true GROUP BY category_id HAVING COUNT(*) >= 2 ORDER BY active_products DESC, category_id ASC;",
+    "solution_explanation": "Combines row-level WHERE filtering on active status with post-aggregate HAVING group filtering.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Putting is_active in HAVING or putting COUNT(*) in WHERE."
+    ],
+    "hints": [
+      "Filter rows with WHERE is_active = true.",
+      "Filter groups with HAVING COUNT(*) >= 2.",
+      "Query: SELECT category_id, COUNT(*) AS active_products FROM products WHERE is_active = true GROUP BY category_id HAVING COUNT(*) >= 2 ORDER BY active_products DESC, category_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "where",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-19",
+    "slug": "collegedb-marks-tough-assessments-having",
+    "title": "Filter Challenging Assessments with Average Below Eighty-Five",
+    "description_markdown": "From `marks`, find assessment types where class average score is strictly below 85.0 (`AVG(score) < 85.0`). Return `assessment_type`, `COUNT(*) AS mark_count`, and `ROUND(AVG(score), 2) AS avg_score`. Group by `assessment_type` HAVING `AVG(score) < 85.0`. Order by `avg_score` ascending, then `assessment_type` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "assessment_type",
+        "type": "varchar"
+      },
+      {
+        "name": "mark_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter assessments by average score with HAVING\nSELECT assessment_type, COUNT(*) AS mark_count, ROUND(AVG(score), 2) AS avg_score\nFROM marks\nGROUP BY assessment_type\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT assessment_type, COUNT(*) AS mark_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type HAVING AVG(score) < 85.0 ORDER BY avg_score ASC, assessment_type ASC;",
+    "solution_explanation": "Filters assessment types with lower overall student performances.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > 85.0 instead of < 85.0."
+    ],
+    "hints": [
+      "Use HAVING AVG(score) < 85.0.",
+      "Query: SELECT assessment_type, COUNT(*) AS mark_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type HAVING AVG(score) < 85.0 ORDER BY avg_score ASC, assessment_type ASC;",
+      "The expected query is: SELECT assessment_type, COUNT(*) AS mark_count, ROUND(AVG(score), 2) AS avg_score FROM marks GROUP BY assessment_type HAVING AVG(score) < 85.0 ORDER BY avg_score ASC, assessment_type ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-20",
+    "slug": "banking-transactions-major-deposit-accounts",
+    "title": "Filter Accounts with High Cumulative Deposit Inflows",
+    "description_markdown": "From `transactions`, find accounts where cumulative deposits total at least 500.0 (`SUM(amount) >= 500.0`). Filter rows where `transaction_type = 'deposit'`, group by `account_id`, and apply HAVING `SUM(amount) >= 500.0`. Return `account_id` and `SUM(amount) AS total_deposit`. Order by `total_deposit` descending, then `account_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_deposit",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combining WHERE deposit filter with HAVING volume filter\nSELECT account_id, SUM(amount) AS total_deposit\nFROM transactions\nWHERE transaction_type = 'deposit'\nGROUP BY account_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT account_id, SUM(amount) AS total_deposit FROM transactions WHERE transaction_type = 'deposit' GROUP BY account_id HAVING SUM(amount) >= 500.0 ORDER BY total_deposit DESC, account_id ASC;",
+    "solution_explanation": "Filters for deposits with WHERE, then isolates accounts receiving >= 500 via HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE transaction_type = 'deposit'."
+    ],
+    "hints": [
+      "Filter with WHERE transaction_type = 'deposit'.",
+      "Use HAVING SUM(amount) >= 500.0.",
+      "Query: SELECT account_id, SUM(amount) AS total_deposit FROM transactions WHERE transaction_type = 'deposit' GROUP BY account_id HAVING SUM(amount) >= 500.0 ORDER BY total_deposit DESC, account_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "where",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-21",
+    "slug": "hospital-appointments-frequent-patients-having",
+    "title": "Filter Patients with Multiple Clinical Consultations",
+    "description_markdown": "From `appointments`, find patients who have had strictly more than 1 appointment (`COUNT(*) > 1`). Return `patient_id` and `COUNT(*) AS appointment_count`. Group by `patient_id` HAVING `COUNT(*) > 1`. Order by `appointment_count` descending, then `patient_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "appointment_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Patients with multiple appointments\nSELECT patient_id, COUNT(*) AS appointment_count\nFROM appointments\nGROUP BY patient_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT patient_id, COUNT(*) AS appointment_count FROM appointments GROUP BY patient_id HAVING COUNT(*) > 1 ORDER BY appointment_count DESC, patient_id ASC;",
+    "solution_explanation": "Identifies patients with repeated hospital appointments using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 1 instead of > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT patient_id, COUNT(*) AS appointment_count FROM appointments GROUP BY patient_id HAVING COUNT(*) > 1 ORDER BY appointment_count DESC, patient_id ASC;",
+      "The expected query is: SELECT patient_id, COUNT(*) AS appointment_count FROM appointments GROUP BY patient_id HAVING COUNT(*) > 1 ORDER BY appointment_count DESC, patient_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-22",
+    "slug": "hotel-reservations-guests-spending-over-500",
+    "title": "Filter High-Value Hotel Guests by Cumulative Lodging Spend",
+    "description_markdown": "From `reservations`, find guests who have spent a cumulative total of at least 500.0 (`SUM(total_amount) >= 500.0`). Return `guest_id`, `COUNT(*) AS reservation_count`, and `SUM(total_amount) AS total_spent`. Group by `guest_id` HAVING `SUM(total_amount) >= 500.0`. Order by `total_spent` descending, then `guest_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "reservation_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_spent",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter guests by total lodging spend\nSELECT guest_id, COUNT(*) AS reservation_count, SUM(total_amount) AS total_spent\nFROM reservations\nGROUP BY guest_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT guest_id, COUNT(*) AS reservation_count, SUM(total_amount) AS total_spent FROM reservations GROUP BY guest_id HAVING SUM(total_amount) >= 500.0 ORDER BY total_spent DESC, guest_id ASC;",
+    "solution_explanation": "Identifies top spending guests using HAVING SUM(total_amount) >= 500.0.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing total_amount condition in WHERE."
+    ],
+    "hints": [
+      "Use HAVING SUM(total_amount) >= 500.0.",
+      "Query: SELECT guest_id, COUNT(*) AS reservation_count, SUM(total_amount) AS total_spent FROM reservations GROUP BY guest_id HAVING SUM(total_amount) >= 500.0 ORDER BY total_spent DESC, guest_id ASC;",
+      "The expected query is: SELECT guest_id, COUNT(*) AS reservation_count, SUM(total_amount) AS total_spent FROM reservations GROUP BY guest_id HAVING SUM(total_amount) >= 500.0 ORDER BY total_spent DESC, guest_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-23",
+    "slug": "movie-streaming-subscriptions-high-mrr-plans",
+    "title": "Filter Subscription Plans Exceeding MRR Threshold",
+    "description_markdown": "From `subscriptions`, find plans generating at least 50.0 in total revenue (`SUM(monthly_price) >= 50.0`). Return `plan_name`, `COUNT(*) AS subscriber_count`, and `SUM(monthly_price) AS plan_mrr`. Group by `plan_name` HAVING `SUM(monthly_price) >= 50.0`. Order by `plan_mrr` descending, then `plan_name` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "subscriptions"
+    ],
+    "expected_columns": [
+      {
+        "name": "plan_name",
+        "type": "varchar"
+      },
+      {
+        "name": "subscriber_count",
+        "type": "bigint"
+      },
+      {
+        "name": "plan_mrr",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter subscription plans by MRR\nSELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS plan_mrr\nFROM subscriptions\nGROUP BY plan_name\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS plan_mrr FROM subscriptions GROUP BY plan_name HAVING SUM(monthly_price) >= 50.0 ORDER BY plan_mrr DESC, plan_name ASC;",
+    "solution_explanation": "Filters subscription tiers by revenue generation scale.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting plan_mrr alias."
+    ],
+    "hints": [
+      "Use HAVING SUM(monthly_price) >= 50.0.",
+      "Query: SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS plan_mrr FROM subscriptions GROUP BY plan_name HAVING SUM(monthly_price) >= 50.0 ORDER BY plan_mrr DESC, plan_name ASC;",
+      "The expected query is: SELECT plan_name, COUNT(*) AS subscriber_count, SUM(monthly_price) AS plan_mrr FROM subscriptions GROUP BY plan_name HAVING SUM(monthly_price) >= 50.0 ORDER BY plan_mrr DESC, plan_name ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-24",
+    "slug": "sales-opportunities-high-deal-leads",
+    "title": "Filter Corporate Leads with Significant Deal Size",
+    "description_markdown": "From `opportunities`, find leads whose combined deal sizes total at least 50,000 (`SUM(deal_size) >= 50000.0`). Return `lead_id`, `COUNT(*) AS deal_count`, and `SUM(deal_size) AS total_deal_size`. Group by `lead_id` HAVING `SUM(deal_size) >= 50000.0`. Order by `total_deal_size` descending, then `lead_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_deal_size",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter enterprise leads by deal size with HAVING\nSELECT lead_id, COUNT(*) AS deal_count, SUM(deal_size) AS total_deal_size\nFROM opportunities\nGROUP BY lead_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT lead_id, COUNT(*) AS deal_count, SUM(deal_size) AS total_deal_size FROM opportunities GROUP BY lead_id HAVING SUM(deal_size) >= 50000.0 ORDER BY total_deal_size DESC, lead_id ASC;",
+    "solution_explanation": "Isolates key accounts with large cumulative opportunity values.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing deal_size condition in WHERE."
+    ],
+    "hints": [
+      "Use HAVING SUM(deal_size) >= 50000.0.",
+      "Query: SELECT lead_id, COUNT(*) AS deal_count, SUM(deal_size) AS total_deal_size FROM opportunities GROUP BY lead_id HAVING SUM(deal_size) >= 50000.0 ORDER BY total_deal_size DESC, lead_id ASC;",
+      "The expected query is: SELECT lead_id, COUNT(*) AS deal_count, SUM(deal_size) AS total_deal_size FROM opportunities GROUP BY lead_id HAVING SUM(deal_size) >= 50000.0 ORDER BY total_deal_size DESC, lead_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-25",
+    "slug": "food-delivery-orders-busy-restaurants",
+    "title": "Filter Restaurants with Multiple Delivery Orders",
+    "description_markdown": "From `delivery_orders`, find restaurants that fulfilled strictly more than 1 order (`COUNT(*) > 1`). Return `restaurant_id`, `COUNT(*) AS order_count`, and `SUM(total_amount) AS gross_sales`. Group by `restaurant_id` HAVING `COUNT(*) > 1`. Order by `gross_sales` descending, then `restaurant_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "order_count",
+        "type": "bigint"
+      },
+      {
+        "name": "gross_sales",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter restaurants with multiple orders\nSELECT restaurant_id, COUNT(*) AS order_count, SUM(total_amount) AS gross_sales\nFROM delivery_orders\nGROUP BY restaurant_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT restaurant_id, COUNT(*) AS order_count, SUM(total_amount) AS gross_sales FROM delivery_orders GROUP BY restaurant_id HAVING COUNT(*) > 1 ORDER BY gross_sales DESC, restaurant_id ASC;",
+    "solution_explanation": "Filters restaurant partners by order volume threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 1 instead of > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT restaurant_id, COUNT(*) AS order_count, SUM(total_amount) AS gross_sales FROM delivery_orders GROUP BY restaurant_id HAVING COUNT(*) > 1 ORDER BY gross_sales DESC, restaurant_id ASC;",
+      "The expected query is: SELECT restaurant_id, COUNT(*) AS order_count, SUM(total_amount) AS gross_sales FROM delivery_orders GROUP BY restaurant_id HAVING COUNT(*) > 1 ORDER BY gross_sales DESC, restaurant_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-26",
+    "slug": "airline-flights-peak-fare-origins",
+    "title": "Filter Departure Airports Offering Premium Long-Haul Fares",
+    "description_markdown": "From `flights`, find origin airports where highest base price is at least 300.0 (`MAX(base_price) >= 300.0`). Return `origin`, `MAX(base_price) AS peak_fare`, and `COUNT(*) AS flight_count`. Group by `origin` HAVING `MAX(base_price) >= 300.0`. Order by `peak_fare` descending, then `origin` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "peak_fare",
+        "type": "numeric"
+      },
+      {
+        "name": "flight_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter flight origins by peak fare with HAVING\nSELECT origin, MAX(base_price) AS peak_fare, COUNT(*) AS flight_count\nFROM flights\nGROUP BY origin\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT origin, MAX(base_price) AS peak_fare, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING MAX(base_price) >= 300.0 ORDER BY peak_fare DESC, origin ASC;",
+    "solution_explanation": "Filters origins where the upper fare ceiling meets a premium threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using MIN instead of MAX in the HAVING condition."
+    ],
+    "hints": [
+      "Use HAVING MAX(base_price) >= 300.0.",
+      "Query: SELECT origin, MAX(base_price) AS peak_fare, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING MAX(base_price) >= 300.0 ORDER BY peak_fare DESC, origin ASC;",
+      "The expected query is: SELECT origin, MAX(base_price) AS peak_fare, COUNT(*) AS flight_count FROM flights GROUP BY origin HAVING MAX(base_price) >= 300.0 ORDER BY peak_fare DESC, origin ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-27",
+    "slug": "inventory-stock-transactions-high-movement-items",
+    "title": "Filter Inventory Items with High Cumulative Movement",
+    "description_markdown": "From `stock_transactions`, find items whose cumulative movement quantity is at least 20 (`SUM(quantity) >= 20`). Return `item_id` and `SUM(quantity) AS total_moved`. Group by `item_id` HAVING `SUM(quantity) >= 20`. Order by `total_moved` descending, then `item_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_moved",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter stock items by movement volume\nSELECT item_id, SUM(quantity) AS total_moved\nFROM stock_transactions\nGROUP BY item_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT item_id, SUM(quantity) AS total_moved FROM stock_transactions GROUP BY item_id HAVING SUM(quantity) >= 20 ORDER BY total_moved DESC, item_id ASC;",
+    "solution_explanation": "Applies HAVING SUM(quantity) >= 20 to isolate high-throughput inventory lines.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing quantity condition in WHERE."
+    ],
+    "hints": [
+      "Use HAVING SUM(quantity) >= 20.",
+      "Query: SELECT item_id, SUM(quantity) AS total_moved FROM stock_transactions GROUP BY item_id HAVING SUM(quantity) >= 20 ORDER BY total_moved DESC, item_id ASC;",
+      "The expected query is: SELECT item_id, SUM(quantity) AS total_moved FROM stock_transactions GROUP BY item_id HAVING SUM(quantity) >= 20 ORDER BY total_moved DESC, item_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-28",
+    "slug": "finance-trades-active-portfolios-having",
+    "title": "Filter Active Investment Portfolios by Execution Count",
+    "description_markdown": "From `trades`, find portfolios with strictly more than 1 execution (`COUNT(*) > 1`). Return `portfolio_id`, `COUNT(*) AS trade_count`, and `SUM(shares) AS total_shares`. Group by `portfolio_id` HAVING `COUNT(*) > 1`. Order by `trade_count` descending, then `portfolio_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "trades"
+    ],
+    "expected_columns": [
+      {
+        "name": "portfolio_id",
+        "type": "integer"
+      },
+      {
+        "name": "trade_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_shares",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter portfolios with multiple trades\nSELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares\nFROM trades\nGROUP BY portfolio_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id HAVING COUNT(*) > 1 ORDER BY trade_count DESC, portfolio_id ASC;",
+    "solution_explanation": "Isolates active accounts executing multiple trades.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using trade_id instead of portfolio_id."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id HAVING COUNT(*) > 1 ORDER BY trade_count DESC, portfolio_id ASC;",
+      "The expected query is: SELECT portfolio_id, COUNT(*) AS trade_count, SUM(shares) AS total_shares FROM trades GROUP BY portfolio_id HAVING COUNT(*) > 1 ORDER BY trade_count DESC, portfolio_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-29",
+    "slug": "hr-applicants-experience-cohorts-having",
+    "title": "Filter Candidate Experience Cohorts with Sizable Pools",
+    "description_markdown": "From `applicants`, find experience years with at least 2 candidates (`COUNT(*) >= 2`). Return `years_experience` and `COUNT(*) AS applicant_count`. Group by `years_experience` HAVING `COUNT(*) >= 2`. Order by `years_experience` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "applicant_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter experience cohorts with multiple candidates\nSELECT years_experience, COUNT(*) AS applicant_count\nFROM applicants\nGROUP BY years_experience\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience HAVING COUNT(*) >= 2 ORDER BY years_experience ASC;",
+    "solution_explanation": "Restricts talent experience reports to cohorts with sufficient volume.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using > 2 instead of >= 2."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) >= 2.",
+      "Query: SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience HAVING COUNT(*) >= 2 ORDER BY years_experience ASC;",
+      "The expected query is: SELECT years_experience, COUNT(*) AS applicant_count FROM applicants GROUP BY years_experience HAVING COUNT(*) >= 2 ORDER BY years_experience ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-30",
+    "slug": "social-media-posts-active-creators-having",
+    "title": "Filter Active Content Creators with Multiple Posts",
+    "description_markdown": "From `posts`, find users who have authored strictly more than 1 post (`COUNT(*) > 1`). Return `user_id` and `COUNT(*) AS post_count`. Group by `user_id` HAVING `COUNT(*) > 1`. Order by `post_count` descending, then `user_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "post_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter active creators with multiple posts\nSELECT user_id, COUNT(*) AS post_count\nFROM posts\nGROUP BY user_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id HAVING COUNT(*) > 1 ORDER BY post_count DESC, user_id ASC;",
+    "solution_explanation": "Filters for frequent posters using HAVING COUNT(*) > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 1 instead of > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id HAVING COUNT(*) > 1 ORDER BY post_count DESC, user_id ASC;",
+      "The expected query is: SELECT user_id, COUNT(*) AS post_count FROM posts GROUP BY user_id HAVING COUNT(*) > 1 ORDER BY post_count DESC, user_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-31",
+    "slug": "ecommercedb-order-items-multi-item-orders",
+    "title": "Filter Baskets Containing Multiple Distinct Line Items",
+    "description_markdown": "From `order_items`, find orders that contain strictly more than 1 item record (`COUNT(*) > 1`). Return `order_id`, `COUNT(*) AS line_item_count`, and `SUM(quantity) AS total_units`. Group by `order_id` HAVING `COUNT(*) > 1`. Order by `line_item_count` descending, then `order_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "line_item_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_units",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-item checkout baskets with HAVING\nSELECT order_id, COUNT(*) AS line_item_count, SUM(quantity) AS total_units\nFROM order_items\nGROUP BY order_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT order_id, COUNT(*) AS line_item_count, SUM(quantity) AS total_units FROM order_items GROUP BY order_id HAVING COUNT(*) > 1 ORDER BY line_item_count DESC, order_id ASC;",
+    "solution_explanation": "Isolates multi-item shopping carts using HAVING COUNT(*) > 1.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using SUM(quantity) > 1 instead of COUNT(*) > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT order_id, COUNT(*) AS line_item_count, SUM(quantity) AS total_units FROM order_items GROUP BY order_id HAVING COUNT(*) > 1 ORDER BY line_item_count DESC, order_id ASC;",
+      "The expected query is: SELECT order_id, COUNT(*) AS line_item_count, SUM(quantity) AS total_units FROM order_items GROUP BY order_id HAVING COUNT(*) > 1 ORDER BY line_item_count DESC, order_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-hav-32",
+    "slug": "collegedb-enrollments-students-with-multiple-courses",
+    "title": "Filter Undergraduates Registered for Multiple Classes",
+    "description_markdown": "From `enrollments`, find students who are enrolled in strictly more than 1 course (`COUNT(*) > 1`). Return `student_id` and `COUNT(*) AS enrollment_count`. Group by `student_id` HAVING `COUNT(*) > 1`. Order by `enrollment_count` descending, then `student_id` ascending.",
+    "topic_id": "having",
+    "subtopic_id": "hav-filters",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Filter students taking multiple courses\nSELECT student_id, COUNT(*) AS enrollment_count\nFROM enrollments\nGROUP BY student_id\nHAVING ...\nORDER BY ...",
+    "solution_query": "SELECT student_id, COUNT(*) AS enrollment_count FROM enrollments GROUP BY student_id HAVING COUNT(*) > 1 ORDER BY enrollment_count DESC, student_id ASC;",
+    "solution_explanation": "Identifies multi-course student registrations using HAVING.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using >= 1 instead of > 1."
+    ],
+    "hints": [
+      "Use HAVING COUNT(*) > 1.",
+      "Query: SELECT student_id, COUNT(*) AS enrollment_count FROM enrollments GROUP BY student_id HAVING COUNT(*) > 1 ORDER BY enrollment_count DESC, student_id ASC;",
+      "The expected query is: SELECT student_id, COUNT(*) AS enrollment_count FROM enrollments GROUP BY student_id HAVING COUNT(*) > 1 ORDER BY enrollment_count DESC, student_id ASC;"
+    ],
+    "tags": [
+      "having",
+      "filter-groups",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hav-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hav-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hav-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

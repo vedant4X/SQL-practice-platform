@@ -1,0 +1,2392 @@
+[
+  {
+    "id": "q-my-nul-01",
+    "slug": "identify-top-executives-null-manager",
+    "title": "Identify Top Leadership with NULL Manager",
+    "description_markdown": "Find all employees who do not report to anyone (`manager_id IS NULL`). Return `emp_id`, `first_name`, `last_name`, and `job_title`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Check for NULL manager_id\nSELECT emp_id, first_name, last_name, job_title\nFROM employees\nWHERE ...",
+    "solution_query": "SELECT emp_id, first_name, last_name, job_title FROM employees WHERE manager_id IS NULL;",
+    "solution_explanation": "In SQL, NULL represents missing or unknown data. Always compare using `IS NULL` instead of `= NULL`.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Never use `= NULL`. Always use `IS NULL`.",
+      "Predicate: `WHERE manager_id IS NULL`",
+      "Query: SELECT emp_id, first_name, last_name, job_title FROM employees WHERE manager_id IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-02",
+    "slug": "unassigned-college-courses",
+    "title": "Find Offerings Missing an Assigned Professor",
+    "description_markdown": "Find all courses in `courses` where `professor_id` is currently unassigned (`IS NULL`). Return `course_id`, `course_code`, and `course_name`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Filter courses with IS NULL\nSELECT ...",
+    "solution_query": "SELECT course_id, course_code, course_name FROM courses WHERE professor_id IS NULL;",
+    "solution_explanation": "Filters the table to locate course sections that do not yet have an appointed professor.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE professor_id IS NULL`.",
+      "Target the `courses` table.",
+      "Query: SELECT course_id, course_code, course_name FROM courses WHERE professor_id IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "foreign-key-null"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-03",
+    "slug": "active-ongoing-projects",
+    "title": "Filter Active Ongoing Projects Without End Date",
+    "description_markdown": "Find all ongoing projects in `projects` that have not finished (`end_date IS NULL`). Return `project_id`, `project_name`, and `budget`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Find projects where end_date IS NULL\nSELECT ...",
+    "solution_query": "SELECT project_id, project_name, budget FROM projects WHERE end_date IS NULL;",
+    "solution_explanation": "Ongoing corporate projects lack a defined completion timestamp, marked as NULL in the database.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter on `end_date IS NULL`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT project_id, project_name, budget FROM projects WHERE end_date IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "business-logic"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-04",
+    "slug": "ecommercedb-categories-root-parents",
+    "title": "Root Level E-Commerce Product Categories",
+    "description_markdown": "Query `categories` for top-level taxonomy categories having no parent category (`parent_category_id IS NULL`). Return `category_id` and `category_name`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Root categories (no parent)\nSELECT category_id, category_name\nFROM categories\nWHERE parent_category_id IS NULL;",
+    "solution_query": "SELECT category_id, category_name FROM categories WHERE parent_category_id IS NULL;",
+    "solution_explanation": "Top-level departments in a self-referencing taxonomy tree have a NULL parent identifier.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using = NULL instead of IS NULL."
+    ],
+    "hints": [
+      "Use `WHERE parent_category_id IS NULL`.",
+      "Never use `= NULL` in SQL.",
+      "Query: SELECT category_id, category_name FROM categories WHERE parent_category_id IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-05",
+    "slug": "ecommercedb-subcategories-populated",
+    "title": "Subordinate Department Categories with Parent",
+    "description_markdown": "Find all subcategories in `categories` that have an assigned parent category (`parent_category_id IS NOT NULL`). Return `category_id`, `category_name`, and `parent_category_id`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      },
+      {
+        "name": "parent_category_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Subcategories with a parent\nSELECT category_id, category_name, parent_category_id\nFROM categories\nWHERE ...",
+    "solution_query": "SELECT category_id, category_name, parent_category_id FROM categories WHERE parent_category_id IS NOT NULL;",
+    "solution_explanation": "IS NOT NULL filters rows where the parent attribute is actively populated.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using != NULL or <> NULL."
+    ],
+    "hints": [
+      "Use `WHERE parent_category_id IS NOT NULL`.",
+      "Select category_id, category_name, parent_category_id.",
+      "Query: SELECT category_id, category_name, parent_category_id FROM categories WHERE parent_category_id IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-06",
+    "slug": "collegedb-professors-with-assigned-courses",
+    "title": "Curriculum Courses with Assigned Instructor",
+    "description_markdown": "Find courses in `courses` where `professor_id` is assigned (`professor_id IS NOT NULL`). Return `course_code`, `course_name`, and `professor_id`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      },
+      {
+        "name": "professor_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Courses with assigned professor\nSELECT course_code, course_name, professor_id\nFROM courses\nWHERE ...",
+    "solution_query": "SELECT course_code, course_name, professor_id FROM courses WHERE professor_id IS NOT NULL;",
+    "solution_explanation": "Filters course records that have a linked faculty professor.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using professor_id > 0 which may fail if ids allow 0."
+    ],
+    "hints": [
+      "Use `WHERE professor_id IS NOT NULL`.",
+      "Query: SELECT course_code, course_name, professor_id FROM courses WHERE professor_id IS NOT NULL;",
+      "The expected query is: SELECT course_code, course_name, professor_id FROM courses WHERE professor_id IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-07",
+    "slug": "hospital-appointments-completed-diagnosis",
+    "title": "Clinical Encounters with Recorded Diagnosis",
+    "description_markdown": "Query `appointments` for consultations that have a recorded diagnosis (`diagnosis IS NOT NULL`). Return `appointment_id`, `patient_id`, `doctor_id`, and `diagnosis`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "diagnosis",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Appointments with diagnosis\nSELECT appointment_id, patient_id, doctor_id, diagnosis\nFROM appointments\nWHERE diagnosis IS NOT NULL;",
+    "solution_query": "SELECT appointment_id, patient_id, doctor_id, diagnosis FROM appointments WHERE diagnosis IS NOT NULL;",
+    "solution_explanation": "Retrieves medical visits where clinical diagnosis documentation has taken place.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking diagnosis != '' instead of IS NOT NULL."
+    ],
+    "hints": [
+      "Use `WHERE diagnosis IS NOT NULL`.",
+      "Query: SELECT appointment_id, patient_id, doctor_id, diagnosis FROM appointments WHERE diagnosis IS NOT NULL;",
+      "The expected query is: SELECT appointment_id, patient_id, doctor_id, diagnosis FROM appointments WHERE diagnosis IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-08",
+    "slug": "hospital-appointments-pending-diagnosis",
+    "title": "Clinical Consultations Pending Medical Assessment",
+    "description_markdown": "Find appointments in `appointments` where `diagnosis IS NULL`. Return `appointment_id`, `patient_id`, `doctor_id`, and `appointment_date`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "appointments"
+    ],
+    "expected_columns": [
+      {
+        "name": "appointment_id",
+        "type": "integer"
+      },
+      {
+        "name": "patient_id",
+        "type": "integer"
+      },
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "appointment_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Appointments missing diagnosis\nSELECT appointment_id, patient_id, doctor_id, appointment_date\nFROM appointments\nWHERE ...",
+    "solution_query": "SELECT appointment_id, patient_id, doctor_id, appointment_date FROM appointments WHERE diagnosis IS NULL;",
+    "solution_explanation": "Filters for hospital appointments awaiting doctor assessment notes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using diagnosis = NULL."
+    ],
+    "hints": [
+      "Use `WHERE diagnosis IS NULL`.",
+      "Query: SELECT appointment_id, patient_id, doctor_id, appointment_date FROM appointments WHERE diagnosis IS NULL;",
+      "The expected query is: SELECT appointment_id, patient_id, doctor_id, appointment_date FROM appointments WHERE diagnosis IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-09",
+    "slug": "library-loans-active-unreturned",
+    "title": "Outstanding Active Library Book Loans",
+    "description_markdown": "Query `book_loans` for active loans that have not been returned yet (`returned_date IS NULL`). Return `loan_id`, `book_id`, `member_id`, and `due_date`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "due_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Loans with returned_date IS NULL\nSELECT loan_id, book_id, member_id, due_date\nFROM book_loans\nWHERE ...",
+    "solution_query": "SELECT loan_id, book_id, member_id, due_date FROM book_loans WHERE returned_date IS NULL;",
+    "solution_explanation": "Unreturned book borrowings remain active with a NULL returned timestamp.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking status instead of checking returned_date IS NULL."
+    ],
+    "hints": [
+      "Filter with `WHERE returned_date IS NULL`.",
+      "Query: SELECT loan_id, book_id, member_id, due_date FROM book_loans WHERE returned_date IS NULL;",
+      "The expected query is: SELECT loan_id, book_id, member_id, due_date FROM book_loans WHERE returned_date IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-10",
+    "slug": "library-loans-returned-history",
+    "title": "Historical Completed Library Loan Returns",
+    "description_markdown": "Find all completed loans in `book_loans` where `returned_date IS NOT NULL`. Return `loan_id`, `book_id`, `member_id`, and `returned_date`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "book_loans"
+    ],
+    "expected_columns": [
+      {
+        "name": "loan_id",
+        "type": "integer"
+      },
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "member_id",
+        "type": "integer"
+      },
+      {
+        "name": "returned_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Returned loans\nSELECT loan_id, book_id, member_id, returned_date\nFROM book_loans\nWHERE ...",
+    "solution_query": "SELECT loan_id, book_id, member_id, returned_date FROM book_loans WHERE returned_date IS NOT NULL;",
+    "solution_explanation": "Filters circulation archive for items successfully handed back.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using != NULL."
+    ],
+    "hints": [
+      "Use `WHERE returned_date IS NOT NULL`.",
+      "Query: SELECT loan_id, book_id, member_id, returned_date FROM book_loans WHERE returned_date IS NOT NULL;",
+      "The expected query is: SELECT loan_id, book_id, member_id, returned_date FROM book_loans WHERE returned_date IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-11",
+    "slug": "social-media-posts-with-media",
+    "title": "Rich Content Posts with Media Attachments",
+    "description_markdown": "Query `posts` for user updates containing media attachments (`media_url IS NOT NULL`). Return `post_id`, `user_id`, `content`, and `media_url`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "varchar"
+      },
+      {
+        "name": "media_url",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Posts with media\nSELECT post_id, user_id, content, media_url\nFROM posts\nWHERE ...",
+    "solution_query": "SELECT post_id, user_id, content, media_url FROM posts WHERE media_url IS NOT NULL;",
+    "solution_explanation": "Extracts multimedia social posts by confirming media link presence.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking length of media_url instead of IS NOT NULL."
+    ],
+    "hints": [
+      "Use `WHERE media_url IS NOT NULL`.",
+      "Query: SELECT post_id, user_id, content, media_url FROM posts WHERE media_url IS NOT NULL;",
+      "The expected query is: SELECT post_id, user_id, content, media_url FROM posts WHERE media_url IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-12",
+    "slug": "social-media-posts-text-only",
+    "title": "Text Only Status Updates Without Media",
+    "description_markdown": "Find text-only status updates in `posts` where `media_url IS NULL`. Return `post_id`, `user_id`, and `content`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "posts"
+    ],
+    "expected_columns": [
+      {
+        "name": "post_id",
+        "type": "integer"
+      },
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "content",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Text only posts\nSELECT post_id, user_id, content\nFROM posts\nWHERE ...",
+    "solution_query": "SELECT post_id, user_id, content FROM posts WHERE media_url IS NULL;",
+    "solution_explanation": "Screens feed posts lacking image or video URL attachments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting content column."
+    ],
+    "hints": [
+      "Condition: WHERE media_url IS NULL.",
+      "Query: SELECT post_id, user_id, content FROM posts WHERE media_url IS NULL;",
+      "The expected query is: SELECT post_id, user_id, content FROM posts WHERE media_url IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-13",
+    "slug": "social-users-with-bio",
+    "title": "User Profiles with Configured Biography",
+    "description_markdown": "Query `social_users` for accounts that have filled out their biography (`bio IS NOT NULL`). Return `user_id`, `handle`, `full_name`, and `bio`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "bio",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Users with a bio\nSELECT user_id, handle, full_name, bio\nFROM social_users\nWHERE ...",
+    "solution_query": "SELECT user_id, handle, full_name, bio FROM social_users WHERE bio IS NOT NULL;",
+    "solution_explanation": "Filters active profiles who completed profile bio details.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking bio != '' which fails on NULL."
+    ],
+    "hints": [
+      "Use `WHERE bio IS NOT NULL`.",
+      "Query: SELECT user_id, handle, full_name, bio FROM social_users WHERE bio IS NOT NULL;",
+      "The expected query is: SELECT user_id, handle, full_name, bio FROM social_users WHERE bio IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-14",
+    "slug": "social-users-without-bio",
+    "title": "Profiles Missing Biography Summary",
+    "description_markdown": "Find accounts in `social_users` where `bio IS NULL`. Return `user_id`, `handle`, and `full_name`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "social_media",
+    "question_type": "select",
+    "tables_involved": [
+      "social_users"
+    ],
+    "expected_columns": [
+      {
+        "name": "user_id",
+        "type": "integer"
+      },
+      {
+        "name": "handle",
+        "type": "varchar"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Users without a bio\nSELECT user_id, handle, full_name\nFROM social_users\nWHERE ...",
+    "solution_query": "SELECT user_id, handle, full_name FROM social_users WHERE bio IS NULL;",
+    "solution_explanation": "Identifies newly onboarding profiles needing user profile setup prompts.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using bio = NULL."
+    ],
+    "hints": [
+      "Use `WHERE bio IS NULL`.",
+      "Query: SELECT user_id, handle, full_name FROM social_users WHERE bio IS NULL;",
+      "The expected query is: SELECT user_id, handle, full_name FROM social_users WHERE bio IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "social_media"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-15",
+    "slug": "employeedb-managed-staff",
+    "title": "Employees Reporting to an Organizational Manager",
+    "description_markdown": "Query `employees` for workers who have an assigned manager (`manager_id IS NOT NULL`). Return `emp_id`, `first_name`, `last_name`, and `manager_id`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "manager_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Employees with manager\nSELECT emp_id, first_name, last_name, manager_id\nFROM employees\nWHERE ...",
+    "solution_query": "SELECT emp_id, first_name, last_name, manager_id FROM employees WHERE manager_id IS NOT NULL;",
+    "solution_explanation": "Excludes executive chairs and CEO by filtering for non-null manager links.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using manager_id != NULL."
+    ],
+    "hints": [
+      "Condition: WHERE manager_id IS NOT NULL.",
+      "Query: SELECT emp_id, first_name, last_name, manager_id FROM employees WHERE manager_id IS NOT NULL;",
+      "The expected query is: SELECT emp_id, first_name, last_name, manager_id FROM employees WHERE manager_id IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-16",
+    "slug": "employeedb-completed-projects",
+    "title": "Corporate Projects Concluded with End Date",
+    "description_markdown": "Find projects in `projects` that have a completed closing date (`end_date IS NOT NULL`). Return `project_id`, `project_name`, `start_date`, and `end_date`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "start_date",
+        "type": "date"
+      },
+      {
+        "name": "end_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Completed projects\nSELECT project_id, project_name, start_date, end_date\nFROM projects\nWHERE ...",
+    "solution_query": "SELECT project_id, project_name, start_date, end_date FROM projects WHERE end_date IS NOT NULL;",
+    "solution_explanation": "Returns projects with defined project conclusion timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering budget instead of end_date."
+    ],
+    "hints": [
+      "Use `WHERE end_date IS NOT NULL`.",
+      "Query: SELECT project_id, project_name, start_date, end_date FROM projects WHERE end_date IS NOT NULL;",
+      "The expected query is: SELECT project_id, project_name, start_date, end_date FROM projects WHERE end_date IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-17",
+    "slug": "sales-opportunities-closed",
+    "title": "Sales Deals with Recorded Close Date",
+    "description_markdown": "Query `opportunities` for deals where `close_date IS NOT NULL`. Return `opportunity_id`, `lead_id`, `deal_size`, and `close_date`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Opportunities with close_date\nSELECT opportunity_id, lead_id, deal_size, close_date\nFROM opportunities\nWHERE ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size, close_date FROM opportunities WHERE close_date IS NOT NULL;",
+    "solution_explanation": "Isolates transactions where the commercial close date has been entered.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using stage instead of close_date."
+    ],
+    "hints": [
+      "Condition: WHERE close_date IS NOT NULL.",
+      "Query: SELECT opportunity_id, lead_id, deal_size, close_date FROM opportunities WHERE close_date IS NOT NULL;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size, close_date FROM opportunities WHERE close_date IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-18",
+    "slug": "sales-opportunities-open",
+    "title": "Open Pipeline Deals Missing Close Date",
+    "description_markdown": "Find open opportunities in `opportunities` where `close_date IS NULL`. Return `opportunity_id`, `lead_id`, `deal_size`, and `stage`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Open opportunities\nSELECT opportunity_id, lead_id, deal_size, stage\nFROM opportunities\nWHERE ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE close_date IS NULL;",
+    "solution_explanation": "Filters active opportunities that have yet to conclude.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using close_date = NULL."
+    ],
+    "hints": [
+      "Condition: WHERE close_date IS NULL.",
+      "Query: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE close_date IS NULL;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size, stage FROM opportunities WHERE close_date IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-19",
+    "slug": "sales-leads-assigned-rep",
+    "title": "Sales Inquiries Assigned to Sales Representative",
+    "description_markdown": "Query `leads` for prospect accounts that have an assigned account rep (`rep_id IS NOT NULL`). Return `lead_id`, `company_name`, `rep_id`, and `status`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Assigned leads\nSELECT lead_id, company_name, rep_id, status\nFROM leads\nWHERE ...",
+    "solution_query": "SELECT lead_id, company_name, rep_id, status FROM leads WHERE rep_id IS NOT NULL;",
+    "solution_explanation": "Filters for business prospects that have been claimed by a sales team member.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using rep_id != NULL."
+    ],
+    "hints": [
+      "Use `WHERE rep_id IS NOT NULL`.",
+      "Query: SELECT lead_id, company_name, rep_id, status FROM leads WHERE rep_id IS NOT NULL;",
+      "The expected query is: SELECT lead_id, company_name, rep_id, status FROM leads WHERE rep_id IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-20",
+    "slug": "sales-leads-unassigned-rep",
+    "title": "Unclaimed Prospect Inbound Sales Leads",
+    "description_markdown": "Find unassigned leads in `leads` where `rep_id IS NULL`. Return `lead_id`, `company_name`, and `industry`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Unassigned leads\nSELECT lead_id, company_name, industry\nFROM leads\nWHERE ...",
+    "solution_query": "SELECT lead_id, company_name, industry FROM leads WHERE rep_id IS NULL;",
+    "solution_explanation": "Screens CRM inbound pipeline for unassigned leads requiring territory routing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using rep_id = NULL."
+    ],
+    "hints": [
+      "Use `WHERE rep_id IS NULL`.",
+      "Query: SELECT lead_id, company_name, industry FROM leads WHERE rep_id IS NULL;",
+      "The expected query is: SELECT lead_id, company_name, industry FROM leads WHERE rep_id IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-21",
+    "slug": "ecommerce-reviews-with-text",
+    "title": "Product Reviews with Written Customer Commentary",
+    "description_markdown": "Find customer submissions in `reviews` that include written text (`review_text IS NOT NULL`). Return `review_id`, `product_id`, `rating`, and `review_text`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "review_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      },
+      {
+        "name": "review_text",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Reviews with written commentary\nSELECT review_id, product_id, rating, review_text\nFROM reviews\nWHERE ...",
+    "solution_query": "SELECT review_id, product_id, rating, review_text FROM reviews WHERE review_text IS NOT NULL;",
+    "solution_explanation": "Separates comprehensive feedback reviews from simple star-only ratings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using length(review_text) > 0."
+    ],
+    "hints": [
+      "Condition: WHERE review_text IS NOT NULL.",
+      "Query: SELECT review_id, product_id, rating, review_text FROM reviews WHERE review_text IS NOT NULL;",
+      "The expected query is: SELECT review_id, product_id, rating, review_text FROM reviews WHERE review_text IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-22",
+    "slug": "ecommerce-reviews-rating-only",
+    "title": "Star Ratings Submitted Without Detailed Feedback",
+    "description_markdown": "Query `reviews` for rating submissions where `review_text IS NULL`. Return `review_id`, `product_id`, `customer_id`, and `rating`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "review_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Reviews without text\nSELECT review_id, product_id, customer_id, rating\nFROM reviews\nWHERE ...",
+    "solution_query": "SELECT review_id, product_id, customer_id, rating FROM reviews WHERE review_text IS NULL;",
+    "solution_explanation": "Isolates quick star ratings submitted without text elaboration.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using review_text = NULL."
+    ],
+    "hints": [
+      "Condition: WHERE review_text IS NULL.",
+      "Query: SELECT review_id, product_id, customer_id, rating FROM reviews WHERE review_text IS NULL;",
+      "The expected query is: SELECT review_id, product_id, customer_id, rating FROM reviews WHERE review_text IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-23",
+    "slug": "hotel-reservations-completed-checkout",
+    "title": "Hospitality Reservations with Recorded Departure Date",
+    "description_markdown": "Query `reservations` for bookings where `check_out IS NOT NULL`. Return `reservation_id`, `guest_id`, `check_in`, and `check_out`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "reservations"
+    ],
+    "expected_columns": [
+      {
+        "name": "reservation_id",
+        "type": "integer"
+      },
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "check_in",
+        "type": "date"
+      },
+      {
+        "name": "check_out",
+        "type": "date"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Completed checkouts\nSELECT reservation_id, guest_id, check_in, check_out\nFROM reservations\nWHERE ...",
+    "solution_query": "SELECT reservation_id, guest_id, check_in, check_out FROM reservations WHERE check_out IS NOT NULL;",
+    "solution_explanation": "Identifies lodging stays with recorded checkout dates.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using check_out != NULL."
+    ],
+    "hints": [
+      "Use `WHERE check_out IS NOT NULL`.",
+      "Query: SELECT reservation_id, guest_id, check_in, check_out FROM reservations WHERE check_out IS NOT NULL;",
+      "The expected query is: SELECT reservation_id, guest_id, check_in, check_out FROM reservations WHERE check_out IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-24",
+    "slug": "airline-bookings-with-amount",
+    "title": "Passenger Itinerary Bookings with Valid Total",
+    "description_markdown": "Find flight bookings in `bookings` where `total_amount IS NOT NULL`. Return `booking_id`, `passenger_id`, `booking_date`, and `total_amount`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "bookings"
+    ],
+    "expected_columns": [
+      {
+        "name": "booking_id",
+        "type": "integer"
+      },
+      {
+        "name": "passenger_id",
+        "type": "integer"
+      },
+      {
+        "name": "booking_date",
+        "type": "date"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Bookings with populated total\nSELECT booking_id, passenger_id, booking_date, total_amount\nFROM bookings\nWHERE ...",
+    "solution_query": "SELECT booking_id, passenger_id, booking_date, total_amount FROM bookings WHERE total_amount IS NOT NULL;",
+    "solution_explanation": "Ensures accounting transaction ledger records contain numeric totals.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting booking_date."
+    ],
+    "hints": [
+      "Condition: WHERE total_amount IS NOT NULL.",
+      "Query: SELECT booking_id, passenger_id, booking_date, total_amount FROM bookings WHERE total_amount IS NOT NULL;",
+      "The expected query is: SELECT booking_id, passenger_id, booking_date, total_amount FROM bookings WHERE total_amount IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-25",
+    "slug": "food-delivery-order-assigned-driver",
+    "title": "Dispatch Orders with Appointed Courier",
+    "description_markdown": "Query `delivery_orders` for orders where a courier has been dispatched (`driver_id IS NOT NULL`). Return `order_id`, `restaurant_id`, `driver_id`, and `total_amount`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "driver_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Dispatched orders\nSELECT order_id, restaurant_id, driver_id, total_amount\nFROM delivery_orders\nWHERE ...",
+    "solution_query": "SELECT order_id, restaurant_id, driver_id, total_amount FROM delivery_orders WHERE driver_id IS NOT NULL;",
+    "solution_explanation": "Filters delivery tracking records for dispatched orders.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering delivery_fee instead of driver_id."
+    ],
+    "hints": [
+      "Condition: WHERE driver_id IS NOT NULL.",
+      "Query: SELECT order_id, restaurant_id, driver_id, total_amount FROM delivery_orders WHERE driver_id IS NOT NULL;",
+      "The expected query is: SELECT order_id, restaurant_id, driver_id, total_amount FROM delivery_orders WHERE driver_id IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-26",
+    "slug": "food-delivery-order-unassigned-driver",
+    "title": "Pending Orders Waiting for Courier Acceptance",
+    "description_markdown": "Find orders in `delivery_orders` waiting for driver assignment (`driver_id IS NULL`). Return `order_id`, `restaurant_id`, `customer_name`, and `total_amount`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "delivery_orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Orders waiting for driver\nSELECT order_id, restaurant_id, customer_name, total_amount\nFROM delivery_orders\nWHERE ...",
+    "solution_query": "SELECT order_id, restaurant_id, customer_name, total_amount FROM delivery_orders WHERE driver_id IS NULL;",
+    "solution_explanation": "Surfaces unfilled orders needing delivery driver routing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using driver_id = NULL."
+    ],
+    "hints": [
+      "Condition: WHERE driver_id IS NULL.",
+      "Query: SELECT order_id, restaurant_id, customer_name, total_amount FROM delivery_orders WHERE driver_id IS NULL;",
+      "The expected query is: SELECT order_id, restaurant_id, customer_name, total_amount FROM delivery_orders WHERE driver_id IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-27",
+    "slug": "collegedb-students-with-gpa",
+    "title": "Student Academic Records with Computed GPA",
+    "description_markdown": "Query `students` for students who have a recorded grade point average (`gpa IS NOT NULL`). Return `student_id`, `first_name`, `last_name`, and `gpa`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Students with GPA\nSELECT student_id, first_name, last_name, gpa\nFROM students\nWHERE ...",
+    "solution_query": "SELECT student_id, first_name, last_name, gpa FROM students WHERE gpa IS NOT NULL;",
+    "solution_explanation": "Excludes first-semester students who have yet to complete course credits.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using gpa >= 0 instead of IS NOT NULL."
+    ],
+    "hints": [
+      "Use `WHERE gpa IS NOT NULL`.",
+      "Query: SELECT student_id, first_name, last_name, gpa FROM students WHERE gpa IS NOT NULL;",
+      "The expected query is: SELECT student_id, first_name, last_name, gpa FROM students WHERE gpa IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-28",
+    "slug": "hr-applicants-prior-company-known",
+    "title": "Job Candidates with Current Employer Recorded",
+    "description_markdown": "Find applicants in `applicants` whose `current_company` is recorded (`current_company IS NOT NULL`). Return `applicant_id`, `first_name`, `last_name`, and `current_company`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_company",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Applicants with current company\nSELECT applicant_id, first_name, last_name, current_company\nFROM applicants\nWHERE ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, current_company FROM applicants WHERE current_company IS NOT NULL;",
+    "solution_explanation": "Isolates currently employed candidates in recruiting talent pipelines.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using current_company != NULL."
+    ],
+    "hints": [
+      "Use `WHERE current_company IS NOT NULL`.",
+      "Query: SELECT applicant_id, first_name, last_name, current_company FROM applicants WHERE current_company IS NOT NULL;",
+      "The expected query is: SELECT applicant_id, first_name, last_name, current_company FROM applicants WHERE current_company IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-29",
+    "slug": "hr-applicants-first-time-job-seekers",
+    "title": "Entry-Level Applicants Without Prior Employer",
+    "description_markdown": "Query `applicants` for candidates whose `current_company IS NULL`. Return `applicant_id`, `first_name`, `last_name`, and `email`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-is",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Applicants without current company\nSELECT applicant_id, first_name, last_name, email\nFROM applicants\nWHERE ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, email FROM applicants WHERE current_company IS NULL;",
+    "solution_explanation": "Identifies early-career candidates entering the workforce without a current employer.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using current_company = NULL."
+    ],
+    "hints": [
+      "Condition: WHERE current_company IS NULL.",
+      "Query: SELECT applicant_id, first_name, last_name, email FROM applicants WHERE current_company IS NULL;",
+      "The expected query is: SELECT applicant_id, first_name, last_name, email FROM applicants WHERE current_company IS NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-null",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-30",
+    "slug": "banking-transactions-timestamp-logged",
+    "title": "Audited Financial Transactions with Execution Time",
+    "description_markdown": "Find transactions in `transactions` where `tx_time IS NOT NULL`. Return `transaction_id`, `account_id`, `amount`, and `tx_time`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "transactions"
+    ],
+    "expected_columns": [
+      {
+        "name": "transaction_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "tx_time",
+        "type": "timestamp"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Transactions with tx_time\nSELECT transaction_id, account_id, amount, tx_time\nFROM transactions\nWHERE ...",
+    "solution_query": "SELECT transaction_id, account_id, amount, tx_time FROM transactions WHERE tx_time IS NOT NULL;",
+    "solution_explanation": "Verifies compliance auditability by screening records having complete execution timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering status instead of tx_time."
+    ],
+    "hints": [
+      "Condition: WHERE tx_time IS NOT NULL.",
+      "Query: SELECT transaction_id, account_id, amount, tx_time FROM transactions WHERE tx_time IS NOT NULL;",
+      "The expected query is: SELECT transaction_id, account_id, amount, tx_time FROM transactions WHERE tx_time IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-31",
+    "slug": "hotel-guests-phone-provided",
+    "title": "Guest Directory Profiles with Verified Contact Number",
+    "description_markdown": "Query `hotel_guests` for patrons who provided a phone number (`phone IS NOT NULL`). Return `guest_id`, `first_name`, `last_name`, and `phone`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotel_guests"
+    ],
+    "expected_columns": [
+      {
+        "name": "guest_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "phone",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Guests with phone\nSELECT guest_id, first_name, last_name, phone\nFROM hotel_guests\nWHERE ...",
+    "solution_query": "SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone IS NOT NULL;",
+    "solution_explanation": "Filters guest registry for SMS concierge notification reachability.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking phone != ''."
+    ],
+    "hints": [
+      "Use `WHERE phone IS NOT NULL`.",
+      "Query: SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone IS NOT NULL;",
+      "The expected query is: SELECT guest_id, first_name, last_name, phone FROM hotel_guests WHERE phone IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-nul-32",
+    "slug": "inventory-suppliers-email-verified",
+    "title": "Supply Chain Partners with Electronic Contact",
+    "description_markdown": "Find vendors in `suppliers` where `contact_email IS NOT NULL`. Return `supplier_id`, `name`, `contact_email`, and `country`.",
+    "topic_id": "null-handling",
+    "subtopic_id": "null-not",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "suppliers"
+    ],
+    "expected_columns": [
+      {
+        "name": "supplier_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "contact_email",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": false,
+    "starter_query": "-- Suppliers with contact_email\nSELECT supplier_id, name, contact_email, country\nFROM suppliers\nWHERE ...",
+    "solution_query": "SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email IS NOT NULL;",
+    "solution_explanation": "Filters supplier catalog to partners capable of automated digital PO routing.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using contact_email != NULL."
+    ],
+    "hints": [
+      "Condition: WHERE contact_email IS NOT NULL.",
+      "Query: SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email IS NOT NULL;",
+      "The expected query is: SELECT supplier_id, name, contact_email, country FROM suppliers WHERE contact_email IS NOT NULL;"
+    ],
+    "tags": [
+      "null",
+      "is-not-null",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-nul-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-nul-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-nul-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2397 @@
+[
+  {
+    "id": "q-my-uni-01",
+    "slug": "combine-customer-and-employee-contacts",
+    "title": "Combine Stakeholder Names with UNION",
+    "description_markdown": "Combine the distinct set of first names from both `employees` and `customers` into a unified list named `person_first_name` using `UNION`. Order alphabetically by `person_first_name` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "person_first_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combine queries using UNION\nSELECT first_name AS person_first_name FROM employees WHERE dept_id = 1\nUNION\nSELECT first_name FROM employees WHERE dept_id = 2\nORDER BY ...",
+    "solution_query": "SELECT first_name AS person_first_name FROM employees WHERE dept_id = 1 UNION SELECT first_name FROM employees WHERE dept_id = 2 ORDER BY person_first_name ASC;",
+    "solution_explanation": "UNION stacks matching column types from both SELECT queries and deduplicates identical records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use UNION between the two SELECT statements.",
+      "Order at the very end: `ORDER BY person_first_name ASC`.",
+      "Query: SELECT first_name AS person_first_name FROM employees WHERE dept_id = 1 UNION SELECT first_name FROM employees WHERE dept_id = 2 ORDER BY person_first_name ASC;"
+    ],
+    "tags": [
+      "union",
+      "set-operators"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-02",
+    "slug": "preserve-duplicates-with-union-all",
+    "title": "Preserve All Records with UNION ALL",
+    "description_markdown": "Select `role` as `role_title` from `assignments` for project 101, combined with all `job_title` as `role_title` from `employees` using `UNION ALL`. Do not deduplicate. Order by `role_title` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "assignments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "role_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Use UNION ALL\nSELECT ...",
+    "solution_query": "SELECT role AS role_title FROM assignments WHERE project_id = 101 UNION ALL SELECT job_title AS role_title FROM employees WHERE dept_id = 1 ORDER BY role_title ASC;",
+    "solution_explanation": "UNION ALL combines both record streams without the performance cost of deduplication, retaining all duplicates.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use UNION ALL between the queries.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT role AS role_title FROM assignments WHERE project_id = 101 UNION ALL SELECT job_title AS role_title FROM employees WHERE dept_id = 1 ORDER BY role_title ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "performance"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-03",
+    "slug": "labeled-union-revenue-and-cost-streams",
+    "title": "Create Tagged Financial Stream Ledger",
+    "description_markdown": "From `departments`, create a tagged stream: select `dept_name` as `entity_name`, `budget` as `amount`, and `'BUDGET'` as `stream_type`. Union this with `projects`: `project_name` as `entity_name`, `budget` as `amount`, and `'PROJECT_CAPITAL'` as `stream_type`. Order by `amount` DESC, `entity_name` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "entity_name",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "stream_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Union tagged records\nSELECT ...",
+    "solution_query": "SELECT dept_name AS entity_name, budget AS amount, 'BUDGET' AS stream_type FROM departments UNION ALL SELECT project_name AS entity_name, budget AS amount, 'PROJECT_CAPITAL' AS stream_type FROM projects ORDER BY amount DESC, entity_name ASC;",
+    "solution_explanation": "Injects constant discriminant literals (`'BUDGET'`, `'PROJECT_CAPITAL'`) to distinguish heterogeneous tables in a combined dataset.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Include a literal string column `'BUDGET' AS stream_type` in the first query.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT dept_name AS entity_name, budget AS amount, 'BUDGET' AS stream_type FROM departments UNION ALL SELECT project_name AS entity_name, budget AS amount, 'PROJECT_CAPITAL' AS stream_type FROM projects ORDER BY amount DESC, entity_name ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "polymorphism"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-04",
+    "slug": "union-all-high-low-salary-employees",
+    "title": "Combine High and Standard Earners with UNION ALL",
+    "description_markdown": "Use `UNION ALL` to create a categorized roster of employees: combine high earners (`salary >= 170000`) tagged with literal `'High Earner' AS tier` and standard earners (`salary < 100000`) tagged with `'Standard Earner' AS tier`. Return `emp_id`, `first_name`, `salary`, and `tier`. Order by `salary` DESC, `emp_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "tier",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combine categorized cohorts with UNION ALL\nSELECT emp_id, first_name, salary, 'High Earner' AS tier\nFROM employees\nWHERE salary >= 170000.00\nUNION ALL\nSELECT emp_id, first_name, salary, 'Standard Earner' AS tier\nFROM employees\nWHERE salary < 100000.00\nORDER BY salary DESC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, first_name, salary, 'High Earner' AS tier FROM employees WHERE salary >= 170000.00 UNION ALL SELECT emp_id, first_name, salary, 'Standard Earner' AS tier FROM employees WHERE salary < 100000.00 ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "UNION ALL combines two mutually disjoint subsets of employees without incurring the deduplication overhead of UNION.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION instead of UNION ALL when explicit duplicate preservation is requested or subsets are disjoint."
+    ],
+    "interview_tip": "When input sets are guaranteed disjoint, UNION ALL is significantly more performant than UNION because it skips the deduplication sort.",
+    "hints": [
+      "Select high earners in the first query with `'High Earner' AS tier`.",
+      "Use `UNION ALL` before selecting standard earners with `'Standard Earner' AS tier`.",
+      "Query: SELECT emp_id, first_name, salary, 'High Earner' AS tier FROM employees WHERE salary >= 170000.00 UNION ALL SELECT emp_id, first_name, salary, 'Standard Earner' AS tier FROM employees WHERE salary < 100000.00 ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "set-operators",
+      "discriminant",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-05",
+    "slug": "distinct-first-names-across-departments",
+    "title": "Deduplicate Names Across Departments with UNION",
+    "description_markdown": "Using the `UNION` operator to eliminate duplicates, combine the set of `first_name` values of employees in Engineering (`dept_id = 1`) and Sales (`dept_id = 3`). Order by `first_name` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Deduplicate names across departments using UNION\nSELECT first_name FROM employees WHERE dept_id = 1\nUNION\nSELECT first_name FROM employees WHERE dept_id = 3\nORDER BY first_name ASC;",
+    "solution_query": "SELECT first_name FROM employees WHERE dept_id = 1 UNION SELECT first_name FROM employees WHERE dept_id = 3 ORDER BY first_name ASC;",
+    "solution_explanation": "UNION automatically filters out any duplicate first names appearing in both departments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing an ORDER BY on the first query instead of at the very end."
+    ],
+    "interview_tip": "In SQL, an ORDER BY clause applies to the combined result of a set operation and must appear after the final SELECT.",
+    "hints": [
+      "Query 1: `SELECT first_name FROM employees WHERE dept_id = 1`.",
+      "Combine with `UNION` and order by `first_name ASC`.",
+      "Query: SELECT first_name FROM employees WHERE dept_id = 1 UNION SELECT first_name FROM employees WHERE dept_id = 3 ORDER BY first_name ASC;"
+    ],
+    "tags": [
+      "union",
+      "set-operators",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-06",
+    "slug": "union-all-customer-and-order-dates",
+    "title": "Merge Customer Registration and Order Activity Dates",
+    "description_markdown": "Using `UNION ALL`, construct an event log combining customer registrations (`CAST(created_at AS DATE) AS event_date`, tagged with literal `'account_created' AS event_type`) and order dates (`order_date AS event_date`, tagged with `'order_placed' AS event_type`). Return `customer_id`, `event_date`, and `event_type`. Order by `event_date` ASC, `customer_id` ASC, `event_type` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "event_date",
+        "type": "date"
+      },
+      {
+        "name": "event_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Build unified event log with UNION ALL\nSELECT customer_id, CAST(created_at AS DATE) AS event_date, 'account_created' AS event_type\nFROM customers\nUNION ALL\nSELECT customer_id, order_date AS event_date, 'order_placed' AS event_type\nFROM orders\nORDER BY event_date ASC, customer_id ASC, event_type ASC;",
+    "solution_query": "SELECT customer_id, CAST(created_at AS DATE) AS event_date, 'account_created' AS event_type FROM customers UNION ALL SELECT customer_id, order_date AS event_date, 'order_placed' AS event_type FROM orders ORDER BY event_date ASC, customer_id ASC, event_type ASC;",
+    "solution_explanation": "Casts timestamp to DATE to align data types across both branches of the UNION ALL before sorting chronologically.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatched data types between created_at (timestamp) and order_date (date)."
+    ],
+    "interview_tip": "Set operators require matching or compatible data types in corresponding positional columns.",
+    "hints": [
+      "Use `CAST(created_at AS DATE)` to match the DATE type of `order_date`.",
+      "Inject literals `'account_created'` and `'order_placed'`.",
+      "Query: SELECT customer_id, CAST(created_at AS DATE) AS event_date, 'account_created' AS event_type FROM customers UNION ALL SELECT customer_id, order_date AS event_date, 'order_placed' AS event_type FROM orders ORDER BY event_date ASC, customer_id ASC, event_type ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "timeline",
+      "event-log",
+      "casting"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-07",
+    "slug": "union-distinct-product-categories-and-parents",
+    "title": "Find Unique Category References with UNION",
+    "description_markdown": "Using `UNION`, find all unique category identifier values that appear either as a primary `category_id` or as a non-null `parent_category_id` in the `categories` table. Name the column `cat_id`. Order by `cat_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "cat_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique category IDs across parent and child roles\nSELECT category_id AS cat_id FROM categories\nUNION\nSELECT parent_category_id AS cat_id FROM categories WHERE parent_category_id IS NOT NULL\nORDER BY cat_id ASC;",
+    "solution_query": "SELECT category_id AS cat_id FROM categories UNION SELECT parent_category_id AS cat_id FROM categories WHERE parent_category_id IS NOT NULL ORDER BY cat_id ASC;",
+    "solution_explanation": "Collects both child and parent foreign key keys into a single deduplicated domain of category IDs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter out NULL parent_category_id values."
+    ],
+    "interview_tip": "UNION naturally removes NULLs or duplicates present across relational hierarchies.",
+    "hints": [
+      "Select `category_id AS cat_id` from categories.",
+      "Union with `parent_category_id AS cat_id` where `parent_category_id IS NOT NULL`.",
+      "Query: SELECT category_id AS cat_id FROM categories UNION SELECT parent_category_id AS cat_id FROM categories WHERE parent_category_id IS NOT NULL ORDER BY cat_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "hierarchy",
+      "categories",
+      "keys"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-08",
+    "slug": "union-all-student-and-professor-directory",
+    "title": "Build Campus Directory with UNION ALL",
+    "description_markdown": "Combine all students (tagged with `'Student' AS campus_role`) and professors (tagged with `'Professor' AS campus_role`) into a single campus directory using `UNION ALL`. Return `first_name`, `last_name`, and `campus_role`. Order by `last_name` ASC, `first_name` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "campus_role",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Campus directory via UNION ALL\nSELECT first_name, last_name, 'Student' AS campus_role FROM students\nUNION ALL\nSELECT first_name, last_name, 'Professor' AS campus_role FROM professors\nORDER BY last_name ASC, first_name ASC;",
+    "solution_query": "SELECT first_name, last_name, 'Student' AS campus_role FROM students UNION ALL SELECT first_name, last_name, 'Professor' AS campus_role FROM professors ORDER BY last_name ASC, first_name ASC;",
+    "solution_explanation": "Stacks rows from two separate entities with an added literal distinguishing each entity's role.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Ordering within the first query block."
+    ],
+    "interview_tip": "UNION ALL is standard for creating polymorphic views over normalized separate entity tables.",
+    "hints": [
+      "Select names from students with literal `'Student' AS campus_role`.",
+      "Union all with professors with literal `'Professor' AS campus_role`.",
+      "Query: SELECT first_name, last_name, 'Student' AS campus_role FROM students UNION ALL SELECT first_name, last_name, 'Professor' AS campus_role FROM professors ORDER BY last_name ASC, first_name ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "directory",
+      "polymorphism",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-09",
+    "slug": "distinct-departments-from-professors-and-courses",
+    "title": "Collect Distinct Academic Departments Using UNION",
+    "description_markdown": "Use `UNION` to return a distinct list of all academic department names that appear in either the `professors` table or the `courses` table. Order alphabetically by `department` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique departments across professors and courses\nSELECT department FROM professors\nUNION\nSELECT department FROM courses\nORDER BY department ASC;",
+    "solution_query": "SELECT department FROM professors UNION SELECT department FROM courses ORDER BY department ASC;",
+    "solution_explanation": "Performs set union of department strings across faculty and course schedules, eliminating duplicate strings.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION ALL which would repeat department names."
+    ],
+    "interview_tip": "UNION performs a distinct sort across both branches, ideal for compiling global lookup lists.",
+    "hints": [
+      "Select `department` from `professors`.",
+      "Use `UNION` before `SELECT department FROM courses`.",
+      "Query: SELECT department FROM professors UNION SELECT department FROM courses ORDER BY department ASC;"
+    ],
+    "tags": [
+      "union",
+      "departments",
+      "deduplication",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-10",
+    "slug": "union-all-completed-and-refunded-orders",
+    "title": "Segregate Completed and Refunded Orders with Status Flags",
+    "description_markdown": "Using `UNION ALL`, combine completed orders (`order_status = 'completed'`, flagged with `'COMPLETED' AS status_flag`) and refunded orders (`order_status = 'refunded'`, flagged with `'REFUNDED' AS status_flag`). Return `order_id`, `customer_id`, `total_amount`, and `status_flag`. Order by `order_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "status_flag",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Combine completed and refunded orders via UNION ALL\nSELECT order_id, customer_id, total_amount, 'COMPLETED' AS status_flag\nFROM orders\nWHERE order_status = 'completed'\nUNION ALL\nSELECT order_id, customer_id, total_amount, 'REFUNDED' AS status_flag\nFROM orders\nWHERE order_status = 'refunded'\nORDER BY order_id ASC;",
+    "solution_query": "SELECT order_id, customer_id, total_amount, 'COMPLETED' AS status_flag FROM orders WHERE order_status = 'completed' UNION ALL SELECT order_id, customer_id, total_amount, 'REFUNDED' AS status_flag FROM orders WHERE order_status = 'refunded' ORDER BY order_id ASC;",
+    "solution_explanation": "Partitions orders by status criteria and concatenates the two streams with clear audit classification tags.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering both conditions into a single WHERE clause without the status_flag distinction."
+    ],
+    "interview_tip": "UNION ALL allows different SELECT clauses to apply specific business tags before merging.",
+    "hints": [
+      "First branch filters `order_status = 'completed'` with `'COMPLETED' AS status_flag`.",
+      "Second branch filters `order_status = 'refunded'` with `'REFUNDED' AS status_flag`.",
+      "Query: SELECT order_id, customer_id, total_amount, 'COMPLETED' AS status_flag FROM orders WHERE order_status = 'completed' UNION ALL SELECT order_id, customer_id, total_amount, 'REFUNDED' AS status_flag FROM orders WHERE order_status = 'refunded' ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "orders",
+      "status-tagging",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-11",
+    "slug": "union-distinct-job-titles-and-roles",
+    "title": "Unique Professional Titles Across Staff and Assignments",
+    "description_markdown": "Using `UNION`, compile a comprehensive distinct list of all professional job titles and assignment roles by combining `job_title AS title_name` from `employees` and `role AS title_name` from `assignments`. Order alphabetically by `title_name` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "title_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique professional roles via UNION\nSELECT job_title AS title_name FROM employees\nUNION\nSELECT role AS title_name FROM assignments\nORDER BY title_name ASC;",
+    "solution_query": "SELECT job_title AS title_name FROM employees UNION SELECT role AS title_name FROM assignments ORDER BY title_name ASC;",
+    "solution_explanation": "Consolidates company positions and project-specific roles into a unified deduplicated terminology list.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatched alias names between branches (column name of first branch sets the result column name)."
+    ],
+    "interview_tip": "In SQL set operations, the column names of the first SELECT statement dictate the column names of the final result set.",
+    "hints": [
+      "Select `job_title AS title_name` from employees.",
+      "Union with `role AS title_name` from assignments.",
+      "Query: SELECT job_title AS title_name FROM employees UNION SELECT role AS title_name FROM assignments ORDER BY title_name ASC;"
+    ],
+    "tags": [
+      "union",
+      "job-titles",
+      "assignments",
+      "vocabulary"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-12",
+    "slug": "union-all-payments-and-orders-reconciliation",
+    "title": "Reconcile Invoices and Payments with UNION ALL",
+    "description_markdown": "Generate an audit reconciliation stream using `UNION ALL`. Combine orders (`total_amount AS amount`, tagged with `'ORDER_INVOICE' AS txn_type`) with successful payments from `payments` (`amount`, where `payment_status = 'success'`, tagged with `'PAYMENT_RECEIVED' AS txn_type`). Return `order_id`, `amount`, and `txn_type`. Order by `order_id` ASC, `txn_type` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "txn_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Financial reconciliation stream via UNION ALL\nSELECT order_id, total_amount AS amount, 'ORDER_INVOICE' AS txn_type\nFROM orders\nUNION ALL\nSELECT order_id, amount, 'PAYMENT_RECEIVED' AS txn_type\nFROM payments\nWHERE payment_status = 'success'\nORDER BY order_id ASC, txn_type ASC;",
+    "solution_query": "SELECT order_id, total_amount AS amount, 'ORDER_INVOICE' AS txn_type FROM orders UNION ALL SELECT order_id, amount, 'PAYMENT_RECEIVED' AS txn_type FROM payments WHERE payment_status = 'success' ORDER BY order_id ASC, txn_type ASC;",
+    "solution_explanation": "Unifies debit and credit records across orders and payment gateways into a double-entry style audit stream.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the payment_status = 'success' filter on payments."
+    ],
+    "interview_tip": "Double-entry general ledgers in fintech are built using UNION ALL to stitch debits and credits together.",
+    "hints": [
+      "Select orders with `'ORDER_INVOICE' AS txn_type`.",
+      "Union all with successful payments tagged as `'PAYMENT_RECEIVED' AS txn_type`.",
+      "Query: SELECT order_id, total_amount AS amount, 'ORDER_INVOICE' AS txn_type FROM orders UNION ALL SELECT order_id, amount, 'PAYMENT_RECEIVED' AS txn_type FROM payments WHERE payment_status = 'success' ORDER BY order_id ASC, txn_type ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "accounting",
+      "ledger",
+      "fintech"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-13",
+    "slug": "union-student-majors-and-course-departments",
+    "title": "Consolidate Academic Fields of Study via UNION",
+    "description_markdown": "Using `UNION`, produce a distinct list of all declared academic study areas: combine `major AS academic_area` from `students` (excluding `'Undeclared'`) with `department AS academic_area` from `courses`. Order alphabetically by `academic_area` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "academic_area",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Distinct academic disciplines via UNION\nSELECT major AS academic_area FROM students WHERE major != 'Undeclared'\nUNION\nSELECT department AS academic_area FROM courses\nORDER BY academic_area ASC;",
+    "solution_query": "SELECT major AS academic_area FROM students WHERE major != 'Undeclared' UNION SELECT department AS academic_area FROM courses ORDER BY academic_area ASC;",
+    "solution_explanation": "Collects student degree majors and course departmental offerings into a single deduplicated discipline taxonomy.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter out 'Undeclared' from the student roster."
+    ],
+    "interview_tip": "Set operations are often used to consolidate disparate domain registries across multiple operational databases.",
+    "hints": [
+      "Filter `major != 'Undeclared'` in the first query.",
+      "UNION with `SELECT department AS academic_area FROM courses`.",
+      "Query: SELECT major AS academic_area FROM students WHERE major != 'Undeclared' UNION SELECT department AS academic_area FROM courses ORDER BY academic_area ASC;"
+    ],
+    "tags": [
+      "union",
+      "taxonomy",
+      "academic",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-14",
+    "slug": "union-all-employee-promotions-and-hirings",
+    "title": "HR Career Milestone Timeline with UNION ALL",
+    "description_markdown": "Construct an HR career event timeline using `UNION ALL`. Combine initial hiring events from `employees` (`emp_id`, `hire_date AS event_date`, literal `'NEW_HIRE' AS event_name`) with compensation milestones from `salaries_history` (`emp_id`, `effective_date AS event_date`, `change_reason AS event_name`). Order by `event_date` ASC, `emp_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "event_date",
+        "type": "date"
+      },
+      {
+        "name": "event_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- HR milestone timeline via UNION ALL\nSELECT emp_id, hire_date AS event_date, 'NEW_HIRE' AS event_name\nFROM employees\nUNION ALL\nSELECT emp_id, effective_date AS event_date, change_reason AS event_name\nFROM salaries_history\nORDER BY event_date ASC, emp_id ASC;",
+    "solution_query": "SELECT emp_id, hire_date AS event_date, 'NEW_HIRE' AS event_name FROM employees UNION ALL SELECT emp_id, effective_date AS event_date, change_reason AS event_name FROM salaries_history ORDER BY event_date ASC, emp_id ASC;",
+    "solution_explanation": "Blends two time-series tables into a unified chronological log of employment events.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatched date types or forgetting to sort by event_date."
+    ],
+    "interview_tip": "Chronological activity streams are created by taking projections of distinct event tables and combining with UNION ALL.",
+    "hints": [
+      "Select hire_date from employees with `'NEW_HIRE'`.",
+      "Union all with effective_date and change_reason from salaries_history.",
+      "Query: SELECT emp_id, hire_date AS event_date, CAST('NEW_HIRE' AS VARCHAR(100)) AS event_name FROM employees UNION ALL SELECT emp_id, effective_date AS event_date, change_reason AS event_name FROM salaries_history ORDER BY event_date ASC, emp_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "timeline",
+      "hr",
+      "career-events"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-15",
+    "slug": "distinct-customers-ordering-computers-or-coffee",
+    "title": "Find Unique Customers Across Distinct Product Categories",
+    "description_markdown": "Using `UNION`, find all distinct `customer_id` values for customers who ordered Computers (`category_id = 2`) OR ordered Coffee & Tea (`category_id = 6`). Join `orders`, `order_items`, and `products` within each query branch. Order by `customer_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "order_items",
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique customers across two distinct categories via UNION\nSELECT o.customer_id\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id\nWHERE p.category_id = 2\nUNION\nSELECT o.customer_id\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id\nWHERE p.category_id = 6\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT o.customer_id FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE p.category_id = 2 UNION SELECT o.customer_id FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE p.category_id = 6 ORDER BY customer_id ASC;",
+    "solution_explanation": "Performs set union of customer IDs meeting category condition 2 or category condition 6, eliminating duplicate customer IDs.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using OR across a complex join when query plans prefer indexed UNION branch evaluation."
+    ],
+    "interview_tip": "In database query optimization, transforming complex OR predicates into indexed UNION queries often unlocks massive speedups.",
+    "hints": [
+      "Branch 1 joins orders, order_items, and products where `category_id = 2`.",
+      "Branch 2 does the same where `category_id = 6`.",
+      "Query: SELECT o.customer_id FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE p.category_id = 2 UNION SELECT o.customer_id FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE p.category_id = 6 ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "ecommerce",
+      "optimization",
+      "or-expansion"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-16",
+    "slug": "union-all-product-prices-and-costs",
+    "title": "Unpivot Price and Cost Columns into Single Stream",
+    "description_markdown": "Unpivot the `price` and `cost` columns from `products` into a single stream using `UNION ALL`. First select `product_id`, `product_name`, `price AS amount`, and literal `'RETAIL' AS valuation_type`. Union with `product_id`, `product_name`, `cost AS amount`, and `'COST' AS valuation_type`. Order by `product_id` ASC, `valuation_type` DESC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "amount",
+        "type": "decimal"
+      },
+      {
+        "name": "valuation_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unpivot price and cost columns using UNION ALL\nSELECT product_id, product_name, price AS amount, 'RETAIL' AS valuation_type\nFROM products\nUNION ALL\nSELECT product_id, product_name, cost AS amount, 'COST' AS valuation_type\nFROM products\nORDER BY product_id ASC, valuation_type DESC;",
+    "solution_query": "SELECT product_id, product_name, price AS amount, 'RETAIL' AS valuation_type FROM products UNION ALL SELECT product_id, product_name, cost AS amount, 'COST' AS valuation_type FROM products ORDER BY product_id ASC, valuation_type DESC;",
+    "solution_explanation": "Converts a wide table format (having both price and cost columns) into a normalized long table format via UNION ALL.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION which might deduplicate items where cost equals price."
+    ],
+    "interview_tip": "UNION ALL is the standard cross-dialect technique for UNPIVOT operations in ANSI SQL.",
+    "hints": [
+      "First query selects `price AS amount` with `'RETAIL'`.",
+      "Second query selects `cost AS amount` with `'COST'`.",
+      "Query: SELECT product_id, product_name, price AS amount, 'RETAIL' AS valuation_type FROM products UNION ALL SELECT product_id, product_name, cost AS amount, 'COST' AS valuation_type FROM products ORDER BY product_id ASC, valuation_type DESC;"
+    ],
+    "tags": [
+      "union-all",
+      "unpivot",
+      "normalization",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-17",
+    "slug": "union-distinct-high-gpa-and-senior-students",
+    "title": "Compile Honors and Senior Cohort with UNION",
+    "description_markdown": "Using `UNION`, create a deduplicated list of students who either achieved academic honors (`gpa >= 3.80`) OR entered the college in `enrollment_year = 2021`. Return `student_id`, `first_name`, and `gpa`. Order by `student_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Distinct students across GPA and enrollment year criteria\nSELECT student_id, first_name, gpa FROM students WHERE gpa >= 3.80\nUNION\nSELECT student_id, first_name, gpa FROM students WHERE enrollment_year = 2021\nORDER BY student_id ASC;",
+    "solution_query": "SELECT student_id, first_name, gpa FROM students WHERE gpa >= 3.80 UNION SELECT student_id, first_name, gpa FROM students WHERE enrollment_year = 2021 ORDER BY student_id ASC;",
+    "solution_explanation": "Ensures students who satisfy both conditions (honor roll AND entered in 2021) appear exactly once in the final result set.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION ALL, which would list qualifying dual-criteria students twice."
+    ],
+    "interview_tip": "UNION is mathematically equivalent to the set union operator (A ∪ B), deduplicating elements in the intersection.",
+    "hints": [
+      "Select students where `gpa >= 3.80`.",
+      "Union with students where `enrollment_year = 2021`.",
+      "Query: SELECT student_id, first_name, gpa FROM students WHERE gpa >= 3.80 UNION SELECT student_id, first_name, gpa FROM students WHERE enrollment_year = 2021 ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "academic",
+      "deduplication",
+      "set-union"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-18",
+    "slug": "union-all-project-budgets-and-department-budgets-summary",
+    "title": "Combine Department and Project Capital Commitments",
+    "description_markdown": "Using `UNION ALL`, combine departmental budgets from `departments` (`dept_id`, `budget`, tagged with `'DEPARTMENT' AS entity_type`) and project budgets from `projects` (`dept_id`, `budget`, tagged with `'PROJECT' AS entity_type`). Filter out any rows with NULL `dept_id` or NULL `budget`. Order by `dept_id` ASC, `budget` DESC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      },
+      {
+        "name": "entity_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Financial capital commitments via UNION ALL\nSELECT dept_id, budget, 'DEPARTMENT' AS entity_type\nFROM departments\nWHERE dept_id IS NOT NULL AND budget IS NOT NULL\nUNION ALL\nSELECT dept_id, budget, 'PROJECT' AS entity_type\nFROM projects\nWHERE dept_id IS NOT NULL AND budget IS NOT NULL\nORDER BY dept_id ASC, budget DESC;",
+    "solution_query": "SELECT dept_id, budget, 'DEPARTMENT' AS entity_type FROM departments WHERE dept_id IS NOT NULL AND budget IS NOT NULL UNION ALL SELECT dept_id, budget, 'PROJECT' AS entity_type FROM projects WHERE dept_id IS NOT NULL AND budget IS NOT NULL ORDER BY dept_id ASC, budget DESC;",
+    "solution_explanation": "Builds a unified ledger of capital allocations across operational departments and specific initiative projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the NULL check on budget."
+    ],
+    "interview_tip": "Combining financial commitments from differing tiers is a frequent reporting pattern.",
+    "hints": [
+      "Branch 1 selects from departments with `'DEPARTMENT' AS entity_type`.",
+      "Branch 2 selects from projects with `'PROJECT' AS entity_type`.",
+      "Query: SELECT dept_id, budget, 'DEPARTMENT' AS entity_type FROM departments WHERE dept_id IS NOT NULL AND budget IS NOT NULL UNION ALL SELECT dept_id, budget, 'PROJECT' AS entity_type FROM projects WHERE dept_id IS NOT NULL AND budget IS NOT NULL ORDER BY dept_id ASC, budget DESC;"
+    ],
+    "tags": [
+      "union-all",
+      "budget",
+      "finance",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-19",
+    "slug": "union-distinct-active-products-and-reviewed-products",
+    "title": "Gather Distinct Catalog and Engaged Product IDs",
+    "description_markdown": "Using `UNION`, find all unique `product_id` numbers that are currently marked active (`is_active = TRUE` in `products`) OR have received at least one review in the `reviews` table. Order by `product_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Distinct product IDs via UNION\nSELECT product_id FROM products WHERE is_active = TRUE\nUNION\nSELECT product_id FROM reviews\nORDER BY product_id ASC;",
+    "solution_query": "SELECT product_id FROM products WHERE is_active = TRUE UNION SELECT product_id FROM reviews ORDER BY product_id ASC;",
+    "solution_explanation": "Collects active inventory items and engaged products that have reviews, deduplicating IDs across both sets.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining tables instead of performing a set union."
+    ],
+    "interview_tip": "Set operations compile universe sets across distinct operational conditions without joining overhead.",
+    "hints": [
+      "Select `product_id` from products where `is_active = TRUE`.",
+      "Union with `SELECT product_id FROM reviews`.",
+      "Query: SELECT product_id FROM products WHERE is_active = TRUE UNION SELECT product_id FROM reviews ORDER BY product_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "catalog",
+      "reviews",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-20",
+    "slug": "union-all-professors-and-adjuncts-compensation",
+    "title": "Faculty Compensation Roll-Up by Rank with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, partition and label faculty members by their professional rank: select full faculty (`title LIKE '%Professor%'`, tagged with `'Full Faculty' AS status`) and adjunct staff (`title LIKE '%Lecturer%'`, tagged with `'Adjunct' AS status`). Return `professor_id`, `first_name`, `salary`, and `status`. Order by `salary` DESC, `professor_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "status",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Faculty rank compensation ledger via UNION ALL\nSELECT professor_id, first_name, salary, 'Full Faculty' AS status\nFROM professors\nWHERE title LIKE '%Professor%'\nUNION ALL\nSELECT professor_id, first_name, salary, 'Adjunct' AS status\nFROM professors\nWHERE title LIKE '%Lecturer%'\nORDER BY salary DESC, professor_id ASC;",
+    "solution_query": "SELECT professor_id, first_name, salary, 'Full Faculty' AS status FROM professors WHERE title LIKE '%Professor%' UNION ALL SELECT professor_id, first_name, salary, 'Adjunct' AS status FROM professors WHERE title LIKE '%Lecturer%' ORDER BY salary DESC, professor_id ASC;",
+    "solution_explanation": "Splits faculty by rank and combines them into an ordered compensation breakdown.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using AND in a single WHERE clause instead of splitting into distinct union branches."
+    ],
+    "interview_tip": "UNION ALL makes complex multi-tier reporting transparent and easily maintainable.",
+    "hints": [
+      "Branch 1 matches `title LIKE '%Professor%'` with status `'Full Faculty'`.",
+      "Branch 2 matches `title LIKE '%Lecturer%'` with status `'Adjunct'`.",
+      "Query: SELECT professor_id, first_name, salary, 'Full Faculty' AS status FROM professors WHERE title LIKE '%Professor%' UNION ALL SELECT professor_id, first_name, salary, 'Adjunct' AS status FROM professors WHERE title LIKE '%Lecturer%' ORDER BY salary DESC, professor_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "faculty",
+      "academic-rank",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-21",
+    "slug": "union-distinct-customers-usa-or-completed-orders",
+    "title": "Compile Target Audience via UNION",
+    "description_markdown": "Using `UNION`, create a target marketing list of customers who are located in the United States (`country = 'USA'`) OR who have completed at least one order (`order_status = 'completed'`). Return `customer_id` and `email`. Order by `customer_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Target audience compile via UNION\nSELECT customer_id, email FROM customers WHERE country = 'USA'\nUNION\nSELECT c.customer_id, c.email FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed'\nORDER BY customer_id ASC;",
+    "solution_query": "SELECT customer_id, email FROM customers WHERE country = 'USA' UNION SELECT c.customer_id, c.email FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' ORDER BY customer_id ASC;",
+    "solution_explanation": "Deduplicates customers who qualify under demographic location or transaction behavior.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off the join between customers and orders in the second branch."
+    ],
+    "interview_tip": "UNION is ideal when target audiences originate from disparate business channels or criteria.",
+    "hints": [
+      "Branch 1 filters `country = 'USA'` from customers.",
+      "Branch 2 joins orders and filters `order_status = 'completed'`.",
+      "Query: SELECT customer_id, email FROM customers WHERE country = 'USA' UNION SELECT c.customer_id, c.email FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_status = 'completed' ORDER BY customer_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "marketing",
+      "crm",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-22",
+    "slug": "union-all-midterm-and-final-exam-marks",
+    "title": "Standardize Exam Mark Records with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, combine exam score records for midterms (`assessment_type = 'midterm'`, tagged with `'MIDTERM' AS exam_label`) and finals (`assessment_type = 'final'`, tagged with `'FINAL' AS exam_label`). Return `mark_id`, `enrollment_id`, `score`, and `exam_label`. Order by `enrollment_id` ASC, `exam_label` ASC, `mark_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "mark_id",
+        "type": "integer"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "score",
+        "type": "decimal"
+      },
+      {
+        "name": "exam_label",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Exam marks audit stream via UNION ALL\nSELECT mark_id, enrollment_id, score, 'MIDTERM' AS exam_label\nFROM marks\nWHERE assessment_type = 'midterm'\nUNION ALL\nSELECT mark_id, enrollment_id, score, 'FINAL' AS exam_label\nFROM marks\nWHERE assessment_type = 'final'\nORDER BY enrollment_id ASC, exam_label ASC, mark_id ASC;",
+    "solution_query": "SELECT mark_id, enrollment_id, score, 'MIDTERM' AS exam_label FROM marks WHERE assessment_type = 'midterm' UNION ALL SELECT mark_id, enrollment_id, score, 'FINAL' AS exam_label FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC, exam_label ASC, mark_id ASC;",
+    "solution_explanation": "Partitions student assessment marks by exam category and unifies them with explicit discriminant labels.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the assessment_type filter on each branch."
+    ],
+    "interview_tip": "UNION ALL with explicit tags creates standardized streams from heterogeneous operational records.",
+    "hints": [
+      "Select midterm scores with `'MIDTERM' AS exam_label`.",
+      "Union all with final scores with `'FINAL' AS exam_label`.",
+      "Query: SELECT mark_id, enrollment_id, score, 'MIDTERM' AS exam_label FROM marks WHERE assessment_type = 'midterm' UNION ALL SELECT mark_id, enrollment_id, score, 'FINAL' AS exam_label FROM marks WHERE assessment_type = 'final' ORDER BY enrollment_id ASC, exam_label ASC, mark_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "grading",
+      "marks",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-23",
+    "slug": "union-distinct-employee-managers-and-directors",
+    "title": "Compile Leadership Directory via UNION",
+    "description_markdown": "Using `UNION`, compile a distinct list of all leadership employee IDs: combine all employees who serve as managers (`manager_id AS emp_id` from `employees` where `manager_id IS NOT NULL`) with any employee whose job title starts with 'VP' (`emp_id` where `job_title LIKE 'VP%'`). Order by `emp_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique leadership employee IDs via UNION\nSELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL\nUNION\nSELECT emp_id FROM employees WHERE job_title LIKE 'VP%'\nORDER BY emp_id ASC;",
+    "solution_query": "SELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL UNION SELECT emp_id FROM employees WHERE job_title LIKE 'VP%' ORDER BY emp_id ASC;",
+    "solution_explanation": "Aggregates managerial IDs and executive titles into a unified leadership roster without duplicates.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Selecting manager_id without filtering out NULLs."
+    ],
+    "interview_tip": "Set union eliminates duplicates when combining organizational roles across different reporting dimensions.",
+    "hints": [
+      "Select non-null `manager_id AS emp_id` from employees.",
+      "Union with `emp_id` where `job_title LIKE 'VP%'`.",
+      "Query: SELECT manager_id AS emp_id FROM employees WHERE manager_id IS NOT NULL UNION SELECT emp_id FROM employees WHERE job_title LIKE 'VP%' ORDER BY emp_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "leadership",
+      "management",
+      "hierarchy"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-24",
+    "slug": "union-all-positive-and-negative-reviews",
+    "title": "Split Review Sentiment Streams with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, create a bifurcated sentiment stream: select positive reviews (`rating >= 4`, tagged with `'POSITIVE' AS sentiment`) and critical reviews (`rating <= 2`, tagged with `'CRITICAL' AS sentiment`). Return `review_id`, `product_id`, `rating`, and `sentiment`. Order by `rating` DESC, `review_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "review_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "rating",
+        "type": "integer"
+      },
+      {
+        "name": "sentiment",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Split sentiment streams via UNION ALL\nSELECT review_id, product_id, rating, 'POSITIVE' AS sentiment\nFROM reviews\nWHERE rating >= 4\nUNION ALL\nSELECT review_id, product_id, rating, 'CRITICAL' AS sentiment\nFROM reviews\nWHERE rating <= 2\nORDER BY rating DESC, review_id ASC;",
+    "solution_query": "SELECT review_id, product_id, rating, 'POSITIVE' AS sentiment FROM reviews WHERE rating >= 4 UNION ALL SELECT review_id, product_id, rating, 'CRITICAL' AS sentiment FROM reviews WHERE rating <= 2 ORDER BY rating DESC, review_id ASC;",
+    "solution_explanation": "Partitions reviews into polar ends of the rating scale, excluding neutral ratings (3) while assigning explicit tags.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including neutral rating 3 reviews."
+    ],
+    "interview_tip": "UNION ALL is frequently used in ETL data preparation to split and label data streams for machine learning.",
+    "hints": [
+      "First query filters `rating >= 4` with sentiment `'POSITIVE'`.",
+      "Second query filters `rating <= 2` with sentiment `'CRITICAL'`.",
+      "Query: SELECT review_id, product_id, rating, 'POSITIVE' AS sentiment FROM reviews WHERE rating >= 4 UNION ALL SELECT review_id, product_id, rating, 'CRITICAL' AS sentiment FROM reviews WHERE rating <= 2 ORDER BY rating DESC, review_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "reviews",
+      "sentiment",
+      "ecommerce"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-25",
+    "slug": "union-distinct-course-professors-and-assigned-faculty",
+    "title": "Find Active Faculty Identifiers via UNION",
+    "description_markdown": "Using `UNION`, find all distinct `professor_id` values for professors who either earn a high salary (`salary >= 140000.00` in `professors`) OR are currently assigned to teach at least one course (`professor_id` in `courses` where `professor_id IS NOT NULL`). Order by `professor_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique faculty IDs via UNION\nSELECT professor_id FROM professors WHERE salary >= 140000.00\nUNION\nSELECT professor_id FROM courses WHERE professor_id IS NOT NULL\nORDER BY professor_id ASC;",
+    "solution_query": "SELECT professor_id FROM professors WHERE salary >= 140000.00 UNION SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;",
+    "solution_explanation": "Deduplicates professor IDs meeting either senior compensation threshold or teaching assignment.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to filter out NULL professor_id from the courses table."
+    ],
+    "interview_tip": "NULL filtering before performing set operations prevents unexpected NULL entries in final result sets.",
+    "hints": [
+      "Select `professor_id` from professors where `salary >= 140000.00`.",
+      "Union with `SELECT professor_id FROM courses WHERE professor_id IS NOT NULL`.",
+      "Query: SELECT professor_id FROM professors WHERE salary >= 140000.00 UNION SELECT professor_id FROM courses WHERE professor_id IS NOT NULL ORDER BY professor_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "faculty",
+      "academic",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-26",
+    "slug": "union-all-hourly-assignments-and-salaried-base",
+    "title": "Multi-Source Compensation Breakdown with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, construct a multi-source compensation ledger for employees in Engineering (`dept_id = 1`): combine base salaries (`salary AS comp_amount`, tagged with `'ANNUAL_BASE' AS comp_type`) with estimated project values from `assignments` (`(hours_worked * 50.00) AS comp_amount` where `hours_worked > 0`, tagged with `'PROJECT_HOURLY' AS comp_type`). Return `emp_id`, `comp_amount`, and `comp_type`. Order by `emp_id` ASC, `comp_type` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "comp_amount",
+        "type": "decimal"
+      },
+      {
+        "name": "comp_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-source compensation stream via UNION ALL\nSELECT emp_id, salary AS comp_amount, 'ANNUAL_BASE' AS comp_type\nFROM employees\nWHERE dept_id = 1\nUNION ALL\nSELECT emp_id, (hours_worked * 50.00) AS comp_amount, 'PROJECT_HOURLY' AS comp_type\nFROM assignments\nWHERE hours_worked > 0\nORDER BY emp_id ASC, comp_type ASC;",
+    "solution_query": "SELECT emp_id, salary AS comp_amount, 'ANNUAL_BASE' AS comp_type FROM employees WHERE dept_id = 1 UNION ALL SELECT emp_id, (hours_worked * 50.00) AS comp_amount, 'PROJECT_HOURLY' AS comp_type FROM assignments WHERE hours_worked > 0 ORDER BY emp_id ASC, comp_type ASC;",
+    "solution_explanation": "Consolidates salaried compensation with billable project work into a single unified payroll audit report.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatched arithmetic types between salary and hours_worked product."
+    ],
+    "interview_tip": "UNION ALL handles polymorphic union of different payout structures cleanly.",
+    "hints": [
+      "Branch 1 selects base salary from department 1 employees.",
+      "Branch 2 multiplies `hours_worked * 50.00` from assignments.",
+      "Query: SELECT emp_id, salary AS comp_amount, 'ANNUAL_BASE' AS comp_type FROM employees WHERE dept_id = 1 UNION ALL SELECT emp_id, (hours_worked * 50.00) AS comp_amount, 'PROJECT_HOURLY' AS comp_type FROM assignments WHERE hours_worked > 0 ORDER BY emp_id ASC, comp_type ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "compensation",
+      "payroll",
+      "arithmetic"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-27",
+    "slug": "union-distinct-order-customers-and-payment-customers",
+    "title": "Deduplicate Transacted Order IDs via UNION",
+    "description_markdown": "Using `UNION`, find all distinct `order_id` values that either have status `'completed'` in the `orders` table OR have a `'success'` payment record in the `payments` table. Order by `order_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique transacted order IDs via UNION\nSELECT order_id FROM orders WHERE order_status = 'completed'\nUNION\nSELECT order_id FROM payments WHERE payment_status = 'success'\nORDER BY order_id ASC;",
+    "solution_query": "SELECT order_id FROM orders WHERE order_status = 'completed' UNION SELECT order_id FROM payments WHERE payment_status = 'success' ORDER BY order_id ASC;",
+    "solution_explanation": "Performs set union of order keys satisfying order completion or payment success.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION ALL which would duplicate order IDs present in both systems."
+    ],
+    "interview_tip": "UNION provides automatic deduplication across heterogeneous transaction stores.",
+    "hints": [
+      "Select completed order_ids from orders.",
+      "Union with successful payment order_ids from payments.",
+      "Query: SELECT order_id FROM orders WHERE order_status = 'completed' UNION SELECT order_id FROM payments WHERE payment_status = 'success' ORDER BY order_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "orders",
+      "payments",
+      "reconciliation"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-28",
+    "slug": "union-all-students-enrolled-vs-completed",
+    "title": "Track Registration Status Milestones with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, create an academic status audit report: select completed enrollments (`status = 'completed'`, tagged with `'PASSED' AS audit_status`) and dropped enrollments (`status = 'dropped'`, tagged with `'DROPPED' AS audit_status`). Return `enrollment_id`, `student_id`, `course_id`, and `audit_status`. Order by `enrollment_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "enrollment_id",
+        "type": "integer"
+      },
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "audit_status",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Academic audit status stream via UNION ALL\nSELECT enrollment_id, student_id, course_id, 'PASSED' AS audit_status\nFROM enrollments\nWHERE status = 'completed'\nUNION ALL\nSELECT enrollment_id, student_id, course_id, 'DROPPED' AS audit_status\nFROM enrollments\nWHERE status = 'dropped'\nORDER BY enrollment_id ASC;",
+    "solution_query": "SELECT enrollment_id, student_id, course_id, 'PASSED' AS audit_status FROM enrollments WHERE status = 'completed' UNION ALL SELECT enrollment_id, student_id, course_id, 'DROPPED' AS audit_status FROM enrollments WHERE status = 'dropped' ORDER BY enrollment_id ASC;",
+    "solution_explanation": "Splits enrollment records into definitive outcome buckets (passed vs dropped) and stitches them together with status flags.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Including ongoing 'enrolled' status rows."
+    ],
+    "interview_tip": "Bifurcating operational tables into tagged sub-queries via UNION ALL simplifies pipeline transformations.",
+    "hints": [
+      "Branch 1 selects completed enrollments with `'PASSED'`.",
+      "Branch 2 selects dropped enrollments with `'DROPPED'`.",
+      "Query: SELECT enrollment_id, student_id, course_id, 'PASSED' AS audit_status FROM enrollments WHERE status = 'completed' UNION ALL SELECT enrollment_id, student_id, course_id, 'DROPPED' AS audit_status FROM enrollments WHERE status = 'dropped' ORDER BY enrollment_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "academic",
+      "enrollments",
+      "audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-29",
+    "slug": "union-distinct-projects-by-date-intervals",
+    "title": "Consolidate Strategic Projects via UNION",
+    "description_markdown": "Using `UNION`, find all distinct projects that started before 2022 (`start_date < '2022-01-01'`) OR have a major budget (`budget >= 500000.00`). Return `project_id` and `project_name`. Order by `project_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Unique strategic projects via UNION\nSELECT project_id, project_name FROM projects WHERE start_date < '2022-01-01'\nUNION\nSELECT project_id, project_name FROM projects WHERE budget >= 500000.00\nORDER BY project_id ASC;",
+    "solution_query": "SELECT project_id, project_name FROM projects WHERE start_date < '2022-01-01' UNION SELECT project_id, project_name FROM projects WHERE budget >= 500000.00 ORDER BY project_id ASC;",
+    "solution_explanation": "Combines early initiatives and high-budget projects into a unified non-duplicative list.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using UNION ALL which causes projects meeting both conditions to appear twice."
+    ],
+    "interview_tip": "UNION guarantees uniqueness across all projected columns.",
+    "hints": [
+      "Select projects where `start_date < '2022-01-01'`.",
+      "Union with projects where `budget >= 500000.00`.",
+      "Query: SELECT project_id, project_name FROM projects WHERE start_date < '2022-01-01' UNION SELECT project_id, project_name FROM projects WHERE budget >= 500000.00 ORDER BY project_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "projects",
+      "deduplication",
+      "budget"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-30",
+    "slug": "union-all-multi-tier-product-catalog-banding",
+    "title": "Multi-Tier Price Band Classification with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, classify all products into three price tiers: `'PREMIUM'` (`price >= 500.00`), `'MID_TIER'` (`price >= 100.00 AND price < 500.00`), and `'BUDGET'` (`price < 100.00`). Return `product_id`, `product_name`, `price`, and `price_band`. Order by `price` DESC, `product_id` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      },
+      {
+        "name": "price_band",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Multi-tier price banding via UNION ALL\nSELECT product_id, product_name, price, 'PREMIUM' AS price_band\nFROM products\nWHERE price >= 500.00\nUNION ALL\nSELECT product_id, product_name, price, 'MID_TIER' AS price_band\nFROM products\nWHERE price >= 100.00 AND price < 500.00\nUNION ALL\nSELECT product_id, product_name, price, 'BUDGET' AS price_band\nFROM products\nWHERE price < 100.00\nORDER BY price DESC, product_id ASC;",
+    "solution_query": "SELECT product_id, product_name, price, 'PREMIUM' AS price_band FROM products WHERE price >= 500.00 UNION ALL SELECT product_id, product_name, price, 'MID_TIER' AS price_band FROM products WHERE price >= 100.00 AND price < 500.00 UNION ALL SELECT product_id, product_name, price, 'BUDGET' AS price_band FROM products WHERE price < 100.00 ORDER BY price DESC, product_id ASC;",
+    "solution_explanation": "Chains multiple UNION ALL operations to partition products into three mutually exclusive tiers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Overlapping boundaries between the tiers."
+    ],
+    "interview_tip": "Multiple UNION ALL queries allow parallel partition scanning and independent optimization hints per branch.",
+    "hints": [
+      "Create three distinct SELECT statements for the three price ranges.",
+      "Combine all three with `UNION ALL`.",
+      "Query: SELECT product_id, product_name, price, 'PREMIUM' AS price_band FROM products WHERE price >= 500.00 UNION ALL SELECT product_id, product_name, price, 'MID_TIER' AS price_band FROM products WHERE price >= 100.00 AND price < 500.00 UNION ALL SELECT product_id, product_name, price, 'BUDGET' AS price_band FROM products WHERE price < 100.00 ORDER BY price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "price-tiers",
+      "classification",
+      "multi-union"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-31",
+    "slug": "union-distinct-students-with-high-scores-or-high-gpa",
+    "title": "Compile High Achievement Scholars via UNION",
+    "description_markdown": "Using `UNION`, find all distinct `student_id` values for students who either maintain a cumulative GPA of at least 3.75 (`gpa >= 3.75` in `students`) OR scored 95 or higher on any individual exam (`score >= 95.00` in `marks` via `enrollments`). Order by `student_id` ascending.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- High achievement students via UNION\nSELECT student_id FROM students WHERE gpa >= 3.75\nUNION\nSELECT e.student_id FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.score >= 95.00\nORDER BY student_id ASC;",
+    "solution_query": "SELECT student_id FROM students WHERE gpa >= 3.75 UNION SELECT e.student_id FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.score >= 95.00 ORDER BY student_id ASC;",
+    "solution_explanation": "Deduplicates students who qualify via high cumulative GPA or peak individual exam performance.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Joining students to enrollments in both branches unnecessarily."
+    ],
+    "interview_tip": "UNION across different schemas (a dimension table and a fact table join) keeps individual queries simple and fast.",
+    "hints": [
+      "Branch 1 selects student_id from students with `gpa >= 3.75`.",
+      "Branch 2 joins enrollments and marks where `score >= 95.00`.",
+      "Query: SELECT student_id FROM students WHERE gpa >= 3.75 UNION SELECT e.student_id FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.score >= 95.00 ORDER BY student_id ASC;"
+    ],
+    "tags": [
+      "union",
+      "academic-honors",
+      "marks",
+      "deduplication"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-uni-32",
+    "slug": "union-all-full-payroll-and-compensation-ledger",
+    "title": "Master Compensation Historical Ledger with UNION ALL",
+    "description_markdown": "Using `UNION ALL`, compile a unified audit ledger of all employee compensation events: combine active employee base salary (`salary`, `hire_date AS record_date`, tagged with `'CURRENT_BASE' AS record_type`) with historical compensation changes from `salaries_history` (`salary`, `effective_date AS record_date`, tagged with `'HISTORICAL_ADJUSTMENT' AS record_type`). Return `emp_id`, `salary`, `record_date`, and `record_type`. Order by `emp_id` ASC, `record_date` ASC, `record_type` ASC.",
+    "topic_id": "union-union-all",
+    "subtopic_id": "set-union",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      },
+      {
+        "name": "record_date",
+        "type": "date"
+      },
+      {
+        "name": "record_type",
+        "type": "text"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Master compensation ledger via UNION ALL\nSELECT emp_id, salary, hire_date AS record_date, 'CURRENT_BASE' AS record_type\nFROM employees\nUNION ALL\nSELECT emp_id, salary, effective_date AS record_date, 'HISTORICAL_ADJUSTMENT' AS record_type\nFROM salaries_history\nORDER BY emp_id ASC, record_date ASC, record_type ASC;",
+    "solution_query": "SELECT emp_id, salary, hire_date AS record_date, 'CURRENT_BASE' AS record_type FROM employees UNION ALL SELECT emp_id, salary, effective_date AS record_date, 'HISTORICAL_ADJUSTMENT' AS record_type FROM salaries_history ORDER BY emp_id ASC, record_date ASC, record_type ASC;",
+    "solution_explanation": "Creates an immutable chronological audit trail merging current snapshot state with historical changes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Mismatched date column aliases or sorting by salary instead of record_date."
+    ],
+    "interview_tip": "Point-in-time financial reconstructing heavily relies on UNION ALL to sew together snapshot state and journal entries.",
+    "hints": [
+      "Branch 1 selects from employees using `hire_date AS record_date`.",
+      "Branch 2 selects from salaries_history using `effective_date AS record_date`.",
+      "Query: SELECT emp_id, salary, hire_date AS record_date, 'CURRENT_BASE' AS record_type FROM employees UNION ALL SELECT emp_id, salary, effective_date AS record_date, 'HISTORICAL_ADJUSTMENT' AS record_type FROM salaries_history ORDER BY emp_id ASC, record_date ASC, record_type ASC;"
+    ],
+    "tags": [
+      "union-all",
+      "audit-ledger",
+      "payroll",
+      "point-in-time"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-uni-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-uni-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-uni-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

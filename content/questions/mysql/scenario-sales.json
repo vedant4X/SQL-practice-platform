@@ -1,0 +1,2500 @@
+[
+  {
+    "id": "q-my-sc-sls-01",
+    "slug": "sales-qualified-leads-by-rep",
+    "title": "Count Qualified Leads by Sales Representative",
+    "description_markdown": "Sales leadership request: Count qualified leads (`status = 'qualified'`) per sales rep in `leads`. Return `sr.name AS rep_name`, `sr.territory`, and `COUNT(l.lead_id) AS qualified_leads`. Order by `qualified_leads` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "qualified_leads",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Qualified leads per rep\nSELECT ...",
+    "solution_query": "SELECT sr.name AS rep_name, sr.territory, COUNT(l.lead_id) AS qualified_leads FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id WHERE l.status = 'qualified' GROUP BY sr.rep_id, sr.name, sr.territory ORDER BY qualified_leads DESC, sr.rep_id ASC;",
+    "solution_explanation": "Quantifies top-of-funnel discovery qualification by territory rep.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE l.status = 'qualified'`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT sr.name AS rep_name, sr.territory, COUNT(l.lead_id) AS qualified_leads FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id WHERE l.status = 'qualified' GROUP BY sr.rep_id, sr.name, sr.territory ORDER BY qualified_leads DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "leads"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sls-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sls-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sls-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-02",
+    "slug": "sales-quota-attainment-percentage",
+    "title": "Calculate Quota Attainment Percentage for Closed Deals",
+    "description_markdown": "Sales ops request: For closed won opportunities (`stage = 'closed_won'`), calculate each rep's total closed deal volume (`SUM(o.deal_size)` as `closed_revenue`), and quota attainment percentage: `ROUND((SUM(o.deal_size) / sr.quota) * 100.0, 2)` as `attainment_pct`. Return `sr.name`, `sr.quota`, `closed_revenue`, and `attainment_pct`. Order by `attainment_pct` DESC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "closed_revenue",
+        "type": "decimal"
+      },
+      {
+        "name": "attainment_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Quota attainment\nSELECT ...",
+    "solution_query": "SELECT sr.name, sr.quota, SUM(o.deal_size) AS closed_revenue, ROUND((SUM(o.deal_size) / sr.quota) * 100.0, 2) AS attainment_pct FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY attainment_pct DESC, sr.rep_id ASC;",
+    "solution_explanation": "Measures attainment performance versus assigned quota targets.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join sales_reps -> leads -> opportunities with stage = 'closed_won'.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT sr.name, sr.quota, SUM(o.deal_size) AS closed_revenue, ROUND((SUM(o.deal_size) / sr.quota) * 100.0, 2) AS attainment_pct FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY attainment_pct DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "quota-attainment"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sls-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sls-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sls-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-03",
+    "slug": "sales-annual-contract-value-arr-totals",
+    "title": "Aggregate Enterprise Contract ARR and Multi-Year Value",
+    "description_markdown": "Revenue operations request: Calculate total contracted annual revenue (`SUM(annual_contract_value)` as `total_acv`) and average duration in months (`ROUND(AVG(duration_months), 0)` as `avg_duration_months`) across all executed contracts. Return `total_acv` and `avg_duration_months`.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_acv",
+        "type": "decimal"
+      },
+      {
+        "name": "avg_duration_months",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": false,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Contract value aggregates\nSELECT ...",
+    "solution_query": "SELECT SUM(annual_contract_value) AS total_acv, ROUND(AVG(duration_months), 0) AS avg_duration_months FROM contracts;",
+    "solution_explanation": "Computes corporate ARR bookings and weighted contract lengths.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(annual_contract_value) AS total_acv` and `ROUND(AVG(duration_months), 0) AS avg_duration_months`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT SUM(annual_contract_value) AS total_acv, ROUND(AVG(duration_months), 0) AS avg_duration_months FROM contracts;"
+    ],
+    "tags": [
+      "sales",
+      "acv-arr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sls-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sls-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sls-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-04",
+    "slug": "sls-high-quota-reps",
+    "title": "Filter Senior Sales Representatives by Quota Target",
+    "description_markdown": "Commercial performance audit: Find all sales representatives in `sales_reps` carrying an annual quota of at least $1,000,000 (`quota >= 1000000.00`). Return `rep_id`, `name`, `territory`, and `quota`. Order by `quota` DESC, `rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT rep_id, name, territory, quota FROM sales_reps WHERE quota >= 1000000.00 ORDER BY quota DESC, rep_id ASC;",
+    "solution_explanation": "Filters sales reps matching top-tier quota targets.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE quota >= 1000000.00`.",
+      "Order by `quota` DESC, `rep_id` ASC.",
+      "Query: SELECT rep_id, name, territory, quota FROM sales_reps WHERE quota >= 1000000.00 ORDER BY quota DESC, rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-05",
+    "slug": "sls-leads-by-industry",
+    "title": "Aggregate Lead Prospect Density by Vertical Industry",
+    "description_markdown": "Marketing market segmentation: For each industry represented in `leads`, count total prospect accounts (`COUNT(lead_id)` as `lead_count`). Return `industry` and `lead_count`. Order by `lead_count` DESC, `industry` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "lead_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT industry, COUNT(lead_id) AS lead_count FROM leads GROUP BY industry ORDER BY lead_count DESC, industry ASC;",
+    "solution_explanation": "Groups prospective leads by industry vertical.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `industry`.",
+      "Order by `lead_count` DESC, `industry` ASC.",
+      "Query: SELECT industry, COUNT(lead_id) AS lead_count FROM leads GROUP BY industry ORDER BY lead_count DESC, industry ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-06",
+    "slug": "sls-closed-won-opportunities",
+    "title": "Filter High-Value Closed Won Sales Opportunities",
+    "description_markdown": "Bookings report: Retrieve all opportunities in `opportunities` that have reached `'closed_won'` status. Return `opportunity_id`, `deal_size`, `stage`, and `close_date`. Order by `deal_size` DESC, `opportunity_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT opportunity_id, deal_size, stage, close_date FROM opportunities WHERE stage = 'closed_won' ORDER BY deal_size DESC, opportunity_id ASC;",
+    "solution_explanation": "Filters sales pipeline opportunities by won status.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE stage = 'closed_won'`.",
+      "Order by `deal_size` DESC, `opportunity_id` ASC.",
+      "Query: SELECT opportunity_id, deal_size, stage, close_date FROM opportunities WHERE stage = 'closed_won' ORDER BY deal_size DESC, opportunity_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-07",
+    "slug": "sls-contracts-above-threshold",
+    "title": "Filter Enterprise Contracts by Annual Value Threshold",
+    "description_markdown": "Revenue accounting: Retrieve all client agreements in `contracts` with an annual value of at least $200,000 (`annual_contract_value >= 200000.00`). Return `contract_id`, `signed_date`, `annual_contract_value`, and `duration_months`. Order by `annual_contract_value` DESC, `contract_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "signed_date",
+        "type": "date"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT contract_id, signed_date, annual_contract_value, duration_months FROM contracts WHERE annual_contract_value >= 200000.00 ORDER BY annual_contract_value DESC, contract_id ASC;",
+    "solution_explanation": "Filters executed agreements by ACV threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE annual_contract_value >= 200000.00`.",
+      "Order by `annual_contract_value` DESC, `contract_id` ASC.",
+      "Query: SELECT contract_id, signed_date, annual_contract_value, duration_months FROM contracts WHERE annual_contract_value >= 200000.00 ORDER BY annual_contract_value DESC, contract_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-08",
+    "slug": "sls-sales-rep-commission-potential",
+    "title": "Calculate On-Target Commission Incentive Potential",
+    "description_markdown": "Incentive compensation planning: For each representative in `sales_reps`, calculate the potential commission earned upon achieving 100% quota attainment: `(quota * commission_rate)` as `target_commission`. Return `rep_id`, `name`, `quota`, `commission_rate`, and `target_commission`. Order by `target_commission` DESC, `rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "commission_rate",
+        "type": "decimal"
+      },
+      {
+        "name": "target_commission",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT rep_id, name, quota, commission_rate, (quota * commission_rate) AS target_commission FROM sales_reps ORDER BY target_commission DESC, rep_id ASC;",
+    "solution_explanation": "Multiplies annual quota targets by contract commission rates.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Multiply `(quota * commission_rate)` as `target_commission`.",
+      "Order by `target_commission` DESC, `rep_id` ASC.",
+      "Query: SELECT rep_id, name, quota, commission_rate, (quota * commission_rate) AS target_commission FROM sales_reps ORDER BY target_commission DESC, rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-09",
+    "slug": "sls-leads-with-rep-info",
+    "title": "Map Target Accounts to Assigned Territory Representatives",
+    "description_markdown": "CRM account mapping: Join `leads` with `sales_reps`. Return `l.lead_id`, `l.company_name`, `l.industry`, `l.status`, `sr.name AS rep_name`, and `sr.territory`. Order by `l.lead_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads",
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "rep_name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT l.lead_id, l.company_name, l.industry, l.status, sr.name AS rep_name, sr.territory FROM leads l JOIN sales_reps sr ON l.rep_id = sr.rep_id ORDER BY l.lead_id ASC;",
+    "solution_explanation": "Joins sales leads with assigned regional account representatives.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `leads l` and `sales_reps sr` on `l.rep_id = sr.rep_id`.",
+      "Order by `l.lead_id` ASC.",
+      "Query: SELECT l.lead_id, l.company_name, l.industry, l.status, sr.name AS rep_name, sr.territory FROM leads l JOIN sales_reps sr ON l.rep_id = sr.rep_id ORDER BY l.lead_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-10",
+    "slug": "sls-opportunity-stage-breakdown",
+    "title": "Aggregate Sales Pipeline Volume Across Deal Stages",
+    "description_markdown": "Pipeline funnel summary: For each stage in `opportunities`, count open deals (`COUNT(opportunity_id)` as `opp_count`) and aggregate deal size (`SUM(deal_size)` as `total_volume`). Return `stage`, `opp_count`, and `total_volume`. Order by `total_volume` DESC, `stage` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "opp_count",
+        "type": "bigint"
+      },
+      {
+        "name": "total_volume",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage, COUNT(opportunity_id) AS opp_count, SUM(deal_size) AS total_volume FROM opportunities GROUP BY stage ORDER BY total_volume DESC, stage ASC;",
+    "solution_explanation": "Groups pipeline opportunities by stage and computes total potential bookings.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `stage`.",
+      "Use `COUNT(opportunity_id)` and `SUM(deal_size)`.",
+      "Query: SELECT stage, COUNT(opportunity_id) AS opp_count, SUM(deal_size) AS total_volume FROM opportunities GROUP BY stage ORDER BY total_volume DESC, stage ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-11",
+    "slug": "sls-multi-year-contracts",
+    "title": "Filter Multi-Year Enterprise Customer Agreements",
+    "description_markdown": "Customer retention metrics: Filter all contracts in `contracts` whose term length exceeds one year (`duration_months > 12`). Return `contract_id`, `signed_date`, `annual_contract_value`, and `duration_months`. Order by `duration_months` DESC, `contract_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "signed_date",
+        "type": "date"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT contract_id, signed_date, annual_contract_value, duration_months FROM contracts WHERE duration_months > 12 ORDER BY duration_months DESC, contract_id ASC;",
+    "solution_explanation": "Filters client agreements by tenure duration.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE duration_months > 12`.",
+      "Order by `duration_months` DESC, `contract_id` ASC.",
+      "Query: SELECT contract_id, signed_date, annual_contract_value, duration_months FROM contracts WHERE duration_months > 12 ORDER BY duration_months DESC, contract_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-12",
+    "slug": "sls-lead-status-classification",
+    "title": "Classify Prospect Pipeline Category by Engagement Status",
+    "description_markdown": "CRM pipeline health: Categorize accounts in `leads` using `CASE` as `pipeline_category`:\n- If `status = 'qualified'`, return `'Active Pipeline'`\n- Else if `status = 'lost'`, return `'Archived'`\n- Otherwise, return `'In Progress'`\n\nReturn `lead_id`, `company_name`, `status`, and `pipeline_category`. Order by `lead_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "pipeline_category",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT lead_id, company_name, status, CASE WHEN status = 'qualified' THEN 'Active Pipeline' WHEN status = 'lost' THEN 'Archived' ELSE 'In Progress' END AS pipeline_category FROM leads ORDER BY lead_id ASC;",
+    "solution_explanation": "Evaluates lead status using conditional CASE logic.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN status = 'qualified' THEN 'Active Pipeline' WHEN status = 'lost' THEN 'Archived' ELSE 'In Progress' END`.",
+      "Order by `lead_id` ASC.",
+      "Query: SELECT lead_id, company_name, status, CASE WHEN status = 'qualified' THEN 'Active Pipeline' WHEN status = 'lost' THEN 'Archived' ELSE 'In Progress' END AS pipeline_category FROM leads ORDER BY lead_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-13",
+    "slug": "sls-total-contract-value-tcv",
+    "title": "Calculate Full Term Total Contract Value Across Engagements",
+    "description_markdown": "Bookings accounting: For each contract in `contracts`, calculate the Total Contract Value (TCV) across its entire lifespan: `ROUND(annual_contract_value * (duration_months / 12.0), 2)` as `total_contract_value`. Return `contract_id`, `annual_contract_value`, `duration_months`, and `total_contract_value`. Order by `total_contract_value` DESC, `contract_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      },
+      {
+        "name": "total_contract_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT contract_id, annual_contract_value, duration_months, ROUND(annual_contract_value * (duration_months / 12.0), 2) AS total_contract_value FROM contracts ORDER BY total_contract_value DESC, contract_id ASC;",
+    "solution_explanation": "Converts annualized values into full lifetime contract value.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Multiply `annual_contract_value` by `(duration_months / 12.0)` and round to 2 decimals.",
+      "Order by `total_contract_value` DESC, `contract_id` ASC.",
+      "Query: SELECT contract_id, annual_contract_value, duration_months, ROUND(annual_contract_value * (duration_months / 12.0), 2) AS total_contract_value FROM contracts ORDER BY total_contract_value DESC, contract_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-14",
+    "slug": "sls-reps-without-won-deals",
+    "title": "Identify Sales Representatives with Zero Won Bookings",
+    "description_markdown": "Sales performance coaching: Find all sales representatives in `sales_reps` who currently have no closed won deals (`stage = 'closed_won'`). Return `sr.rep_id`, `sr.name`, `sr.territory`, and `sr.quota`. Order by `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, sr.territory, sr.quota FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id AND o.stage = 'closed_won' WHERE o.opportunity_id IS NULL GROUP BY sr.rep_id, sr.name, sr.territory, sr.quota ORDER BY sr.rep_id ASC;",
+    "solution_explanation": "Anti-join identifying reps without any successful deal closures.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Left join `sales_reps` to `leads` and `opportunities` with `AND o.stage = 'closed_won'`.",
+      "Filter with `WHERE o.opportunity_id IS NULL`.",
+      "Query: SELECT sr.rep_id, sr.name, sr.territory, sr.quota FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id AND o.stage = 'closed_won' WHERE o.opportunity_id IS NULL GROUP BY sr.rep_id, sr.name, sr.territory, sr.quota ORDER BY sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-15",
+    "slug": "sls-earned-commission-on-won-deals",
+    "title": "Calculate Net Commissions Earned on Closed Bookings",
+    "description_markdown": "Payroll incentive payouts: For closed won deals (`o.stage = 'closed_won'`), calculate total earned sales commission for each representative: `SUM(o.deal_size * sr.commission_rate)` as `earned_commission`. Return `sr.rep_id`, `sr.name`, and `earned_commission`. Order by `earned_commission` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "earned_commission",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, SUM(o.deal_size * sr.commission_rate) AS earned_commission FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.commission_rate ORDER BY earned_commission DESC, sr.rep_id ASC;",
+    "solution_explanation": "Multiplies closed won revenue by individual rep commission percentages.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `sales_reps`, `leads`, and `opportunities` with `WHERE o.stage = 'closed_won'`.",
+      "Group by `sr.rep_id, sr.name, sr.commission_rate`.",
+      "Query: SELECT sr.rep_id, sr.name, SUM(o.deal_size * sr.commission_rate) AS earned_commission FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.commission_rate ORDER BY earned_commission DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-16",
+    "slug": "sls-leads-without-opportunities",
+    "title": "Identify Dormant Leads Without Pipeline Opportunities",
+    "description_markdown": "Lead qualification audit: Find all records in `leads` that have never been converted into an opportunity in `opportunities`. Return `l.lead_id`, `l.company_name`, `l.industry`, and `l.status`. Order by `l.lead_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT l.lead_id, l.company_name, l.industry, l.status FROM leads l LEFT JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.opportunity_id IS NULL ORDER BY l.lead_id ASC;",
+    "solution_explanation": "Anti-join identifying leads without corresponding opportunities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN opportunities o ON l.lead_id = o.lead_id`.",
+      "Filter with `WHERE o.opportunity_id IS NULL`.",
+      "Query: SELECT l.lead_id, l.company_name, l.industry, l.status FROM leads l LEFT JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.opportunity_id IS NULL ORDER BY l.lead_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-17",
+    "slug": "sls-average-deal-size-by-territory",
+    "title": "Compute Average Opportunity Deal Size by Sales Territory",
+    "description_markdown": "Territory benchmarking: For each sales region in `sales_reps`, count opportunities generated (`COUNT(o.opportunity_id)` as `deal_count`) and compute the average deal size (`ROUND(AVG(o.deal_size), 2)` as `avg_deal_size`). Return `sr.territory`, `deal_count`, and `avg_deal_size`. Order by `avg_deal_size` DESC, `sr.territory` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "deal_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_deal_size",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.territory, COUNT(o.opportunity_id) AS deal_count, ROUND(AVG(o.deal_size), 2) AS avg_deal_size FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id GROUP BY sr.territory ORDER BY avg_deal_size DESC, sr.territory ASC;",
+    "solution_explanation": "Aggregates pipeline volume and deal size benchmarks across sales territories.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `sales_reps sr`, `leads l`, and `opportunities o`.",
+      "Group by `sr.territory` and calculate `ROUND(AVG(o.deal_size), 2)`.",
+      "Query: SELECT sr.territory, COUNT(o.opportunity_id) AS deal_count, ROUND(AVG(o.deal_size), 2) AS avg_deal_size FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id GROUP BY sr.territory ORDER BY avg_deal_size DESC, sr.territory ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-18",
+    "slug": "sls-opportunities-without-contracts",
+    "title": "Identify Active Pipeline Deals Without Executed Contracts",
+    "description_markdown": "Deal closing surveillance: Find all opportunities in `opportunities` that do not have an executed agreement in `contracts`. Return `o.opportunity_id`, `o.deal_size`, `o.stage`, and `o.close_date`. Order by `o.opportunity_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities",
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT o.opportunity_id, o.deal_size, o.stage, o.close_date FROM opportunities o LEFT JOIN contracts c ON o.opportunity_id = c.opportunity_id WHERE c.contract_id IS NULL ORDER BY o.opportunity_id ASC;",
+    "solution_explanation": "Anti-join identifying uncontracted opportunities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN contracts c ON o.opportunity_id = c.opportunity_id`.",
+      "Filter with `WHERE c.contract_id IS NULL`.",
+      "Query: SELECT o.opportunity_id, o.deal_size, o.stage, o.close_date FROM opportunities o LEFT JOIN contracts c ON o.opportunity_id = c.opportunity_id WHERE c.contract_id IS NULL ORDER BY o.opportunity_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-19",
+    "slug": "sls-rank-reps-by-quota",
+    "title": "Dense Rank Sales Team by Annual Quota Assignment",
+    "description_markdown": "Commercial team hierarchy: Rank all representatives in `sales_reps` by assigned `quota` descending using `DENSE_RANK()` as `quota_rank`. Return `rep_id`, `name`, `territory`, `quota`, and `quota_rank`. Order by `quota_rank` ASC, `rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "quota_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT rep_id, name, territory, quota, DENSE_RANK() OVER (ORDER BY quota DESC) AS quota_rank FROM sales_reps ORDER BY quota_rank ASC, rep_id ASC;",
+    "solution_explanation": "Applies DENSE_RANK window function ordered by quota target.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY quota DESC)`.",
+      "Order by `quota_rank` ASC, `rep_id` ASC.",
+      "Query: SELECT rep_id, name, territory, quota, DENSE_RANK() OVER (ORDER BY quota DESC) AS quota_rank FROM sales_reps ORDER BY quota_rank ASC, rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-20",
+    "slug": "sls-lead-to-deal-conversion-details",
+    "title": "Trace Executed Deals from Prospect Lead Through Contract",
+    "description_markdown": "Conversion traceability audit: Join `leads`, `opportunities`, and `contracts` for signed client engagements. Return `l.company_name`, `l.industry`, `o.deal_size`, `c.annual_contract_value`, and `c.duration_months`. Order by `o.deal_size` DESC, `l.company_name` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads",
+      "opportunities",
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT l.company_name, l.industry, o.deal_size, c.annual_contract_value, c.duration_months FROM leads l JOIN opportunities o ON l.lead_id = o.lead_id JOIN contracts c ON o.opportunity_id = c.opportunity_id ORDER BY o.deal_size DESC, l.company_name ASC;",
+    "solution_explanation": "Traces won pipeline progression across customer lifecycle stages.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `leads l` to `opportunities o` to `contracts c`.",
+      "Order by `o.deal_size` DESC, `l.company_name` ASC.",
+      "Query: SELECT l.company_name, l.industry, o.deal_size, c.annual_contract_value, c.duration_months FROM leads l JOIN opportunities o ON l.lead_id = o.lead_id JOIN contracts c ON o.opportunity_id = c.opportunity_id ORDER BY o.deal_size DESC, l.company_name ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-21",
+    "slug": "sls-opportunities-above-territory-average",
+    "title": "Filter Opportunities Outperforming Platform Mean Deal Size",
+    "description_markdown": "Deal tiering screen: Identify all opportunities in `opportunities` whose `deal_size` is strictly higher than the average deal size across the entire sales pipeline. Return `opportunity_id`, `deal_size`, `stage`, and `close_date`. Order by `deal_size` DESC, `opportunity_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT opportunity_id, deal_size, stage, close_date FROM opportunities WHERE deal_size > (SELECT AVG(deal_size) FROM opportunities) ORDER BY deal_size DESC, opportunity_id ASC;",
+    "solution_explanation": "Applies a scalar subquery in the WHERE clause comparing to global average deal size.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE deal_size > (SELECT AVG(deal_size) FROM opportunities)`.",
+      "Order by `deal_size` DESC, `opportunity_id` ASC.",
+      "Query: SELECT opportunity_id, deal_size, stage, close_date FROM opportunities WHERE deal_size > (SELECT AVG(deal_size) FROM opportunities) ORDER BY deal_size DESC, opportunity_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-22",
+    "slug": "sls-largest-deal-per-rep",
+    "title": "Identify Single Largest Deal Sourced by Each Sales Rep",
+    "description_markdown": "Using `ROW_NUMBER()`, find each sales representative's largest generated opportunity. Return `rep_id`, `name`, `opportunity_id`, `deal_size`, and `stage`. Order by `rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH RepDeals AS (SELECT sr.rep_id, sr.name, o.opportunity_id, o.deal_size, o.stage, ROW_NUMBER() OVER (PARTITION BY sr.rep_id ORDER BY o.deal_size DESC, o.opportunity_id ASC) AS rn FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id) SELECT rep_id, name, opportunity_id, deal_size, stage FROM RepDeals WHERE rn = 1 ORDER BY rep_id ASC;",
+    "solution_explanation": "Applies ROW_NUMBER partitioned by rep and filtered to rank 1 in the outer query.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY sr.rep_id ORDER BY o.deal_size DESC, o.opportunity_id ASC)` in a CTE.",
+      "Filter outer query with `WHERE rn = 1`.",
+      "Query: WITH RepDeals AS (SELECT sr.rep_id, sr.name, o.opportunity_id, o.deal_size, o.stage, ROW_NUMBER() OVER (PARTITION BY sr.rep_id ORDER BY o.deal_size DESC, o.opportunity_id ASC) AS rn FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id) SELECT rep_id, name, opportunity_id, deal_size, stage FROM RepDeals WHERE rn = 1 ORDER BY rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-23",
+    "slug": "sls-cumulative-closed-deal-volume",
+    "title": "Calculate Cumulative Bookings Revenue Over Time",
+    "description_markdown": "Revenue pacing: For closed won deals (`stage = 'closed_won'`), calculate the running cumulative total of booked revenue chronologically: `SUM(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC)` as `running_closed_volume`. Return `opportunity_id`, `deal_size`, `close_date`, and `running_closed_volume`. Order by `close_date` ASC, `opportunity_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      },
+      {
+        "name": "running_closed_volume",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT opportunity_id, deal_size, close_date, SUM(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC) AS running_closed_volume FROM opportunities WHERE stage = 'closed_won' ORDER BY close_date ASC, opportunity_id ASC;",
+    "solution_explanation": "Computes running sum of closed revenue over calendar close dates.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Filter with `WHERE stage = 'closed_won'`.",
+      "Use `SUM(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC)`.",
+      "Query: SELECT opportunity_id, deal_size, close_date, SUM(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC) AS running_closed_volume FROM opportunities WHERE stage = 'closed_won' ORDER BY close_date ASC, opportunity_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-24",
+    "slug": "sls-lead-count-by-rep-territory",
+    "title": "Aggregate Assigned Lead Volumes Including Zero-Lead Reps",
+    "description_markdown": "Workload distribution: For each sales representative in `sales_reps`, count assigned leads (`COUNT(l.lead_id)` as `total_leads`), ensuring reps with 0 leads are included. Return `sr.rep_id`, `sr.name`, `sr.territory`, and `total_leads`. Order by `total_leads` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "territory",
+        "type": "varchar"
+      },
+      {
+        "name": "total_leads",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, sr.territory, COUNT(l.lead_id) AS total_leads FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id GROUP BY sr.rep_id, sr.name, sr.territory ORDER BY total_leads DESC, sr.rep_id ASC;",
+    "solution_explanation": "Left joins sales reps with assigned leads and groups by representative.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN leads l ON sr.rep_id = l.rep_id`.",
+      "Group by `sr.rep_id, sr.name, sr.territory`.",
+      "Query: SELECT sr.rep_id, sr.name, sr.territory, COUNT(l.lead_id) AS total_leads FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id GROUP BY sr.rep_id, sr.name, sr.territory ORDER BY total_leads DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-25",
+    "slug": "sls-contract-duration-classification",
+    "title": "Classify Enterprise Agreements by Customer Commitment Term",
+    "description_markdown": "Customer commitment tiering: Classify agreements in `contracts` using `CASE` as `commitment_type`:\n- If `duration_months >= 36`, return `'Long-Term (3yr+)'`\n- Else if `duration_months >= 24`, return `'Medium-Term (2yr)'`\n- Otherwise, return `'Annual (1yr)'`\n\nReturn `contract_id`, `annual_contract_value`, `duration_months`, and `commitment_type`. Order by `duration_months` DESC, `contract_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts"
+    ],
+    "expected_columns": [
+      {
+        "name": "contract_id",
+        "type": "integer"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      },
+      {
+        "name": "commitment_type",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT contract_id, annual_contract_value, duration_months, CASE WHEN duration_months >= 36 THEN 'Long-Term (3yr+)' WHEN duration_months >= 24 THEN 'Medium-Term (2yr)' ELSE 'Annual (1yr)' END AS commitment_type FROM contracts ORDER BY duration_months DESC, contract_id ASC;",
+    "solution_explanation": "Categorizes customer contract tenure into multi-year commitments.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN duration_months >= 36 THEN 'Long-Term (3yr+)' WHEN duration_months >= 24 THEN 'Medium-Term (2yr)' ELSE 'Annual (1yr)' END`.",
+      "Order by `duration_months` DESC, `contract_id` ASC.",
+      "Query: SELECT contract_id, annual_contract_value, duration_months, CASE WHEN duration_months >= 36 THEN 'Long-Term (3yr+)' WHEN duration_months >= 24 THEN 'Medium-Term (2yr)' ELSE 'Annual (1yr)' END AS commitment_type FROM contracts ORDER BY duration_months DESC, contract_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-26",
+    "slug": "sls-lag-opportunity-deal-progression",
+    "title": "Track Previous Closed Deal Size with Window LAG",
+    "description_markdown": "Deal size trajectory: For each opportunity in `opportunities`, display the deal size from the previous opportunity in chronological order using `LAG(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC)` as `prev_deal_size`. Return `opportunity_id`, `deal_size`, `stage`, `close_date`, and `prev_deal_size`. Order by `close_date` ASC, `opportunity_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      },
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "close_date",
+        "type": "date"
+      },
+      {
+        "name": "prev_deal_size",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT opportunity_id, deal_size, stage, close_date, LAG(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC) AS prev_deal_size FROM opportunities ORDER BY close_date ASC, opportunity_id ASC;",
+    "solution_explanation": "Uses LAG to retrieve the preceding opportunity deal size.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC)`.",
+      "Order by `close_date` ASC, `opportunity_id` ASC.",
+      "Query: SELECT opportunity_id, deal_size, stage, close_date, LAG(deal_size) OVER (ORDER BY close_date ASC, opportunity_id ASC) AS prev_deal_size FROM opportunities ORDER BY close_date ASC, opportunity_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-27",
+    "slug": "sls-quota-gap-analysis",
+    "title": "Calculate Quota Deficit and Shortfall Gap per Sales Rep",
+    "description_markdown": "Quota gap analysis: For each sales representative, calculate total closed won revenue (`COALESCE(SUM(o.deal_size), 0.00)` as `actual_revenue`), and the remaining quota deficit (`CASE WHEN sr.quota > actual_revenue THEN (sr.quota - actual_revenue) ELSE 0.00 END` as `quota_gap`). Return `sr.name`, `sr.quota`, `actual_revenue`, and `quota_gap`. Order by `quota_gap` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "actual_revenue",
+        "type": "decimal"
+      },
+      {
+        "name": "quota_gap",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.name, sr.quota, COALESCE(SUM(o.deal_size), 0.00) AS actual_revenue, CASE WHEN sr.quota > COALESCE(SUM(o.deal_size), 0.00) THEN (sr.quota - COALESCE(SUM(o.deal_size), 0.00)) ELSE 0.00 END AS quota_gap FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id AND o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY quota_gap DESC, sr.rep_id ASC;",
+    "solution_explanation": "Measures shortfall between target quota and realized won revenue.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN` on leads and opportunities (`AND o.stage = 'closed_won'`).",
+      "Group by `sr.rep_id, sr.name, sr.quota`.",
+      "Query: SELECT sr.name, sr.quota, COALESCE(SUM(o.deal_size), 0.00) AS actual_revenue, CASE WHEN sr.quota > COALESCE(SUM(o.deal_size), 0.00) THEN (sr.quota - COALESCE(SUM(o.deal_size), 0.00)) ELSE 0.00 END AS quota_gap FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id AND o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY quota_gap DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-28",
+    "slug": "sls-rep-percentage-contribution-to-revenue",
+    "title": "Calculate Representative Share of Company Total Won Bookings",
+    "description_markdown": "Revenue concentration audit: For each representative with closed won revenue, calculate their total bookings (`SUM(o.deal_size)` as `rep_revenue`) and their percentage share of the company's total closed won revenue (`ROUND((rep_revenue * 100.0) / (SELECT SUM(deal_size) FROM opportunities WHERE stage = 'closed_won'), 2)` as `rev_share_pct`). Return `sr.rep_id`, `sr.name`, `rep_revenue`, and `rev_share_pct`. Order by `rep_revenue` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "rep_revenue",
+        "type": "decimal"
+      },
+      {
+        "name": "rev_share_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, SUM(o.deal_size) AS rep_revenue, ROUND((SUM(o.deal_size) * 100.0) / (SELECT SUM(deal_size) FROM opportunities WHERE stage = 'closed_won'), 2) AS rev_share_pct FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name ORDER BY rep_revenue DESC, sr.rep_id ASC;",
+    "solution_explanation": "Compares individual rep bookings against total enterprise closed revenue.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subquery `(SELECT SUM(deal_size) FROM opportunities WHERE stage = 'closed_won')` as denominator.",
+      "Group by `sr.rep_id, sr.name`.",
+      "Query: SELECT sr.rep_id, sr.name, SUM(o.deal_size) AS rep_revenue, ROUND((SUM(o.deal_size) * 100.0) / (SELECT SUM(deal_size) FROM opportunities WHERE stage = 'closed_won'), 2) AS rev_share_pct FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id JOIN opportunities o ON l.lead_id = o.lead_id WHERE o.stage = 'closed_won' GROUP BY sr.rep_id, sr.name ORDER BY rep_revenue DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-29",
+    "slug": "sls-pipeline-health-by-stage",
+    "title": "Aggregate Pipeline Health and Value Distribution by Stage",
+    "description_markdown": "Pipeline distribution: For each opportunity stage, count deals (`COUNT(opportunity_id)` as `deal_count`), aggregate total value (`SUM(deal_size)` as `stage_volume`), and calculate what percentage of the entire pipeline value that stage represents: `ROUND((SUM(deal_size) * 100.0) / (SELECT SUM(deal_size) FROM opportunities), 2)` as `stage_pct`. Return `stage`, `deal_count`, `stage_volume`, and `stage_pct`. Order by `stage_volume` DESC, `stage` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage",
+        "type": "varchar"
+      },
+      {
+        "name": "deal_count",
+        "type": "bigint"
+      },
+      {
+        "name": "stage_volume",
+        "type": "decimal"
+      },
+      {
+        "name": "stage_pct",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage, COUNT(opportunity_id) AS deal_count, SUM(deal_size) AS stage_volume, ROUND((SUM(deal_size) * 100.0) / (SELECT SUM(deal_size) FROM opportunities), 2) AS stage_pct FROM opportunities GROUP BY stage ORDER BY stage_volume DESC, stage ASC;",
+    "solution_explanation": "Aggregates pipeline concentration across operational stages.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use scalar subquery `(SELECT SUM(deal_size) FROM opportunities)` as denominator.",
+      "Group by `stage`.",
+      "Query: SELECT stage, COUNT(opportunity_id) AS deal_count, SUM(deal_size) AS stage_volume, ROUND((SUM(deal_size) * 100.0) / (SELECT SUM(deal_size) FROM opportunities), 2) AS stage_pct FROM opportunities GROUP BY stage ORDER BY stage_volume DESC, stage ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-30",
+    "slug": "sls-contract-annualized-vs-monthly-runrate",
+    "title": "Compute Contract Monthly Run-Rate and Lifetime Value",
+    "description_markdown": "Financial run-rate: For executed contracts, compute monthly revenue run-rate: `ROUND(c.annual_contract_value / 12.0, 2)` as `monthly_run_rate`, and total lifetime value: `ROUND(c.annual_contract_value * (c.duration_months / 12.0), 2)` as `contract_lifetime_value`. Join `contracts`, `opportunities`, and `leads`. Return `l.company_name`, `c.annual_contract_value`, `c.duration_months`, `monthly_run_rate`, and `contract_lifetime_value`. Order by `contract_lifetime_value` DESC, `l.company_name` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "contracts",
+      "opportunities",
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "annual_contract_value",
+        "type": "decimal"
+      },
+      {
+        "name": "duration_months",
+        "type": "integer"
+      },
+      {
+        "name": "monthly_run_rate",
+        "type": "decimal"
+      },
+      {
+        "name": "contract_lifetime_value",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT l.company_name, c.annual_contract_value, c.duration_months, ROUND(c.annual_contract_value / 12.0, 2) AS monthly_run_rate, ROUND(c.annual_contract_value * (c.duration_months / 12.0), 2) AS contract_lifetime_value FROM contracts c JOIN opportunities o ON c.opportunity_id = o.opportunity_id JOIN leads l ON o.lead_id = l.lead_id ORDER BY contract_lifetime_value DESC, l.company_name ASC;",
+    "solution_explanation": "Converts contracted annual revenues into recurring monthly run rates and total LTV.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `contracts c` to `opportunities o` to `leads l`.",
+      "Compute `ROUND(c.annual_contract_value / 12.0, 2)` as `monthly_run_rate`.",
+      "Query: SELECT l.company_name, c.annual_contract_value, c.duration_months, ROUND(c.annual_contract_value / 12.0, 2) AS monthly_run_rate, ROUND(c.annual_contract_value * (c.duration_months / 12.0), 2) AS contract_lifetime_value FROM contracts c JOIN opportunities o ON c.opportunity_id = o.opportunity_id JOIN leads l ON o.lead_id = l.lead_id ORDER BY contract_lifetime_value DESC, l.company_name ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-31",
+    "slug": "sls-lead-conversion-efficiency-ratio",
+    "title": "Calculate Lead Qualification Conversion Rate by Representative",
+    "description_markdown": "Top of funnel conversion efficiency: For each sales rep with assigned leads, count total leads (`COUNT(l.lead_id)` as `total_leads`) and compute the qualification conversion rate: `ROUND((SUM(CASE WHEN l.status = 'qualified' THEN 1 ELSE 0 END) * 100.0) / COUNT(l.lead_id), 2)` as `qualification_rate`. Return `sr.rep_id`, `sr.name`, `total_leads`, and `qualification_rate`. Order by `qualification_rate` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_leads",
+        "type": "bigint"
+      },
+      {
+        "name": "qualification_rate",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, COUNT(l.lead_id) AS total_leads, ROUND((SUM(CASE WHEN l.status = 'qualified' THEN 1 ELSE 0 END) * 100.0) / COUNT(l.lead_id), 2) AS qualification_rate FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id GROUP BY sr.rep_id, sr.name ORDER BY qualification_rate DESC, sr.rep_id ASC;",
+    "solution_explanation": "Calculates ratio of qualified prospects against total assigned leads.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `SUM(CASE WHEN l.status = 'qualified' THEN 1 ELSE 0 END)` in numerator.",
+      "Group by `sr.rep_id, sr.name`.",
+      "Query: SELECT sr.rep_id, sr.name, COUNT(l.lead_id) AS total_leads, ROUND((SUM(CASE WHEN l.status = 'qualified' THEN 1 ELSE 0 END) * 100.0) / COUNT(l.lead_id), 2) AS qualification_rate FROM sales_reps sr JOIN leads l ON sr.rep_id = l.rep_id GROUP BY sr.rep_id, sr.name ORDER BY qualification_rate DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-sc-sls-32",
+    "slug": "sls-sales-rep-comprehensive-scorecard",
+    "title": "Generate Comprehensive Multi-Stage Sales Rep Scorecard",
+    "description_markdown": "Comprehensive executive scorecard: For each sales representative, aggregate distinct leads (`COUNT(DISTINCT l.lead_id)` as `lead_count`), distinct won opportunities (`COUNT(DISTINCT CASE WHEN o.stage = 'closed_won' THEN o.opportunity_id END)` as `won_deals`), and total closed won volume (`COALESCE(SUM(CASE WHEN o.stage = 'closed_won' THEN o.deal_size ELSE 0.00 END), 0.00)` as `won_volume`). Return `sr.rep_id`, `sr.name`, `sr.quota`, `lead_count`, `won_deals`, and `won_volume`. Order by `won_volume` DESC, `sr.rep_id` ASC.",
+    "topic_id": "scenario-sales",
+    "subtopic_id": "sc-sales",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "sales_reps",
+      "leads",
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "rep_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "quota",
+        "type": "decimal"
+      },
+      {
+        "name": "lead_count",
+        "type": "bigint"
+      },
+      {
+        "name": "won_deals",
+        "type": "bigint"
+      },
+      {
+        "name": "won_volume",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT sr.rep_id, sr.name, sr.quota, COUNT(DISTINCT l.lead_id) AS lead_count, COUNT(DISTINCT CASE WHEN o.stage = 'closed_won' THEN o.opportunity_id END) AS won_deals, COALESCE(SUM(CASE WHEN o.stage = 'closed_won' THEN o.deal_size ELSE 0.00 END), 0.00) AS won_volume FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY won_volume DESC, sr.rep_id ASC;",
+    "solution_explanation": "Produces an end-to-end sales performance scorecard linking leads and opportunities.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN` on leads and opportunities.",
+      "Use `COUNT(DISTINCT ...)` and conditional sum for won deals.",
+      "Query: SELECT sr.rep_id, sr.name, sr.quota, COUNT(DISTINCT l.lead_id) AS lead_count, COUNT(DISTINCT CASE WHEN o.stage = 'closed_won' THEN o.opportunity_id END) AS won_deals, COALESCE(SUM(CASE WHEN o.stage = 'closed_won' THEN o.deal_size ELSE 0.00 END), 0.00) AS won_volume FROM sales_reps sr LEFT JOIN leads l ON sr.rep_id = l.rep_id LEFT JOIN opportunities o ON l.lead_id = o.lead_id GROUP BY sr.rep_id, sr.name, sr.quota ORDER BY won_volume DESC, sr.rep_id ASC;"
+    ],
+    "tags": [
+      "sales",
+      "sc-sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-sc-sls-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-sc-sls-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-sc-sls-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

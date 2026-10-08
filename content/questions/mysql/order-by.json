@@ -1,0 +1,2360 @@
+[
+  {
+    "id": "q-my-ord-01",
+    "slug": "rank-salaries-descending",
+    "title": "Sort Employee Payroll in Descending Order",
+    "description_markdown": "Retrieve `first_name`, `last_name`, and `salary` from `employees`, sorted by `salary` from highest to lowest (DESC).",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Sort employees by salary descending\nSELECT first_name, last_name, salary\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC;",
+    "solution_explanation": "ORDER BY salary DESC orders the rows with the greatest salaries at the top. We add emp_id ASC as a deterministic tie-breaker.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Add ORDER BY salary DESC at the end of the query.",
+      "Include emp_id ASC to break ties deterministically.",
+      "Query: SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "sorting"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-02",
+    "slug": "catalog-pricing-hierarchical-sort",
+    "title": "Sort Products by Category and Price",
+    "description_markdown": "List `product_name`, `category_id`, and `price` from `products`. Sort first by `category_id` ascending, and for items in the same category, by `price` descending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Multi-column ORDER BY\nSELECT ...",
+    "solution_query": "SELECT product_name, category_id, price FROM products ORDER BY category_id ASC, price DESC, product_id ASC;",
+    "solution_explanation": "Demonstrates compound sorting criteria where ties in the primary column are sorted by secondary criteria.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Specify both columns separated by a comma: `ORDER BY category_id ASC, price DESC`",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT product_name, category_id, price FROM products ORDER BY category_id ASC, price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-03",
+    "slug": "student-academic-merit-ranking",
+    "title": "Order Students by GPA and Enrollment Year",
+    "description_markdown": "List `first_name`, `last_name`, `enrollment_year`, and `gpa` from `students`. Order by `gpa` descending, and break ties by `enrollment_year` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "enrollment_year",
+        "type": "integer"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Sort students by GPA descending\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, enrollment_year, gpa FROM students ORDER BY gpa DESC, enrollment_year ASC, student_id ASC;",
+    "solution_explanation": "Sorts top-performing students at the top while deterministically ordering ties by cohort year.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ORDER BY gpa DESC, enrollment_year ASC, student_id ASC`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, enrollment_year, gpa FROM students ORDER BY gpa DESC, enrollment_year ASC, student_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "college"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-04",
+    "slug": "ecommercedb-products-price-desc",
+    "title": "Catalog Products Ranked by Price Descending",
+    "description_markdown": "Retrieve `product_id`, `product_name`, and `price` from `products`, sorted by `price` descending, with `product_id` ascending as tie-breaker.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Products sorted by price DESC\nSELECT product_id, product_name, price\nFROM products\nORDER BY ...",
+    "solution_query": "SELECT product_id, product_name, price FROM products ORDER BY price DESC, product_id ASC;",
+    "solution_explanation": "Orders retail items from highest price to lowest price with deterministic tie-breaking.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting DESC or the tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY price DESC, product_id ASC`.",
+      "Lower prices appear at the bottom.",
+      "Query: SELECT product_id, product_name, price FROM products ORDER BY price DESC, product_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-05",
+    "slug": "collegedb-students-gpa-desc",
+    "title": "Academic Honor Roll Ranked by GPA",
+    "description_markdown": "Query `students` to return `student_id`, `first_name`, `last_name`, and `gpa`, sorted by `gpa` descending, then `student_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Students sorted by gpa DESC\nSELECT student_id, first_name, last_name, gpa\nFROM students\nORDER BY ...",
+    "solution_query": "SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC;",
+    "solution_explanation": "Sorts student academic profiles starting with highest grade point averages.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending instead of descending."
+    ],
+    "hints": [
+      "Use `ORDER BY gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC;",
+      "The expected query is: SELECT student_id, first_name, last_name, gpa FROM students ORDER BY gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-06",
+    "slug": "airline-flights-price-asc",
+    "title": "Flight Routes Sorted by Lowest Base Fare",
+    "description_markdown": "Find flights in `flights` and return `flight_id`, `flight_number`, and `base_price`, ordered by `base_price` ascending, then `flight_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Flights by base_price ASC\nSELECT flight_id, flight_number, base_price\nFROM flights\nORDER BY ...",
+    "solution_query": "SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price ASC, flight_id ASC;",
+    "solution_explanation": "Ascending sort presents the most affordable airfare tickets first.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Default sort is ASC, but adding explicit ASC improves clarity."
+    ],
+    "hints": [
+      "Use `ORDER BY base_price ASC, flight_id ASC`.",
+      "Query: SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price ASC, flight_id ASC;",
+      "The expected query is: SELECT flight_id, flight_number, base_price FROM flights ORDER BY base_price ASC, flight_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "asc",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-07",
+    "slug": "banking-accounts-balance-desc",
+    "title": "Bank Accounts Sorted by Highest Ledger Balance",
+    "description_markdown": "Query `accounts` to return `account_id`, `account_type`, and `balance`, sorted by `balance` descending, then `account_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "accounts"
+    ],
+    "expected_columns": [
+      {
+        "name": "account_id",
+        "type": "integer"
+      },
+      {
+        "name": "account_type",
+        "type": "varchar"
+      },
+      {
+        "name": "balance",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Accounts by balance DESC\nSELECT account_id, account_type, balance\nFROM accounts\nORDER BY ...",
+    "solution_query": "SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC;",
+    "solution_explanation": "Sorts financial accounts from highest liquid balance downward.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting account_id tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY balance DESC, account_id ASC`.",
+      "Query: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC;",
+      "The expected query is: SELECT account_id, account_type, balance FROM accounts ORDER BY balance DESC, account_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-08",
+    "slug": "finance-stocks-price-desc",
+    "title": "Market Equities Sorted by Share Price",
+    "description_markdown": "Query `stocks` and return `symbol`, `company_name`, and `current_price`, ordered by `current_price` descending, then `symbol` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stocks by current_price DESC\nSELECT symbol, company_name, current_price\nFROM stocks\nORDER BY ...",
+    "solution_query": "SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC;",
+    "solution_explanation": "Ranks equities by unit market quotation from most expensive to least.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY current_price DESC, symbol ASC`.",
+      "Query: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC;",
+      "The expected query is: SELECT symbol, company_name, current_price FROM stocks ORDER BY current_price DESC, symbol ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-09",
+    "slug": "food-delivery-restaurants-rating-desc",
+    "title": "Partner Restaurants Sorted by Consumer Rating",
+    "description_markdown": "Find restaurants in `restaurants` and return `restaurant_id`, `name`, and `rating`, sorted by `rating` descending, then `restaurant_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Restaurants by rating DESC\nSELECT restaurant_id, name, rating\nFROM restaurants\nORDER BY ...",
+    "solution_query": "SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC;",
+    "solution_explanation": "Orders food establishments by highest satisfaction score first.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting restaurant_id tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY rating DESC, restaurant_id ASC`.",
+      "Query: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC;",
+      "The expected query is: SELECT restaurant_id, name, rating FROM restaurants ORDER BY rating DESC, restaurant_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-10",
+    "slug": "hospital-doctors-experience-desc",
+    "title": "Physician Roster Ranked by Seniority",
+    "description_markdown": "Query `doctors` to return `doctor_id`, `name`, and `experience_years`, ordered by `experience_years` descending, then `doctor_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Doctors by experience DESC\nSELECT doctor_id, name, experience_years\nFROM doctors\nORDER BY ...",
+    "solution_query": "SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC;",
+    "solution_explanation": "Orders clinical personnel starting with the most experienced physicians.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting doctor_id in ORDER BY."
+    ],
+    "hints": [
+      "Use `ORDER BY experience_years DESC, doctor_id ASC`.",
+      "Query: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC;",
+      "The expected query is: SELECT doctor_id, name, experience_years FROM doctors ORDER BY experience_years DESC, doctor_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-11",
+    "slug": "hotel-hotels-stars-desc",
+    "title": "Hotel Establishments Sorted by Star Classification",
+    "description_markdown": "Find hotel properties in `hotels` and return `hotel_id`, `name`, and `star_rating`, sorted by `star_rating` descending, then `hotel_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "hotels"
+    ],
+    "expected_columns": [
+      {
+        "name": "hotel_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "star_rating",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Hotels by star_rating DESC\nSELECT hotel_id, name, star_rating\nFROM hotels\nORDER BY ...",
+    "solution_query": "SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC;",
+    "solution_explanation": "Displays highest rated luxury hotels first.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ASC."
+    ],
+    "hints": [
+      "Use `ORDER BY star_rating DESC, hotel_id ASC`.",
+      "Query: SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC;",
+      "The expected query is: SELECT hotel_id, name, star_rating FROM hotels ORDER BY star_rating DESC, hotel_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-12",
+    "slug": "hr-applicants-experience-desc",
+    "title": "Recruiting Applicants Ranked by Work History",
+    "description_markdown": "Query `applicants` to return `applicant_id`, `first_name`, `last_name`, and `years_experience`, sorted by `years_experience` descending, then `applicant_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Applicants by years_experience DESC\nSELECT applicant_id, first_name, last_name, years_experience\nFROM applicants\nORDER BY ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC;",
+    "solution_explanation": "Ranks applicants starting with veteran candidates possessing highest experience.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting applicant_id."
+    ],
+    "hints": [
+      "Use `ORDER BY years_experience DESC, applicant_id ASC`.",
+      "Query: SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC;",
+      "The expected query is: SELECT applicant_id, first_name, last_name, years_experience FROM applicants ORDER BY years_experience DESC, applicant_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-13",
+    "slug": "inventory-stock-quantity-asc",
+    "title": "Inventory Restocking Priority Order",
+    "description_markdown": "Find items in `stock_items` and return `item_id`, `sku`, and `quantity_on_hand`, ordered by `quantity_on_hand` ascending, then `item_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity_on_hand",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stock by quantity_on_hand ASC\nSELECT item_id, sku, quantity_on_hand\nFROM stock_items\nORDER BY ...",
+    "solution_query": "SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC;",
+    "solution_explanation": "Ascending sort surfaces lowest inventory reserves at the top for urgent replenishment.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using DESC instead of ASC."
+    ],
+    "hints": [
+      "Use `ORDER BY quantity_on_hand ASC, item_id ASC`.",
+      "Query: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC;",
+      "The expected query is: SELECT item_id, sku, quantity_on_hand FROM stock_items ORDER BY quantity_on_hand ASC, item_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "asc",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-14",
+    "slug": "library-books-publication-asc",
+    "title": "Library Books Chronological Publication Order",
+    "description_markdown": "Query `books` to return `book_id`, `title`, and `publication_year`, ordered by `publication_year` ascending, then `book_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "publication_year",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Books by publication_year ASC\nSELECT book_id, title, publication_year\nFROM books\nORDER BY ...",
+    "solution_query": "SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC;",
+    "solution_explanation": "Lists literature in chronological timeline starting with oldest publication.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting book_id tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY publication_year ASC, book_id ASC`.",
+      "Query: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC;",
+      "The expected query is: SELECT book_id, title, publication_year FROM books ORDER BY publication_year ASC, book_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "asc",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-15",
+    "slug": "movie-streaming-rating-desc",
+    "title": "Streaming Library Movies by Viewer Rating",
+    "description_markdown": "Find films in `movies` and return `movie_id`, `title`, and `imdb_rating`, sorted by `imdb_rating` descending, then `movie_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Movies by imdb_rating DESC\nSELECT movie_id, title, imdb_rating\nFROM movies\nORDER BY ...",
+    "solution_query": "SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC;",
+    "solution_explanation": "Presents critically acclaimed cinematic titles at the beginning of recommendation lists.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY imdb_rating DESC, movie_id ASC`.",
+      "Query: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC;",
+      "The expected query is: SELECT movie_id, title, imdb_rating FROM movies ORDER BY imdb_rating DESC, movie_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-16",
+    "slug": "sales-opportunities-deal-size-desc",
+    "title": "Sales Deals Ranked by Financial Magnitude",
+    "description_markdown": "Query `opportunities` to return `opportunity_id`, `lead_id`, and `deal_size`, ordered by `deal_size` descending, then `opportunity_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "opportunities"
+    ],
+    "expected_columns": [
+      {
+        "name": "opportunity_id",
+        "type": "integer"
+      },
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "deal_size",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Opportunities by deal_size DESC\nSELECT opportunity_id, lead_id, deal_size\nFROM opportunities\nORDER BY ...",
+    "solution_query": "SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC;",
+    "solution_explanation": "Highlights high-value commercial transactions at the top of pipeline review.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting opportunity_id in ORDER BY."
+    ],
+    "hints": [
+      "Use `ORDER BY deal_size DESC, opportunity_id ASC`.",
+      "Query: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC;",
+      "The expected query is: SELECT opportunity_id, lead_id, deal_size FROM opportunities ORDER BY deal_size DESC, opportunity_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-17",
+    "slug": "employeedb-dept-budget-desc",
+    "title": "Corporate Departments Ranked by Budget Allowance",
+    "description_markdown": "Find departments in `departments` and return `dept_id`, `dept_name`, and `budget`, sorted by `budget` descending, then `dept_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Departments by budget DESC\nSELECT dept_id, dept_name, budget\nFROM departments\nORDER BY ...",
+    "solution_query": "SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC;",
+    "solution_explanation": "Ranks organizational units starting with the largest operational budget allocations.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY budget DESC, dept_id ASC`.",
+      "Query: SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC;",
+      "The expected query is: SELECT dept_id, dept_name, budget FROM departments ORDER BY budget DESC, dept_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-18",
+    "slug": "collegedb-professors-salary-desc",
+    "title": "University Faculty Ranked by Annual Compensation",
+    "description_markdown": "Query `professors` to return `professor_id`, `first_name`, `last_name`, and `salary`, sorted by `salary` descending, then `professor_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "easy",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Professors by salary DESC\nSELECT professor_id, first_name, last_name, salary\nFROM professors\nORDER BY ...",
+    "solution_query": "SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC;",
+    "solution_explanation": "Lists academic staff ordered from highest salary downward.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting professor_id."
+    ],
+    "hints": [
+      "Use `ORDER BY salary DESC, professor_id ASC`.",
+      "Query: SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC;",
+      "The expected query is: SELECT professor_id, first_name, last_name, salary FROM professors ORDER BY salary DESC, professor_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-19",
+    "slug": "ecommercedb-orders-amount-desc",
+    "title": "Customer Order History Ranked by Purchase Volume",
+    "description_markdown": "Find orders in `orders` and return `order_id`, `customer_id`, and `total_amount`, ordered by `total_amount` descending, then `order_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-asc-desc",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Orders by total_amount DESC\nSELECT order_id, customer_id, total_amount\nFROM orders\nORDER BY ...",
+    "solution_query": "SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC;",
+    "solution_explanation": "Highlights high-value purchases in financial order histories.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY total_amount DESC, order_id ASC`.",
+      "Query: SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC;",
+      "The expected query is: SELECT order_id, customer_id, total_amount FROM orders ORDER BY total_amount DESC, order_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "desc",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-20",
+    "slug": "ecommercedb-customer-country-city",
+    "title": "Multi-Tier Geography Sorting for Customer Registry",
+    "description_markdown": "Query `customers` to return `customer_id`, `first_name`, `country`, and `city`, sorted primarily by `country` ascending, secondarily by `city` ascending, then `customer_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Customers by country ASC, city ASC\nSELECT customer_id, first_name, country, city\nFROM customers\nORDER BY ...",
+    "solution_query": "SELECT customer_id, first_name, country, city FROM customers ORDER BY country ASC, city ASC, customer_id ASC;",
+    "solution_explanation": "Demonstrates multi-level hierarchical sorting across geographic attributes.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing the column precedence in ORDER BY."
+    ],
+    "hints": [
+      "Use `ORDER BY country ASC, city ASC, customer_id ASC`.",
+      "Query: SELECT customer_id, first_name, country, city FROM customers ORDER BY country ASC, city ASC, customer_id ASC;",
+      "The expected query is: SELECT customer_id, first_name, country, city FROM customers ORDER BY country ASC, city ASC, customer_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "ecommercedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-21",
+    "slug": "collegedb-students-major-gpa",
+    "title": "Academic Roster Grouped by Major and Ranked by GPA",
+    "description_markdown": "Query `students` to return `student_id`, `first_name`, `major`, and `gpa`, sorted by `major` ascending, then `gpa` descending, then `student_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Students by major ASC, gpa DESC\nSELECT student_id, first_name, major, gpa\nFROM students\nORDER BY ...",
+    "solution_query": "SELECT student_id, first_name, major, gpa FROM students ORDER BY major ASC, gpa DESC, student_id ASC;",
+    "solution_explanation": "Groups students alphabetically by academic major, then orders students within each major by highest GPA.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Applying DESC to major instead of gpa."
+    ],
+    "hints": [
+      "Use `ORDER BY major ASC, gpa DESC, student_id ASC`.",
+      "Query: SELECT student_id, first_name, major, gpa FROM students ORDER BY major ASC, gpa DESC, student_id ASC;",
+      "The expected query is: SELECT student_id, first_name, major, gpa FROM students ORDER BY major ASC, gpa DESC, student_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "collegedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-22",
+    "slug": "employeedb-employees-dept-salary",
+    "title": "Staff Payroll Sorted by Department and Compensation",
+    "description_markdown": "Find employees in `employees` and return `emp_id`, `first_name`, `dept_id`, and `salary`, sorted by `dept_id` ascending, then `salary` descending, then `emp_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "salary",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Employees by dept_id ASC, salary DESC\nSELECT emp_id, first_name, dept_id, salary\nFROM employees\nORDER BY ...",
+    "solution_query": "SELECT emp_id, first_name, dept_id, salary FROM employees ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+    "solution_explanation": "Organizes compensation analysis by department division, displaying top earners first per unit.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing salary before dept_id."
+    ],
+    "hints": [
+      "Use `ORDER BY dept_id ASC, salary DESC, emp_id ASC`.",
+      "Query: SELECT emp_id, first_name, dept_id, salary FROM employees ORDER BY dept_id ASC, salary DESC, emp_id ASC;",
+      "The expected query is: SELECT emp_id, first_name, dept_id, salary FROM employees ORDER BY dept_id ASC, salary DESC, emp_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "employeedb"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-23",
+    "slug": "finance-stocks-sector-price",
+    "title": "Market Securities Grouped by Sector and Share Price",
+    "description_markdown": "Query `stocks` to return `symbol`, `sector`, and `current_price`, ordered by `sector` ascending, then `current_price` descending, then `symbol` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "finance",
+    "question_type": "select",
+    "tables_involved": [
+      "stocks"
+    ],
+    "expected_columns": [
+      {
+        "name": "symbol",
+        "type": "varchar"
+      },
+      {
+        "name": "sector",
+        "type": "varchar"
+      },
+      {
+        "name": "current_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stocks by sector ASC, current_price DESC\nSELECT symbol, sector, current_price\nFROM stocks\nORDER BY ...",
+    "solution_query": "SELECT symbol, sector, current_price FROM stocks ORDER BY sector ASC, current_price DESC, symbol ASC;",
+    "solution_explanation": "Groups equities into industrial sectors, sorting components from highest priced to lowest.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting sector descending."
+    ],
+    "hints": [
+      "Use `ORDER BY sector ASC, current_price DESC, symbol ASC`.",
+      "Query: SELECT symbol, sector, current_price FROM stocks ORDER BY sector ASC, current_price DESC, symbol ASC;",
+      "The expected query is: SELECT symbol, sector, current_price FROM stocks ORDER BY sector ASC, current_price DESC, symbol ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-24",
+    "slug": "airline-flights-origin-price",
+    "title": "Aviation Flights Grouped by Origin and Fare",
+    "description_markdown": "Find flights in `flights` and return `flight_id`, `flight_number`, `origin`, and `base_price`, sorted by `origin` ascending, then `base_price` ascending, then `flight_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "airline",
+    "question_type": "select",
+    "tables_involved": [
+      "flights"
+    ],
+    "expected_columns": [
+      {
+        "name": "flight_id",
+        "type": "integer"
+      },
+      {
+        "name": "flight_number",
+        "type": "varchar"
+      },
+      {
+        "name": "origin",
+        "type": "varchar"
+      },
+      {
+        "name": "base_price",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Flights by origin ASC, base_price ASC\nSELECT flight_id, flight_number, origin, base_price\nFROM flights\nORDER BY ...",
+    "solution_query": "SELECT flight_id, flight_number, origin, base_price FROM flights ORDER BY origin ASC, base_price ASC, flight_id ASC;",
+    "solution_explanation": "Groups flights by departure hub, listing the most economical departures first.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting base_price descending instead of ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY origin ASC, base_price ASC, flight_id ASC`.",
+      "Query: SELECT flight_id, flight_number, origin, base_price FROM flights ORDER BY origin ASC, base_price ASC, flight_id ASC;",
+      "The expected query is: SELECT flight_id, flight_number, origin, base_price FROM flights ORDER BY origin ASC, base_price ASC, flight_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "airline"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-25",
+    "slug": "food-delivery-cuisine-rating",
+    "title": "Partner Restaurants Grouped by Cuisine and Rating",
+    "description_markdown": "Query `restaurants` to return `restaurant_id`, `name`, `cuisine`, and `rating`, sorted by `cuisine` ascending, then `rating` descending, then `restaurant_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "food_delivery",
+    "question_type": "select",
+    "tables_involved": [
+      "restaurants"
+    ],
+    "expected_columns": [
+      {
+        "name": "restaurant_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "cuisine",
+        "type": "varchar"
+      },
+      {
+        "name": "rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Restaurants by cuisine ASC, rating DESC\nSELECT restaurant_id, name, cuisine, rating\nFROM restaurants\nORDER BY ...",
+    "solution_query": "SELECT restaurant_id, name, cuisine, rating FROM restaurants ORDER BY cuisine ASC, rating DESC, restaurant_id ASC;",
+    "solution_explanation": "Organizes restaurants by gastronomic style, displaying highest rated venues first per cuisine.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting restaurant_id."
+    ],
+    "hints": [
+      "Use `ORDER BY cuisine ASC, rating DESC, restaurant_id ASC`.",
+      "Query: SELECT restaurant_id, name, cuisine, rating FROM restaurants ORDER BY cuisine ASC, rating DESC, restaurant_id ASC;",
+      "The expected query is: SELECT restaurant_id, name, cuisine, rating FROM restaurants ORDER BY cuisine ASC, rating DESC, restaurant_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "food_delivery"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-26",
+    "slug": "hospital-doctors-dept-exp",
+    "title": "Clinical Staff Grouped by Department and Experience",
+    "description_markdown": "Find doctors in `doctors` and return `doctor_id`, `name`, `department`, and `experience_years`, sorted by `department` ascending, then `experience_years` descending, then `doctor_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "medium",
+    "dialect": "mysql",
+    "database_id": "hospital",
+    "question_type": "select",
+    "tables_involved": [
+      "doctors"
+    ],
+    "expected_columns": [
+      {
+        "name": "doctor_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Doctors by department ASC, experience DESC\nSELECT doctor_id, name, department, experience_years\nFROM doctors\nORDER BY ...",
+    "solution_query": "SELECT doctor_id, name, department, experience_years FROM doctors ORDER BY department ASC, experience_years DESC, doctor_id ASC;",
+    "solution_explanation": "Ranks medical practitioners within each clinical wing from highest experience downward.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using ASC for experience_years."
+    ],
+    "hints": [
+      "Use `ORDER BY department ASC, experience_years DESC, doctor_id ASC`.",
+      "Query: SELECT doctor_id, name, department, experience_years FROM doctors ORDER BY department ASC, experience_years DESC, doctor_id ASC;",
+      "The expected query is: SELECT doctor_id, name, department, experience_years FROM doctors ORDER BY department ASC, experience_years DESC, doctor_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "hospital"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-27",
+    "slug": "hotel-rooms-type-price",
+    "title": "Lodging Accommodations by Room Type and Nightly Rate",
+    "description_markdown": "Query `rooms` to return `room_id`, `room_number`, `room_type`, and `price_per_night`, sorted by `room_type` ascending, then `price_per_night` ascending, then `room_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "hotel",
+    "question_type": "select",
+    "tables_involved": [
+      "rooms"
+    ],
+    "expected_columns": [
+      {
+        "name": "room_id",
+        "type": "integer"
+      },
+      {
+        "name": "room_number",
+        "type": "varchar"
+      },
+      {
+        "name": "room_type",
+        "type": "varchar"
+      },
+      {
+        "name": "price_per_night",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Rooms by room_type ASC, price_per_night ASC\nSELECT room_id, room_number, room_type, price_per_night\nFROM rooms\nORDER BY ...",
+    "solution_query": "SELECT room_id, room_number, room_type, price_per_night FROM rooms ORDER BY room_type ASC, price_per_night ASC, room_id ASC;",
+    "solution_explanation": "Groups guest accommodations by room classification, ordering from lowest nightly price upward.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting price descending."
+    ],
+    "hints": [
+      "Use `ORDER BY room_type ASC, price_per_night ASC, room_id ASC`.",
+      "Query: SELECT room_id, room_number, room_type, price_per_night FROM rooms ORDER BY room_type ASC, price_per_night ASC, room_id ASC;",
+      "The expected query is: SELECT room_id, room_number, room_type, price_per_night FROM rooms ORDER BY room_type ASC, price_per_night ASC, room_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "hotel"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-28",
+    "slug": "library-books-category-copies",
+    "title": "Library Holdings Grouped by Genre and Stock Availability",
+    "description_markdown": "Find books in `books` and return `book_id`, `title`, `category`, and `copies_available`, sorted by `category` ascending, then `copies_available` descending, then `book_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "library",
+    "question_type": "select",
+    "tables_involved": [
+      "books"
+    ],
+    "expected_columns": [
+      {
+        "name": "book_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "copies_available",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Books by category ASC, copies DESC\nSELECT book_id, title, category, copies_available\nFROM books\nORDER BY ...",
+    "solution_query": "SELECT book_id, title, category, copies_available FROM books ORDER BY category ASC, copies_available DESC, book_id ASC;",
+    "solution_explanation": "Organizes library collection by literature section, prioritizing well-stocked titles.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting book_id."
+    ],
+    "hints": [
+      "Use `ORDER BY category ASC, copies_available DESC, book_id ASC`.",
+      "Query: SELECT book_id, title, category, copies_available FROM books ORDER BY category ASC, copies_available DESC, book_id ASC;",
+      "The expected query is: SELECT book_id, title, category, copies_available FROM books ORDER BY category ASC, copies_available DESC, book_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "library"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-29",
+    "slug": "movie-streaming-genre-rating",
+    "title": "Streaming Media Catalog by Cinematic Genre and Rating",
+    "description_markdown": "Query `movies` to return `movie_id`, `title`, `genre`, and `imdb_rating`, sorted by `genre` ascending, then `imdb_rating` descending, then `movie_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "movie_streaming",
+    "question_type": "select",
+    "tables_involved": [
+      "movies"
+    ],
+    "expected_columns": [
+      {
+        "name": "movie_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "genre",
+        "type": "varchar"
+      },
+      {
+        "name": "imdb_rating",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Movies by genre ASC, imdb_rating DESC\nSELECT movie_id, title, genre, imdb_rating\nFROM movies\nORDER BY ...",
+    "solution_query": "SELECT movie_id, title, genre, imdb_rating FROM movies ORDER BY genre ASC, imdb_rating DESC, movie_id ASC;",
+    "solution_explanation": "Groups movies by cinematic genre, placing top-rated films first within each genre.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing imdb_rating before genre."
+    ],
+    "hints": [
+      "Use `ORDER BY genre ASC, imdb_rating DESC, movie_id ASC`.",
+      "Query: SELECT movie_id, title, genre, imdb_rating FROM movies ORDER BY genre ASC, imdb_rating DESC, movie_id ASC;",
+      "The expected query is: SELECT movie_id, title, genre, imdb_rating FROM movies ORDER BY genre ASC, imdb_rating DESC, movie_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "movie_streaming"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-30",
+    "slug": "sales-leads-industry-company",
+    "title": "CRM Prospect Leads Grouped by Vertical and Name",
+    "description_markdown": "Find leads in `leads` and return `lead_id`, `company_name`, and `industry`, sorted by `industry` ascending, then `company_name` ascending, then `lead_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "sales",
+    "question_type": "select",
+    "tables_involved": [
+      "leads"
+    ],
+    "expected_columns": [
+      {
+        "name": "lead_id",
+        "type": "integer"
+      },
+      {
+        "name": "company_name",
+        "type": "varchar"
+      },
+      {
+        "name": "industry",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Leads by industry ASC, company_name ASC\nSELECT lead_id, company_name, industry\nFROM leads\nORDER BY ...",
+    "solution_query": "SELECT lead_id, company_name, industry FROM leads ORDER BY industry ASC, company_name ASC, lead_id ASC;",
+    "solution_explanation": "Sorts pipeline leads by market sector, then alphabetically by business name.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting lead_id tie-breaker."
+    ],
+    "hints": [
+      "Use `ORDER BY industry ASC, company_name ASC, lead_id ASC`.",
+      "Query: SELECT lead_id, company_name, industry FROM leads ORDER BY industry ASC, company_name ASC, lead_id ASC;",
+      "The expected query is: SELECT lead_id, company_name, industry FROM leads ORDER BY industry ASC, company_name ASC, lead_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "sales"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-31",
+    "slug": "inventory-warehouse-cost",
+    "title": "Inventory Stock by Distribution Facility and Unit Cost",
+    "description_markdown": "Query `stock_items` to return `item_id`, `sku`, `warehouse_id`, and `unit_cost`, ordered by `warehouse_id` ascending, then `unit_cost` descending, then `item_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "inventory",
+    "question_type": "select",
+    "tables_involved": [
+      "stock_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "item_id",
+        "type": "integer"
+      },
+      {
+        "name": "sku",
+        "type": "varchar"
+      },
+      {
+        "name": "warehouse_id",
+        "type": "integer"
+      },
+      {
+        "name": "unit_cost",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Stock by warehouse_id ASC, unit_cost DESC\nSELECT item_id, sku, warehouse_id, unit_cost\nFROM stock_items\nORDER BY ...",
+    "solution_query": "SELECT item_id, sku, warehouse_id, unit_cost FROM stock_items ORDER BY warehouse_id ASC, unit_cost DESC, item_id ASC;",
+    "solution_explanation": "Groups inventory holdings by warehouse facility, listing highest valued components first.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Sorting unit_cost ascending."
+    ],
+    "hints": [
+      "Use `ORDER BY warehouse_id ASC, unit_cost DESC, item_id ASC`.",
+      "Query: SELECT item_id, sku, warehouse_id, unit_cost FROM stock_items ORDER BY warehouse_id ASC, unit_cost DESC, item_id ASC;",
+      "The expected query is: SELECT item_id, sku, warehouse_id, unit_cost FROM stock_items ORDER BY warehouse_id ASC, unit_cost DESC, item_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-my-ord-32",
+    "slug": "banking-branch-assets",
+    "title": "Bank Branch Capitalization by City and Total Assets",
+    "description_markdown": "Find branches in `branches` and return `branch_id`, `branch_name`, `city`, and `total_assets`, sorted by `city` ascending, then `total_assets` descending, then `branch_id` ascending.",
+    "topic_id": "order-by",
+    "subtopic_id": "order-multi",
+    "difficulty": "hard",
+    "dialect": "mysql",
+    "database_id": "banking",
+    "question_type": "select",
+    "tables_involved": [
+      "branches"
+    ],
+    "expected_columns": [
+      {
+        "name": "branch_id",
+        "type": "integer"
+      },
+      {
+        "name": "branch_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "total_assets",
+        "type": "decimal"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Branches by city ASC, total_assets DESC\nSELECT branch_id, branch_name, city, total_assets\nFROM branches\nORDER BY ...",
+    "solution_query": "SELECT branch_id, branch_name, city, total_assets FROM branches ORDER BY city ASC, total_assets DESC, branch_id ASC;",
+    "solution_explanation": "Organizes bank branch network by municipality, ordering locations by capitalization size.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting branch_id."
+    ],
+    "hints": [
+      "Use `ORDER BY city ASC, total_assets DESC, branch_id ASC`.",
+      "Query: SELECT branch_id, branch_name, city, total_assets FROM branches ORDER BY city ASC, total_assets DESC, branch_id ASC;",
+      "The expected query is: SELECT branch_id, branch_name, city, total_assets FROM branches ORDER BY city ASC, total_assets DESC, branch_id ASC;"
+    ],
+    "tags": [
+      "order-by",
+      "multi-column",
+      "banking"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-my-ord-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-my-ord-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-my-ord-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2378 @@
+[
+  {
+    "id": "q-ant-01",
+    "slug": "find-customers-with-zero-orders",
+    "title": "Identify Inactive Customers with Anti-Join",
+    "description_markdown": "Find all customers who have NEVER placed an order using a `LEFT JOIN ... WHERE orders.order_id IS NULL`. Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id`.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join with LEFT JOIN and IS NULL\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE ...",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL ORDER BY c.customer_id ASC;",
+    "solution_explanation": "An anti-join filters for rows where the right side of the LEFT JOIN failed to produce any match (`o.order_id IS NULL`).",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE o.order_id IS NULL`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-02",
+    "slug": "departments-with-zero-employees",
+    "title": "Find Unstaffed Divisions via Anti-Join",
+    "description_markdown": "Find departments that have zero employees assigned. Return `d.dept_id`, `d.dept_name`, and `d.budget`. Order by `d.dept_id`.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join from departments to employees\nSELECT ...",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id WHERE e.emp_id IS NULL ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Identifies budgeted business departments that currently have 0 active staff members.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN employees e ON d.dept_id = e.dept_id WHERE e.emp_id IS NULL`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget FROM departments d LEFT JOIN employees e ON d.dept_id = e.dept_id WHERE e.emp_id IS NULL ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "empty-departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-03",
+    "slug": "students-with-zero-enrollments",
+    "title": "Identify Unenrolled Students",
+    "description_markdown": "Find students from `students` who have not enrolled in any course (`enrollments`). Return `s.student_id`, `s.first_name`, and `s.email`. Order by `s.student_id`.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join on students\nSELECT ...",
+    "solution_query": "SELECT s.student_id, s.first_name, s.email FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id WHERE e.enrollment_id IS NULL ORDER BY s.student_id ASC;",
+    "solution_explanation": "Detects newly declared or inactive students missing from all registration records.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE e.enrollment_id IS NULL`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT s.student_id, s.first_name, s.email FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id WHERE e.enrollment_id IS NULL ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "academic"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-04",
+    "slug": "products-never-ordered",
+    "title": "Detect Unsold Catalog Products via Anti-Join",
+    "description_markdown": "Perform an anti-join from `products` to `order_items` on `product_id` using `LEFT JOIN ... WHERE oi.order_item_id IS NULL` to find products that have never been purchased. Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join products to order_items\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nWHERE oi.order_item_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id WHERE oi.order_item_id IS NULL ORDER BY p.product_id ASC;",
+    "solution_explanation": "An anti-join uses a LEFT JOIN combined with `WHERE right_table.pk IS NULL` to isolate unmatched left-table records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking IS NULL on a nullable right column rather than the primary key."
+    ],
+    "interview_tip": "Always filter on the right table's PRIMARY KEY or NOT NULL column to ensure NULL indicates an absence of match.",
+    "hints": [
+      "Join condition: `p.product_id = oi.product_id`.",
+      "Filter condition: `WHERE oi.order_item_id IS NULL`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id WHERE oi.order_item_id IS NULL ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "inventory"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-05",
+    "slug": "employees-without-project-assignments",
+    "title": "Identify Staff with No Project Assignments",
+    "description_markdown": "Perform an anti-join from `employees` to `assignments` on `emp_id` to find employees with no current project assignments. Return `e.emp_id`, `e.first_name`, `e.last_name`, and `e.job_title`. Order by `e.emp_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join employees without assignments\nSELECT e.emp_id, e.first_name, e.last_name, e.job_title\nFROM employees e\nLEFT JOIN assignments a ON e.emp_id = a.emp_id\nWHERE a.assignment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.last_name, e.job_title FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id WHERE a.assignment_id IS NULL ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Surfaces unassigned bench personnel who have zero entries in the assignments junction table.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN instead of LEFT JOIN."
+    ],
+    "interview_tip": "Anti-joins are universally used in workforce resource management to locate unallocated talent.",
+    "hints": [
+      "Join `e.emp_id = a.emp_id`.",
+      "Filter `WHERE a.assignment_id IS NULL`.",
+      "Query: SELECT e.emp_id, e.first_name, e.last_name, e.job_title FROM employees e LEFT JOIN assignments a ON e.emp_id = a.emp_id WHERE a.assignment_id IS NULL ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "workforce"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-06",
+    "slug": "products-without-customer-reviews",
+    "title": "Find Products That Have Received Zero Reviews",
+    "description_markdown": "Perform an anti-join from `products` to `reviews` on `product_id` to find products that have never received any review feedback. Return `p.product_id`, `p.product_name`, and `p.stock_quantity`. Order by `p.product_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stock_quantity",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join products without reviews\nSELECT p.product_id, p.product_name, p.stock_quantity\nFROM products p\nLEFT JOIN reviews r ON p.product_id = r.product_id\nWHERE r.review_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.stock_quantity FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id WHERE r.review_id IS NULL ORDER BY p.product_id ASC;",
+    "solution_explanation": "Identifies products lacking consumer feedback by checking `r.review_id IS NULL`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking `r.rating IS NULL` when rating itself might be a regular column."
+    ],
+    "interview_tip": "Checking the primary key `review_id IS NULL` is foolproof against nullable payload columns.",
+    "hints": [
+      "Join on `p.product_id = r.product_id`.",
+      "Filter `WHERE r.review_id IS NULL`.",
+      "Query: SELECT p.product_id, p.product_name, p.stock_quantity FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id WHERE r.review_id IS NULL ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "catalog"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-07",
+    "slug": "departments-without-active-projects",
+    "title": "Find Departments Sponsoring Zero Technology Projects",
+    "description_markdown": "Perform an anti-join from `departments` to `projects` on `dept_id` to locate departments that currently sponsor no projects. Return `d.dept_id`, `d.dept_name`, and `d.location`. Order by `d.dept_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "location",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join departments without projects\nSELECT d.dept_id, d.dept_name, d.location\nFROM departments d\nLEFT JOIN projects p ON d.dept_id = p.dept_id\nWHERE p.project_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.location FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id WHERE p.project_id IS NULL ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Pinpoints departments with no project initiatives using `p.project_id IS NULL`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to sort by dept_id."
+    ],
+    "interview_tip": "Anti-joins operate as set-difference operations (A minus B).",
+    "hints": [
+      "Join `d.dept_id = p.dept_id`.",
+      "Filter with `WHERE p.project_id IS NULL`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.location FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id WHERE p.project_id IS NULL ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "departments"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-08",
+    "slug": "professors-without-course-assignments",
+    "title": "Identify Faculty with Zero Assigned Courses",
+    "description_markdown": "Perform an anti-join from `professors` to `courses` on `professor_id` to identify faculty members teaching no classes. Return `p.professor_id`, `p.first_name`, `p.last_name`, and `p.department`. Order by `p.professor_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join professors without courses\nSELECT p.professor_id, p.first_name, p.last_name, p.department\nFROM professors p\nLEFT JOIN courses c ON p.professor_id = c.professor_id\nWHERE c.course_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT p.professor_id, p.first_name, p.last_name, p.department FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id WHERE c.course_id IS NULL ORDER BY p.professor_id ASC;",
+    "solution_explanation": "Isolates research faculty or educators taking sabbatical terms.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using INNER JOIN which hides unassigned faculty."
+    ],
+    "interview_tip": "Anti-joins reveal absent relationships in clean relational structures.",
+    "hints": [
+      "Join `p.professor_id = c.professor_id`.",
+      "Filter `WHERE c.course_id IS NULL`.",
+      "Query: SELECT p.professor_id, p.first_name, p.last_name, p.department FROM professors p LEFT JOIN courses c ON p.professor_id = c.professor_id WHERE c.course_id IS NULL ORDER BY p.professor_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "faculty"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-09",
+    "slug": "courses-without-enrolled-students",
+    "title": "Identify Courses with Zero Student Registrations",
+    "description_markdown": "Perform an anti-join from `courses` to `enrollments` on `course_id` to find courses with no registered students. Return `c.course_id`, `c.course_code`, and `c.course_name`. Order by `c.course_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join courses without enrollments\nSELECT c.course_id, c.course_code, c.course_name\nFROM courses c\nLEFT JOIN enrollments e ON c.course_id = e.course_id\nWHERE e.enrollment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT c.course_id, c.course_code, c.course_name FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id WHERE e.enrollment_id IS NULL ORDER BY c.course_id ASC;",
+    "solution_explanation": "Detects low-demand or newly minted courses that have 0 enrollments.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering in WHERE with an equality condition instead of IS NULL."
+    ],
+    "interview_tip": "Course cancellation audits rely on anti-join detection of zero-enrollment classes.",
+    "hints": [
+      "Join `c.course_id = e.course_id`.",
+      "Filter `WHERE e.enrollment_id IS NULL`.",
+      "Query: SELECT c.course_id, c.course_code, c.course_name FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id WHERE e.enrollment_id IS NULL ORDER BY c.course_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 100,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-10",
+    "slug": "individual-contributors-no-direct-reports",
+    "title": "Identify Individual Contributors with Zero Direct Reports",
+    "description_markdown": "Perform a self anti-join on `employees` to find staff members who manage zero employees (`sub.manager_id = e.emp_id`). Return `e.emp_id`, `e.first_name`, `e.last_name`, and `e.job_title`. Order by `e.emp_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "job_title",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Self anti-join to find non-managers\nSELECT e.emp_id, e.first_name, e.last_name, e.job_title\nFROM employees e\nLEFT JOIN employees sub ON e.emp_id = sub.manager_id\nWHERE sub.emp_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.last_name, e.job_title FROM employees e LEFT JOIN employees sub ON e.emp_id = sub.manager_id WHERE sub.emp_id IS NULL ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Leaves behind only individual contributors by checking where nobody references them as `manager_id` (`sub.emp_id IS NULL`).",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Confusing the join keys: joining on sub.emp_id = e.manager_id finds staff without a manager (the CEO)."
+    ],
+    "interview_tip": "This is a top-tier interview test of hierarchy logic: finding leaf nodes in a self-referencing tree.",
+    "hints": [
+      "Left join `sub` on `e.emp_id = sub.manager_id`.",
+      "Filter `WHERE sub.emp_id IS NULL`.",
+      "Query: SELECT e.emp_id, e.first_name, e.last_name, e.job_title FROM employees e LEFT JOIN employees sub ON e.emp_id = sub.manager_id WHERE sub.emp_id IS NULL ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "self-join",
+      "hierarchy",
+      "leaf-nodes"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-11",
+    "slug": "employees-without-salary-history",
+    "title": "Find Employees with No Recorded Compensation History",
+    "description_markdown": "Perform an anti-join from `employees` to `salaries_history` on `emp_id` to find staff who have never had a salary change logged. Return `e.emp_id`, `e.first_name`, `e.last_name`, and `e.salary`. Order by `e.emp_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "salaries_history"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join employees to salary history\nSELECT e.emp_id, e.first_name, e.last_name, e.salary\nFROM employees e\nLEFT JOIN salaries_history sh ON e.emp_id = sh.emp_id\nWHERE sh.history_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.last_name, e.salary FROM employees e LEFT JOIN salaries_history sh ON e.emp_id = sh.emp_id WHERE sh.history_id IS NULL ORDER BY e.emp_id ASC;",
+    "solution_explanation": "Locates employees whose compensation has remained static since joining the firm.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking `sh.salary IS NULL` instead of the primary key `sh.history_id IS NULL`."
+    ],
+    "interview_tip": "Primary key NULL checking prevents false hits if a historical column legitimately contained a null.",
+    "hints": [
+      "Join `e.emp_id = sh.emp_id`.",
+      "Filter `WHERE sh.history_id IS NULL`.",
+      "Query: SELECT e.emp_id, e.first_name, e.last_name, e.salary FROM employees e LEFT JOIN salaries_history sh ON e.emp_id = sh.emp_id WHERE sh.history_id IS NULL ORDER BY e.emp_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "audit"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-12",
+    "slug": "leaf-categories-without-children",
+    "title": "Find Terminal Categories with No Subcategories",
+    "description_markdown": "Perform a self anti-join on `categories` to find terminal (leaf) categories that have NO child subcategories referencing them (`sub.parent_category_id = parent.category_id`). Return `parent.category_id` and `parent.category_name`. Order by `parent.category_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "category_id",
+        "type": "integer"
+      },
+      {
+        "name": "category_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Self anti-join to find leaf categories\nSELECT parent.category_id, parent.category_name\nFROM categories parent\nLEFT JOIN categories sub ON parent.category_id = sub.parent_category_id\nWHERE sub.category_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT parent.category_id, parent.category_name FROM categories parent LEFT JOIN categories sub ON parent.category_id = sub.parent_category_id WHERE sub.category_id IS NULL ORDER BY parent.category_id ASC;",
+    "solution_explanation": "Surfaces terminal nodes in the category tree by checking for the absence of child rows.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Reversing parent and child aliases."
+    ],
+    "interview_tip": "In taxonomy models, products are typically attached only to leaf categories.",
+    "hints": [
+      "Join `sub` on `parent.category_id = sub.parent_category_id`.",
+      "Filter `WHERE sub.category_id IS NULL`.",
+      "Query: SELECT parent.category_id, parent.category_name FROM categories parent LEFT JOIN categories sub ON parent.category_id = sub.parent_category_id WHERE sub.category_id IS NULL ORDER BY parent.category_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "self-join",
+      "taxonomy",
+      "leaf-nodes"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-13",
+    "slug": "customers-who-never-reviewed",
+    "title": "Identify Customers Who Have Never Written a Review",
+    "description_markdown": "Perform an anti-join from `customers` to `reviews` on `customer_id` to find customers who have never authored any product review. Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join customers to reviews\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nLEFT JOIN reviews r ON c.customer_id = r.customer_id\nWHERE r.review_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c LEFT JOIN reviews r ON c.customer_id = r.customer_id WHERE r.review_id IS NULL ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Surfaces customers who consume without providing feedback by checking `r.review_id IS NULL`.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using NOT IN without filtering out nulls."
+    ],
+    "interview_tip": "LEFT JOIN ... WHERE right.pk IS NULL is safer and faster than NOT IN with subqueries.",
+    "hints": [
+      "Join `c.customer_id = r.customer_id`.",
+      "Filter `WHERE r.review_id IS NULL`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c LEFT JOIN reviews r ON c.customer_id = r.customer_id WHERE r.review_id IS NULL ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "feedback"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-14",
+    "slug": "active-products-never-purchased",
+    "title": "Find Active Catalog Products with Zero Orders",
+    "description_markdown": "Perform an anti-join from `products` to `order_items` on `product_id`. Filter for active merchandise (`p.is_active = TRUE`) that has never been ordered (`oi.order_item_id IS NULL`). Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join on active products\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nWHERE oi.order_item_id IS NULL AND p.is_active = TRUE\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id WHERE oi.order_item_id IS NULL AND p.is_active = TRUE ORDER BY p.product_id ASC;",
+    "solution_explanation": "Filters out discontinued/inactive items to focus purely on active products suffering from zero sales conversions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing p.is_active = TRUE in the ON clause which would retain inactive products."
+    ],
+    "interview_tip": "Left-table filters belong in WHERE, not ON.",
+    "hints": [
+      "Join `p.product_id = oi.product_id`.",
+      "Filter `WHERE oi.order_item_id IS NULL AND p.is_active = TRUE`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN order_items oi ON p.product_id = oi.product_id WHERE oi.order_item_id IS NULL AND p.is_active = TRUE ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "exclusion",
+      "catalog",
+      "merchandising"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-15",
+    "slug": "engineering-staff-without-assignments",
+    "title": "Identify Engineering Personnel with Zero Project Allocation",
+    "description_markdown": "Join `employees` and `departments` on `dept_id` where `d.dept_name = 'Engineering'`. Anti-join to `assignments` on `e.emp_id = a.emp_id` (`a.assignment_id IS NULL`). Return `e.emp_id`, `e.first_name`, and `e.salary`. Order by `e.salary` descending, then `e.emp_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "employees",
+      "departments",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "emp_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join with department filter\nSELECT e.emp_id, e.first_name, e.salary\nFROM employees e\nJOIN departments d ON e.dept_id = d.dept_id\nLEFT JOIN assignments a ON e.emp_id = a.emp_id\nWHERE d.dept_name = 'Engineering' AND a.assignment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN departments d ON e.dept_id = d.dept_id LEFT JOIN assignments a ON e.emp_id = a.emp_id WHERE d.dept_name = 'Engineering' AND a.assignment_id IS NULL ORDER BY e.salary DESC, e.emp_id ASC;",
+    "solution_explanation": "Combines an inner join for departmental filtering with an outer anti-join to detect unallocated technical personnel.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Left-joining departments instead of inner-joining."
+    ],
+    "interview_tip": "Mixing INNER JOIN (for filtering) and LEFT JOIN (for anti-join exclusion) is a standard production design.",
+    "hints": [
+      "Join `d` on `e.dept_id = d.dept_id`, left join `a` on `e.emp_id = a.emp_id`.",
+      "Filter with `WHERE d.dept_name = 'Engineering' AND a.assignment_id IS NULL`.",
+      "Query: SELECT e.emp_id, e.first_name, e.salary FROM employees e JOIN departments d ON e.dept_id = d.dept_id LEFT JOIN assignments a ON e.emp_id = a.emp_id WHERE d.dept_name = 'Engineering' AND a.assignment_id IS NULL ORDER BY e.salary DESC, e.emp_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "staffing",
+      "engineering"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-16",
+    "slug": "students-with-no-completed-enrollments",
+    "title": "Identify Students with Zero Completed Course Records",
+    "description_markdown": "Perform an anti-join from `students` to `enrollments` on `s.student_id = e.student_id AND e.status = 'completed'` where `e.enrollment_id IS NULL`. Return `s.student_id`, `s.first_name`, and `s.major`. Order by `s.student_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "major",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join with status filter in ON clause\nSELECT s.student_id, s.first_name, s.major\nFROM students s\nLEFT JOIN enrollments e ON s.student_id = e.student_id AND e.status = 'completed'\nWHERE e.enrollment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.major FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id AND e.status = 'completed' WHERE e.enrollment_id IS NULL ORDER BY s.student_id ASC;",
+    "solution_explanation": "Placing `e.status = 'completed'` in the ON clause treats any other enrollment status as a non-match, identifying students who have never finished any course.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Putting `e.status = 'completed'` in WHERE, which would eliminate all non-matches."
+    ],
+    "interview_tip": "In conditional anti-joins, the qualifying condition MUST be in the ON clause.",
+    "hints": [
+      "Keep `AND e.status = 'completed'` inside the `ON` clause.",
+      "Filter `WHERE e.enrollment_id IS NULL`.",
+      "Query: SELECT s.student_id, s.first_name, s.major FROM students s LEFT JOIN enrollments e ON s.student_id = e.student_id AND e.status = 'completed' WHERE e.enrollment_id IS NULL ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "conditional-join",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-17",
+    "slug": "customers-with-no-completed-orders",
+    "title": "Find Customers with No Successful Completed Orders",
+    "description_markdown": "Perform an anti-join from `customers` to `orders` on `c.customer_id = o.customer_id AND o.order_status = 'completed'` where `o.order_id IS NULL`. Return `c.customer_id`, `c.email`, and `c.country`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "country",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join customers without completed orders\nSELECT c.customer_id, c.email, c.country\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed'\nWHERE o.order_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.email, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' WHERE o.order_id IS NULL ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Captures customers who either never bought anything OR whose only purchases were cancelled/refunded.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the order_status filter in the WHERE clause."
+    ],
+    "interview_tip": "This is one of the most critical questions in business analytics: finding users who have never achieved a successful conversion.",
+    "hints": [
+      "Join with `ON c.customer_id = o.customer_id AND o.order_status = 'completed'`.",
+      "Filter with `WHERE o.order_id IS NULL`.",
+      "Query: SELECT c.customer_id, c.email, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_status = 'completed' WHERE o.order_id IS NULL ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "conversion",
+      "retention"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-18",
+    "slug": "products-never-reviewed-5-stars",
+    "title": "Find Products That Have Never Received a 5-Star Review",
+    "description_markdown": "Perform an anti-join from `products` to `reviews` on `p.product_id = r.product_id AND r.rating = 5` where `r.review_id IS NULL`. Return `p.product_id`, `p.product_name`, and `p.price`. Order by `p.product_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "products",
+      "reviews"
+    ],
+    "expected_columns": [
+      {
+        "name": "product_id",
+        "type": "integer"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "price",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join on 5-star review condition\nSELECT p.product_id, p.product_name, p.price\nFROM products p\nLEFT JOIN reviews r ON p.product_id = r.product_id AND r.rating = 5\nWHERE r.review_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id AND r.rating = 5 WHERE r.review_id IS NULL ORDER BY p.product_id ASC;",
+    "solution_explanation": "Includes both products that have lower reviews and products with no reviews at all.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering `WHERE r.rating < 5`, which misses products with zero reviews."
+    ],
+    "interview_tip": "To include 'never had X' (including 0 items total), use a conditional anti-join.",
+    "hints": [
+      "Join `ON p.product_id = r.product_id AND r.rating = 5`.",
+      "Filter `WHERE r.review_id IS NULL`.",
+      "Query: SELECT p.product_id, p.product_name, p.price FROM products p LEFT JOIN reviews r ON p.product_id = r.product_id AND r.rating = 5 WHERE r.review_id IS NULL ORDER BY p.product_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "conditional-anti-join",
+      "ratings"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-19",
+    "slug": "departments-with-budget-no-projects",
+    "title": "Find High-Budget Departments Sponsoring No Projects",
+    "description_markdown": "Perform an anti-join from `departments` to `projects` on `dept_id` where `p.project_id IS NULL` and `d.budget >= 500000`. Return `d.dept_name` and `d.budget`. Order by `d.budget` descending, then `d.dept_name` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "projects"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- High budget departments with no projects\nSELECT d.dept_name, d.budget\nFROM departments d\nLEFT JOIN projects p ON d.dept_id = p.dept_id\nWHERE p.project_id IS NULL AND d.budget >= 500000\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_name, d.budget FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id WHERE p.project_id IS NULL AND d.budget >= 500000 ORDER BY d.budget DESC, d.dept_name ASC;",
+    "solution_explanation": "Highlights departments with large financial allocations that have not committed capital to named projects.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing the budget condition on p.budget rather than d.budget."
+    ],
+    "interview_tip": "Corporate financial audits use anti-joins to pinpoint unallocated departmental budgets.",
+    "hints": [
+      "Join `d.dept_id = p.dept_id`.",
+      "Filter `WHERE p.project_id IS NULL AND d.budget >= 500000`.",
+      "Query: SELECT d.dept_name, d.budget FROM departments d LEFT JOIN projects p ON d.dept_id = p.dept_id WHERE p.project_id IS NULL AND d.budget >= 500000 ORDER BY d.budget DESC, d.dept_name ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "budget",
+      "finance"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-20",
+    "slug": "us-customers-with-zero-orders",
+    "title": "Isolate Inactive Domestic Customers via Anti-Join",
+    "description_markdown": "Perform an anti-join from `customers` to `orders` on `customer_id` where `o.order_id IS NULL` and `c.country = 'USA'`. Return `c.customer_id`, `c.first_name`, and `c.city`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Inactive US customers\nSELECT c.customer_id, c.first_name, c.city\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_id IS NULL AND c.country = 'USA'\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.city FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL AND c.country = 'USA' ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Targets domestic market customer accounts that have never made an active transaction.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Placing c.country = 'USA' in the ON clause instead of WHERE."
+    ],
+    "interview_tip": "Left table filters belong in WHERE so rows not matching the condition are filtered out.",
+    "hints": [
+      "Join on `c.customer_id = o.customer_id`.",
+      "Filter `WHERE o.order_id IS NULL AND c.country = 'USA'`.",
+      "Query: SELECT c.customer_id, c.first_name, c.city FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL AND c.country = 'USA' ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "marketing",
+      "churn"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-21",
+    "slug": "anti-join-via-not-exists",
+    "title": "Implement Anti-Join Pattern Using NOT EXISTS",
+    "description_markdown": "Use the `NOT EXISTS` correlated subquery pattern to find all customers who have NEVER placed an order. Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join using NOT EXISTS\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o WHERE ...\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE c.customer_id = o.customer_id) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "`NOT EXISTS` is semantically equivalent to a LEFT JOIN ... IS NULL anti-join, and often optimizes identically under modern query optimizers.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Forgetting to correlate the subquery with `c.customer_id = o.customer_id`."
+    ],
+    "interview_tip": "NOT EXISTS is NULL-safe: it never produces the 3-valued logic pitfalls associated with NOT IN.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE c.customer_id = o.customer_id)`.",
+      "Order by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE c.customer_id = o.customer_id) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "subqueries"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-22",
+    "slug": "anti-join-via-not-in-safe",
+    "title": "Implement Safe Anti-Join Pattern Using NOT IN",
+    "description_markdown": "Use the `NOT IN` subquery syntax to find departments that have no employees. Explicitly add `WHERE dept_id IS NOT NULL` to the subquery to ensure three-valued logic safety. Return `d.dept_id` and `d.dept_name`. Order by `d.dept_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Safe NOT IN anti-join\nSELECT d.dept_id, d.dept_name\nFROM departments d\nWHERE d.dept_id NOT IN (\n  SELECT dept_id FROM employees WHERE dept_id IS NOT NULL\n)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name FROM departments d WHERE d.dept_id NOT IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "If a subquery evaluated by `NOT IN` contains even a single NULL, the entire `NOT IN` expression evaluates to UNKNOWN (returning 0 rows). Adding `WHERE col IS NOT NULL` guarantees correctness.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting WHERE dept_id IS NOT NULL in the NOT IN subquery."
+    ],
+    "interview_tip": "This is one of the most famous SQL interview questions: why does NOT IN fail when the subquery returns NULL?",
+    "hints": [
+      "Use `WHERE d.dept_id NOT IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL)`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name FROM departments d WHERE d.dept_id NOT IN (SELECT dept_id FROM employees WHERE dept_id IS NOT NULL) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-in",
+      "null-safety",
+      "interview-classic"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-23",
+    "slug": "students-with-zero-assessment-marks",
+    "title": "Identify Enrolled Students with Zero Graded Marks",
+    "description_markdown": "Find enrolled students who have NO graded mark records across any of their course enrollments. Join `students` and `enrollments` on `student_id`, then anti-join to `marks` on `e.enrollment_id = m.enrollment_id` (`m.mark_id IS NULL`). Group by `s.student_id`, `s.first_name`, and `s.last_name`. Return `s.student_id`, `s.first_name`, and `s.last_name`. Order by `s.student_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Multi-table anti-join to marks\nSELECT s.student_id, s.first_name, s.last_name\nFROM students s\nJOIN enrollments e ON s.student_id = e.student_id\nLEFT JOIN marks m ON e.enrollment_id = m.enrollment_id\nWHERE m.mark_id IS NULL\nGROUP BY ...\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.last_name FROM students s JOIN enrollments e ON s.student_id = e.student_id LEFT JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.mark_id IS NULL GROUP BY s.student_id, s.first_name, s.last_name ORDER BY s.student_id ASC;",
+    "solution_explanation": "Detects active enrollments that have not received any test scores.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Leaving off GROUP BY, resulting in duplicate student rows if multiple enrollments lack marks."
+    ],
+    "interview_tip": "Grouping eliminates duplicate parent rows produced by intermediate 1-to-many bridge tables.",
+    "hints": [
+      "Join `s` to `e`, left join `e` to `m`.",
+      "Filter `WHERE m.mark_id IS NULL` and group by the student keys.",
+      "Query: SELECT s.student_id, s.first_name, s.last_name FROM students s JOIN enrollments e ON s.student_id = e.student_id LEFT JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE m.mark_id IS NULL GROUP BY s.student_id, s.first_name, s.last_name ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "multi-table",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-24",
+    "slug": "orders-with-no-processed-payments",
+    "title": "Detect Orders with Zero Payment Processing Records",
+    "description_markdown": "Perform an anti-join from `orders` to `payments` on `order_id` to find orders that have NO corresponding entry in the `payments` table (`pay.payment_id IS NULL`). Return `o.order_id`, `o.customer_id`, and `o.total_amount`. Order by `o.order_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "order_id",
+        "type": "integer"
+      },
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "total_amount",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join orders to payments\nSELECT o.order_id, o.customer_id, o.total_amount\nFROM orders o\nLEFT JOIN payments pay ON o.order_id = pay.order_id\nWHERE pay.payment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT o.order_id, o.customer_id, o.total_amount FROM orders o LEFT JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_id IS NULL ORDER BY o.order_id ASC;",
+    "solution_explanation": "Isolates checkout orders that completely bypassed or aborted prior to entering the payment gateway.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering payment_status = 'pending' instead of checking for complete record absence."
+    ],
+    "interview_tip": "Anti-joins differentiate between 'record missing' and 'record exists with pending status'.",
+    "hints": [
+      "Join `o.order_id = pay.order_id`.",
+      "Filter `WHERE pay.payment_id IS NULL`.",
+      "Query: SELECT o.order_id, o.customer_id, o.total_amount FROM orders o LEFT JOIN payments pay ON o.order_id = pay.order_id WHERE pay.payment_id IS NULL ORDER BY o.order_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "payments",
+      "checkout-funnel"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-25",
+    "slug": "courses-with-no-final-exam-assessments",
+    "title": "Identify Courses with No Final Exam Assessment",
+    "description_markdown": "Find courses where NO student has ever taken a final exam assessment (`m.assessment_type = 'final'`). Use an anti-join or `NOT EXISTS`. Return `c.course_id`, `c.course_code`, and `c.course_name`. Order by `c.course_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "course_id",
+        "type": "integer"
+      },
+      {
+        "name": "course_code",
+        "type": "varchar"
+      },
+      {
+        "name": "course_name",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join courses with no final exam\nSELECT c.course_id, c.course_code, c.course_name\nFROM courses c\nWHERE NOT EXISTS (\n  SELECT 1 FROM enrollments e\n  JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE e.course_id = c.course_id AND m.assessment_type = 'final'\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.course_id, c.course_code, c.course_name FROM courses c WHERE NOT EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') ORDER BY c.course_id ASC;",
+    "solution_explanation": "NOT EXISTS with a joined subquery safely checks across multiple tables for the complete absence of a matching record.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Allowing courses with midterms but no finals to be omitted."
+    ],
+    "interview_tip": "NOT EXISTS handles multi-table condition checking elegantly without creating wide outer joins.",
+    "hints": [
+      "Use `NOT EXISTS` with `enrollments` joined to `marks`.",
+      "Check `e.course_id = c.course_id AND m.assessment_type = 'final'`.",
+      "Query: SELECT c.course_id, c.course_code, c.course_name FROM courses c WHERE NOT EXISTS (SELECT 1 FROM enrollments e JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE e.course_id = c.course_id AND m.assessment_type = 'final') ORDER BY c.course_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-26",
+    "slug": "projects-with-no-assigned-engineers",
+    "title": "Identify Technology Projects with Zero Assigned Engineers",
+    "description_markdown": "Perform an anti-join from `projects` to `assignments` on `project_id` to locate projects that currently have zero assigned personnel. Return `p.project_id`, `p.project_name`, and `p.budget`. Order by `p.project_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "projects",
+      "assignments"
+    ],
+    "expected_columns": [
+      {
+        "name": "project_id",
+        "type": "integer"
+      },
+      {
+        "name": "project_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Anti-join projects to assignments\nSELECT p.project_id, p.project_name, p.budget\nFROM projects p\nLEFT JOIN assignments a ON p.project_id = a.project_id\nWHERE a.assignment_id IS NULL\nORDER BY ...;",
+    "solution_query": "SELECT p.project_id, p.project_name, p.budget FROM projects p LEFT JOIN assignments a ON p.project_id = a.project_id WHERE a.assignment_id IS NULL ORDER BY p.project_id ASC;",
+    "solution_explanation": "Detects unstaffed software projects where no labor has been logged.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking IS NULL on a.hours_worked instead of the primary key."
+    ],
+    "interview_tip": "Unstaffed projects are flagged in PMO audits for staffing re-allocation.",
+    "hints": [
+      "Join `p.project_id = a.project_id`.",
+      "Filter `WHERE a.assignment_id IS NULL`.",
+      "Query: SELECT p.project_id, p.project_name, p.budget FROM projects p LEFT JOIN assignments a ON p.project_id = a.project_id WHERE a.assignment_id IS NULL ORDER BY p.project_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "staffing",
+      "projects"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-27",
+    "slug": "customers-who-never-bought-electronics",
+    "title": "Find Customers Who Have Never Purchased an Electronic Product",
+    "description_markdown": "Use `NOT EXISTS` to find customers who have NEVER ordered any product in the 'Electronics' parent category or its child categories (e.g., category_id IN (1, 2, 3, 4)). Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders",
+      "order_items",
+      "products",
+      "categories"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS anti-join for electronics category\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  JOIN order_items oi ON o.order_id = oi.order_id\n  JOIN products p ON oi.product_id = p.product_id\n  WHERE o.customer_id = c.customer_id AND p.category_id IN (1, 2, 3, 4)\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE o.customer_id = c.customer_id AND p.category_id IN (1, 2, 3, 4)) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Combines 3 joined tables inside a correlated NOT EXISTS subquery to exclude customers with any purchase matching specific category criteria.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Writing a simple NOT IN on orders without traversing to products."
+    ],
+    "interview_tip": "NOT EXISTS with deep subquery joins is ideal for complex categorical exclusion queries.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE o.customer_id = c.customer_id AND p.category_id IN (1, 2, 3, 4))`.",
+      "Order by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id JOIN products p ON oi.product_id = p.product_id WHERE o.customer_id = c.customer_id AND p.category_id IN (1, 2, 3, 4)) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "segmentation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-28",
+    "slug": "students-with-no-dropped-courses",
+    "title": "Identify Students with Zero Dropped Course Enrollments",
+    "description_markdown": "Find all students who have NEVER dropped a course (`e.status = 'dropped'`). Use `NOT EXISTS`. Return `s.student_id`, `s.first_name`, and `s.gpa`. Order by `s.student_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "students",
+      "enrollments"
+    ],
+    "expected_columns": [
+      {
+        "name": "student_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "gpa",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Students without dropped courses\nSELECT s.student_id, s.first_name, s.gpa\nFROM students s\nWHERE NOT EXISTS (\n  SELECT 1 FROM enrollments e\n  WHERE s.student_id = e.student_id AND e.status = 'dropped'\n)\nORDER BY ...;",
+    "solution_query": "SELECT s.student_id, s.first_name, s.gpa FROM students s WHERE NOT EXISTS (SELECT 1 FROM enrollments e WHERE s.student_id = e.student_id AND e.status = 'dropped') ORDER BY s.student_id ASC;",
+    "solution_explanation": "Surfaces students with perfect course persistence by excluding those with any dropped enrollment records.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Filtering status != 'dropped' on a join, which keeps students who dropped one course but kept another."
+    ],
+    "interview_tip": "To check 'never did X', filtering WHERE status != 'dropped' on a regular join is wrong; NOT EXISTS is the correct pattern.",
+    "hints": [
+      "Use `NOT EXISTS (SELECT 1 FROM enrollments e WHERE s.student_id = e.student_id AND e.status = 'dropped')`.",
+      "Order by `s.student_id ASC`.",
+      "Query: SELECT s.student_id, s.first_name, s.gpa FROM students s WHERE NOT EXISTS (SELECT 1 FROM enrollments e WHERE s.student_id = e.student_id AND e.status = 'dropped') ORDER BY s.student_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 200,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-29",
+    "slug": "customers-with-no-discounted-purchases",
+    "title": "Find Customers Who Never Received an Order Item Discount",
+    "description_markdown": "Use `NOT EXISTS` to find customers who have NEVER purchased an order line item with a discount (`oi.discount > 0.00`). Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders",
+      "order_items"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for discounted item purchases\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  JOIN order_items oi ON o.order_id = oi.order_id\n  WHERE o.customer_id = c.customer_id AND oi.discount > 0.00\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.customer_id = c.customer_id AND oi.discount > 0.00) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Isolates full-price purchasing customers by excluding anyone who took advantage of price markdown promotions.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking oi.discount = 0 on a simple join."
+    ],
+    "interview_tip": "Price elasticity modeling uses anti-joins to isolate cohorts immune to promotional discounting.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.customer_id = c.customer_id AND oi.discount > 0.00)`.",
+      "Order by `c.customer_id ASC`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN order_items oi ON o.order_id = oi.order_id WHERE o.customer_id = c.customer_id AND oi.discount > 0.00) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "pricing"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-30",
+    "slug": "departments-with-no-employees-earning-150k",
+    "title": "Find Departments with Zero Employees Earning at Least 150k",
+    "description_markdown": "Use `NOT EXISTS` to find departments that have NO employees earning a salary of 150,000 or greater. Return `d.dept_id`, `d.dept_name`, and `d.budget`. Order by `d.dept_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "employeedb",
+    "question_type": "select",
+    "tables_involved": [
+      "departments",
+      "employees"
+    ],
+    "expected_columns": [
+      {
+        "name": "dept_id",
+        "type": "integer"
+      },
+      {
+        "name": "dept_name",
+        "type": "varchar"
+      },
+      {
+        "name": "budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for high earners per department\nSELECT d.dept_id, d.dept_name, d.budget\nFROM departments d\nWHERE NOT EXISTS (\n  SELECT 1 FROM employees e\n  WHERE d.dept_id = e.dept_id AND e.salary >= 150000\n)\nORDER BY ...;",
+    "solution_query": "SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE NOT EXISTS (SELECT 1 FROM employees e WHERE d.dept_id = e.dept_id AND e.salary >= 150000) ORDER BY d.dept_id ASC;",
+    "solution_explanation": "Checks that no employee associated with the department meets or exceeds the executive compensation threshold.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Using LEFT JOIN and checking salary < 150000, which includes departments that have BOTH high and low earners."
+    ],
+    "interview_tip": "This is a quintessential 'universal negation' query: 'no employees >= 150k'. NOT EXISTS is the cleanest way to express this in SQL.",
+    "hints": [
+      "Use `WHERE NOT EXISTS (SELECT 1 FROM employees e WHERE d.dept_id = e.dept_id AND e.salary >= 150000)`.",
+      "Order by `d.dept_id ASC`.",
+      "Query: SELECT d.dept_id, d.dept_name, d.budget FROM departments d WHERE NOT EXISTS (SELECT 1 FROM employees e WHERE d.dept_id = e.dept_id AND e.salary >= 150000) ORDER BY d.dept_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-31",
+    "slug": "professors-with-no-completed-student-marks",
+    "title": "Identify Professors Whose Students Have No Completed Grades",
+    "description_markdown": "Use `NOT EXISTS` to find professors who have NO recorded student mark records across any course they teach. Return `p.professor_id`, `p.last_name`, and `p.department`. Order by `p.professor_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "collegedb",
+    "question_type": "select",
+    "tables_involved": [
+      "professors",
+      "courses",
+      "enrollments",
+      "marks"
+    ],
+    "expected_columns": [
+      {
+        "name": "professor_id",
+        "type": "integer"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS across 3 relationship tiers\nSELECT p.professor_id, p.last_name, p.department\nFROM professors p\nWHERE NOT EXISTS (\n  SELECT 1 FROM courses c\n  JOIN enrollments e ON c.course_id = e.course_id\n  JOIN marks m ON e.enrollment_id = m.enrollment_id\n  WHERE c.professor_id = p.professor_id\n)\nORDER BY ...;",
+    "solution_query": "SELECT p.professor_id, p.last_name, p.department FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c JOIN enrollments e ON c.course_id = e.course_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE c.professor_id = p.professor_id) ORDER BY p.professor_id ASC;",
+    "solution_explanation": "Traverses 3 relationship layers inside NOT EXISTS to detect faculty whose assigned classes have no recorded student marks.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Omitting the join to marks inside the subquery."
+    ],
+    "interview_tip": "NOT EXISTS subqueries can chain arbitrarily deep joins without polluting the parent query projection.",
+    "hints": [
+      "Join `courses` -> `enrollments` -> `marks` inside `NOT EXISTS`.",
+      "Correlate on `c.professor_id = p.professor_id`.",
+      "Query: SELECT p.professor_id, p.last_name, p.department FROM professors p WHERE NOT EXISTS (SELECT 1 FROM courses c JOIN enrollments e ON c.course_id = e.course_id JOIN marks m ON e.enrollment_id = m.enrollment_id WHERE c.professor_id = p.professor_id) ORDER BY p.professor_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "academics"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-ant-32",
+    "slug": "customers-with-no-payments-failed-or-pending",
+    "title": "Find Customers with Zero Failed or Pending Payments",
+    "description_markdown": "Use `NOT EXISTS` to find customers who have NEVER experienced a failed or pending payment transaction (`pay.payment_status IN ('failed', 'pending')`). Return `c.customer_id`, `c.first_name`, and `c.email`. Order by `c.customer_id` ascending.",
+    "topic_id": "anti-joins",
+    "subtopic_id": "join-anti",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "ecommercedb",
+    "question_type": "select",
+    "tables_involved": [
+      "customers",
+      "orders",
+      "payments"
+    ],
+    "expected_columns": [
+      {
+        "name": "customer_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- NOT EXISTS for failed or pending payment transactions\nSELECT c.customer_id, c.first_name, c.email\nFROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o\n  JOIN payments pay ON o.order_id = pay.order_id\n  WHERE o.customer_id = c.customer_id AND pay.payment_status IN ('failed', 'pending')\n)\nORDER BY ...;",
+    "solution_query": "SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE o.customer_id = c.customer_id AND pay.payment_status IN ('failed', 'pending')) ORDER BY c.customer_id ASC;",
+    "solution_explanation": "Excludes users who have had friction during the checkout processing funnel.",
+    "alternative_solutions": [],
+    "common_mistakes": [
+      "Checking only failed and forgetting pending payments."
+    ],
+    "interview_tip": "Credit and fraud underwriting models frequently use anti-joins to isolate pristine payment histories.",
+    "hints": [
+      "Use `NOT EXISTS` on `orders o JOIN payments pay ON o.order_id = pay.order_id`.",
+      "Check `AND pay.payment_status IN ('failed', 'pending')`.",
+      "Query: SELECT c.customer_id, c.first_name, c.email FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o JOIN payments pay ON o.order_id = pay.order_id WHERE o.customer_id = c.customer_id AND pay.payment_status IN ('failed', 'pending')) ORDER BY c.customer_id ASC;"
+    ],
+    "tags": [
+      "anti-join",
+      "not-exists",
+      "risk",
+      "payments"
+    ],
+    "source": "original",
+    "estimated_minutes": 7,
+    "xp": 300,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-ant-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-ant-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-ant-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]

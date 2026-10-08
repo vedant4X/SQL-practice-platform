@@ -1,0 +1,2540 @@
+[
+  {
+    "id": "q-sc-hr-01",
+    "slug": "hr-experienced-candidates",
+    "title": "Filter Senior Applicants with 5+ Years Experience",
+    "description_markdown": "Recruiting request: Find applicants in `applicants` who have at least 5 years of experience (`years_experience >= 5`). Return `first_name`, `last_name`, `email`, and `years_experience`. Order by `years_experience` DESC, `first_name` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "starter_query": "-- Experienced applicants\nSELECT ...",
+    "solution_query": "SELECT first_name, last_name, email, years_experience FROM applicants WHERE years_experience >= 5 ORDER BY years_experience DESC, first_name ASC;",
+    "solution_explanation": "Filters the applicant tracking pipeline for senior profiles.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE years_experience >= 5`.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT first_name, last_name, email, years_experience FROM applicants WHERE years_experience >= 5 ORDER BY years_experience DESC, first_name ASC;"
+    ],
+    "tags": [
+      "hr",
+      "recruiting"
+    ],
+    "source": "original",
+    "estimated_minutes": 3,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hr-01-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hr-01-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hr-01-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-02",
+    "slug": "hr-average-interview-score-by-posting",
+    "title": "Calculate Average Candidate Interview Scores per Job",
+    "description_markdown": "Hiring committee request: For each job posting in `job_postings`, calculate the average interviewer score (`ROUND(AVG(interviewer_score), 2)` as `avg_score`) across all interview stages. Return `jp.title`, `jp.department`, and `avg_score`. Order by `avg_score` DESC, `jp.posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings",
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Average interview score per posting\nSELECT ...",
+    "solution_query": "SELECT jp.title, jp.department, ROUND(AVG(i.interviewer_score), 2) AS avg_score FROM job_postings jp JOIN interview_stages i ON jp.posting_id = i.posting_id GROUP BY jp.posting_id, jp.title, jp.department ORDER BY avg_score DESC, jp.posting_id ASC;",
+    "solution_explanation": "Aggregates rubric scores from candidate interview loops.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join job_postings to interview_stages and group by posting.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT jp.title, jp.department, ROUND(AVG(i.interviewer_score), 2) AS avg_score FROM job_postings jp JOIN interview_stages i ON jp.posting_id = i.posting_id GROUP BY jp.posting_id, jp.title, jp.department ORDER BY avg_score DESC, jp.posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "interview-scores"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 25,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hr-02-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hr-02-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hr-02-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-03",
+    "slug": "hr-offer-acceptance-analysis",
+    "title": "Audit Accepted Job Offers Against Budget Cap",
+    "description_markdown": "Compensation review: Join `job_offers`, `job_postings`, and `applicants`. For accepted offers (`job_offers.status = 'accepted'`), calculate how close the offered salary was to the maximum base budget: `(jp.base_salary_max - jo.offered_salary)` as `budget_savings`. Return `a.first_name`, `jp.title`, `jo.offered_salary`, and `budget_savings`. Order by `budget_savings` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_offers",
+      "job_postings",
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "offered_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "budget_savings",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Accepted offers audit\nSELECT ...",
+    "solution_query": "SELECT a.first_name, jp.title, jo.offered_salary, (jp.base_salary_max - jo.offered_salary) AS budget_savings FROM job_offers jo JOIN job_postings jp ON jo.posting_id = jp.posting_id JOIN applicants a ON jo.applicant_id = a.applicant_id WHERE jo.status = 'accepted' ORDER BY budget_savings DESC, a.applicant_id ASC;",
+    "solution_explanation": "Audits final agreed employment compensation versus initial salary band authorization.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join job_offers -> job_postings -> applicants with status = 'accepted'.",
+      "Focus on the required WHERE, JOIN, or GROUP BY clause conditions.",
+      "Query: SELECT a.first_name, jp.title, jo.offered_salary, (jp.base_salary_max - jo.offered_salary) AS budget_savings FROM job_offers jo JOIN job_postings jp ON jo.posting_id = jp.posting_id JOIN applicants a ON jo.applicant_id = a.applicant_id WHERE jo.status = 'accepted' ORDER BY budget_savings DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "compensation"
+    ],
+    "source": "original",
+    "estimated_minutes": 5,
+    "xp": 50,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-hr-03-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-hr-03-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-hr-03-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-04",
+    "slug": "hr-high-salary-job-postings",
+    "title": "Filter High-Compensation Requisitions by Budget Threshold",
+    "description_markdown": "Talent acquisition screen: Retrieve all job postings in `job_postings` with a maximum authorized salary of at least $150,000 (`base_salary_max >= 150000.00`). Return `posting_id`, `title`, `department`, and `base_salary_max`. Order by `base_salary_max` DESC, `posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE base_salary_max >= 150000.00 ORDER BY base_salary_max DESC, posting_id ASC;",
+    "solution_explanation": "Filters job requisitions matching executive compensation thresholds.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE base_salary_max >= 150000.00`.",
+      "Order by `base_salary_max` DESC, `posting_id` ASC.",
+      "Query: SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE base_salary_max >= 150000.00 ORDER BY base_salary_max DESC, posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-04-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-04-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-04-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-05",
+    "slug": "hr-perfect-interview-scores",
+    "title": "Filter Candidate Stages Achieving Perfect Rubric Ratings",
+    "description_markdown": "Interview debrief review: Find all completed interview rounds in `interview_stages` where the candidate received a top rating of 5 (`interviewer_score = 5`). Return `stage_id`, `posting_id`, `applicant_id`, `stage_name`, and `interviewer_score`. Order by `stage_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_id",
+        "type": "integer"
+      },
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "interviewer_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage_id, posting_id, applicant_id, stage_name, interviewer_score FROM interview_stages WHERE interviewer_score = 5 ORDER BY stage_id ASC;",
+    "solution_explanation": "Filters interview evaluation records by top score.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE interviewer_score = 5`.",
+      "Order by `stage_id` ASC.",
+      "Query: SELECT stage_id, posting_id, applicant_id, stage_name, interviewer_score FROM interview_stages WHERE interviewer_score = 5 ORDER BY stage_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-05-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-05-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-05-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-06",
+    "slug": "hr-average-salary-budget-by-dept",
+    "title": "Aggregate Department Headcount Requisition Budgets",
+    "description_markdown": "Compensation planning: For each department in `job_postings`, count open job requisitions (`COUNT(posting_id)` as `openings_count`) and compute the average salary ceiling (`ROUND(AVG(base_salary_max), 2)` as `avg_salary`). Return `department`, `openings_count`, and `avg_salary`. Order by `avg_salary` DESC, `department` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "openings_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT department, COUNT(posting_id) AS openings_count, ROUND(AVG(base_salary_max), 2) AS avg_salary FROM job_postings GROUP BY department ORDER BY avg_salary DESC, department ASC;",
+    "solution_explanation": "Groups requisitions by department and averages max salary bands.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `department`.",
+      "Use `COUNT(posting_id)` and `ROUND(AVG(base_salary_max), 2)`.",
+      "Query: SELECT department, COUNT(posting_id) AS openings_count, ROUND(AVG(base_salary_max), 2) AS avg_salary FROM job_postings GROUP BY department ORDER BY avg_salary DESC, department ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-06-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-06-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-06-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-07",
+    "slug": "hr-applicants-by-company",
+    "title": "Filter Employed Candidates by Current Company Affiliation",
+    "description_markdown": "Passive candidate sourcing: Find all applicants in `applicants` who have a recorded current employer (`current_company IS NOT NULL`). Return `applicant_id`, `first_name`, `last_name`, `current_company`, and `years_experience`. Order by `years_experience` DESC, `applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "current_company",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, current_company, years_experience FROM applicants WHERE current_company IS NOT NULL ORDER BY years_experience DESC, applicant_id ASC;",
+    "solution_explanation": "Filters candidate pool for presently employed profiles.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE current_company IS NOT NULL`.",
+      "Order by `years_experience` DESC, `applicant_id` ASC.",
+      "Query: SELECT applicant_id, first_name, last_name, current_company, years_experience FROM applicants WHERE current_company IS NOT NULL ORDER BY years_experience DESC, applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-07-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-07-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-07-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-08",
+    "slug": "hr-interview-stages-count",
+    "title": "Aggregate Interview Assessment Rounds and Mean Score",
+    "description_markdown": "Interview process analytics: Group by `stage_name` in `interview_stages`. Calculate total evaluations conducted (`COUNT(stage_id)` as `stage_count`) and average score (`ROUND(AVG(interviewer_score), 2)` as `avg_score`). Return `stage_name`, `stage_count`, and `avg_score`. Order by `stage_count` DESC, `stage_name` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stage_count",
+        "type": "bigint"
+      },
+      {
+        "name": "avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage_name, COUNT(stage_id) AS stage_count, ROUND(AVG(interviewer_score), 2) AS avg_score FROM interview_stages GROUP BY stage_name ORDER BY stage_count DESC, stage_name ASC;",
+    "solution_explanation": "Summarizes candidate performance across evaluation stages.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `stage_name`.",
+      "Compute `COUNT(stage_id)` and `ROUND(AVG(interviewer_score), 2)`.",
+      "Query: SELECT stage_name, COUNT(stage_id) AS stage_count, ROUND(AVG(interviewer_score), 2) AS avg_score FROM interview_stages GROUP BY stage_name ORDER BY stage_count DESC, stage_name ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-08-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-08-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-08-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-09",
+    "slug": "hr-applicant-full-name-contact",
+    "title": "Format Candidate Directory with Full Name Concatenation",
+    "description_markdown": "Produce an applicant roster: Concatenate `first_name` and `last_name` with a space using `CONCAT()` as `full_name`. Return `applicant_id`, `full_name`, `email`, and `years_experience`. Order by `full_name` ASC, `applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "full_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT applicant_id, CONCAT(first_name, ' ', last_name) AS full_name, email, years_experience FROM applicants ORDER BY full_name ASC, applicant_id ASC;",
+    "solution_explanation": "Concatenates first and last name into a unified full name column.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CONCAT(first_name, ' ', last_name) AS full_name`.",
+      "Order by `full_name` ASC, `applicant_id` ASC.",
+      "Query: SELECT applicant_id, CONCAT(first_name, ' ', last_name) AS full_name, email, years_experience FROM applicants ORDER BY full_name ASC, applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-09-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-09-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-09-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-10",
+    "slug": "hr-job-postings-experience-tiers",
+    "title": "Categorize Job Requisitions by Seniority Experience Band",
+    "description_markdown": "Classify job postings in `job_postings` into career seniority bands using `CASE` as `seniority_tier`:\n- If `min_experience_years >= 7`, return `'Principal/Staff'`\n- Else if `min_experience_years >= 5`, return `'Senior'`\n- Otherwise, return `'Mid-Level'`\n\nReturn `posting_id`, `title`, `min_experience_years`, and `seniority_tier`. Order by `min_experience_years` DESC, `posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "min_experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "seniority_tier",
+        "type": "varchar"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT posting_id, title, min_experience_years, CASE WHEN min_experience_years >= 7 THEN 'Principal/Staff' WHEN min_experience_years >= 5 THEN 'Senior' ELSE 'Mid-Level' END AS seniority_tier FROM job_postings ORDER BY min_experience_years DESC, posting_id ASC;",
+    "solution_explanation": "Applies conditional evaluation to required experience.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `CASE WHEN min_experience_years >= 7 THEN 'Principal/Staff' WHEN min_experience_years >= 5 THEN 'Senior' ELSE 'Mid-Level' END`.",
+      "Order by `min_experience_years` DESC, `posting_id` ASC.",
+      "Query: SELECT posting_id, title, min_experience_years, CASE WHEN min_experience_years >= 7 THEN 'Principal/Staff' WHEN min_experience_years >= 5 THEN 'Senior' ELSE 'Mid-Level' END AS seniority_tier FROM job_postings ORDER BY min_experience_years DESC, posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-10-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-10-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-10-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-11",
+    "slug": "hr-interviews-with-candidate-names",
+    "title": "Join Interview Evaluations with Candidate and Requisition Names",
+    "description_markdown": "Build an interview tracking ledger by joining `interview_stages`, `applicants`, and `job_postings`. Return `i.stage_id`, `a.first_name`, `a.last_name`, `jp.title`, `i.stage_name`, and `i.interviewer_score`. Order by `i.stage_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages",
+      "applicants",
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "interviewer_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT i.stage_id, a.first_name, a.last_name, jp.title, i.stage_name, i.interviewer_score FROM interview_stages i JOIN applicants a ON i.applicant_id = a.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id ORDER BY i.stage_id ASC;",
+    "solution_explanation": "Three-table inner join relating candidates, interview evaluations, and requisitions.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `interview_stages i` to `applicants a` and `job_postings jp`.",
+      "Order by `i.stage_id` ASC.",
+      "Query: SELECT i.stage_id, a.first_name, a.last_name, jp.title, i.stage_name, i.interviewer_score FROM interview_stages i JOIN applicants a ON i.applicant_id = a.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id ORDER BY i.stage_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-11-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-11-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-11-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-12",
+    "slug": "hr-job-offers-summary",
+    "title": "Aggregate Company-Wide Offer Volume and Payroll Commitments",
+    "description_markdown": "Offer package executive summary: Across all extended employment packages in `job_offers`, compute total offers (`COUNT(offer_id)` as `total_offers`), total committed payroll (`SUM(offered_salary)` as `total_payroll_offered`), and average offer amount (`ROUND(AVG(offered_salary), 2)` as `avg_offered_salary`).",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "easy",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "total_offers",
+        "type": "bigint"
+      },
+      {
+        "name": "total_payroll_offered",
+        "type": "numeric"
+      },
+      {
+        "name": "avg_offered_salary",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT COUNT(offer_id) AS total_offers, SUM(offered_salary) AS total_payroll_offered, ROUND(AVG(offered_salary), 2) AS avg_offered_salary FROM job_offers;",
+    "solution_explanation": "Aggregates offer count, sum, and average across all job offers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(offer_id)`, `SUM(offered_salary)`, and `ROUND(AVG(offered_salary), 2)`.",
+      "No GROUP BY clause is necessary for whole-table summary.",
+      "Query: SELECT COUNT(offer_id) AS total_offers, SUM(offered_salary) AS total_payroll_offered, ROUND(AVG(offered_salary), 2) AS avg_offered_salary FROM job_offers;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 4,
+    "xp": 10,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-12-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-12-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-12-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-13",
+    "slug": "hr-applicant-qualification-surplus",
+    "title": "Calculate Applicant Experience Surplus Over Requisition Minimum",
+    "description_markdown": "Competency qualification check: For candidates interviewing for positions, calculate the experience surplus above the role's requirement: `(a.years_experience - jp.min_experience_years)` as `experience_surplus`. Return distinct records with `a.applicant_id`, `a.first_name`, `jp.title`, `a.years_experience`, `jp.min_experience_years`, and `experience_surplus`. Order by `experience_surplus` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages",
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "min_experience_years",
+        "type": "integer"
+      },
+      {
+        "name": "experience_surplus",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT a.applicant_id, a.first_name, jp.title, a.years_experience, jp.min_experience_years, (a.years_experience - jp.min_experience_years) AS experience_surplus FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id ORDER BY experience_surplus DESC, a.applicant_id ASC;",
+    "solution_explanation": "Computes differential between candidate experience and role prerequisites.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `applicants`, `interview_stages`, and `job_postings`.",
+      "Compute `(a.years_experience - jp.min_experience_years)` as `experience_surplus`.",
+      "Query: SELECT DISTINCT a.applicant_id, a.first_name, jp.title, a.years_experience, jp.min_experience_years, (a.years_experience - jp.min_experience_years) AS experience_surplus FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id ORDER BY experience_surplus DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-13-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-13-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-13-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-14",
+    "slug": "hr-applicants-without-interviews",
+    "title": "Identify Uncontacted Candidates with Zero Interview History",
+    "description_markdown": "Talent pipeline audit: Find all candidates in `applicants` who have not completed any interview stages in `interview_stages`. Return `a.applicant_id`, `a.first_name`, `a.last_name`, `a.email`, and `a.years_experience`. Order by `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "email",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.applicant_id, a.first_name, a.last_name, a.email, a.years_experience FROM applicants a LEFT JOIN interview_stages i ON a.applicant_id = i.applicant_id WHERE i.stage_id IS NULL ORDER BY a.applicant_id ASC;",
+    "solution_explanation": "Anti-join identifying un-interviewed applicants.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN interview_stages i ON a.applicant_id = i.applicant_id`.",
+      "Filter with `WHERE i.stage_id IS NULL`.",
+      "Query: SELECT a.applicant_id, a.first_name, a.last_name, a.email, a.years_experience FROM applicants a LEFT JOIN interview_stages i ON a.applicant_id = i.applicant_id WHERE i.stage_id IS NULL ORDER BY a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-14-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-14-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-14-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-15",
+    "slug": "hr-job-postings-without-offers",
+    "title": "Identify Active Requisitions Without Any Extended Job Offers",
+    "description_markdown": "Hiring velocity review: Find all job openings in `job_postings` that have never had a job offer extended in `job_offers`. Return `jp.posting_id`, `jp.title`, `jp.department`, and `jp.base_salary_max`. Order by `jp.posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings",
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT jp.posting_id, jp.title, jp.department, jp.base_salary_max FROM job_postings jp LEFT JOIN job_offers jo ON jp.posting_id = jo.posting_id WHERE jo.offer_id IS NULL ORDER BY jp.posting_id ASC;",
+    "solution_explanation": "Anti-join identifying unfilled openings without offers.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Left join `job_postings jp` with `job_offers jo` on `jp.posting_id = jo.posting_id`.",
+      "Filter with `WHERE jo.offer_id IS NULL`.",
+      "Query: SELECT jp.posting_id, jp.title, jp.department, jp.base_salary_max FROM job_postings jp LEFT JOIN job_offers jo ON jp.posting_id = jo.posting_id WHERE jo.offer_id IS NULL ORDER BY jp.posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-15-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-15-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-15-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-16",
+    "slug": "hr-candidate-overall-average-score",
+    "title": "Compute Aggregate Candidate Interview Performance",
+    "description_markdown": "Candidate scorecard: For each applicant who has gone through interviews, calculate total rounds completed (`COUNT(i.stage_id)` as `total_stages`) and their overall mean score (`ROUND(AVG(i.interviewer_score), 2)` as `candidate_avg_score`). Return `a.applicant_id`, `a.first_name`, `a.last_name`, `total_stages`, and `candidate_avg_score`. Order by `candidate_avg_score` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "total_stages",
+        "type": "bigint"
+      },
+      {
+        "name": "candidate_avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.applicant_id, a.first_name, a.last_name, COUNT(i.stage_id) AS total_stages, ROUND(AVG(i.interviewer_score), 2) AS candidate_avg_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id GROUP BY a.applicant_id, a.first_name, a.last_name ORDER BY candidate_avg_score DESC, a.applicant_id ASC;",
+    "solution_explanation": "Aggregates interview stage scores per individual applicant.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `applicants a` and `interview_stages i`.",
+      "Group by `a.applicant_id, a.first_name, a.last_name`.",
+      "Query: SELECT a.applicant_id, a.first_name, a.last_name, COUNT(i.stage_id) AS total_stages, ROUND(AVG(i.interviewer_score), 2) AS candidate_avg_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id GROUP BY a.applicant_id, a.first_name, a.last_name ORDER BY candidate_avg_score DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-16-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-16-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-16-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-17",
+    "slug": "hr-offer-salary-to-budget-ratio",
+    "title": "Calculate Offered Compensation Share of Budget Band Ceiling",
+    "description_markdown": "Compensation fairness review: For each record in `job_offers`, compute what percentage of the role's maximum base salary was offered: `ROUND((jo.offered_salary * 100.0) / jp.base_salary_max, 2)` as `pct_of_budget`. Return `jo.offer_id`, `jp.title`, `jo.offered_salary`, `jp.base_salary_max`, and `pct_of_budget`. Order by `pct_of_budget` DESC, `jo.offer_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_offers",
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "offer_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "offered_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      },
+      {
+        "name": "pct_of_budget",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT jo.offer_id, jp.title, jo.offered_salary, jp.base_salary_max, ROUND((jo.offered_salary * 100.0) / jp.base_salary_max, 2) AS pct_of_budget FROM job_offers jo JOIN job_postings jp ON jo.posting_id = jp.posting_id ORDER BY pct_of_budget DESC, jo.offer_id ASC;",
+    "solution_explanation": "Compares offered compensation package to departmental max budget ceiling.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Compute `ROUND((jo.offered_salary * 100.0) / jp.base_salary_max, 2)`.",
+      "Join on `jo.posting_id = jp.posting_id`.",
+      "Query: SELECT jo.offer_id, jp.title, jo.offered_salary, jp.base_salary_max, ROUND((jo.offered_salary * 100.0) / jp.base_salary_max, 2) AS pct_of_budget FROM job_offers jo JOIN job_postings jp ON jo.posting_id = jp.posting_id ORDER BY pct_of_budget DESC, jo.offer_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-17-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-17-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-17-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-18",
+    "slug": "hr-highest-scoring-stage-per-candidate",
+    "title": "Identify Top Scoring Interview Stage per Candidate",
+    "description_markdown": "Using `ROW_NUMBER()`, retrieve the single highest-scoring interview stage completed by each candidate. If scores tie, select the lowest `stage_id`. Return `applicant_id`, `posting_id`, `stage_name`, and `interviewer_score`. Order by `applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "interviewer_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "WITH TopStages AS (SELECT applicant_id, posting_id, stage_name, interviewer_score, ROW_NUMBER() OVER (PARTITION BY applicant_id ORDER BY interviewer_score DESC, stage_id ASC) AS rn FROM interview_stages) SELECT applicant_id, posting_id, stage_name, interviewer_score FROM TopStages WHERE rn = 1 ORDER BY applicant_id ASC;",
+    "solution_explanation": "Uses ROW_NUMBER() partitioned by applicant to find their highest rating.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROW_NUMBER() OVER (PARTITION BY applicant_id ORDER BY interviewer_score DESC, stage_id ASC)` in a CTE.",
+      "Filter outer query with `WHERE rn = 1`.",
+      "Query: WITH TopStages AS (SELECT applicant_id, posting_id, stage_name, interviewer_score, ROW_NUMBER() OVER (PARTITION BY applicant_id ORDER BY interviewer_score DESC, stage_id ASC) AS rn FROM interview_stages) SELECT applicant_id, posting_id, stage_name, interviewer_score FROM TopStages WHERE rn = 1 ORDER BY applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-18-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-18-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-18-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-19",
+    "slug": "hr-rank-applicants-by-experience",
+    "title": "Dense Rank Candidate Pool by Years of Industry Experience",
+    "description_markdown": "Rank all candidates in `applicants` by `years_experience` descending using `DENSE_RANK()` as `exp_rank`. Return `applicant_id`, `first_name`, `last_name`, `years_experience`, and `exp_rank`. Order by `exp_rank` ASC, `applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "exp_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT applicant_id, first_name, last_name, years_experience, DENSE_RANK() OVER (ORDER BY years_experience DESC) AS exp_rank FROM applicants ORDER BY exp_rank ASC, applicant_id ASC;",
+    "solution_explanation": "Applies DENSE_RANK window function ordered by years of experience.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY years_experience DESC)`.",
+      "Order by `exp_rank` ASC, `applicant_id` ASC.",
+      "Query: SELECT applicant_id, first_name, last_name, years_experience, DENSE_RANK() OVER (ORDER BY years_experience DESC) AS exp_rank FROM applicants ORDER BY exp_rank ASC, applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-19-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-19-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-19-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-20",
+    "slug": "hr-postings-with-above-average-salary",
+    "title": "Filter Requisitions Exceeding Company Mean Base Salary",
+    "description_markdown": "Filter job requisitions in `job_postings` whose salary ceiling is strictly greater than the average maximum base salary across all job postings. Return `posting_id`, `title`, `department`, and `base_salary_max`. Order by `base_salary_max` DESC, `posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE base_salary_max > (SELECT AVG(base_salary_max) FROM job_postings) ORDER BY base_salary_max DESC, posting_id ASC;",
+    "solution_explanation": "Uses a scalar subquery in the WHERE clause comparing to overall mean salary.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `WHERE base_salary_max > (SELECT AVG(base_salary_max) FROM job_postings)`.",
+      "Order by `base_salary_max` DESC, `posting_id` ASC.",
+      "Query: SELECT posting_id, title, department, base_salary_max FROM job_postings WHERE base_salary_max > (SELECT AVG(base_salary_max) FROM job_postings) ORDER BY base_salary_max DESC, posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-20-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-20-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-20-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-21",
+    "slug": "hr-interview-progression-lag",
+    "title": "Track Previous Interview Round Score with Window LAG",
+    "description_markdown": "Candidate score trajectory: For each record in `interview_stages`, display the candidate's score from their immediately preceding interview round using `LAG(interviewer_score) OVER (PARTITION BY applicant_id ORDER BY completed_at ASC, stage_id ASC)` as `prev_score`. Return `stage_id`, `applicant_id`, `stage_name`, `interviewer_score`, `completed_at`, and `prev_score`. Order by `applicant_id` ASC, `completed_at` ASC, `stage_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_id",
+        "type": "integer"
+      },
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "interviewer_score",
+        "type": "integer"
+      },
+      {
+        "name": "completed_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "prev_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage_id, applicant_id, stage_name, interviewer_score, completed_at, LAG(interviewer_score) OVER (PARTITION BY applicant_id ORDER BY completed_at ASC, stage_id ASC) AS prev_score FROM interview_stages ORDER BY applicant_id ASC, completed_at ASC, stage_id ASC;",
+    "solution_explanation": "Applies LAG window function over candidate interview timelines.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LAG(interviewer_score) OVER (PARTITION BY applicant_id ORDER BY completed_at ASC, stage_id ASC)`.",
+      "Order by `applicant_id` ASC, `completed_at` ASC, `stage_id` ASC.",
+      "Query: SELECT stage_id, applicant_id, stage_name, interviewer_score, completed_at, LAG(interviewer_score) OVER (PARTITION BY applicant_id ORDER BY completed_at ASC, stage_id ASC) AS prev_score FROM interview_stages ORDER BY applicant_id ASC, completed_at ASC, stage_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-21-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-21-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-21-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-22",
+    "slug": "hr-postings-with-multiple-interviewees",
+    "title": "Count Candidates Evaluated per Job Requisition",
+    "description_markdown": "Hiring volume metrics: For each opening that has conducted interviews, count unique candidates evaluated (`COUNT(DISTINCT i.applicant_id)` as `applicant_count`). Return `jp.posting_id`, `jp.title`, and `applicant_count`. Order by `applicant_count` DESC, `jp.posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings",
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "applicant_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT jp.posting_id, jp.title, COUNT(DISTINCT i.applicant_id) AS applicant_count FROM job_postings jp JOIN interview_stages i ON jp.posting_id = i.posting_id GROUP BY jp.posting_id, jp.title ORDER BY applicant_count DESC, jp.posting_id ASC;",
+    "solution_explanation": "Counts distinct candidates participating in interview loops per requisition.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `job_postings jp` and `interview_stages i`.",
+      "Group by `jp.posting_id, jp.title`.",
+      "Query: SELECT jp.posting_id, jp.title, COUNT(DISTINCT i.applicant_id) AS applicant_count FROM job_postings jp JOIN interview_stages i ON jp.posting_id = i.posting_id GROUP BY jp.posting_id, jp.title ORDER BY applicant_count DESC, jp.posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-22-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-22-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-22-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-23",
+    "slug": "hr-offer-acceptance-rate-by-dept",
+    "title": "Count Extended and Accepted Job Offers by Department",
+    "description_markdown": "Department hiring success: For each department with job offers, count total offers extended (`COUNT(jo.offer_id)` as `total_offers`) and the count of accepted offers (`SUM(CASE WHEN jo.status = 'accepted' THEN 1 ELSE 0 END)` as `accepted_count`). Return `jp.department`, `total_offers`, and `accepted_count`. Order by `total_offers` DESC, `jp.department` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings",
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "total_offers",
+        "type": "bigint"
+      },
+      {
+        "name": "accepted_count",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT jp.department, COUNT(jo.offer_id) AS total_offers, SUM(CASE WHEN jo.status = 'accepted' THEN 1 ELSE 0 END) AS accepted_count FROM job_postings jp JOIN job_offers jo ON jp.posting_id = jo.posting_id GROUP BY jp.department ORDER BY total_offers DESC, jp.department ASC;",
+    "solution_explanation": "Conditional aggregation quantifying accepted employment offers per department.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `job_postings jp` and `job_offers jo`.",
+      "Use `SUM(CASE WHEN jo.status = 'accepted' THEN 1 ELSE 0 END)`.",
+      "Query: SELECT jp.department, COUNT(jo.offer_id) AS total_offers, SUM(CASE WHEN jo.status = 'accepted' THEN 1 ELSE 0 END) AS accepted_count FROM job_postings jp JOIN job_offers jo ON jp.posting_id = jo.posting_id GROUP BY jp.department ORDER BY total_offers DESC, jp.department ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-23-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-23-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-23-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-24",
+    "slug": "hr-cumulative-interview-count",
+    "title": "Compute Running Cumulative Completed Interview Count",
+    "description_markdown": "Interview throughput cadence: Compute a running cumulative count of completed interviews chronologically: `COUNT(stage_id) OVER (ORDER BY completed_at ASC, stage_id ASC)` as `cumulative_interviews`. Return `stage_id`, `applicant_id`, `stage_name`, `completed_at`, and `cumulative_interviews`. Order by `completed_at` ASC, `stage_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_id",
+        "type": "integer"
+      },
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "completed_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "cumulative_interviews",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage_id, applicant_id, stage_name, completed_at, COUNT(stage_id) OVER (ORDER BY completed_at ASC, stage_id ASC) AS cumulative_interviews FROM interview_stages ORDER BY completed_at ASC, stage_id ASC;",
+    "solution_explanation": "Running count window function over chronological evaluation timestamps.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `COUNT(stage_id) OVER (ORDER BY completed_at ASC, stage_id ASC)`.",
+      "Order by `completed_at` ASC, `stage_id` ASC.",
+      "Query: SELECT stage_id, applicant_id, stage_name, completed_at, COUNT(stage_id) OVER (ORDER BY completed_at ASC, stage_id ASC) AS cumulative_interviews FROM interview_stages ORDER BY completed_at ASC, stage_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-24-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-24-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-24-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-25",
+    "slug": "hr-salary-delta-from-department-avg",
+    "title": "Compute Salary Band Differential from Department Average",
+    "description_markdown": "Using `AVG() OVER (PARTITION BY department)`, compute the dollar differential between each role's salary ceiling and its departmental average: `ROUND(base_salary_max - AVG(base_salary_max) OVER (PARTITION BY department), 2)` as `salary_diff_from_dept_avg`. Return `posting_id`, `title`, `department`, `base_salary_max`, and `salary_diff_from_dept_avg`. Order by `department` ASC, `base_salary_max` DESC, `posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      },
+      {
+        "name": "salary_diff_from_dept_avg",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT posting_id, title, department, base_salary_max, ROUND(base_salary_max - AVG(base_salary_max) OVER (PARTITION BY department), 2) AS salary_diff_from_dept_avg FROM job_postings ORDER BY department ASC, base_salary_max DESC, posting_id ASC;",
+    "solution_explanation": "Compares individual requisition salaries against the departmental partition mean.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `ROUND(base_salary_max - AVG(base_salary_max) OVER (PARTITION BY department), 2)`.",
+      "Order by `department` ASC, `base_salary_max` DESC, `posting_id` ASC.",
+      "Query: SELECT posting_id, title, department, base_salary_max, ROUND(base_salary_max - AVG(base_salary_max) OVER (PARTITION BY department), 2) AS salary_diff_from_dept_avg FROM job_postings ORDER BY department ASC, base_salary_max DESC, posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-25-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-25-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-25-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-26",
+    "slug": "hr-candidates-meeting-all-posting-criteria",
+    "title": "Filter Qualified Candidates Meeting Experience Prerequisites",
+    "description_markdown": "Screening compliance: Retrieve distinct candidate-job pairings where the applicant meets or exceeds the role's mandatory experience (`a.years_experience >= jp.min_experience_years`). Return `a.applicant_id`, `a.first_name`, `a.last_name`, `jp.title`, `a.years_experience`, and `jp.min_experience_years`. Order by `a.applicant_id` ASC, `jp.title` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "medium",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages",
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "min_experience_years",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT DISTINCT a.applicant_id, a.first_name, a.last_name, jp.title, a.years_experience, jp.min_experience_years FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id WHERE a.years_experience >= jp.min_experience_years ORDER BY a.applicant_id ASC, jp.title ASC;",
+    "solution_explanation": "Joins candidates to their interviewed postings and filters by experience compliance.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `applicants`, `interview_stages`, and `job_postings`.",
+      "Filter with `WHERE a.years_experience >= jp.min_experience_years`.",
+      "Query: SELECT DISTINCT a.applicant_id, a.first_name, a.last_name, jp.title, a.years_experience, jp.min_experience_years FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id JOIN job_postings jp ON i.posting_id = jp.posting_id WHERE a.years_experience >= jp.min_experience_years ORDER BY a.applicant_id ASC, jp.title ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 6,
+    "xp": 20,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-26-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-26-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-26-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-27",
+    "slug": "hr-perfect-candidates-hire-pipeline",
+    "title": "Filter Strong Performers Scoring At Least 4 in All Rounds",
+    "description_markdown": "Elite hiring bar: Identify applicants who scored at least 4 in every single interview stage they took (`MIN(i.interviewer_score) >= 4`). Return `a.applicant_id`, `a.first_name`, `a.last_name`, `COUNT(i.stage_id)` as `stages_completed`, and `MIN(i.interviewer_score)` as `lowest_score`. Order by `stages_completed` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "stages_completed",
+        "type": "bigint"
+      },
+      {
+        "name": "lowest_score",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.applicant_id, a.first_name, a.last_name, COUNT(i.stage_id) AS stages_completed, MIN(i.interviewer_score) AS lowest_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id GROUP BY a.applicant_id, a.first_name, a.last_name HAVING MIN(i.interviewer_score) >= 4 ORDER BY stages_completed DESC, a.applicant_id ASC;",
+    "solution_explanation": "Uses HAVING MIN(...) >= 4 to assert unanimous high ratings.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `a.applicant_id, a.first_name, a.last_name`.",
+      "Filter with `HAVING MIN(i.interviewer_score) >= 4`.",
+      "Query: SELECT a.applicant_id, a.first_name, a.last_name, COUNT(i.stage_id) AS stages_completed, MIN(i.interviewer_score) AS lowest_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id GROUP BY a.applicant_id, a.first_name, a.last_name HAVING MIN(i.interviewer_score) >= 4 ORDER BY stages_completed DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-27-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-27-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-27-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-28",
+    "slug": "hr-offer-vs-applicant-experience-efficiency",
+    "title": "Calculate Offered Salary Efficiency per Year of Experience",
+    "description_markdown": "Compensation efficiency: For candidates who received a job offer, calculate offered compensation per year of professional experience: `ROUND((jo.offered_salary * 1.0) / a.years_experience, 2)` as `salary_per_exp_year`. Return `a.applicant_id`, `a.first_name`, `a.years_experience`, `jo.offered_salary`, and `salary_per_exp_year`. Order by `salary_per_exp_year` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "years_experience",
+        "type": "integer"
+      },
+      {
+        "name": "offered_salary",
+        "type": "numeric"
+      },
+      {
+        "name": "salary_per_exp_year",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.applicant_id, a.first_name, a.years_experience, jo.offered_salary, ROUND((jo.offered_salary * 1.0) / a.years_experience, 2) AS salary_per_exp_year FROM applicants a JOIN job_offers jo ON a.applicant_id = jo.applicant_id ORDER BY salary_per_exp_year DESC, a.applicant_id ASC;",
+    "solution_explanation": "Divides offer remuneration by candidate tenure.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `applicants a` and `job_offers jo`.",
+      "Compute `ROUND((jo.offered_salary * 1.0) / a.years_experience, 2)`.",
+      "Query: SELECT a.applicant_id, a.first_name, a.years_experience, jo.offered_salary, ROUND((jo.offered_salary * 1.0) / a.years_experience, 2) AS salary_per_exp_year FROM applicants a JOIN job_offers jo ON a.applicant_id = jo.applicant_id ORDER BY salary_per_exp_year DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-28-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-28-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-28-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-29",
+    "slug": "hr-department-compensation-percentile",
+    "title": "Dense Rank Requisitions Globally by Compensation Ceiling",
+    "description_markdown": "Global compensation ladder: Rank all openings in `job_postings` by maximum base salary descending using `DENSE_RANK()` as `company_salary_rank`. Return `posting_id`, `title`, `department`, `base_salary_max`, and `company_salary_rank`. Order by `company_salary_rank` ASC, `posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "department",
+        "type": "varchar"
+      },
+      {
+        "name": "base_salary_max",
+        "type": "numeric"
+      },
+      {
+        "name": "company_salary_rank",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT posting_id, title, department, base_salary_max, DENSE_RANK() OVER (ORDER BY base_salary_max DESC) AS company_salary_rank FROM job_postings ORDER BY company_salary_rank ASC, posting_id ASC;",
+    "solution_explanation": "Applies DENSE_RANK window function ordered by salary cap.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `DENSE_RANK() OVER (ORDER BY base_salary_max DESC)`.",
+      "Order by `company_salary_rank` ASC, `posting_id` ASC.",
+      "Query: SELECT posting_id, title, department, base_salary_max, DENSE_RANK() OVER (ORDER BY base_salary_max DESC) AS company_salary_rank FROM job_postings ORDER BY company_salary_rank ASC, posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-29-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-29-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-29-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-30",
+    "slug": "hr-interview-stage-score-spread",
+    "title": "Measure Interview Rubric Variance and Rating Spread",
+    "description_markdown": "Evaluation calibration: For each distinct `stage_name`, calculate total evaluations (`COUNT(stage_id)` as `conducted_count`), lowest score (`MIN(interviewer_score)` as `min_score`), highest score (`MAX(interviewer_score)` as `max_score`), and spread (`(MAX(interviewer_score) - MIN(interviewer_score))` as `score_range`). Return `stage_name`, `conducted_count`, `min_score`, `max_score`, and `score_range`. Order by `conducted_count` DESC, `stage_name` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "interview_stages"
+    ],
+    "expected_columns": [
+      {
+        "name": "stage_name",
+        "type": "varchar"
+      },
+      {
+        "name": "conducted_count",
+        "type": "bigint"
+      },
+      {
+        "name": "min_score",
+        "type": "integer"
+      },
+      {
+        "name": "max_score",
+        "type": "integer"
+      },
+      {
+        "name": "score_range",
+        "type": "integer"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT stage_name, COUNT(stage_id) AS conducted_count, MIN(interviewer_score) AS min_score, MAX(interviewer_score) AS max_score, (MAX(interviewer_score) - MIN(interviewer_score)) AS score_range FROM interview_stages GROUP BY stage_name ORDER BY conducted_count DESC, stage_name ASC;",
+    "solution_explanation": "Aggregates min, max, and spread of interview scoring bands.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Group by `stage_name`.",
+      "Compute `MAX(interviewer_score) - MIN(interviewer_score)` as `score_range`.",
+      "Query: SELECT stage_name, COUNT(stage_id) AS conducted_count, MIN(interviewer_score) AS min_score, MAX(interviewer_score) AS max_score, (MAX(interviewer_score) - MIN(interviewer_score)) AS score_range FROM interview_stages GROUP BY stage_name ORDER BY conducted_count DESC, stage_name ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-30-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-30-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-30-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-31",
+    "slug": "hr-hiring-funnel-conversion-rate",
+    "title": "Aggregate Full Recruitment Funnel Conversion by Requisition",
+    "description_markdown": "Hiring funnel conversion: For each job posting in `job_postings`, count distinct interviewed candidates (`COUNT(DISTINCT i.applicant_id)` as `interviewed_candidates`) and distinct job offers extended (`COUNT(DISTINCT jo.offer_id)` as `offers_extended`). Return `jp.posting_id`, `jp.title`, `interviewed_candidates`, and `offers_extended`. Order by `jp.posting_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "job_postings",
+      "interview_stages",
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "posting_id",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      },
+      {
+        "name": "interviewed_candidates",
+        "type": "bigint"
+      },
+      {
+        "name": "offers_extended",
+        "type": "bigint"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT jp.posting_id, jp.title, COUNT(DISTINCT i.applicant_id) AS interviewed_candidates, COUNT(DISTINCT jo.offer_id) AS offers_extended FROM job_postings jp LEFT JOIN interview_stages i ON jp.posting_id = i.posting_id LEFT JOIN job_offers jo ON jp.posting_id = jo.posting_id GROUP BY jp.posting_id, jp.title ORDER BY jp.posting_id ASC;",
+    "solution_explanation": "Multi-table outer joins aggregating distinct candidates interviewed and offers extended.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Use `LEFT JOIN interview_stages i` and `LEFT JOIN job_offers jo`.",
+      "Group by `jp.posting_id, jp.title`.",
+      "Query: SELECT jp.posting_id, jp.title, COUNT(DISTINCT i.applicant_id) AS interviewed_candidates, COUNT(DISTINCT jo.offer_id) AS offers_extended FROM job_postings jp LEFT JOIN interview_stages i ON jp.posting_id = i.posting_id LEFT JOIN job_offers jo ON jp.posting_id = jo.posting_id GROUP BY jp.posting_id, jp.title ORDER BY jp.posting_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-31-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-31-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-31-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  },
+  {
+    "id": "q-sc-hr-32",
+    "slug": "hr-unsuccessful-candidate-audit",
+    "title": "Audit Interviewed Candidates Not Extended Any Job Offer",
+    "description_markdown": "Talent pipeline disposition audit: Find applicants who completed at least one interview stage but never received an offer in `job_offers`. Compute their average interview score (`ROUND(AVG(i.interviewer_score), 2)` as `avg_score`). Return `a.applicant_id`, `a.first_name`, `a.last_name`, and `avg_score`. Order by `avg_score` DESC, `a.applicant_id` ASC.",
+    "topic_id": "scenario-hr",
+    "subtopic_id": "sc-hr",
+    "difficulty": "hard",
+    "dialect": "postgresql",
+    "database_id": "hr",
+    "question_type": "select",
+    "tables_involved": [
+      "applicants",
+      "interview_stages",
+      "job_offers"
+    ],
+    "expected_columns": [
+      {
+        "name": "applicant_id",
+        "type": "integer"
+      },
+      {
+        "name": "first_name",
+        "type": "varchar"
+      },
+      {
+        "name": "last_name",
+        "type": "varchar"
+      },
+      {
+        "name": "avg_score",
+        "type": "numeric"
+      }
+    ],
+    "order_matters": true,
+    "comparison_config": {
+      "compare_column_names": true
+    },
+    "starter_query": "-- Write your solution query here\nSELECT ...",
+    "solution_query": "SELECT a.applicant_id, a.first_name, a.last_name, ROUND(AVG(i.interviewer_score), 2) AS avg_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id LEFT JOIN job_offers jo ON a.applicant_id = jo.applicant_id WHERE jo.offer_id IS NULL GROUP BY a.applicant_id, a.first_name, a.last_name ORDER BY avg_score DESC, a.applicant_id ASC;",
+    "solution_explanation": "Anti-join on job offers filtering candidate pool to rejected or pending interviewees.",
+    "alternative_solutions": [],
+    "common_mistakes": [],
+    "dialect_notes": "",
+    "hints": [
+      "Join `applicants a` and `interview_stages i`, then `LEFT JOIN job_offers jo`.",
+      "Filter with `WHERE jo.offer_id IS NULL` and group by candidate.",
+      "Query: SELECT a.applicant_id, a.first_name, a.last_name, ROUND(AVG(i.interviewer_score), 2) AS avg_score FROM applicants a JOIN interview_stages i ON a.applicant_id = i.applicant_id LEFT JOIN job_offers jo ON a.applicant_id = jo.applicant_id WHERE jo.offer_id IS NULL GROUP BY a.applicant_id, a.first_name, a.last_name ORDER BY avg_score DESC, a.applicant_id ASC;"
+    ],
+    "tags": [
+      "hr",
+      "sc-hr"
+    ],
+    "source": "original",
+    "estimated_minutes": 8,
+    "xp": 30,
+    "status": "published",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "tc-sc-hr-32-1",
+        "name": "Visible Sample",
+        "is_hidden": false,
+        "dataset_name": "sample"
+      },
+      {
+        "id": "tc-sc-hr-32-2",
+        "name": "Hidden Test 1",
+        "is_hidden": true,
+        "dataset_name": "hidden_1"
+      },
+      {
+        "id": "tc-sc-hr-32-3",
+        "name": "Hidden Test 2",
+        "is_hidden": true,
+        "dataset_name": "hidden_2"
+      }
+    ]
+  }
+]
