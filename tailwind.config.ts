@@ -11,32 +11,44 @@ const config: Config = {
     extend: {
       colors: {
         background: {
-          DEFAULT: "#0f172a", // Dark charcoal slate
-          darker: "#0a0f1d",
-          card: "#1e293b",
-          border: "#334155",
+          DEFAULT: "var(--bg-base)",
+          panel: "var(--bg-panel)",
+          surface: "var(--bg-surface)",
+          border: "var(--border-color)",
+          darker: "#0a0a12",
+          card: "#12121f",
+        },
+        cyber: {
+          void: "#0a0a12",
+          surface: "#12121f",
+          lime: "#39ff14",
+          yellow: "#fcee0a",
+          magenta: "#ff007f",
+          cyan: "#00f0ff",
+        },
+        neo: {
+          parchment: "#fbf9f5",
+          parchmentDark: "#f4f0ea",
+          cobalt: "#0022ff",
+          orange: "#ff4d00",
+          uv: "#7928ca",
+          black: "#000000",
         },
         primary: {
-          DEFAULT: "#3b82f6", // Vibrant blue
-          hover: "#2563eb",
-          light: "#60a5fa",
+          DEFAULT: "var(--accent-primary)",
+          hover: "var(--accent-primary-hover)",
+          light: "var(--accent-primary-light)",
         },
-        success: {
-          DEFAULT: "#10b981", // Emerald green
-          light: "#34d399",
-        },
-        warning: {
-          DEFAULT: "#f59e0b", // Amber
-          light: "#fbbf24",
-        },
-        danger: {
-          DEFAULT: "#ef4444", // Crimson red
-          light: "#f87171",
-        },
-        editor: {
-          bg: "#0d1117",
-          line: "#161b22",
-        }
+      },
+      boxShadow: {
+        "brutal-black": "4px 4px 0px #000000",
+        "brutal-black-sm": "2px 2px 0px #000000",
+        "brutal-cobalt": "4px 4px 0px #0022ff",
+        "brutal-orange": "4px 4px 0px #ff4d00",
+        "neon-cyan": "0 0 15px rgba(0, 240, 255, 0.5), 0 0 30px rgba(0, 240, 255, 0.2)",
+        "neon-magenta": "0 0 15px rgba(255, 0, 127, 0.5), 0 0 30px rgba(255, 0, 127, 0.2)",
+        "neon-lime": "0 0 15px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2)",
+        "neon-yellow": "0 0 15px rgba(252, 238, 10, 0.5), 0 0 30px rgba(252, 238, 10, 0.2)",
       },
     },
   },
