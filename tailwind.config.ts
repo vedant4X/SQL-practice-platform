@@ -17,17 +17,26 @@ const config: Config = {
           elevated: "var(--bg-elevated)",
           border: "var(--border-color)",
           darker: "var(--bg-base)",
-          card: "var(--bg-panel)",
+          card: "var(--bg-elevated)",
         },
         primary: {
           DEFAULT: "var(--accent-primary)",
           hover: "var(--accent-primary-hover)",
           light: "var(--accent-primary-light)",
+          text: "var(--accent-primary-text)",
         },
         editor: {
           bg: "var(--editor-bg)",
           line: "var(--editor-line)",
         },
+        border: {
+          control: "var(--border-control)",
+          DEFAULT: "var(--border-color)",
+        },
+      },
+      fontFamily: {
+        sans: ["'IBM Plex Sans'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        mono: ["'IBM Plex Mono'", "'JetBrains Mono'", "Consolas", "monospace"],
       },
       boxShadow: {
         subtle: "0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)",

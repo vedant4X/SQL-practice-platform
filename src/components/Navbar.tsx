@@ -29,7 +29,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme } = useTheme();
-  const isDark = theme === "dark";
 
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,16 +73,16 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--bg-base)]/95 backdrop-blur-md transition-colors">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-6">
-          {/* Minimalist Logo */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group transition">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-bold text-xs shadow-xs">
               <Database className="h-4 w-4" />
             </div>
-            <span className="text-sm tracking-tight font-semibold text-slate-900 dark:text-white">
-              SQL<span className="text-blue-600 dark:text-blue-400">Judge</span>
+            <span className="text-sm tracking-tight font-semibold text-[var(--text-main)]">
+              SQL<span className="text-[var(--accent-primary)]">Judge</span>
             </span>
           </Link>
 
@@ -91,52 +90,53 @@ export default function Navbar() {
           <div className="relative">
             <button
               onClick={() => setDialectDropdownOpen(!dialectDropdownOpen)}
-              className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              aria-label="Select database engine"
+              className="flex items-center gap-2 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
             >
-              <Server className="h-3 w-3 text-slate-500" />
+              <Server className="h-3 w-3 text-[var(--text-muted)]" />
               <span>{isPostgres ? "PostgreSQL 16" : "MySQL 8.4"}</span>
               <ChevronDown className="h-3 w-3 opacity-60" />
             </button>
 
             {dialectDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1 shadow-lg z-50 text-xs">
+              <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-card z-50 text-xs">
                 <button
                   onClick={() => handleSwitchDialect("postgresql")}
                   className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition ${
                     isPostgres
-                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      ? "bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] font-semibold"
+                      : "text-[var(--text-main)] hover:bg-[var(--bg-surface)]"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
                     <span>PostgreSQL 16</span>
                   </div>
-                  {isPostgres && <span className="text-[10px] text-blue-600 dark:text-blue-400">Active</span>}
+                  {isPostgres && <span className="text-[10px] text-[var(--accent-primary)]">Active</span>}
                 </button>
                 <button
                   onClick={() => handleSwitchDialect("mysql")}
                   className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition mt-0.5 ${
                     !isPostgres
-                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      ? "bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] font-semibold"
+                      : "text-[var(--text-main)] hover:bg-[var(--bg-surface)]"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-success)]" />
                     <span>MySQL 8.4</span>
                   </div>
-                  {!isPostgres && <span className="text-[10px] text-blue-600 dark:text-blue-400">Active</span>}
+                  {!isPostgres && <span className="text-[10px] text-[var(--accent-primary)]">Active</span>}
                 </button>
               </div>
             )}
           </div>
 
-          <nav className="hidden md:flex items-center gap-5 text-xs font-medium text-slate-600 dark:text-slate-400">
+          <nav className="hidden md:flex items-center gap-5 text-xs font-medium text-[var(--text-muted)]">
             <Link
               href={`/${activeDialect}/topics`}
-              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
-                pathname.includes("/topics") ? "text-slate-900 dark:text-white font-semibold" : ""
+              className={`flex items-center gap-1.5 transition hover:text-[var(--text-main)] ${
+                pathname.includes("/topics") ? "text-[var(--text-main)] font-semibold" : ""
               }`}
             >
               <BookOpen className="h-3.5 w-3.5" />
@@ -144,8 +144,8 @@ export default function Navbar() {
             </Link>
             <Link
               href={`/${activeDialect}/playground`}
-              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
-                pathname.includes("/playground") ? "text-slate-900 dark:text-white font-semibold" : ""
+              className={`flex items-center gap-1.5 transition hover:text-[var(--text-main)] ${
+                pathname.includes("/playground") ? "text-[var(--text-main)] font-semibold" : ""
               }`}
             >
               <Terminal className="h-3.5 w-3.5" />
@@ -153,8 +153,8 @@ export default function Navbar() {
             </Link>
             <Link
               href={`/${activeDialect}/dashboard`}
-              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
-                pathname.includes("/dashboard") ? "text-slate-900 dark:text-white font-semibold" : ""
+              className={`flex items-center gap-1.5 transition hover:text-[var(--text-main)] ${
+                pathname.includes("/dashboard") ? "text-[var(--text-main)] font-semibold" : ""
               }`}
             >
               <BarChart2 className="h-3.5 w-3.5" />
@@ -167,16 +167,16 @@ export default function Navbar() {
           <ThemeToggle />
 
           {loading ? (
-            <div className="h-7 w-20 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+            <div className="h-7 w-20 animate-pulse rounded bg-[var(--bg-surface)]" />
           ) : user ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
-                <Zap className="h-3 w-3 text-amber-500 fill-current" />
+              <div className="flex items-center gap-1 rounded bg-[var(--accent-warning-bg)] border border-[var(--accent-warning-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-warning-text)]">
+                <Zap className="h-3 w-3 text-[var(--accent-warning)] fill-current" />
                 <span>{user.totalXp || 0} XP</span>
               </div>
               <Link
                 href="/profile"
-                className="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                className="flex items-center gap-1.5 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs"
               >
                 <UserIcon className="h-3 w-3 opacity-60" />
                 <span className="max-w-[100px] truncate">{user.name}</span>
@@ -184,7 +184,8 @@ export default function Navbar() {
               <button
                 onClick={handleLogout}
                 title="Log out"
-                className="rounded p-1 text-slate-400 hover:text-rose-600 transition"
+                aria-label="Log out"
+                className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--accent-danger)] transition"
               >
                 <LogOut className="h-3.5 w-3.5" />
               </button>
@@ -193,13 +194,13 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="rounded px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
+                className="rounded px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-main)] transition"
               >
                 Sign In
               </Link>
               <Link
                 href="/register"
-                className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 transition shadow-sm"
+                className="rounded-md bg-[var(--accent-primary)] px-3 py-1 text-xs font-medium text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] transition shadow-xs"
               >
                 Get Started
               </Link>

@@ -1,100 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ==========================================================================
-   MINIMALISTIC HIGH-CONTRAST DESIGN SYSTEM (LIGHT & DARK)
+   QUIET GROVE THEME SYSTEM (DARK & LIGHT)
+   Atmospheric Forest Dusk & Natural Ivory-Green
    ========================================================================== */
 
 :root,
 html.light {
-  /* Clean Minimalist Light Mode */
-  --bg-base: #ffffff;
-  --bg-panel: #f8fafc;
-  --bg-surface: #f1f5f9;
-  --bg-elevated: #ffffff;
-  --border-color: #e2e8f0;
-  --border-strong: #cbd5e1;
+  color-scheme: light;
 
-  --text-main: #0f172a;        /* Deep slate-900: maximum legibility */
-  --text-secondary: #334155;   /* Slate-700 */
-  --text-muted: #64748b;       /* Slate-500 */
-  --text-faint: #94a3b8;       /* Slate-400 */
-  --text-inverse: #ffffff;
+  /* Natural Ivory-Green Light Mode */
+  --bg-base: #F4F7F4;
+  --bg-panel: #FFFFFF;
+  --bg-surface: #EBF1EB;
+  --bg-elevated: #EBF1EB;
+  --border-color: #D6E0D8;
+  --border-strong: #BACABA;
+  --border-control: #76927F;     /* 3.39:1 on #FFFFFF: Meets WCAG AA 3:1 */
 
-  --accent-primary: #2563eb;       /* Royal Blue */
-  --accent-primary-hover: #1d4ed8;
-  --accent-primary-light: #3b82f6;
+  --text-main: #1B2620;          /* 15.62:1 on #FFFFFF: WCAG AAA */
+  --text-secondary: #2D4036;     /* 11.06:1 on #FFFFFF: WCAG AAA */
+  --text-muted: #4E6556;         /* 6.33:1 on #FFFFFF: WCAG AA */
+  --text-faint: #5F7868;         /* 4.80:1 on #FFFFFF: WCAG AA */
+  --text-inverse: #FFFFFF;
 
-  --accent-success: #10b981;
-  --accent-success-bg: #ecfdf5;
-  --accent-success-border: #a7f3d0;
-  --accent-success-text: #065f46;
+  --accent-primary: #1B6E32;
+  --accent-primary-hover: #145526;
+  --accent-primary-light: #2E8B49;
+  --accent-primary-text: #FFFFFF;
 
-  --accent-danger: #ef4444;
-  --accent-danger-bg: #fef2f2;
-  --accent-danger-border: #fecaca;
-  --accent-danger-text: #991b1b;
+  --accent-success: #1B6E32;
+  --accent-success-bg: #EAF7EE;
+  --accent-success-border: #9DD4AC;
+  --accent-success-text: #135225;
 
-  --accent-warning: #f59e0b;
-  --accent-warning-bg: #fffbeb;
-  --accent-warning-border: #fde68a;
-  --accent-warning-text: #92400e;
+  --accent-warning: #8C530A;
+  --accent-warning-bg: #FEF7EE;
+  --accent-warning-border: #F3CF9E;
+  --accent-warning-text: #6B3E05;
 
-  --editor-bg: #ffffff;
-  --editor-line: #f8fafc;
+  --accent-danger: #B3261E;
+  --accent-danger-bg: #FDF2F2;
+  --accent-danger-border: #F5A39F;
+  --accent-danger-text: #871A14;
+
+  --accent-info: #155A8A;
+  --accent-info-bg: #F0F7FC;
+  --accent-info-border: #99C6E8;
+  --accent-info-text: #0E4266;
+
+  --editor-bg: #FFFFFF;
+  --editor-line: #F4F7F4;
 }
 
 html.dark {
-  /* Refined Minimalist Dark Mode */
-  --bg-base: #090d16;
-  --bg-panel: #0f172a;
-  --bg-surface: #1e293b;
-  --bg-elevated: #1e293b;
-  --border-color: #1e293b;
-  --border-strong: #334155;
+  color-scheme: dark;
 
-  --text-main: #f8fafc;        /* Slate-50: crisp white */
-  --text-secondary: #cbd5e1;   /* Slate-300 */
-  --text-muted: #94a3b8;       /* Slate-400 */
-  --text-faint: #64748b;       /* Slate-500 */
-  --text-inverse: #090d16;
+  /* Quiet Grove Atmospheric Forest Dusk Dark Mode */
+  --bg-base: #202B27;
+  --bg-panel: #273630;
+  --bg-surface: #2E3D35;
+  --bg-elevated: #2E3D35;
+  --border-color: #45574B;       /* Decorative divider */
+  --border-strong: #45574B;
+  --border-control: #6F8777;     /* 3.26:1 on #273630: Meets WCAG AA 3:1 */
 
-  --accent-primary: #3b82f6;
-  --accent-primary-hover: #2563eb;
-  --accent-primary-light: #60a5fa;
+  --text-main: #DDE8DE;          /* 10.06:1 on #273630: WCAG AAA */
+  --text-secondary: #A8C7B1;     /* 6.92:1 on #273630: WCAG AA */
+  --text-muted: #9BB1A1;         /* 5.55:1 on #273630: WCAG AA */
+  --text-faint: #93A89A;         /* 5.02:1 on #273630: WCAG AA */
+  --text-inverse: #202B27;
 
-  --accent-success: #10b981;
-  --accent-success-bg: rgba(16, 185, 129, 0.12);
-  --accent-success-border: rgba(16, 185, 129, 0.3);
-  --accent-success-text: #34d399;
+  --accent-primary: #8FD0A0;
+  --accent-primary-hover: #7ABF8D;
+  --accent-primary-light: #A5DCB3;
+  --accent-primary-text: #1B2620;
 
-  --accent-danger: #ef4444;
-  --accent-danger-bg: rgba(239, 68, 68, 0.12);
-  --accent-danger-border: rgba(239, 68, 68, 0.3);
-  --accent-danger-text: #f87171;
+  --accent-success: #8FD0A0;
+  --accent-success-bg: rgba(143, 208, 160, 0.14);
+  --accent-success-border: rgba(143, 208, 160, 0.35);
+  --accent-success-text: #8FD0A0;
 
-  --accent-warning: #f59e0b;
-  --accent-warning-bg: rgba(245, 158, 11, 0.12);
-  --accent-warning-border: rgba(245, 158, 11, 0.3);
-  --accent-warning-text: #fbbf24;
+  --accent-warning: #E5B782;
+  --accent-warning-bg: rgba(229, 183, 130, 0.14);
+  --accent-warning-border: rgba(229, 183, 130, 0.35);
+  --accent-warning-text: #E5B782;
 
-  --editor-bg: #090d16;
-  --editor-line: #0f172a;
+  --accent-danger: #F0958D;
+  --accent-danger-bg: rgba(240, 149, 141, 0.14);
+  --accent-danger-border: rgba(240, 149, 141, 0.35);
+  --accent-danger-text: #F0958D;
+
+  --accent-info: #91BDE0;
+  --accent-info-bg: rgba(145, 189, 224, 0.14);
+  --accent-info-border: rgba(145, 189, 224, 0.35);
+  --accent-info-text: #91BDE0;
+
+  --editor-bg: #273630;
+  --editor-line: #202B27;
 }
 
 body {
   background-color: var(--bg-base);
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-/* ==========================================================================
-   MINIMALIST BORDERS & SUBTLE SHADOWS
-   ========================================================================== */
+/* Monospace typography */
+code, pre, kbd, samp, .font-mono {
+  font-family: "IBM Plex Mono", "JetBrains Mono", Consolas, monospace !important;
+}
 
+/* ==========================================================================
+   STRICT AUTOFILL OVERRIDES (B2)
+   Prevents browser autofill from rendering unreadable text.
+   ========================================================================== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-main) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-panel) inset !important;
+  box-shadow: 0 0 0 1000px var(--bg-panel) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--text-main) !important;
+}
+
+/* Card & Borders */
 .minimal-card {
   background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
@@ -105,6 +143,11 @@ body {
   border-color: var(--border-color);
 }
 
+/* Tabular numbers for clean numeric data columns */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
@@ -112,23 +155,23 @@ body {
 }
 
 html.dark ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: var(--bg-base);
 }
 html.dark ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--border-color);
   border-radius: 3px;
 }
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--border-control);
 }
 
 html.light ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: var(--bg-surface);
 }
 html.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-strong);
   border-radius: 3px;
 }
 html.light ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--border-control);
 }

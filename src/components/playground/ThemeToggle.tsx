@@ -19,12 +19,12 @@ export default function ThemeToggle({ className = "", showLabel = false }: Theme
       type="button"
       aria-label="Toggle theme"
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      className={`group flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white ${className}`}
+      className={`group flex items-center gap-1.5 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-main)] transition-colors hover:bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] ${className}`}
     >
       {isDark ? (
-        <Sun className="h-3.5 w-3.5 text-amber-400 transition-transform duration-200 group-hover:rotate-45" />
+        <Sun className="h-3.5 w-3.5 text-[var(--accent-warning)] transition-transform duration-200 group-hover:rotate-45" />
       ) : (
-        <Moon className="h-3.5 w-3.5 text-slate-600 transition-transform duration-200 group-hover:-rotate-12" />
+        <Moon className="h-3.5 w-3.5 text-[var(--accent-primary)] transition-transform duration-200 group-hover:-rotate-12" />
       )}
       {showLabel && <span>{isDark ? "Light" : "Dark"}</span>}
     </button>

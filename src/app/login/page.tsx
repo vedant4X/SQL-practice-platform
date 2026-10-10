@@ -2,13 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Database, Lock, Mail, ArrowRight, AlertCircle, CheckCircle } from "lucide-react";
+import { Database, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -26,81 +25,133 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data?.success) {
+        // Merge guest progress if stored locally
+        try {
+          const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+          if (guestSolvedRaw) {
+            const guestSolved = JSON.parse(guestSolvedRaw);
+            if (Array.isArray(guestSolved) && guestSolved.length > 0) {
+              await fetch("/api/v1/user/merge-guest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ solvedQuestionIds: guestSolved }),
+              });
+              localStorage.removeItem("sqljudge_guest_solved");
+            }
+          }
+        } catch {
+          // Continue to dashboard even if guest merge fails
+        }
+
         window.location.href = "/dashboard";
       } else {
         setError(data?.error?.message || "Invalid email or password.");
       }
-    } catch (err: any) {
-      setError("Network error. Please try again.");
+    } catch {
+      setError("Network connection error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-800 bg-background-card/60 p-8 shadow-2xl backdrop-blur-sm">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-12 bg-[var(--bg-base)] transition-colors">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-8 shadow-card backdrop-blur-sm">
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-md">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-primary)] text-[var(--accent-primary-text)] shadow-sm">
             <Database className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Welcome Back</h1>
-          <p className="text-xs text-slate-400">
-            Sign in to continue your PostgreSQL mastery journey.
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Welcome Back</h1>
+          <p className="text-xs text-[var(--text-muted)]">
+            Sign in to continue your SQL mastery journey.
           </p>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-400">
-            <AlertCircle className="h-4 w-4 shrink-0" />
+          <div
+            role="alert"
+            className="flex items-center gap-2 rounded-lg border border-[var(--accent-danger)] bg-[var(--accent-danger-bg)] p-3 text-xs text-[var(--accent-danger-text)] font-medium"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0 text-[var(--accent-danger)]" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-300">Email Address</label>
+          <div className="space-y-1.5">
+            <label htmlFor="login-email" className="block text-xs font-semibold text-[var(--text-main)]">
+              Email Address
+            </label>
             <div className="relative">
-              <Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-500" />
+              <Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
               <input
+                id="login-email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full rounded-lg border border-slate-700 bg-background-dark py-2.5 pl-10 pr-3 text-xs text-white placeholder-slate-500 focus:border-primary focus:outline-none"
+                style={{
+                  color: "var(--text-main)",
+                  backgroundColor: "var(--bg-panel)",
+                  caretColor: "var(--text-main)",
+                  WebkitTextFillColor: "var(--text-main)",
+                }}
+                className="w-full rounded-lg border border-[var(--border-control)] bg-[var(--bg-panel)] py-2.5 pl-10 pr-3 text-xs text-[var(--text-main)] placeholder-[var(--text-faint)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-1 transition"
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-300">Password</label>
+          <div className="space-y-1.5">
+            <label htmlFor="login-password" className="block text-xs font-semibold text-[var(--text-main)]">
+              Password
+            </label>
             <div className="relative">
-              <Lock className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-500" />
+              <Lock className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
               <input
-                type="password"
+                id="login-password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-slate-700 bg-background-dark py-2.5 pl-10 pr-3 text-xs text-white placeholder-slate-500 focus:border-primary focus:outline-none"
+                style={{
+                  color: "var(--text-main)",
+                  backgroundColor: "var(--bg-panel)",
+                  caretColor: "var(--text-main)",
+                  WebkitTextFillColor: "var(--text-main)",
+                }}
+                className="w-full rounded-lg border border-[var(--border-control)] bg-[var(--bg-panel)] py-2.5 pl-10 pr-10 text-xs text-[var(--text-main)] placeholder-[var(--text-faint)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-1 transition"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                className="absolute right-2.5 top-2.5 rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] transition"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-bold text-white shadow-md hover:bg-primary-hover disabled:opacity-50 transition"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent-primary)] py-2.5 text-xs font-bold text-[var(--accent-primary-text)] shadow-sm hover:bg-[var(--accent-primary-hover)] active:opacity-95 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-2 transition"
           >
             <span>{loading ? "Authenticating..." : "Sign In"}</span>
             <ArrowRight className="h-4 w-4" />
           </button>
         </form>
 
-        <div className="text-center text-xs text-slate-400">
+        <div className="text-center text-xs text-[var(--text-muted)]">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-primary-light hover:underline">
+          <Link href="/register" className="font-semibold text-[var(--accent-primary)] hover:underline">
             Register for free
           </Link>
         </div>

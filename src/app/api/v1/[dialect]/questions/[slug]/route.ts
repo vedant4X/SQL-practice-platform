@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/cookies";
 import { getQuestionBySlug } from "@/lib/curriculum/questions";
 import { TOPICS } from "@/lib/curriculum/topics";
+import { getTopicNavigation } from "@/lib/curriculum/navigation";
 import { appStore } from "@/lib/db/store";
 import { errorResponse, successResponse } from "@/lib/api/response";
 import { parseDialect } from "@/lib/api/dialect";
@@ -27,6 +28,7 @@ export async function GET(
     : false;
 
   const topic = TOPICS.find((t) => t.id === question.topic_id);
+  const navigation = getTopicNavigation(slug, dialect);
 
   const hintsRevealedCount = qState?.hintsUsed || 0;
   const availableHints = question.hints.slice(0, hintsRevealedCount);
@@ -62,5 +64,8 @@ export async function GET(
       interviewTip: qState?.solutionViewed ? question.interview_tip : null,
       dialectNotes: question.dialect_notes,
     },
+    prevSlug: navigation.prevSlug,
+    nextSlug: navigation.nextSlug,
+    navigation,
   });
 }

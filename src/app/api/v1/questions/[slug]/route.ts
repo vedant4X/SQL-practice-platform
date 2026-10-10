@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/cookies";
 import { getQuestionBySlug } from "@/lib/curriculum/questions";
 import { TOPICS } from "@/lib/curriculum/topics";
+import { getTopicNavigation } from "@/lib/curriculum/navigation";
 import { appStore } from "@/lib/db/store";
 import { errorResponse, successResponse } from "@/lib/api/response";
 
@@ -22,6 +23,7 @@ export async function GET(
     : false;
 
   const topic = TOPICS.find((t) => t.id === question.topic_id);
+  const navigation = getTopicNavigation(slug, "postgresql");
 
   // Return only unlocked hints based on user state
   const hintsRevealedCount = qState?.hintsUsed || 0;
@@ -52,11 +54,13 @@ export async function GET(
       totalHints: question.hints.length,
       availableHints,
       solutionViewed: qState?.solutionViewed || false,
-      // Only include solution if user previously forfeited XP to view it
       solutionQuery: qState?.solutionViewed ? question.solution_query : null,
       solutionExplanation: qState?.solutionViewed ? question.solution_explanation : null,
       commonMistakes: qState?.solutionViewed ? question.common_mistakes : null,
       interviewTip: qState?.solutionViewed ? question.interview_tip : null,
     },
+    prevSlug: navigation.prevSlug,
+    nextSlug: navigation.nextSlug,
+    navigation,
   });
 }

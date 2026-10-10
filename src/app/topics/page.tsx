@@ -35,12 +35,12 @@ export default function TopicsPage() {
   const levels = Array.from({ length: 10 }, (_, i) => i + 1);
 
   return (
-    <div className="flex-1 py-10 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-8 bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 transition-colors">
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+    <div className="flex-1 py-10 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-8 bg-[var(--bg-base)] text-[var(--text-main)] transition-colors">
+      <div className="border-b border-[var(--border-color)] pb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)] tracking-tight">
           SQL Learning Curriculum
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-sm mt-1.5 leading-relaxed">
+        <p className="text-[var(--text-muted)] text-sm mt-1.5 leading-relaxed">
           Master relational database querying across 10 progressive levels. Every topic features authentic PostgreSQL 16 exercises.
         </p>
       </div>
@@ -48,7 +48,7 @@ export default function TopicsPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800/50" />
+            <div key={i} className="h-32 animate-pulse rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)]" />
           ))}
         </div>
       ) : (
@@ -59,11 +59,11 @@ export default function TopicsPage() {
 
             return (
               <div key={levelNum} className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
-                  <span className="rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-xs px-2 py-0.5">
+                <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-2">
+                  <span className="rounded font-bold text-xs px-2 py-0.5 bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--border-control)]">
                     Level {levelNum}
                   </span>
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  <h2 className="text-base sm:text-lg font-bold text-[var(--text-main)]">
                     {levelNum === 1 && "Basics & Fundamentals"}
                     {levelNum === 2 && "Scalar & Aggregate Functions"}
                     {levelNum === 3 && "Grouping & Summaries"}
@@ -81,37 +81,39 @@ export default function TopicsPage() {
                   {levelTopics.map((topic) => (
                     <div
                       key={topic.id}
-                      className="flex flex-col justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] p-4 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm"
+                      className="flex flex-col justify-between rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-4 hover:border-[var(--border-control)] transition shadow-xs"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-bold text-slate-900 dark:text-white text-sm">{topic.title}</h3>
+                          <h3 className="font-bold text-[var(--text-main)] text-sm">{topic.title}</h3>
                           {topic.isMastered && (
-                            <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                            <span className="flex items-center gap-1 text-[11px] font-semibold text-[var(--accent-success)]">
                               <CheckCircle className="h-3.5 w-3.5" />
                               Mastered
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
                           {topic.description}
                         </p>
                       </div>
 
-                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 mt-4 flex items-center justify-between">
-                        <span className="text-xs font-mono text-slate-500">
+                      <div className="pt-4 border-t border-[var(--border-color)] mt-4 flex items-center justify-between">
+                        <span className="text-xs font-mono text-[var(--text-muted)]">
                           {topic.solvedCount}/{topic.questionCount} Solved
                         </span>
                         {topic.firstQuestionSlug ? (
                           <Link
                             href={`/practice/${topic.firstQuestionSlug}`}
-                            className="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
+                            className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition"
                           >
                             <span>Practice</span>
                             <ArrowRight className="h-3.5 w-3.5" />
                           </Link>
                         ) : (
-                          <span className="text-[11px] text-slate-400 italic">Coming Soon</span>
+                          <span className="text-[11px] text-[var(--text-faint)] italic">
+                            Coming Soon
+                          </span>
                         )}
                       </div>
                     </div>

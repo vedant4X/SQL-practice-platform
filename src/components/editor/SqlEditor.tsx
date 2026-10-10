@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { OnMount } from "@monaco-editor/react";
 import { format } from "sql-formatter";
-import { Play, Send, AlignLeft, RotateCcw, RefreshCw, ChevronRight, ArrowRight } from "lucide-react";
+import { Play, Send, AlignLeft, RotateCcw, RefreshCw, ArrowRight, Check, Cloud } from "lucide-react";
 import Link from "next/link";
 import { Dialect } from "@/lib/engine/types";
 import { useTheme } from "@/lib/theme/ThemeContext";
@@ -12,9 +12,9 @@ import { useTheme } from "@/lib/theme/ThemeContext";
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-slate-50 dark:bg-[#090d16] text-slate-500">
+    <div className="flex h-full w-full items-center justify-center bg-[var(--bg-panel)] text-[var(--text-muted)]">
       <div className="flex items-center gap-2 text-xs">
-        <RefreshCw className="h-4 w-4 animate-spin text-blue-600" />
+        <RefreshCw className="h-4 w-4 animate-spin text-[var(--accent-primary)]" />
         <span>Initializing SQL Editor...</span>
       </div>
     </div>
@@ -33,6 +33,7 @@ interface SqlEditorProps {
   dialect?: Dialect;
   nextSlug?: string | null;
   onNextQuestion?: () => void;
+  draftStatus?: "idle" | "saving" | "saved" | "error";
 }
 
 export default function SqlEditor({
@@ -47,6 +48,7 @@ export default function SqlEditor({
   dialect = "postgresql",
   nextSlug,
   onNextQuestion,
+  draftStatus = "idle",
 }: SqlEditorProps) {
   const editorRef = useRef<any>(null);
   const { theme } = useTheme();
@@ -56,49 +58,49 @@ export default function SqlEditor({
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
 
-    // Define Minimalist Dark Theme
-    monaco.editor.defineTheme("sqljudge-dark", {
+    // Quiet Grove Dark Theme
+    monaco.editor.defineTheme("quietgrove-dark", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "keyword", foreground: "38bdf8", fontStyle: "bold" },
-        { token: "string", foreground: "34d399" },
-        { token: "number", foreground: "fbbf24" },
-        { token: "comment", foreground: "64748b", fontStyle: "italic" },
-        { token: "identifier", foreground: "e2e8f0" },
+        { token: "keyword", foreground: "8FD0A0", fontStyle: "bold" },
+        { token: "string", foreground: "E5B782" },
+        { token: "number", foreground: "91BDE0" },
+        { token: "comment", foreground: "9BB1A1", fontStyle: "italic" },
+        { token: "identifier", foreground: "DDE8DE" },
       ],
       colors: {
-        "editor.background": "#090d16",
-        "editor.lineHighlightBackground": "#111827",
-        "editorCursor.foreground": "#38bdf8",
-        "editorWhitespace.foreground": "#1e293b",
-        "editorLineNumber.foreground": "#475569",
-        "editorLineNumber.activeForeground": "#94a3b8",
+        "editor.background": "#273630",
+        "editor.lineHighlightBackground": "#202B27",
+        "editorCursor.foreground": "#8FD0A0",
+        "editorWhitespace.foreground": "#45574B",
+        "editorLineNumber.foreground": "#6F8777",
+        "editorLineNumber.activeForeground": "#DDE8DE",
       },
     });
 
-    // Define Minimalist Light Theme (High Contrast)
-    monaco.editor.defineTheme("sqljudge-light", {
+    // Quiet Grove Light Theme
+    monaco.editor.defineTheme("quietgrove-light", {
       base: "vs",
       inherit: true,
       rules: [
-        { token: "keyword", foreground: "005cc5", fontStyle: "bold" },
-        { token: "string", foreground: "15803d" },
-        { token: "number", foreground: "d97706" },
-        { token: "comment", foreground: "6e7781", fontStyle: "italic" },
-        { token: "identifier", foreground: "0969da" },
+        { token: "keyword", foreground: "1B6E32", fontStyle: "bold" },
+        { token: "string", foreground: "8C530A" },
+        { token: "number", foreground: "155A8A" },
+        { token: "comment", foreground: "4E6556", fontStyle: "italic" },
+        { token: "identifier", foreground: "1B2620" },
       ],
       colors: {
-        "editor.background": "#ffffff",
-        "editor.lineHighlightBackground": "#f8fafc",
-        "editorCursor.foreground": "#005cc5",
-        "editorWhitespace.foreground": "#e2e8f0",
-        "editorLineNumber.foreground": "#94a3b8",
-        "editorLineNumber.activeForeground": "#0f172a",
+        "editor.background": "#FFFFFF",
+        "editor.lineHighlightBackground": "#F4F7F4",
+        "editorCursor.foreground": "#1B6E32",
+        "editorWhitespace.foreground": "#D6E0D8",
+        "editorLineNumber.foreground": "#76927F",
+        "editorLineNumber.activeForeground": "#1B2620",
       },
     });
 
-    monaco.editor.setTheme(isDark ? "sqljudge-dark" : "sqljudge-light");
+    monaco.editor.setTheme(isDark ? "quietgrove-dark" : "quietgrove-light");
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
       onRun();
@@ -122,7 +124,7 @@ export default function SqlEditor({
   // Re-sync Monaco theme on theme switch
   useEffect(() => {
     if (editorRef.current && (window as any).monaco) {
-      (window as any).monaco.editor.setTheme(isDark ? "sqljudge-dark" : "sqljudge-light");
+      (window as any).monaco.editor.setTheme(isDark ? "quietgrove-dark" : "quietgrove-light");
     }
   }, [isDark]);
 
@@ -135,33 +137,44 @@ export default function SqlEditor({
       });
       onChange(formatted);
     } catch {
-      // Keep existing on parse failure
+      // Keep existing code on parse failure
     }
   };
 
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-[#090d16] transition-colors">
+    <div className="flex h-full flex-col bg-[var(--bg-panel)] transition-colors">
       {/* Editor Action Toolbar */}
-      <div className="flex h-11 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-3">
+      <div className="flex h-11 items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-surface)] px-3">
         <div className="flex items-center gap-1.5">
           <button
             onClick={handleFormat}
             disabled={isLoading}
-            className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+            className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] disabled:opacity-50 transition"
             title="Format SQL (Ctrl+Shift+F)"
+            aria-label="Format SQL"
           >
-            <AlignLeft className="h-3 w-3" />
+            <AlignLeft className="h-3 w-3 text-[var(--text-muted)]" />
             <span className="hidden sm:inline">Format</span>
           </button>
           <button
             onClick={onReset}
             disabled={isLoading}
-            className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-            title="Reset code"
+            className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] disabled:opacity-50 transition"
+            title="Reset code to starter template"
+            aria-label="Reset code"
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3 w-3 text-[var(--text-muted)]" />
             <span className="hidden sm:inline">Reset</span>
           </button>
+
+          {/* Draft Auto-save status */}
+          <div className="hidden md:flex items-center gap-1 text-[11px] text-[var(--text-muted)] pl-2">
+            <Cloud className="h-3 w-3" />
+            {draftStatus === "saving" && <span>Saving draft...</span>}
+            {draftStatus === "saved" && <span className="text-[var(--accent-success)]">Saved</span>}
+            {draftStatus === "error" && <span className="text-[var(--accent-danger)]">Offline draft</span>}
+            {draftStatus === "idle" && <span>Auto-saved</span>}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -169,10 +182,11 @@ export default function SqlEditor({
           <button
             onClick={onRun}
             disabled={isLoading}
-            className="flex items-center gap-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition shadow-sm"
-            title="Execute query (Ctrl+Enter)"
+            className="flex items-center gap-1.5 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-3 py-1 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
+            title="Execute query in sandbox (Ctrl+Enter)"
+            aria-label="Execute query"
           >
-            <Play className={`h-3 w-3 ${isLoading ? "animate-spin" : "fill-current"}`} />
+            <Play className={`h-3 w-3 ${isLoading ? "animate-spin text-[var(--accent-primary)]" : "fill-current"}`} />
             <span>Run</span>
           </button>
 
@@ -180,8 +194,9 @@ export default function SqlEditor({
           <button
             onClick={onSubmit}
             disabled={isLoading}
-            className="flex items-center gap-1.5 rounded bg-blue-600 px-3.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition shadow-sm"
+            className="flex items-center gap-1.5 rounded bg-[var(--accent-primary)] px-3.5 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
             title="Submit query against test cases (Ctrl+Shift+Enter)"
+            aria-label="Submit query"
           >
             <Send className="h-3 w-3" />
             <span>Submit</span>
@@ -191,8 +206,9 @@ export default function SqlEditor({
           {nextSlug && (
             <Link
               href={`/${dialect}/practice/${nextSlug}`}
-              className="flex items-center gap-1 rounded border border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition shadow-sm"
-              title="Travel to Next Question"
+              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
+              title="Travel to Next Question (Alt+→)"
+              aria-label="Next Question"
             >
               <span>Next</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -209,10 +225,10 @@ export default function SqlEditor({
           value={value}
           onChange={(v) => onChange(v || "")}
           onMount={handleEditorDidMount}
-          theme={isDark ? "sqljudge-dark" : "sqljudge-light"}
+          theme={isDark ? "quietgrove-dark" : "quietgrove-light"}
           options={{
             fontSize: 13,
-            fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+            fontFamily: "'IBM Plex Mono', 'JetBrains Mono', Consolas, monospace",
             lineNumbers: "on",
             minimap: { enabled: false },
             scrollBeyondLastLine: false,

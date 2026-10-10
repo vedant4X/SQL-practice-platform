@@ -11,12 +11,13 @@ import {
   XCircle,
   Zap,
   Bookmark,
-  ChevronRight,
   ArrowRight,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
 import ResultTable from "./ResultTable";
 import { QueryExecutionResult, TestCaseResult } from "@/lib/engine/types";
+import { TopicNavigationInfo } from "@/lib/curriculum/navigation";
 
 interface QuestionData {
   id: string;
@@ -59,6 +60,7 @@ interface QuestionPanelProps {
   onToggleBookmark: () => void;
   nextSlug?: string | null;
   dialect?: string;
+  navigation?: TopicNavigationInfo | null;
 }
 
 export default function QuestionPanel({
@@ -73,49 +75,54 @@ export default function QuestionPanel({
   onToggleBookmark,
   nextSlug,
   dialect = "postgresql",
+  navigation,
 }: QuestionPanelProps) {
   const [confirmSolution, setConfirmSolution] = useState(false);
+
+  const effectiveNextSlug = navigation?.nextSlug || nextSlug;
+  const isLastInTopic = navigation?.isLastInTopic;
 
   const getDifficultyBadge = (diff: string) => {
     switch (diff) {
       case "easy":
         return (
-          <span className="rounded bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+          <span className="rounded bg-[var(--accent-success-bg)] border border-[var(--accent-success-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-success-text)]">
             Easy
           </span>
         );
       case "medium":
         return (
-          <span className="rounded bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+          <span className="rounded bg-[var(--accent-warning-bg)] border border-[var(--accent-warning-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-warning-text)]">
             Medium
           </span>
         );
       case "hard":
+      case "expert":
         return (
-          <span className="rounded bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">
-            Hard
+          <span className="rounded bg-[var(--accent-danger-bg)] border border-[var(--accent-danger-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-danger-text)]">
+            {diff === "hard" ? "Hard" : "Expert"}
           </span>
         );
       default:
         return (
-          <span className="rounded bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 px-2 py-0.5 text-xs font-medium text-purple-700 dark:text-purple-400">
-            Expert
+          <span className="rounded bg-[var(--bg-surface)] border border-[var(--border-control)] px-2 py-0.5 text-xs font-medium text-[var(--text-main)]">
+            {diff}
           </span>
         );
     }
   };
 
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-[#090d16] text-slate-800 dark:text-slate-200 transition-colors">
+    <div className="flex h-full flex-col bg-[var(--bg-panel)] text-[var(--text-main)] transition-colors">
       {/* Header Tabs */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-3">
+      <div className="flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-surface)] px-3">
         <div className="flex items-center space-x-1 overflow-x-auto text-xs font-medium">
           <button
             onClick={() => setActiveTab("description")}
             className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition ${
               activeTab === "description"
-                ? "border-blue-600 text-blue-600 dark:text-blue-400 font-semibold"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]"
             }`}
           >
             <BookOpen className="h-3.5 w-3.5" />
@@ -125,8 +132,8 @@ export default function QuestionPanel({
             onClick={() => setActiveTab("hints")}
             className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition ${
               activeTab === "hints"
-                ? "border-blue-600 text-blue-600 dark:text-blue-400 font-semibold"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]"
             }`}
           >
             <HelpCircle className="h-3.5 w-3.5" />
@@ -136,8 +143,8 @@ export default function QuestionPanel({
             onClick={() => setActiveTab("solution")}
             className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition ${
               activeTab === "solution"
-                ? "border-blue-600 text-blue-600 dark:text-blue-400 font-semibold"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]"
             }`}
           >
             <Lightbulb className="h-3.5 w-3.5" />
@@ -147,8 +154,8 @@ export default function QuestionPanel({
             onClick={() => setActiveTab("results")}
             className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition ${
               activeTab === "results"
-                ? "border-blue-600 text-blue-600 dark:text-blue-400 font-semibold"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]"
             }`}
           >
             <Table className="h-3.5 w-3.5" />
@@ -158,8 +165,8 @@ export default function QuestionPanel({
             onClick={() => setActiveTab("testcases")}
             className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition ${
               activeTab === "testcases"
-                ? "border-blue-600 text-blue-600 dark:text-blue-400 font-semibold"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                ? "border-[var(--accent-primary)] text-[var(--accent-primary)] font-semibold"
+                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]"
             }`}
           >
             <CheckCircle className="h-3.5 w-3.5" />
@@ -168,8 +175,8 @@ export default function QuestionPanel({
               <span
                 className={`ml-1 text-[11px] font-bold ${
                   submitResult.verdict === "correct"
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-rose-600 dark:text-rose-400"
+                    ? "text-[var(--accent-success)]"
+                    : "text-[var(--accent-danger)]"
                 }`}
               >
                 ({submitResult.passedCount}/{submitResult.totalCount})
@@ -179,25 +186,36 @@ export default function QuestionPanel({
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Quick Travel Next Question Arrow Button in tab bar */}
-          {nextSlug && (
+          {effectiveNextSlug ? (
             <Link
-              href={`/${dialect}/practice/${nextSlug}`}
-              className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
-              title="Next Question"
+              href={`/${dialect}/practice/${effectiveNextSlug}`}
+              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
+              title={`Next problem: ${navigation?.nextTitle || "Next"} (Alt+→)`}
+              aria-label={`Next problem: ${navigation?.nextTitle || "Next"}`}
             >
               <span className="hidden sm:inline">Next</span>
               <ArrowRight className="h-3 w-3" />
             </Link>
-          )}
+          ) : isLastInTopic ? (
+            <Link
+              href={`/${dialect}/topics`}
+              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
+              title="Completed topic! Return to curriculum"
+              aria-label="Back to curriculum"
+            >
+              <span className="hidden sm:inline">Topics</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          ) : null}
 
           <button
             onClick={onToggleBookmark}
-            title="Bookmark question"
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-white transition"
+            title={question.isBookmarked ? "Remove bookmark" : "Bookmark question"}
+            aria-label={question.isBookmarked ? "Remove bookmark" : "Bookmark question"}
+            className="rounded p-1 text-[var(--text-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-main)] transition"
           >
             <Bookmark
-              className={`h-4 w-4 ${question.isBookmarked ? "fill-blue-600 text-blue-600" : ""}`}
+              className={`h-4 w-4 ${question.isBookmarked ? "fill-[var(--accent-primary)] text-[var(--accent-primary)]" : ""}`}
             />
           </button>
         </div>
@@ -209,80 +227,91 @@ export default function QuestionPanel({
         {activeTab === "description" && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h1 className="text-base font-bold text-slate-900 dark:text-white">{question.title}</h1>
+              <h1 className="text-base font-bold text-[var(--text-main)]">{question.title}</h1>
               <div className="flex items-center gap-2">
                 {getDifficultyBadge(question.difficulty)}
-                <span className="flex items-center gap-1 rounded bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
+                <span className="flex items-center gap-1 rounded bg-[var(--accent-info-bg)] border border-[var(--accent-info-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-info-text)]">
                   <Zap className="h-3 w-3" />
                   {question.xp} XP
                 </span>
                 {question.isSolved && (
-                  <span className="rounded bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                  <span className="rounded bg-[var(--accent-success-bg)] border border-[var(--accent-success-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-success-text)]">
                     Solved ✓
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="text-xs leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-line">
+            <div className="text-xs leading-relaxed text-[var(--text-main)] whitespace-pre-line">
               {question.descriptionMarkdown}
             </div>
 
             {/* Expected Output Schema */}
-            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-3 space-y-2">
-              <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-3 space-y-2">
+              <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                 Expected Columns ({question.expectedColumns.length})
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 {question.expectedColumns.map((col) => (
                   <div
                     key={col.name}
-                    className="flex items-center justify-between rounded bg-white dark:bg-slate-800 px-2.5 py-1.5 border border-slate-200/80 dark:border-slate-700/60"
+                    className="flex items-center justify-between rounded bg-[var(--bg-panel)] px-2.5 py-1.5 border border-[var(--border-color)]"
                   >
-                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{col.name}</span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{col.type}</span>
+                    <span className="text-[var(--accent-primary)] font-semibold">{col.name}</span>
+                    <span className="text-[10px] text-[var(--text-muted)]">{col.type}</span>
                   </div>
                 ))}
               </div>
               {question.orderMatters && (
-                <div className="text-[11px] text-amber-700 dark:text-amber-400 font-medium pt-1">
+                <div className="text-[11px] text-[var(--accent-warning)] font-medium pt-1">
                   ⚠️ Note: Output row order matters for this problem. Make sure to use ORDER BY.
                 </div>
               )}
             </div>
 
-            {/* Bottom Travel Arrow */}
-            {nextSlug && (
+            {/* Bottom Navigation Link */}
+            {effectiveNextSlug ? (
               <div className="pt-2">
                 <Link
-                  href={`/${dialect}/practice/${nextSlug}`}
-                  className="flex items-center justify-center gap-1.5 w-full rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  href={`/${dialect}/practice/${effectiveNextSlug}`}
+                  aria-label={`Next problem: ${navigation?.nextTitle || "Next"}`}
+                  className="flex items-center justify-center gap-1.5 w-full rounded-md border border-[var(--border-control)] bg-[var(--bg-surface)] py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--border-color)] transition"
                 >
-                  <span>Go to Next Question</span>
+                  <span>Go to Next Problem</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-            )}
+            ) : isLastInTopic ? (
+              <div className="pt-2">
+                <Link
+                  href={`/${dialect}/topics`}
+                  className="flex items-center justify-center gap-1.5 w-full rounded-md border border-[var(--border-control)] bg-[var(--bg-surface)] py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--border-color)] transition"
+                >
+                  <span>Back to Curriculum</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ) : null}
           </div>
         )}
 
         {/* Tab 2: Hints */}
         {activeTab === "hints" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300">
-              <span className="font-semibold text-slate-900 dark:text-white">Progressive Hint System</span>
+            <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+              <span className="font-semibold text-[var(--text-main)]">Progressive Hint System</span>
               <span>
                 Revealed: {question.hintsUsed} / {question.totalHints}
               </span>
             </div>
 
             {question.availableHints.length === 0 ? (
-              <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-4 text-center text-xs text-slate-600 dark:text-slate-400">
-                <Lightbulb className="mx-auto h-6 w-6 text-amber-500 mb-2 opacity-80" />
+              <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-4 text-center text-xs text-[var(--text-muted)]">
+                <Lightbulb className="mx-auto h-6 w-6 text-[var(--accent-warning)] mb-2 opacity-80" />
                 <p className="mb-3">Need direction? Unlocking a hint provides guided direction with a 20% XP penalty per level.</p>
                 <button
                   onClick={onUnlockHint}
-                  className="rounded bg-blue-600 px-3 py-1.5 font-semibold text-white text-xs hover:bg-blue-700 transition"
+                  className="rounded bg-[var(--accent-primary)] px-3 py-1.5 font-semibold text-[var(--accent-primary-text)] text-xs hover:bg-[var(--accent-primary-hover)] transition"
                 >
                   Unlock Hint 1 (-20% XP)
                 </button>
@@ -292,9 +321,9 @@ export default function QuestionPanel({
                 {question.availableHints.map((hintText, idx) => (
                   <div
                     key={idx}
-                    className="rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-3 text-xs space-y-1 text-slate-800 dark:text-slate-200"
+                    className="rounded-lg border border-[var(--accent-warning-border)] bg-[var(--accent-warning-bg)] p-3 text-xs space-y-1 text-[var(--accent-warning-text)]"
                   >
-                    <div className="font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                    <div className="font-semibold flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5" />
                       Hint {idx + 1}
                     </div>
@@ -305,7 +334,7 @@ export default function QuestionPanel({
                 {question.hintsUsed < question.totalHints && (
                   <button
                     onClick={onUnlockHint}
-                    className="w-full rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                    className="w-full rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-3 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
                   >
                     Unlock Hint {question.hintsUsed + 1} (-{(question.hintsUsed + 1) * 20}% XP)
                   </button>
@@ -319,10 +348,10 @@ export default function QuestionPanel({
         {activeTab === "solution" && (
           <div className="space-y-4">
             {!question.solutionViewed && !question.solutionQuery ? (
-              <div className="rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/20 p-5 text-center text-xs text-rose-900 dark:text-rose-200">
-                <Lightbulb className="mx-auto h-7 w-7 text-amber-500 mb-2" />
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Gated Solution</h3>
-                <p className="mb-4 text-slate-600 dark:text-slate-300">
+              <div className="rounded-lg border border-[var(--accent-danger-border)] bg-[var(--accent-danger-bg)] p-5 text-center text-xs text-[var(--accent-danger-text)]">
+                <Lightbulb className="mx-auto h-7 w-7 text-[var(--accent-warning)] mb-2" />
+                <h3 className="text-sm font-bold text-[var(--text-main)] mb-1">Gated Solution</h3>
+                <p className="mb-4 text-[var(--text-secondary)]">
                   Viewing the official solution will permanently forfeit all XP for this question (0 XP awarded).
                 </p>
 
@@ -330,13 +359,13 @@ export default function QuestionPanel({
                   <div className="space-y-2">
                     <button
                       onClick={onRevealSolution}
-                      className="w-full rounded bg-rose-600 px-4 py-2 font-bold text-white transition hover:bg-rose-700"
+                      className="w-full rounded bg-[var(--accent-danger)] px-4 py-2 font-bold text-white transition hover:opacity-90"
                     >
                       Confirm: Forfeit XP & Reveal Solution
                     </button>
                     <button
                       onClick={() => setConfirmSolution(false)}
-                      className="w-full text-slate-500 dark:text-slate-400 hover:underline text-[11px]"
+                      className="w-full text-[var(--text-muted)] hover:underline text-[11px]"
                     >
                       Cancel
                     </button>
@@ -344,7 +373,7 @@ export default function QuestionPanel({
                 ) : (
                   <button
                     onClick={() => setConfirmSolution(true)}
-                    className="rounded border border-rose-300 dark:border-rose-800 bg-white dark:bg-rose-950/40 px-4 py-2 font-semibold text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/50 transition"
+                    className="rounded border border-[var(--accent-danger-border)] bg-[var(--bg-panel)] px-4 py-2 font-semibold text-[var(--accent-danger-text)] hover:bg-[var(--accent-danger-bg)] transition"
                   >
                     Reveal Solution
                   </button>
@@ -352,28 +381,28 @@ export default function QuestionPanel({
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-3">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 block mb-1.5">
+                <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-3">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] block mb-1.5">
                     Official Reference Solution
                   </span>
-                  <pre className="font-mono text-xs text-emerald-700 dark:text-emerald-400 overflow-x-auto p-2.5 bg-white dark:bg-[#090d16] rounded border border-slate-200 dark:border-slate-800">
+                  <pre className="font-mono text-xs text-[var(--accent-success-text)] overflow-x-auto p-2.5 bg-[var(--bg-panel)] rounded border border-[var(--border-color)]">
                     {question.solutionQuery}
                   </pre>
                 </div>
 
                 {question.solutionExplanation && (
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-slate-900 dark:text-white">Line-by-Line Explanation</h4>
-                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                    <h4 className="text-xs font-semibold text-[var(--text-main)]">Line-by-Line Explanation</h4>
+                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed whitespace-pre-line">
                       {question.solutionExplanation}
                     </p>
                   </div>
                 )}
 
                 {question.commonMistakes && question.commonMistakes.length > 0 && (
-                  <div className="rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-3 space-y-1 text-xs">
-                    <span className="font-semibold text-amber-800 dark:text-amber-400">Common Mistakes to Avoid</span>
-                    <ul className="list-disc list-inside text-slate-700 dark:text-slate-300 space-y-1">
+                  <div className="rounded-lg border border-[var(--accent-warning-border)] bg-[var(--accent-warning-bg)] p-3 space-y-1 text-xs">
+                    <span className="font-semibold text-[var(--accent-warning-text)]">Common Mistakes to Avoid</span>
+                    <ul className="list-disc list-inside text-[var(--accent-warning-text)] space-y-1">
                       {question.commonMistakes.map((cm, i) => (
                         <li key={i}>{cm}</li>
                       ))}
@@ -382,9 +411,9 @@ export default function QuestionPanel({
                 )}
 
                 {question.interviewTip && (
-                  <div className="rounded-lg border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/20 p-3 space-y-1 text-xs">
-                    <span className="font-semibold text-blue-700 dark:text-blue-300">Interview Tip</span>
-                    <p className="text-slate-700 dark:text-slate-300">{question.interviewTip}</p>
+                  <div className="rounded-lg border border-[var(--accent-info-border)] bg-[var(--accent-info-bg)] p-3 space-y-1 text-xs">
+                    <span className="font-semibold text-[var(--accent-info-text)]">Interview Tip</span>
+                    <p className="text-[var(--accent-info-text)]">{question.interviewTip}</p>
                   </div>
                 )}
               </div>
@@ -394,20 +423,32 @@ export default function QuestionPanel({
 
         {/* Tab 4: Results */}
         {activeTab === "results" && (
-          <div className="space-y-3">
-            {/* Quick travel banner above/next to results */}
-            {nextSlug && runResult && (
-              <div className="flex items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-2 text-xs">
-                <span className="text-slate-600 dark:text-slate-400">Ready to move forward?</span>
+          <div className="space-y-4">
+            {effectiveNextSlug ? (
+              <div className="flex items-center justify-between rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] p-2.5 text-xs">
+                <span className="text-[var(--text-secondary)]">Ready to move forward?</span>
                 <Link
-                  href={`/${dialect}/practice/${nextSlug}`}
-                  className="flex items-center gap-1 rounded bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 transition"
+                  href={`/${dialect}/practice/${effectiveNextSlug}`}
+                  aria-label={`Next problem: ${navigation?.nextTitle || "Next problem"}`}
+                  className="flex items-center gap-1 rounded bg-[var(--accent-primary)] px-2.5 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] transition"
                 >
-                  <span>Next Question</span>
+                  <span>Next Problem</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
-            )}
+            ) : isLastInTopic ? (
+              <div className="flex items-center justify-between rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] p-2.5 text-xs">
+                <span className="text-[var(--text-secondary)]">Completed topic challenges!</span>
+                <Link
+                  href={`/${dialect}/topics`}
+                  aria-label="Back to topic curriculum"
+                  className="flex items-center gap-1 rounded bg-[var(--accent-primary)] px-2.5 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] transition"
+                >
+                  <span>Back to Curriculum</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            ) : null}
             <ResultTable result={runResult} isLoading={isLoading} />
           </div>
         )}
@@ -416,7 +457,7 @@ export default function QuestionPanel({
         {activeTab === "testcases" && (
           <div className="space-y-4">
             {!submitResult ? (
-              <div className="p-6 text-center text-xs text-slate-500 italic">
+              <div className="p-6 text-center text-xs text-[var(--text-muted)] italic">
                 Press "Submit" to judge your query against all automated test cases.
               </div>
             ) : (
@@ -425,15 +466,15 @@ export default function QuestionPanel({
                 <div
                   className={`flex flex-wrap items-center justify-between gap-3 rounded-lg p-3.5 text-xs font-semibold border ${
                     submitResult.verdict === "correct"
-                      ? "border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300"
-                      : "border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300"
+                      ? "border-[var(--accent-success-border)] bg-[var(--accent-success-bg)] text-[var(--accent-success-text)]"
+                      : "border-[var(--accent-danger-border)] bg-[var(--accent-danger-bg)] text-[var(--accent-danger-text)]"
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     {submitResult.verdict === "correct" ? (
-                      <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle className="h-5 w-5 text-[var(--accent-success)]" />
                     ) : (
-                      <XCircle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                      <XCircle className="h-5 w-5 text-[var(--accent-danger)]" />
                     )}
                     <span className="text-sm font-bold">
                       {submitResult.verdict === "correct"
@@ -444,22 +485,39 @@ export default function QuestionPanel({
 
                   <div className="flex items-center gap-2">
                     {submitResult.xpEarned !== undefined && submitResult.xpEarned > 0 && (
-                      <span className="rounded bg-emerald-600 px-2 py-0.5 text-white font-bold text-xs">
+                      <span className="rounded bg-[var(--accent-success)] px-2 py-0.5 text-[var(--accent-primary-text)] font-bold text-xs">
                         +{submitResult.xpEarned} XP
                       </span>
                     )}
 
-                    {/* PROMINENT NEXT QUESTION ARROW BUTTON */}
-                    {nextSlug && (
+                    {/* PROMINENT NEXT PROBLEM BUTTON (Accepted = Primary, Wrong = Secondary) */}
+                    {effectiveNextSlug ? (
                       <Link
-                        href={`/${dialect}/practice/${nextSlug}`}
-                        className="flex items-center gap-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 text-xs transition shadow-sm"
-                        title="Proceed to next question"
+                        href={`/${dialect}/practice/${effectiveNextSlug}`}
+                        aria-label={`Next problem: ${navigation?.nextTitle || "Next problem"}`}
+                        className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-bold transition shadow-sm ${
+                          submitResult.verdict === "correct"
+                            ? "bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-[var(--accent-primary-text)] ring-2 ring-[var(--border-control)]"
+                            : "border border-[var(--border-control)] bg-[var(--bg-panel)] hover:bg-[var(--bg-surface)] text-[var(--text-main)]"
+                        }`}
+                        title={`Next problem: ${navigation?.nextTitle || "Next problem"} (Alt+→)`}
                       >
-                        <span>Next Question</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <span>Next problem →</span>
                       </Link>
-                    )}
+                    ) : isLastInTopic ? (
+                      <Link
+                        href={`/${dialect}/topics`}
+                        aria-label="Back to curriculum"
+                        className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-bold transition shadow-sm ${
+                          submitResult.verdict === "correct"
+                            ? "bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-[var(--accent-primary-text)]"
+                            : "border border-[var(--border-control)] bg-[var(--bg-panel)] hover:bg-[var(--bg-surface)] text-[var(--text-main)]"
+                        }`}
+                        title="Completed all problems in this topic! Back to curriculum (Alt+→)"
+                      >
+                        <span>{navigation?.nextTopicSlug ? "Next topic →" : "Back to topic →"}</span>
+                      </Link>
+                    ) : null}
                   </div>
                 </div>
 
@@ -468,32 +526,32 @@ export default function QuestionPanel({
                   {submitResult.testCaseResults.map((tc, idx) => (
                     <div
                       key={tc.testCaseId || idx}
-                      className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#090d16] p-3 text-xs space-y-1.5"
+                      className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-panel)] p-3 text-xs space-y-1.5"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 font-medium">
                           {tc.passed ? (
-                            <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                            <CheckCircle className="h-4 w-4 text-[var(--accent-success)]" />
                           ) : (
-                            <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                            <XCircle className="h-4 w-4 text-[var(--accent-danger)]" />
                           )}
-                          <span className="text-slate-900 dark:text-white font-semibold">
+                          <span className="text-[var(--text-main)] font-semibold">
                             {tc.name} {tc.isHidden ? "(Hidden Case)" : "(Sample Case)"}
                           </span>
                         </div>
-                        <span className="text-[11px] font-mono text-slate-500">
+                        <span className="text-[11px] font-mono text-[var(--text-muted)]">
                           {tc.executionTimeMs} ms
                         </span>
                       </div>
 
                       {tc.feedback && (
-                        <div className="rounded bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 p-2 text-rose-800 dark:text-rose-300 text-[11px]">
+                        <div className="rounded bg-[var(--accent-danger-bg)] border border-[var(--accent-danger-border)] p-2 text-[var(--accent-danger-text)] text-[11px]">
                           {tc.feedback}
                         </div>
                       )}
 
                       {tc.error && (
-                        <div className="rounded bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 p-2 text-rose-900 dark:text-rose-300 text-[11px] font-mono">
+                        <div className="rounded bg-[var(--accent-danger-bg)] border border-[var(--accent-danger-border)] p-2 text-[var(--accent-danger-text)] text-[11px] font-mono">
                           {tc.error}
                         </div>
                       )}

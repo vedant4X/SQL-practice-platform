@@ -25,10 +25,23 @@ export interface UserQuestionState {
   dialect: Dialect;
   questionId: string;
   isSolved: boolean;
+  status: "not_started" | "attempted" | "solved";
+  attemptCount: number;
   hintsUsed: number;
   solutionViewed: boolean;
   firstSolvedAt?: string;
+  lastSubmittedQuery?: string;
+  lastSubmittedAt?: string;
+  updatedAt?: string;
   xpAwarded: number;
+}
+
+export interface UserDraft {
+  userId: string;
+  dialect: Dialect;
+  questionId: string;
+  draftText: string;
+  updatedAt: string;
 }
 
 export interface UserAttempt {
@@ -80,6 +93,7 @@ export interface DatabaseState {
   xpEvents: XpEvent[];
   savedQuestions: SavedQuestion[];
   queryHistory: QueryHistoryItem[];
+  userDrafts: UserDraft[];
 }
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
@@ -95,6 +109,9 @@ export function migrateAppDbToDualDialect(rawState: any): DatabaseState {
     userQuestionState: (rawState?.userQuestionState || []).map((q: any) => ({
       ...q,
       dialect: q.dialect || "postgresql",
+      status: q.status || (q.isSolved ? "solved" : "not_started"),
+      attemptCount: q.attemptCount ?? (q.isSolved ? 1 : 0),
+      updatedAt: q.updatedAt || new Date().toISOString(),
     })),
     userAttempts: (rawState?.userAttempts || []).map((a: any) => ({
       ...a,
@@ -112,6 +129,10 @@ export function migrateAppDbToDualDialect(rawState: any): DatabaseState {
       ...h,
       dialect: h.dialect || "postgresql",
     })),
+    userDrafts: (rawState?.userDrafts || []).map((d: any) => ({
+      ...d,
+      dialect: d.dialect || "postgresql",
+    })),
   };
   return state;
 }
@@ -125,6 +146,7 @@ class AppStore {
     xpEvents: [],
     savedQuestions: [],
     queryHistory: [],
+    userDrafts: [],
   };
 
   private initialized = false;
@@ -134,6 +156,7 @@ class AppStore {
   private userByIdIndex = new Map<string, User>();
   private userByEmailIndex = new Map<string, User>();
   private questionStateIndex = new Map<string, UserQuestionState>(); // key: `${userId}:${dialect}:${questionId}`
+  private draftIndex = new Map<string, UserDraft>(); // key: `${userId}:${dialect}:${questionId}`
 
   constructor() {
     this.init();
@@ -143,6 +166,7 @@ class AppStore {
     this.userByIdIndex.clear();
     this.userByEmailIndex.clear();
     this.questionStateIndex.clear();
+    this.draftIndex.clear();
 
     for (const u of this.state.users) {
       this.userByIdIndex.set(u.id, u);
@@ -152,6 +176,11 @@ class AppStore {
     for (const q of this.state.userQuestionState) {
       const key = `${q.userId}:${q.dialect}:${q.questionId}`;
       this.questionStateIndex.set(key, q);
+    }
+
+    for (const d of this.state.userDrafts) {
+      const key = `${d.userId}:${d.dialect}:${d.questionId}`;
+      this.draftIndex.set(key, d);
     }
   }
 
@@ -274,9 +303,12 @@ class AppStore {
       dialect,
       questionId,
       isSolved: false,
+      status: "not_started",
+      attemptCount: 0,
       hintsUsed: 0,
       solutionViewed: false,
       xpAwarded: 0,
+      updatedAt: new Date().toISOString(),
     };
     this.state.userQuestionState.push(def);
     this.questionStateIndex.set(key, def);
@@ -293,6 +325,7 @@ class AppStore {
     const state = this.getUserQuestionState(userId, questionId, dialect);
     if (level > state.hintsUsed) {
       state.hintsUsed = level;
+      state.updatedAt = new Date().toISOString();
       this.persist();
     }
     return state;
@@ -305,6 +338,7 @@ class AppStore {
   ): UserQuestionState {
     const state = this.getUserQuestionState(userId, questionId, dialect);
     state.solutionViewed = true;
+    state.updatedAt = new Date().toISOString();
     this.persist();
     return state;
   }
@@ -365,34 +399,117 @@ class AppStore {
     let xpEarned = 0;
     const qState = this.getUserQuestionState(userId, questionId, dialect);
 
-    if (verdict === "correct" && !qState.isSolved) {
-      qState.isSolved = true;
-      qState.firstSolvedAt = new Date().toISOString();
+    // Monotonic and idempotent updates
+    qState.attemptCount = (qState.attemptCount || 0) + 1;
+    qState.lastSubmittedQuery = queryText;
+    qState.lastSubmittedAt = new Date().toISOString();
+    qState.updatedAt = new Date().toISOString();
 
-      if (qState.solutionViewed) {
-        xpEarned = 0;
-      } else {
-        const penaltyMultiplier = Math.max(0.4, 1.0 - qState.hintsUsed * 0.2);
-        xpEarned = Math.round(baseXp * penaltyMultiplier);
+    if (verdict === "correct") {
+      const wasAlreadySolved = qState.isSolved;
+      qState.isSolved = true;
+      qState.status = "solved";
+      if (!qState.firstSolvedAt) {
+        qState.firstSolvedAt = new Date().toISOString();
       }
 
-      qState.xpAwarded = xpEarned;
+      if (!wasAlreadySolved) {
+        if (qState.solutionViewed) {
+          xpEarned = 0;
+        } else {
+          const penaltyMultiplier = Math.max(0.4, 1.0 - qState.hintsUsed * 0.2);
+          xpEarned = Math.round(baseXp * penaltyMultiplier);
+        }
 
-      if (xpEarned > 0) {
-        this.state.xpEvents.push({
-          id: `xp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
-          userId,
-          dialect,
-          sourceType: "question_solve",
-          sourceId: questionId,
-          amount: xpEarned,
-          createdAt: new Date().toISOString(),
-        });
+        qState.xpAwarded = xpEarned;
+
+        if (xpEarned > 0) {
+          this.state.xpEvents.push({
+            id: `xp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+            userId,
+            dialect,
+            sourceType: "question_solve",
+            sourceId: questionId,
+            amount: xpEarned,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+    } else {
+      // MONOTONIC: If already solved in the past, never downgrade to attempted!
+      if (!qState.isSolved) {
+        qState.status = "attempted";
       }
     }
 
     this.persist();
     return { attempt, xpEarned };
+  }
+
+  // --- Draft Management ---
+  saveDraft(userId: string, questionId: string, dialect: Dialect, draftText: string): UserDraft {
+    const key = `${userId}:${dialect}:${questionId}`;
+    let draft = this.draftIndex.get(key);
+    if (draft) {
+      draft.draftText = draftText;
+      draft.updatedAt = new Date().toISOString();
+    } else {
+      draft = {
+        userId,
+        dialect,
+        questionId,
+        draftText,
+        updatedAt: new Date().toISOString(),
+      };
+      this.state.userDrafts.push(draft);
+      this.draftIndex.set(key, draft);
+    }
+    this.persist();
+    return draft;
+  }
+
+  getDraft(userId: string, questionId: string, dialect: Dialect): string | undefined {
+    const key = `${userId}:${dialect}:${questionId}`;
+    return this.draftIndex.get(key)?.draftText;
+  }
+
+  clearDraft(userId: string, questionId: string, dialect: Dialect): void {
+    const key = `${userId}:${dialect}:${questionId}`;
+    const idx = this.state.userDrafts.findIndex(
+      (d) => d.userId === userId && d.dialect === dialect && d.questionId === questionId
+    );
+    if (idx >= 0) {
+      this.state.userDrafts.splice(idx, 1);
+      this.draftIndex.delete(key);
+      this.persist();
+    }
+  }
+
+  mergeGuestProgress(
+    userId: string,
+    guestSolvedQuestionIds: string[],
+    guestDrafts?: { questionId: string; dialect: Dialect; draftText: string }[],
+    dialect: Dialect = "postgresql"
+  ): void {
+    for (const qId of guestSolvedQuestionIds) {
+      const qState = this.getUserQuestionState(userId, qId, dialect);
+      if (!qState.isSolved) {
+        qState.isSolved = true;
+        qState.status = "solved";
+        if (!qState.firstSolvedAt) {
+          qState.firstSolvedAt = new Date().toISOString();
+        }
+        qState.updatedAt = new Date().toISOString();
+      }
+    }
+    if (guestDrafts) {
+      for (const gd of guestDrafts) {
+        if (!this.getDraft(userId, gd.questionId, gd.dialect || dialect)) {
+          this.saveDraft(userId, gd.questionId, gd.dialect || dialect, gd.draftText);
+        }
+      }
+    }
+    this.persist();
   }
 
   // --- XP & Progression Metrics ---
@@ -466,6 +583,7 @@ class AppStore {
       xpEvents: [],
       savedQuestions: [],
       queryHistory: [],
+      userDrafts: [],
     };
     this.rebuildIndexes();
     this.persistSync();
