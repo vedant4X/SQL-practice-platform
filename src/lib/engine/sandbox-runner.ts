@@ -4,7 +4,7 @@ import { translatePostgresError } from "./error-translator";
 import { validateQuery } from "./statement-validator";
 import { QueryExecutionResult, QuestionType } from "./types";
 
-const STATEMENT_TIMEOUT_MS = parseInt(process.env.STATEMENT_TIMEOUT_MS || "5000", 10);
+const STATEMENT_TIMEOUT_MS = parseInt(process.env.STATEMENT_TIMEOUT_MS || "10000", 10);
 const MAX_ROW_LIMIT = parseInt(process.env.MAX_ROW_LIMIT || "1000", 10);
 const MAX_PAYLOAD_BYTES = 1024 * 1024; // 1MB
 const MAX_POOL_SIZE_PER_KEY = 3;

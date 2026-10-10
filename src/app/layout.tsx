@@ -31,7 +31,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 antialiased flex flex-col selection:bg-blue-600 selection:text-white transition-colors">
+      <body className="min-h-screen bg-[var(--bg-base)] text-[var(--text-main)] antialiased flex flex-col selection:bg-[var(--accent-primary)] selection:text-[var(--accent-primary-text)] transition-colors">
         <ThemeProvider>
           <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>

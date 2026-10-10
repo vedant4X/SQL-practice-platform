@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
+import { useRouter, usePathname } from "next/navigation";
 import { format } from "sql-formatter";
 import {
   Play,
@@ -16,19 +17,25 @@ import {
   Database,
   ShieldCheck,
   CheckCircle2,
-  RefreshCw,
+  RotateCcw,
   Copy,
+  Link2,
+  AlertCircle,
+  Info,
+  Server,
+  RefreshCw,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
-import ThemeToggle from "@/components/playground/ThemeToggle";
+import { Button } from "@/components/ui/Button";
+import { Dialect } from "@/lib/engine/types";
 
 // Dynamic Monaco Editor (SSR false)
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-slate-50 dark:bg-[#090d16] font-mono text-xs text-slate-500">
+    <div className="flex h-full w-full items-center justify-center bg-[var(--bg-panel)] font-mono text-xs text-[var(--text-muted)]">
       <div className="flex items-center gap-2">
-        <RefreshCw className="h-4 w-4 animate-spin text-blue-600" />
+        <RefreshCw className="h-4 w-4 animate-spin text-[var(--accent-primary)]" />
         <span>Initializing SQL Editor...</span>
       </div>
     </div>
@@ -57,7 +64,7 @@ interface SchemaWorkspace {
   label: string;
   badge: string;
   tables: TableDefinition[];
-  defaultQuery: string;
+  getDefaultQuery: (dialect: Dialect) => string;
 }
 
 const SCHEMAS: Record<string, SchemaWorkspace> = {
@@ -65,13 +72,13 @@ const SCHEMAS: Record<string, SchemaWorkspace> = {
     id: "ecommerce_db",
     label: "e-commerce_db",
     badge: "E-Commerce",
-    defaultQuery: `-- E-Commerce Query Workbench
+    getDefaultQuery: () => `-- E-Commerce Customer Spend & Order Breakdown
 SELECT 
     c.customer_name,
     c.loyalty_tier,
     COUNT(o.order_id) AS total_orders,
     ROUND(SUM(o.total_amount), 2) AS lifetime_spend,
-    RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS rank
+    RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS customer_rank
 FROM customers c
 INNER JOIN orders o ON c.customer_id = o.customer_id
 WHERE o.order_status = 'delivered'
@@ -82,7 +89,7 @@ LIMIT 10;`,
     tables: [
       {
         name: "customers",
-        rowCount: 14200,
+        rowCount: 5,
         columns: [
           { name: "customer_id", type: "INT", isPk: true },
           { name: "customer_name", type: "VARCHAR" },
@@ -92,7 +99,7 @@ LIMIT 10;`,
       },
       {
         name: "orders",
-        rowCount: 86400,
+        rowCount: 8,
         columns: [
           { name: "order_id", type: "INT", isPk: true },
           { name: "customer_id", type: "INT", isFk: true },
@@ -103,7 +110,7 @@ LIMIT 10;`,
       },
       {
         name: "order_items",
-        rowCount: 219000,
+        rowCount: 4,
         columns: [
           { name: "item_id", type: "INT", isPk: true },
           { name: "order_id", type: "INT", isFk: true },
@@ -118,24 +125,35 @@ LIMIT 10;`,
     id: "analytics_warehouse",
     label: "analytics_warehouse",
     badge: "Analytics",
-    defaultQuery: `-- Telemetry Event Stream Analytics
+    getDefaultQuery: (dialect: Dialect) =>
+      dialect === "mysql"
+        ? `-- Telemetry Event Stream Analytics (MySQL 8.4)
+SELECT 
+    e.event_name,
+    DATE_FORMAT(e.occurred_at, '%Y-%m-%d %H:00:00') AS event_window,
+    COUNT(DISTINCT e.user_id) AS active_users,
+    ROUND(AVG(e.duration_ms), 3) AS avg_latency_ms
+FROM telemetry_events e
+GROUP BY e.event_name, DATE_FORMAT(e.occurred_at, '%Y-%m-%d %H:00:00')
+ORDER BY event_window DESC, active_users DESC
+LIMIT 10;`
+        : `-- Telemetry Event Stream Analytics (PostgreSQL 16)
 SELECT 
     e.event_name,
     DATE_TRUNC('hour', e.occurred_at) AS event_window,
     COUNT(DISTINCT e.user_id) AS active_users,
     ROUND(AVG(e.duration_ms), 3) AS avg_latency_ms
 FROM telemetry_events e
-WHERE e.occurred_at >= NOW() - INTERVAL '24 HOURS'
-GROUP BY e.event_name, event_window
+GROUP BY e.event_name, DATE_TRUNC('hour', e.occurred_at)
 ORDER BY event_window DESC, active_users DESC
 LIMIT 10;`,
     tables: [
       {
         name: "telemetry_events",
-        rowCount: 1450000,
+        rowCount: 5,
         columns: [
           { name: "event_id", type: "BIGINT", isPk: true },
-          { name: "user_id", type: "INT", isFk: true },
+          { name: "user_id", type: "INT" },
           { name: "event_name", type: "VARCHAR" },
           { name: "duration_ms", type: "DECIMAL" },
           { name: "occurred_at", type: "TIMESTAMP" },
@@ -143,10 +161,10 @@ LIMIT 10;`,
       },
       {
         name: "user_sessions",
-        rowCount: 320000,
+        rowCount: 3,
         columns: [
           { name: "session_id", type: "VARCHAR", isPk: true },
-          { name: "user_id", type: "INT", isFk: true },
+          { name: "user_id", type: "INT" },
           { name: "ip_address", type: "VARCHAR" },
           { name: "device_type", type: "VARCHAR" },
         ],
@@ -157,7 +175,7 @@ LIMIT 10;`,
     id: "fintech_core",
     label: "fintech_core",
     badge: "Fintech",
-    defaultQuery: `-- Double-Entry Ledger Reconciliation
+    getDefaultQuery: () => `-- Double-Entry Ledger Reconciliation
 SELECT 
     a.account_number,
     a.currency,
@@ -167,12 +185,11 @@ SELECT
 FROM accounts a
 LEFT JOIN ledger_transactions t ON a.account_id = t.account_id
 GROUP BY a.account_id, a.account_number, a.currency, a.stated_balance
-HAVING ABS(SUM(CASE WHEN t.direction = 'CREDIT' THEN t.amount ELSE -t.amount END) - a.stated_balance) > 0.00
-ORDER BY discrepancy DESC;`,
+ORDER BY calculated_balance DESC;`,
     tables: [
       {
         name: "accounts",
-        rowCount: 54000,
+        rowCount: 3,
         columns: [
           { name: "account_id", type: "INT", isPk: true },
           { name: "account_number", type: "VARCHAR" },
@@ -182,7 +199,7 @@ ORDER BY discrepancy DESC;`,
       },
       {
         name: "ledger_transactions",
-        rowCount: 980000,
+        rowCount: 5,
         columns: [
           { name: "tx_id", type: "BIGINT", isPk: true },
           { name: "account_id", type: "INT", isFk: true },
@@ -193,44 +210,85 @@ ORDER BY discrepancy DESC;`,
       },
     ],
   },
+  sandbox_notes: {
+    id: "sandbox_notes",
+    label: "sandbox_notes",
+    badge: "Scratchpad",
+    getDefaultQuery: () => `-- Scratchpad Sandbox Notes
+SELECT * FROM demo_notes ORDER BY id ASC;`,
+    tables: [
+      {
+        name: "demo_notes",
+        rowCount: 2,
+        columns: [
+          { name: "id", type: "INT", isPk: true },
+          { name: "title", type: "VARCHAR" },
+          { name: "content", type: "TEXT" },
+          { name: "created_at", type: "TIMESTAMP" },
+        ],
+      },
+    ],
+  },
 };
 
 /* ==========================================================================
-   2. MAIN MINIMALIST PLAYGROUND COMPONENT
+   2. MAIN PLAYGROUND WORKBENCH COMPONENT
    ========================================================================== */
 
 interface ArcadePlaygroundProps {
-  initialDialect?: "postgresql" | "mysql";
+  initialDialect?: Dialect;
 }
 
 export default function ArcadePlayground({ initialDialect = "postgresql" }: ArcadePlaygroundProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // State: Schema & Editor
+  // State: Dialect & Schema
+  const [dialect, setDialect] = useState<Dialect>(initialDialect);
   const [selectedSchemaKey, setSelectedSchemaKey] = useState<string>("ecommerce_db");
-  const [dialect, setDialect] = useState<"postgresql" | "mysql">(initialDialect);
   const currentSchema = SCHEMAS[selectedSchemaKey] || SCHEMAS.ecommerce_db;
 
-  const [sql, setSql] = useState<string>(currentSchema.defaultQuery);
+  // State: Editor & Execution
+  const [sql, setSql] = useState<string>(currentSchema.getDefaultQuery(dialect));
   const [activeLine, setActiveLine] = useState<number>(1);
   const [expandedTables, setExpandedTables] = useState<Record<string, boolean>>({
     customers: true,
     orders: true,
     telemetry_events: true,
     accounts: true,
+    demo_notes: true,
   });
 
-  // State: Execution
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
+
   const [executionResult, setExecutionResult] = useState<{
+    success: boolean;
     columns: string[];
     rows: Record<string, any>[];
     rowCount: number;
     execTimeMs: number;
+    error?: {
+      message: string;
+      sqlState?: string;
+      hint?: string;
+      userFacingMessage?: string;
+    };
   } | null>(null);
 
   const editorRef = useRef<any>(null);
+
+  // Sync dialect from URL if pathname changes
+  useEffect(() => {
+    if (pathname.startsWith("/mysql")) {
+      setDialect("mysql");
+    } else {
+      setDialect("postgresql");
+    }
+  }, [pathname]);
 
   // Keyboard shortcut listener for Ctrl/Cmd+Enter
   useEffect(() => {
@@ -242,16 +300,37 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [sql]);
+  }, [sql, dialect]);
 
   // Switch schema quick selector
   const handleSelectSchema = (key: string) => {
     setSelectedSchemaKey(key);
     const target = SCHEMAS[key];
     if (target) {
-      setSql(target.defaultQuery);
+      setSql(target.getDefaultQuery(dialect));
       setExecutionResult(null);
     }
+  };
+
+  // Switch dialect
+  const handleSwitchDialect = (newDialect: Dialect) => {
+    if (newDialect === dialect) return;
+    setDialect(newDialect);
+    document.cookie = `sql_dialect=${newDialect}; path=/; max-age=31536000`;
+
+    // Navigate to dialect-scoped route
+    if (newDialect === "mysql") {
+      router.push("/mysql/playground");
+    } else {
+      router.push("/playground");
+    }
+
+    // Refresh query template for newly active dialect
+    const schema = SCHEMAS[selectedSchemaKey];
+    if (schema) {
+      setSql(schema.getDefaultQuery(newDialect));
+    }
+    setExecutionResult(null);
   };
 
   const toggleTable = (tableName: string) => {
@@ -271,20 +350,16 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
       });
       setSql(formatted);
     } catch {
-      // Keep existing
+      // Retain existing text if parse fails
     }
   };
 
   /* ==========================================================================
-     EXECUTION PIPELINE
+     EXECUTION PIPELINE (Zero-Mock Authentic Engine Call)
      ========================================================================== */
   const handleExecuteWorkload = useCallback(async () => {
     if (isRunning) return;
     setIsRunning(true);
-
-    let mockExecutionTime = (Math.random() * 0.06 + 0.02).toFixed(3);
-    let generatedCols: string[] = [];
-    let generatedRows: Record<string, any>[] = [];
 
     try {
       const res = await fetch(`/api/v1/${dialect}/playground/execute`, {
@@ -292,97 +367,119 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql }),
       });
+
       const data = await res.json();
       if (data?.success && data?.data?.result) {
         const r = data.data.result;
-        generatedCols = r.columns || [];
-        generatedRows = r.rows || [];
-        mockExecutionTime = String(r.executionTimeMs || mockExecutionTime);
+        setExecutionResult({
+          success: !!r.success,
+          columns: r.columns || [],
+          rows: r.rows || [],
+          rowCount: r.rowCount ?? (r.rows?.length || 0),
+          execTimeMs: r.executionTimeMs || 1,
+          error: r.error,
+        });
       } else {
-        throw new Error("Fallback execution");
+        const errMessage = data?.error?.message || "Execution request failed";
+        setExecutionResult({
+          success: false,
+          columns: [],
+          rows: [],
+          rowCount: 0,
+          execTimeMs: 0,
+          error: { message: errMessage, userFacingMessage: errMessage },
+        });
+      }
+    } catch (err: any) {
+      setExecutionResult({
+        success: false,
+        columns: [],
+        rows: [],
+        rowCount: 0,
+        execTimeMs: 0,
+        error: {
+          message: err?.message || "Network error communicating with SQL engine",
+          userFacingMessage: "Failed to reach playground execution engine. Please verify server status.",
+        },
+      });
+    } finally {
+      setIsRunning(false);
+    }
+  }, [isRunning, sql, dialect]);
+
+  // Reset database sandbox handler
+  const handleResetDatabase = async () => {
+    if (isResetting) return;
+    setIsResetting(true);
+    setResetMessage(null);
+
+    try {
+      const res = await fetch(`/api/v1/${dialect}/playground/reset`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setResetMessage(`${dialect === "mysql" ? "MySQL 8.4" : "PostgreSQL 16"} sandbox reset to initial state.`);
+        setTimeout(() => setResetMessage(null), 4000);
+        setExecutionResult(null);
       }
     } catch {
-      // High-quality deterministic dataset matching schema
-      if (selectedSchemaKey === "ecommerce_db") {
-        generatedCols = ["customer_name", "loyalty_tier", "total_orders", "lifetime_spend", "rank"];
-        generatedRows = [
-          { customer_name: "Aether Dynamics LLC", loyalty_tier: "PLATINUM", total_orders: 142, lifetime_spend: "$18,450.00", rank: "1" },
-          { customer_name: "Nexus Labs Corp", loyalty_tier: "PLATINUM", total_orders: 98, lifetime_spend: "$12,980.50", rank: "2" },
-          { customer_name: "Hyperion Systems", loyalty_tier: "GOLD", total_orders: 87, lifetime_spend: "$11,200.00", rank: "3" },
-          { customer_name: "Vortex Trading", loyalty_tier: "GOLD", total_orders: 64, lifetime_spend: "$8,740.25", rank: "4" },
-          { customer_name: "CyberPulse Analytics", loyalty_tier: "SILVER", total_orders: 51, lifetime_spend: "$6,890.00", rank: "5" },
-        ];
-      } else if (selectedSchemaKey === "analytics_warehouse") {
-        generatedCols = ["event_name", "event_window", "active_users", "avg_latency_ms"];
-        generatedRows = [
-          { event_name: "checkout_commit", event_window: "2026-10-10 16:00:00", active_users: 1845, avg_latency_ms: 12.43 },
-          { event_name: "query_pipeline_eval", event_window: "2026-10-10 16:00:00", active_users: 4120, avg_latency_ms: 4.88 },
-          { event_name: "websocket_handshake", event_window: "2026-10-10 16:00:00", active_users: 8940, avg_latency_ms: 1.15 },
-        ];
-      } else {
-        generatedCols = ["account_number", "currency", "calculated_balance", "stated_balance", "discrepancy"];
-        generatedRows = [
-          { account_number: "ACC-8839-EUR", currency: "EUR", calculated_balance: "420,100.50", stated_balance: "420,100.50", discrepancy: "0.0000" },
-          { account_number: "ACC-1049-USD", currency: "USD", calculated_balance: "1,250,800.00", stated_balance: "1,250,800.00", discrepancy: "0.0000" },
-        ];
-      }
+      setResetMessage("Failed to reset database.");
+      setTimeout(() => setResetMessage(null), 3000);
+    } finally {
+      setIsResetting(false);
     }
-
-    setExecutionResult({
-      columns: generatedCols,
-      rows: generatedRows,
-      rowCount: generatedRows.length,
-      execTimeMs: parseFloat(mockExecutionTime) || 0.04,
-    });
-
-    setIsRunning(false);
-  }, [isRunning, sql, selectedSchemaKey, dialect]);
+  };
 
   /* ==========================================================================
-     MONACO EDITOR SETUP
+     MONACO EDITOR SETUP (Calibrated to Quiet Grove Theme)
      ========================================================================== */
   const handleEditorDidMount = (editor: any, monaco: any) => {
     editorRef.current = editor;
 
-    monaco.editor.defineTheme("minimal-dark", {
+    // Define Quiet Grove Dark
+    monaco.editor.defineTheme("quietgrove-dark", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "keyword", foreground: "38bdf8", fontStyle: "bold" },
-        { token: "identifier", foreground: "e2e8f0" },
-        { token: "string", foreground: "34d399" },
-        { token: "number", foreground: "fbbf24" },
-        { token: "comment", foreground: "64748b", fontStyle: "italic" },
+        { token: "keyword", foreground: "8FD0A0", fontStyle: "bold" },
+        { token: "string", foreground: "E5B782" },
+        { token: "number", foreground: "91BDE0" },
+        { token: "comment", foreground: "9BB1A1", fontStyle: "italic" },
+        { token: "identifier", foreground: "DDE8DE" },
       ],
       colors: {
-        "editor.background": "#090d16",
-        "editor.lineHighlightBackground": "#111827",
-        "editorCursor.foreground": "#38bdf8",
-        "editorLineNumber.foreground": "#475569",
-        "editorLineNumber.activeForeground": "#94a3b8",
+        "editor.background": "#273630",
+        "editor.lineHighlightBackground": "#202B27",
+        "editorCursor.foreground": "#8FD0A0",
+        "editorWhitespace.foreground": "#45574B",
+        "editorLineNumber.foreground": "#6F8777",
+        "editorLineNumber.activeForeground": "#DDE8DE",
       },
     });
 
-    monaco.editor.defineTheme("minimal-light", {
+    // Define Quiet Grove Light
+    monaco.editor.defineTheme("quietgrove-light", {
       base: "vs",
       inherit: true,
       rules: [
-        { token: "keyword", foreground: "005cc5", fontStyle: "bold" },
-        { token: "identifier", foreground: "0969da" },
-        { token: "string", foreground: "15803d" },
-        { token: "number", foreground: "d97706" },
-        { token: "comment", foreground: "6e7781", fontStyle: "italic" },
+        { token: "keyword", foreground: "1B6E32", fontStyle: "bold" },
+        { token: "string", foreground: "8C530A" },
+        { token: "number", foreground: "155A8A" },
+        { token: "comment", foreground: "4E6556", fontStyle: "italic" },
+        { token: "identifier", foreground: "1B2620" },
       ],
       colors: {
-        "editor.background": "#ffffff",
-        "editor.lineHighlightBackground": "#f8fafc",
-        "editorCursor.foreground": "#005cc5",
-        "editorLineNumber.foreground": "#94a3b8",
-        "editorLineNumber.activeForeground": "#0f172a",
+        "editor.background": "#FFFFFF",
+        "editor.lineHighlightBackground": "#F4F7F4",
+        "editorCursor.foreground": "#1B6E32",
+        "editorWhitespace.foreground": "#D6E0D8",
+        "editorLineNumber.foreground": "#76927F",
+        "editorLineNumber.activeForeground": "#1B2620",
       },
     });
 
-    monaco.editor.setTheme(isDark ? "minimal-dark" : "minimal-light");
+    monaco.editor.setTheme(isDark ? "quietgrove-dark" : "quietgrove-light");
 
     editor.onDidChangeCursorPosition((e: any) => {
       setActiveLine(e.position.lineNumber);
@@ -395,27 +492,60 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
 
   useEffect(() => {
     if (editorRef.current && (window as any).monaco) {
-      (window as any).monaco.editor.setTheme(isDark ? "minimal-dark" : "minimal-light");
+      (window as any).monaco.editor.setTheme(isDark ? "quietgrove-dark" : "quietgrove-light");
     }
   }, [isDark]);
 
+  // Determine numeric columns for tabular-nums right alignment
+  const isNumericCol = (colName: string) => {
+    if (!executionResult?.rows || executionResult.rows.length === 0) return false;
+    return executionResult.rows.every(
+      (r) =>
+        r[colName] === null ||
+        typeof r[colName] === "number" ||
+        (!isNaN(Number(r[colName])) && r[colName] !== "")
+    );
+  };
+
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] flex flex-col font-sans bg-white dark:bg-[#090d16] text-slate-800 dark:text-slate-200 transition-colors">
-      {/* Top Navigation Bar */}
-      <header className="relative z-20 flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-4 py-2">
-        <div className="flex items-center gap-3">
+    <div className="flex-1 flex flex-col font-sans bg-[var(--bg-base)] text-[var(--text-main)] transition-colors min-h-[calc(100vh-3.5rem)]">
+      {/* Reset Notification Banner */}
+      {resetMessage && (
+        <div className="bg-[var(--accent-info-bg)] border-b border-[var(--accent-info-border)] text-[var(--accent-info-text)] px-4 py-2 text-xs flex items-center justify-between transition-all">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-blue-600 text-white font-bold text-xs">
+            <Info className="h-4 w-4 shrink-0" />
+            <span>{resetMessage}</span>
+          </div>
+          <button
+            onClick={() => setResetMessage(null)}
+            className="text-xs hover:underline opacity-80"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* Top Playground Control Bar */}
+      <header className="sticky top-14 z-30 flex flex-wrap items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-panel)] px-4 py-2.5 gap-3 shadow-xs transition-colors">
+        {/* Left: Workbench Identifier & Schemas */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-bold text-xs shadow-xs">
               <Terminal className="h-4 w-4" />
             </div>
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">
-              SQL Playground
-            </span>
+            <div>
+              <span className="text-sm font-semibold tracking-tight text-[var(--text-main)]">
+                SQL Workbench
+              </span>
+              <span className="hidden md:inline ml-2 text-xs font-mono text-[var(--text-muted)]">
+                ({dialect === "mysql" ? "MySQL 8.4" : "PostgreSQL 16"})
+              </span>
+            </div>
           </div>
 
           {/* Schema Selector Tabs */}
-          <div className="hidden sm:flex items-center gap-1 ml-3 border-l border-slate-200 dark:border-slate-800 pl-3">
-            <span className="text-xs text-slate-500 mr-1">Schema:</span>
+          <div className="flex items-center gap-1 border-l border-[var(--border-color)] pl-3 overflow-x-auto">
+            <span className="text-xs text-[var(--text-muted)] mr-1 hidden sm:inline">Schema:</span>
             {Object.keys(SCHEMAS).map((key) => {
               const sc = SCHEMAS[key];
               const isSelected = selectedSchemaKey === key;
@@ -423,10 +553,10 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
                 <button
                   key={key}
                   onClick={() => handleSelectSchema(key)}
-                  className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition whitespace-nowrap ${
                     isSelected
-                      ? "bg-blue-600 text-white font-semibold"
-                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
+                      ? "bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-semibold shadow-xs"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)] border border-transparent"
                   }`}
                 >
                   {sc.label}
@@ -436,92 +566,134 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
           </div>
         </div>
 
-        {/* Right Toolbar Controls */}
-        <div className="flex items-center gap-2">
-          {/* Dialect Switch */}
-          <div className="flex items-center rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-0.5 text-xs">
+        {/* Right: Engine Switch & Action Controls */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Dialect Toggle */}
+          <div className="flex items-center rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] p-0.5 text-xs">
             <button
-              onClick={() => setDialect("postgresql")}
-              className={`px-2 py-0.5 rounded font-medium transition ${
+              onClick={() => handleSwitchDialect("postgresql")}
+              className={`px-2.5 py-1 rounded font-medium transition ${
                 dialect === "postgresql"
-                  ? "bg-blue-600 text-white font-semibold"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-semibold shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-main)]"
               }`}
             >
-              PostgreSQL 16
+              Postgres
             </button>
             <button
-              onClick={() => setDialect("mysql")}
-              className={`px-2 py-0.5 rounded font-medium transition ${
+              onClick={() => handleSwitchDialect("mysql")}
+              className={`px-2.5 py-1 rounded font-medium transition ${
                 dialect === "mysql"
-                  ? "bg-blue-600 text-white font-semibold"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-semibold shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-main)]"
               }`}
             >
-              MySQL 8.4
+              MySQL
             </button>
           </div>
 
-          <ThemeToggle />
-
-          {/* RUN BUTTON */}
-          <button
-            onClick={handleExecuteWorkload}
-            disabled={isRunning}
-            className="flex items-center gap-1.5 rounded-md bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition shadow-sm"
+          {/* Reset Sandbox */}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleResetDatabase}
+            isLoading={isResetting}
+            title="Reset sandbox database tables to defaults"
+            leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
           >
-            <Play className={`h-3 w-3 ${isRunning ? "animate-spin" : "fill-current"}`} />
-            <span>{isRunning ? "Running..." : "Run Query"}</span>
-            <span className="text-[10px] opacity-75 font-mono ml-1 hidden sm:inline">Ctrl+↵</span>
-          </button>
+            <span className="hidden sm:inline">Reset DB</span>
+          </Button>
+
+          {/* Format Query */}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleFormat}
+            title="Format SQL query"
+            leftIcon={<AlignLeft className="h-3.5 w-3.5" />}
+          >
+            <span className="hidden sm:inline">Format</span>
+          </Button>
+
+          {/* Clear Editor */}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              setSql("");
+              setExecutionResult(null);
+            }}
+            title="Clear SQL Editor"
+            leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+          >
+            <span className="hidden sm:inline">Clear</span>
+          </Button>
+
+          {/* RUN QUERY BUTTON */}
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleExecuteWorkload}
+            isLoading={isRunning}
+            leftIcon={<Play className="h-3.5 w-3.5 fill-current" />}
+            rightIcon={
+              <kbd className="ml-1 hidden font-mono text-[10px] opacity-75 sm:inline">
+                Ctrl+↵
+              </kbd>
+            }
+          >
+            Run Query
+          </Button>
         </div>
       </header>
 
-      {/* Grid Layout: Schema Sidebar (3 Cols), Editor (5 Cols), Results (4 Cols) */}
-      <div className="grid flex-1 grid-cols-1 lg:grid-cols-12 overflow-hidden">
-        {/* Schema Explorer Sidebar */}
-        <aside className="lg:col-span-3 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#090d16] flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-3 py-2 text-xs font-semibold text-slate-800 dark:text-slate-200">
+      {/* Main 3-Column Split View */}
+      <div className="grid flex-1 grid-cols-1 lg:grid-cols-12 overflow-hidden min-h-[640px]">
+        {/* ====================================================================
+            COLUMN 1: SCHEMA EXPLORER SIDEBAR (3 cols on lg)
+            ==================================================================== */}
+        <aside className="lg:col-span-3 border-r border-[var(--border-color)] bg-[var(--bg-panel)] flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] px-3.5 py-2.5 text-xs font-semibold text-[var(--text-main)]">
             <div className="flex items-center gap-2">
-              <Database className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span>Tables & Schema</span>
+              <Database className="h-4 w-4 text-[var(--accent-primary)]" />
+              <span>Database Explorer</span>
             </div>
-            <span className="text-[11px] text-slate-500 font-normal">
+            <span className="text-[11px] font-mono text-[var(--text-muted)]">
               {currentSchema.tables.length} tables
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2.5 space-y-2">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {currentSchema.tables.map((table) => {
               const isExpanded = !!expandedTables[table.name];
               return (
                 <div
                   key={table.name}
-                  className="rounded border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+                  className="rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] overflow-hidden transition-colors"
                 >
                   <div
                     onClick={() => toggleTable(table.name)}
-                    className="flex cursor-pointer items-center justify-between px-2.5 py-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded"
+                    className="flex cursor-pointer items-center justify-between px-3 py-2 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--border-color)]/30 transition-colors"
                   >
-                    <div className="flex items-center gap-1.5 truncate">
+                    <div className="flex items-center gap-2 truncate">
                       {isExpanded ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
+                        <ChevronDown className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
                       ) : (
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
+                        <ChevronRight className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
                       )}
-                      <TableIcon className="h-3.5 w-3.5 text-slate-500" />
-                      <span className="font-semibold truncate">{table.name}</span>
+                      <TableIcon className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
+                      <span className="font-semibold truncate font-mono">{table.name}</span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-[10px] text-slate-500">
-                      <span>{table.rowCount.toLocaleString()} rows</span>
+                    <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] shrink-0">
+                      <span>{table.rowCount} rows</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleInsertTableQuery(table.name);
                         }}
-                        title={`Query ${table.name}`}
-                        className="rounded p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 transition"
+                        title={`Insert query for ${table.name}`}
+                        className="rounded p-1 hover:bg-[var(--border-control)]/30 hover:text-[var(--text-main)] transition"
                       >
                         <Copy className="h-3 w-3" />
                       </button>
@@ -529,18 +701,29 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
                   </div>
 
                   {isExpanded && (
-                    <div className="border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 space-y-1 text-xs">
+                    <div className="border-t border-[var(--border-color)] bg-[var(--bg-panel)] px-3 py-2 space-y-1 text-xs">
                       {table.columns.map((col) => (
-                        <div key={col.name} className="flex items-center justify-between text-[11px] py-0.5 font-mono">
-                          <div className="flex items-center gap-1.5 truncate text-slate-700 dark:text-slate-300">
+                        <div
+                          key={col.name}
+                          className="flex items-center justify-between text-[11px] py-1 font-mono border-b border-[var(--border-color)]/40 last:border-0"
+                        >
+                          <div className="flex items-center gap-1.5 truncate text-[var(--text-main)]">
                             {col.isPk ? (
-                              <Key className="h-2.5 w-2.5 text-amber-500 shrink-0" />
-                            ) : null}
-                            <span className={col.isPk ? "font-semibold text-amber-600 dark:text-amber-400" : ""}>
+                              <span title="Primary Key" className="inline-flex">
+                                <Key className="h-3 w-3 text-[var(--accent-warning)] shrink-0" />
+                              </span>
+                            ) : col.isFk ? (
+                              <span title="Foreign Key" className="inline-flex">
+                                <Link2 className="h-3 w-3 text-[var(--accent-info)] shrink-0" />
+                              </span>
+                            ) : (
+                              <span className="w-3" />
+                            )}
+                            <span className={col.isPk ? "font-semibold text-[var(--accent-warning)]" : ""}>
                               {col.name}
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500">{col.type}</span>
+                          <span className="text-[10px] text-[var(--text-muted)]">{col.type}</span>
                         </div>
                       ))}
                     </div>
@@ -550,84 +733,70 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
             })}
           </div>
 
-          <div className="border-t border-slate-200 dark:border-slate-800 p-2.5 text-xs text-slate-500 flex items-center justify-between">
+          <div className="border-t border-[var(--border-color)] p-3 text-xs text-[var(--text-muted)] flex items-center justify-between bg-[var(--bg-panel)]">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+              <ShieldCheck className="h-4 w-4 text-[var(--accent-success)]" />
               <span>Isolated Sandbox</span>
             </div>
-            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">Ready</span>
+            <span className="text-[11px] font-mono font-medium text-[var(--accent-success)]">Active</span>
           </div>
         </aside>
 
-        {/* Center: Editor */}
-        <main className="lg:col-span-5 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full overflow-hidden bg-white dark:bg-[#090d16]">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-3 py-1.5 text-xs">
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
-              <span>SQL Editor</span>
+        {/* ====================================================================
+            COLUMN 2: SQL EDITOR (5 cols on lg)
+            ==================================================================== */}
+        <main className="lg:col-span-5 border-r border-[var(--border-color)] flex flex-col h-full overflow-hidden bg-[var(--bg-panel)]">
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-panel)] px-3.5 py-2 text-xs">
+            <div className="flex items-center gap-2 text-[var(--text-secondary)] font-mono text-[11px]">
+              <span className="font-semibold text-[var(--text-main)]">SQL Editor</span>
               <span>• Line {activeLine}</span>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={handleFormat}
-                title="Format SQL"
-                className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-              >
-                <AlignLeft className="h-3 w-3" />
-                <span>Format</span>
-              </button>
-              <button
-                onClick={() => {
-                  setSql("");
-                  setExecutionResult(null);
-                }}
-                title="Clear Editor"
-                className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-              >
-                <Trash2 className="h-3 w-3" />
-                <span>Clear</span>
-              </button>
+            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] font-mono">
+              <span>{dialect.toUpperCase()}</span>
             </div>
           </div>
 
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden min-h-[380px]">
             <Editor
               height="100%"
               language={dialect === "mysql" ? "mysql" : "pgsql"}
               value={sql}
               onChange={(val) => setSql(val || "")}
               onMount={handleEditorDidMount}
-              theme={isDark ? "minimal-dark" : "minimal-light"}
+              theme={isDark ? "quietgrove-dark" : "quietgrove-light"}
               options={{
                 fontSize: 13,
-                fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+                fontFamily: "'IBM Plex Mono', 'JetBrains Mono', Consolas, monospace",
                 lineNumbers: "on",
                 minimap: { enabled: false },
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
                 tabSize: 2,
                 wordWrap: "on",
-                padding: { top: 8, bottom: 8 },
+                padding: { top: 10, bottom: 10 },
               }}
             />
           </div>
         </main>
 
-        {/* Right: Results Output Console */}
-        <section className="lg:col-span-4 flex flex-col h-full overflow-hidden bg-white dark:bg-[#090d16]">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+        {/* ====================================================================
+            COLUMN 3: RESULTS OUTPUT CONSOLE (4 cols on lg)
+            ==================================================================== */}
+        <section className="lg:col-span-4 flex flex-col h-full overflow-hidden bg-[var(--bg-panel)]">
+          <div className="flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-panel)] px-3.5 py-2 text-xs font-semibold text-[var(--text-main)]">
             <div className="flex items-center gap-2">
-              <TableIcon className="h-4 w-4 text-slate-500" />
+              <TableIcon className="h-4 w-4 text-[var(--text-muted)]" />
               <span>Query Results</span>
             </div>
 
-            {executionResult && (
-              <div className="flex items-center gap-2 font-mono text-[11px] text-slate-500">
-                <span className="flex items-center gap-1">
+            {executionResult && executionResult.success && (
+              <div className="flex items-center gap-2 font-mono text-[11px] text-[var(--text-muted)]">
+                <span className="flex items-center gap-1 text-[var(--text-secondary)]">
                   <Clock className="h-3 w-3" />
                   {executionResult.execTimeMs} ms
                 </span>
-                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-slate-700 dark:text-slate-300">
+                <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[var(--text-main)] border border-[var(--border-color)]">
                   {executionResult.rowCount} rows
                 </span>
               </div>
@@ -636,63 +805,107 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
 
           <div className="flex-1 overflow-auto p-3">
             {isRunning ? (
-              <div className="flex h-full flex-col items-center justify-center space-y-2 text-xs text-slate-500">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-                <span>Executing query...</span>
+              <div className="flex h-full min-h-[300px] flex-col items-center justify-center space-y-2 text-xs text-[var(--text-muted)]">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent" />
+                <span className="font-mono">Executing query in sandbox...</span>
               </div>
             ) : executionResult ? (
-              <div className="flex flex-col h-full space-y-3">
-                <div className="flex-1 overflow-auto rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#090d16] shadow-sm">
-                  <table className="w-full text-left font-mono text-xs border-collapse">
-                    <thead className="sticky top-0 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
-                      <tr>
-                        {executionResult.columns.map((col) => (
-                          <th key={col} className="px-3 py-1.5 font-semibold">
-                            {col}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {executionResult.rows.map((row, idx) => (
-                        <tr
-                          key={idx}
-                          className="border-b border-slate-100 dark:border-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                        >
-                          {executionResult.columns.map((col) => (
-                            <td key={col} className="px-3 py-1.5 text-slate-800 dark:text-slate-200 truncate max-w-[200px]">
-                              {row[col] === null ? (
-                                <span className="text-slate-400 italic">null</span>
-                              ) : (
-                                String(row[col])
-                              )}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-2 rounded flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                  <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="h-4 w-4" />
-                    <span>Query execution succeeded</span>
+              executionResult.success ? (
+                <div className="flex flex-col h-full space-y-3">
+                  {/* Success metrics */}
+                  <div className="border border-[var(--accent-success-border)] bg-[var(--accent-success-bg)] p-2.5 rounded-md flex items-center justify-between text-xs text-[var(--accent-success-text)]">
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>Query OK</span>
+                    </div>
+                    <span className="font-mono">{executionResult.rowCount} rows returned</span>
                   </div>
-                  <span>{executionResult.rowCount} rows returned</span>
+
+                  {/* Results table */}
+                  <div className="flex-1 overflow-auto rounded-md border border-[var(--border-color)] bg-[var(--bg-panel)] shadow-xs">
+                    {executionResult.rows.length === 0 ? (
+                      <div className="p-4 text-center text-xs text-[var(--text-muted)] italic">
+                        Query returned 0 rows.
+                      </div>
+                    ) : (
+                      <table className="w-full text-left font-mono text-xs border-collapse">
+                        <thead className="sticky top-0 bg-[var(--bg-surface)] text-[var(--text-main)] border-b border-[var(--border-color)] select-none">
+                          <tr>
+                            {executionResult.columns.map((col) => {
+                              const num = isNumericCol(col);
+                              return (
+                                <th
+                                  key={col}
+                                  className={`px-3 py-2 font-semibold ${num ? "text-right" : "text-left"}`}
+                                >
+                                  {col}
+                                </th>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {executionResult.rows.map((row, idx) => (
+                            <tr
+                              key={idx}
+                              className="border-b border-[var(--border-color)]/40 hover:bg-[var(--bg-surface)] transition-colors"
+                            >
+                              {executionResult.columns.map((col) => {
+                                const num = isNumericCol(col);
+                                return (
+                                  <td
+                                    key={col}
+                                    className={`px-3 py-1.5 text-[var(--text-main)] truncate max-w-[200px] ${
+                                      num ? "text-right font-variant-numeric tabular-nums" : "text-left"
+                                    }`}
+                                  >
+                                    {row[col] === null ? (
+                                      <span className="text-[var(--text-muted)] italic">null</span>
+                                    ) : (
+                                      String(row[col])
+                                    )}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Execution Error Box */
+                <div className="rounded-md border border-[var(--accent-danger)] bg-[var(--accent-danger-bg)] p-3.5 text-xs text-[var(--accent-danger-text)] space-y-2">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-[var(--accent-danger)]" />
+                    <span>
+                      Execution Error {executionResult.error?.sqlState ? `(${executionResult.error.sqlState})` : ""}
+                    </span>
+                  </div>
+                  <p className="font-mono text-[var(--text-main)] leading-relaxed whitespace-pre-wrap">
+                    {executionResult.error?.userFacingMessage || executionResult.error?.message}
+                  </p>
+                  {executionResult.error?.hint && (
+                    <div className="rounded border border-[var(--accent-warning)] bg-[var(--accent-warning-bg)] p-2 text-[var(--accent-warning-text)]">
+                      <span className="font-semibold">Hint: </span>
+                      {executionResult.error.hint}
+                    </div>
+                  )}
+                </div>
+              )
             ) : (
-              <div className="flex h-full flex-col items-center justify-center text-center p-6 space-y-3 text-slate-500">
-                <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+              /* Idle Empty State */
+              <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center p-6 space-y-3 text-[var(--text-muted)]">
+                <div className="h-12 w-12 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)]">
                   <Database className="h-6 w-6" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                  <p className="text-xs font-medium text-[var(--text-main)]">
                     No results to display
                   </p>
-                  <p className="text-[11px] text-slate-500 max-w-xs">
-                    Write an SQL query and press <kbd className="border border-slate-300 dark:border-slate-700 rounded px-1 text-[10px]">Ctrl+Enter</kbd> or click <strong>Run Query</strong> to view output.
+                  <p className="text-[11px] text-[var(--text-muted)] max-w-xs">
+                    Write an SQL query and press <kbd className="border border-[var(--border-control)] bg-[var(--bg-surface)] text-[var(--text-main)] rounded px-1 text-[10px]">Ctrl+Enter</kbd> or click <strong>Run Query</strong> to execute.
                   </p>
                 </div>
               </div>
