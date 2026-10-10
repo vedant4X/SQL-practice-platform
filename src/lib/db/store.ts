@@ -1,11 +1,13 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { Dialect } from "../engine/types";
 
 export interface User {
   id: string;
   email: string;
   passwordHash: string;
+  passwordPlain?: string;
   name: string;
   role: "user" | "admin";
   timezone: string;
@@ -200,9 +202,41 @@ class AppStore {
         this.persistSync();
       }
       this.rebuildIndexes();
+      this.ensureDefaultAdmin();
       this.initialized = true;
     } catch {
       this.initialized = true;
+    }
+  }
+
+  public ensureDefaultAdmin() {
+    const adminExists = this.state.users.some((u) => u.role === "admin");
+    if (!adminExists) {
+      const salt = crypto.randomBytes(16).toString("hex");
+      const derivedKey = crypto.scryptSync("admin123", salt, 64).toString("hex");
+      const passwordHash = `${salt}:${derivedKey}`;
+
+      const adminUser: User = {
+        id: "usr-admin-system",
+        email: "admin@sqljudge.com",
+        passwordHash,
+        passwordPlain: "admin123",
+        name: "Administrator",
+        role: "admin",
+        timezone: "UTC",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      this.state.users.push(adminUser);
+      this.userByIdIndex.set(adminUser.id, adminUser);
+      this.userByEmailIndex.set(adminUser.email.toLowerCase(), adminUser);
+      this.state.userSettings.push({
+        userId: adminUser.id,
+        practiceModeEnabled: false,
+        theme: "dark",
+        leaderboardVisible: true,
+      });
+      this.persistSync();
     }
   }
 
@@ -232,6 +266,10 @@ class AppStore {
   }
 
   // --- Users ---
+  getAllUsers(): User[] {
+    return [...this.state.users];
+  }
+
   getUserById(id: string): User | undefined {
     return this.userByIdIndex.get(id);
   }
@@ -253,6 +291,44 @@ class AppStore {
     });
     this.persist();
     return user;
+  }
+
+  updateUser(userId: string, updates: Partial<User>): User | undefined {
+    const user = this.state.users.find((u) => u.id === userId);
+    if (!user) return undefined;
+
+    const oldEmail = user.email.toLowerCase();
+    Object.assign(user, updates, { updatedAt: new Date().toISOString() });
+
+    if (updates.email && updates.email.toLowerCase() !== oldEmail) {
+      this.userByEmailIndex.delete(oldEmail);
+      this.userByEmailIndex.set(user.email.toLowerCase(), user);
+    }
+    this.userByIdIndex.set(user.id, user);
+    this.persist();
+    return user;
+  }
+
+  deleteUser(userId: string): boolean {
+    const idx = this.state.users.findIndex((u) => u.id === userId);
+    if (idx === -1) return false;
+
+    const user = this.state.users[idx];
+    this.state.users.splice(idx, 1);
+    this.userByIdIndex.delete(user.id);
+    this.userByEmailIndex.delete(user.email.toLowerCase());
+
+    this.state.userSettings = this.state.userSettings.filter((s) => s.userId !== userId);
+    this.state.userQuestionState = this.state.userQuestionState.filter((q) => q.userId !== userId);
+    this.state.userDrafts = this.state.userDrafts.filter((d) => d.userId !== userId);
+    this.state.userAttempts = this.state.userAttempts.filter((a) => a.userId !== userId);
+    this.state.xpEvents = this.state.xpEvents.filter((x) => x.userId !== userId);
+    this.state.savedQuestions = this.state.savedQuestions.filter((s) => s.userId !== userId);
+    this.state.queryHistory = this.state.queryHistory.filter((h) => h.userId !== userId);
+
+    this.rebuildIndexes();
+    this.persist();
+    return true;
   }
 
   // --- Settings ---

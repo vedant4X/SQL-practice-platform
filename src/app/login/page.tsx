@@ -149,11 +149,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="text-center text-xs text-[var(--text-muted)]">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-[var(--accent-primary)] hover:underline">
-            Register for free
-          </Link>
+        <div className="space-y-2 text-center text-xs text-[var(--text-muted)]">
+          <div>
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="font-semibold text-[var(--accent-primary)] hover:underline">
+              Register for free
+            </Link>
+          </div>
+          <div className="pt-2 border-t border-[var(--border-color)]">
+            <Link href="/admin" className="font-semibold text-[var(--accent-warning-text)] hover:underline flex items-center justify-center gap-1">
+              <span>Admin Portal Access →</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       id: userId,
       email,
       passwordHash,
+      passwordPlain: password,
       name,
       role: "user",
       timezone: "UTC",

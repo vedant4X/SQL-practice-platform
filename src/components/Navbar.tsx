@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Server,
   Zap,
+  Shield,
 } from "lucide-react";
 import { Dialect } from "@/lib/engine/types";
 import { useTheme } from "@/lib/theme/ThemeContext";
@@ -22,6 +23,7 @@ interface UserProfile {
   id: string;
   name: string;
   email: string;
+  role?: string;
   totalXp: number;
 }
 
@@ -160,6 +162,17 @@ export default function Navbar() {
               <BarChart2 className="h-3.5 w-3.5" />
               Dashboard
             </Link>
+            {user?.role === "admin" && (
+              <Link
+                href="/admin"
+                className={`flex items-center gap-1.5 transition text-[var(--accent-warning)] hover:text-[var(--accent-warning-text)] ${
+                  pathname.startsWith("/admin") ? "font-bold underline" : "font-medium"
+                }`}
+              >
+                <Shield className="h-3.5 w-3.5" />
+                Admin
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -170,6 +183,18 @@ export default function Navbar() {
             <div className="h-7 w-20 animate-pulse rounded bg-[var(--bg-surface)]" />
           ) : user ? (
             <div className="flex items-center gap-2.5">
+              {user.role === "admin" && (
+                <Link
+                  href="/admin"
+                  className={`flex items-center gap-1 rounded bg-[var(--accent-warning-bg)] border border-[var(--accent-warning-border)] px-2 py-0.5 text-xs font-semibold text-[var(--accent-warning-text)] transition hover:opacity-85 ${
+                    pathname.startsWith("/admin") ? "ring-2 ring-[var(--accent-warning)]" : ""
+                  }`}
+                  title="Administrator Console"
+                >
+                  <Shield className="h-3 w-3 text-[var(--accent-warning)]" />
+                  <span>Admin</span>
+                </Link>
+              )}
               <div className="flex items-center gap-1 rounded bg-[var(--accent-warning-bg)] border border-[var(--accent-warning-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-warning-text)]">
                 <Zap className="h-3 w-3 text-[var(--accent-warning)] fill-current" />
                 <span>{user.totalXp || 0} XP</span>
