@@ -401,7 +401,7 @@ export default function PracticePage({ params }: PageProps) {
   return (
     <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-[var(--bg-base)] transition-colors">
       {/* Subheader Navigation */}
-      <div className="flex h-11 items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-surface)] px-4">
+      <div className="flex h-11 items-center justify-between border-b border-[var(--glass-border)] glass-sub px-4">
         <div className="flex items-center gap-2.5">
           <Link
             href={`/topics`}

@@ -136,9 +136,15 @@ export default function TopicProblemPicker({
 
       {/* LeetCode-style Problem Navigator Popover */}
       {isOpen && (
-        <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-[340px] sm:w-[420px] rounded-lg border border-[var(--border-strong)] bg-[var(--bg-panel)] shadow-xl z-50 overflow-hidden flex flex-col max-h-[520px] transition-colors">
-          {/* Header & Progress Summary */}
-          <div className="p-3.5 border-b border-[var(--border-color)] bg-[var(--bg-surface)] space-y-2">
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[4px] transition-opacity"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-[340px] sm:w-[420px] rounded-lg glass-strong shadow-2xl z-50 overflow-hidden flex flex-col max-h-[520px]">
+            {/* Header & Progress Summary */}
+            <div className="p-3.5 border-b border-[var(--glass-border)] bg-[var(--bg-surface)]/80 backdrop-blur-xs space-y-2">
             <div className="flex items-center justify-between">
               <div className="truncate pr-2">
                 <span className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-wider block">
@@ -293,6 +299,7 @@ export default function TopicProblemPicker({
             )}
           </div>
         </div>
+        </>
       )}
     </div>
   );

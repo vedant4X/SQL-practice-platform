@@ -36,7 +36,7 @@ export default function SchemaExplorer({ databaseId, tables, isLoading = false }
   return (
     <div className="flex h-full flex-col border-l border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-main)] transition-colors">
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-[var(--border-color)] bg-[var(--bg-panel)] px-3 py-2.5">
+      <div className="flex items-center gap-2 border-b border-[var(--border-color)] glass-strong px-3 py-2.5">
         <Database className="h-4 w-4 text-[var(--accent-primary)] shrink-0" />
         <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-main)] font-mono truncate">
           Schema: {databaseId}
@@ -118,11 +118,11 @@ export default function SchemaExplorer({ databaseId, tables, isLoading = false }
       {/* Row Preview Drawer */}
       {previewTable && selectedPreviewData && (
         <div className="border-t border-[var(--border-color)] bg-[var(--bg-surface)] p-2 text-xs">
-          <div className="flex items-center justify-between pb-1.5 font-semibold text-[var(--text-main)]">
+          <div className="flex items-center justify-between px-2.5 py-1.5 font-semibold text-[var(--text-main)] rounded-md glass-strong mb-2 shadow-xs">
             <span>Preview: {previewTable}</span>
             <button
               onClick={() => setPreviewTable(null)}
-              className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+              className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition"
             >
               <X className="h-3.5 w-3.5" />
             </button>

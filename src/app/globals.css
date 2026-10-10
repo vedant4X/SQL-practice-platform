@@ -55,6 +55,13 @@ html.light {
 
   --editor-bg: #FFFFFF;
   --editor-line: #F4F7F4;
+
+  /* Liquid Glass Tokens (Ivory-Green Light Mode) */
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-bg-strong: rgba(255, 255, 255, 0.80);
+  --glass-border: rgba(118, 146, 127, 0.35);
+  --glass-highlight: rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 8px 32px rgba(27, 38, 32, 0.10);
 }
 
 html.dark {
@@ -102,6 +109,13 @@ html.dark {
 
   --editor-bg: #273630;
   --editor-line: #202B27;
+
+  /* Liquid Glass Tokens (Forest Dusk Dark Mode) */
+  --glass-bg: rgba(39, 54, 48, 0.55);
+  --glass-bg-strong: rgba(39, 54, 48, 0.80);
+  --glass-border: rgba(143, 208, 160, 0.18);
+  --glass-highlight: rgba(221, 232, 222, 0.10);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 body {
@@ -174,4 +188,134 @@ html.light ::-webkit-scrollbar-thumb {
 }
 html.light ::-webkit-scrollbar-thumb:hover {
   background: var(--border-control);
+}
+
+/* ==========================================================================
+   LIQUID GLASS (FROSTED CHROME) UTILITY CLASSES
+   Applied strictly to selected floating/chrome surfaces.
+   Monaco editor, results tables, descriptions, and inputs remain solid.
+   ========================================================================== */
+
+:root {
+  --glass-blur: 14px;
+  --glass-blur-sub: 10px;
+  --glass-blur-strong: 18px;
+  --glass-saturate: 140%;
+  --glass-radius: 12px;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+  position: relative;
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--glass-highlight) 0%, transparent 60%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+  position: relative;
+}
+
+.glass-strong::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--glass-highlight) 0%, transparent 50%);
+  opacity: 0.10;
+  pointer-events: none;
+}
+
+.glass-sub {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-sub)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sub)) saturate(var(--glass-saturate));
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  position: relative;
+}
+
+.glass-sub::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--glass-highlight) 0%, transparent 70%);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.glass-interactive {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.glass-interactive:hover {
+  border-color: var(--border-control);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight), 0 0 12px var(--glass-border);
+}
+
+/* Primary CTA Button enhancement (Run / Submit): Preserves solid accent fill & contrast */
+.glass-cta {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 2px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Responsive blur scaling on mobile devices */
+@media (max-width: 767px) {
+  :root {
+    --glass-blur: 8px;
+    --glass-blur-sub: 8px;
+    --glass-blur-strong: 8px;
+  }
+}
+
+/* Fallback: browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-strong, .glass-sub {
+    background: var(--bg-panel) !important;
+  }
+}
+
+/* Fallback: reduced transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-strong, .glass-sub {
+    background: var(--bg-panel) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .glass::before, .glass-strong::before, .glass-sub::before {
+    display: none !important;
+  }
+}
+
+/* Fallback: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glass, .glass-strong, .glass-interactive {
+    transition: none !important;
+  }
+}
+
+/* Fallback: forced colors / high contrast */
+@media (forced-colors: active) {
+  .glass, .glass-strong, .glass-sub {
+    border: 1px solid CanvasText !important;
+    background: Canvas !important;
+  }
 }

@@ -151,106 +151,110 @@ export default function DashboardPage() {
       </div>
 
       {/* Top 4 Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Card 1: Level & XP */}
-        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Level & XP</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-warning-bg)] text-[var(--accent-warning)]">
-              <Trophy className="h-4 w-4" />
+      <div className="relative">
+        <div className="absolute -top-6 -left-6 w-64 h-36 bg-[var(--accent-primary)]/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+        <div className="absolute -bottom-6 -right-6 w-64 h-36 bg-[var(--accent-success)]/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+        <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Level & XP */}
+          <div className="rounded-xl glass p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Level & XP</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-warning-bg)] text-[var(--accent-warning)]">
+                <Trophy className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-[var(--text-main)]">Level {stats?.level || 1}</span>
+              <span className="text-xs font-mono text-[var(--accent-warning)] font-semibold">{stats?.totalXp || 0} XP</span>
+            </div>
+            <div className="mt-3">
+              <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                <div
+                  className="h-full bg-[var(--accent-warning)] rounded-full"
+                  style={{
+                    width: `${Math.min(100, Math.max(10, 100 - ((stats?.xpToNextLevel || 50) / 100) * 100))}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+                {stats?.xpToNextLevel || 0} XP to Level {(stats?.level || 1) + 1}
+              </p>
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-[var(--text-main)]">Level {stats?.level || 1}</span>
-            <span className="text-xs font-mono text-[var(--accent-warning)] font-semibold">{stats?.totalXp || 0} XP</span>
-          </div>
-          <div className="mt-3">
-            <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-              <div
-                className="h-full bg-[var(--accent-warning)] rounded-full"
-                style={{
-                  width: `${Math.min(100, Math.max(10, 100 - ((stats?.xpToNextLevel || 50) / 100) * 100))}%`,
-                }}
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-[var(--text-muted)]">
-              {stats?.xpToNextLevel || 0} XP to Level {(stats?.level || 1) + 1}
-            </p>
-          </div>
-        </div>
 
-        {/* Card 2: Problems Solved */}
-        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Completed</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-success-bg)] text-[var(--accent-success)]">
-              <CheckCircle className="h-4 w-4" />
+          {/* Card 2: Problems Solved */}
+          <div className="rounded-xl glass p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Completed</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-success-bg)] text-[var(--accent-success)]">
+                <CheckCircle className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-[var(--text-main)]">
+                {stats?.solvedCount || 0}
+              </span>
+              <span className="text-xs text-[var(--text-muted)]">/ {stats?.totalQuestions || 153}</span>
+            </div>
+            <div className="mt-3">
+              <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                <div
+                  className="h-full bg-[var(--accent-success)] rounded-full"
+                  style={{
+                    width: `${Math.round(((stats?.solvedCount || 0) / (stats?.totalQuestions || 153)) * 100)}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+                {Math.round(((stats?.solvedCount || 0) / (stats?.totalQuestions || 153)) * 100)}% of total catalog
+              </p>
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-[var(--text-main)]">
-              {stats?.solvedCount || 0}
-            </span>
-            <span className="text-xs text-[var(--text-muted)]">/ {stats?.totalQuestions || 153}</span>
-          </div>
-          <div className="mt-3">
-            <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-              <div
-                className="h-full bg-[var(--accent-success)] rounded-full"
-                style={{
-                  width: `${Math.round(((stats?.solvedCount || 0) / (stats?.totalQuestions || 153)) * 100)}%`,
-                }}
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-[var(--text-muted)]">
-              {Math.round(((stats?.solvedCount || 0) / (stats?.totalQuestions || 153)) * 100)}% of total catalog
-            </p>
-          </div>
-        </div>
 
-        {/* Card 3: Accuracy */}
-        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Accuracy Rate</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]">
-              <Target className="h-4 w-4" />
+          {/* Card 3: Accuracy */}
+          <div className="rounded-xl glass p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Accuracy Rate</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]">
+                <Target className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-[var(--text-main)]">
+                {stats?.accuracyPercentage || 0}%
+              </span>
+              <span className="text-xs text-[var(--text-muted)]">first-try ratio</span>
+            </div>
+            <div className="mt-3">
+              <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                <div
+                  className="h-full bg-[var(--accent-primary)] rounded-full"
+                  style={{ width: `${stats?.accuracyPercentage || 0}%` }}
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-[var(--text-muted)]">Passing test evaluations</p>
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-[var(--text-main)]">
-              {stats?.accuracyPercentage || 0}%
-            </span>
-            <span className="text-xs text-[var(--text-muted)]">first-try ratio</span>
-          </div>
-          <div className="mt-3">
-            <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-              <div
-                className="h-full bg-[var(--accent-primary)] rounded-full"
-                style={{ width: `${stats?.accuracyPercentage || 0}%` }}
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-[var(--text-muted)]">Passing test evaluations</p>
-          </div>
-        </div>
 
-        {/* Card 4: Streak */}
-        <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-5 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Practice Streak</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-danger-bg)] text-[var(--accent-danger)]">
-              <Flame className="h-4 w-4" />
+          {/* Card 4: Streak */}
+          <div className="rounded-xl glass p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Practice Streak</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-danger-bg)] text-[var(--accent-danger)]">
+                <Flame className="h-4 w-4" />
+              </div>
             </div>
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-[var(--text-main)]">
-              {stats?.streakDays || 1} {stats?.streakDays === 1 ? "day" : "days"}
-            </span>
-          </div>
-          <div className="mt-3">
-            <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-              <div className="h-full bg-[var(--accent-danger)] rounded-full w-full" />
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-2xl font-extrabold text-[var(--text-main)]">
+                {stats?.streakDays || 1} {stats?.streakDays === 1 ? "day" : "days"}
+              </span>
             </div>
-            <p className="mt-1 text-[11px] text-[var(--text-muted)]">Keep solving to maintain streak!</p>
+            <div className="mt-3">
+              <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                <div className="h-full bg-[var(--accent-danger)] rounded-full w-full" />
+              </div>
+              <p className="mt-1 text-[11px] text-[var(--text-muted)]">Keep solving to maintain streak!</p>
+            </div>
           </div>
         </div>
       </div>

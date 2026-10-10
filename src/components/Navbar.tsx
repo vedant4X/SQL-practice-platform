@@ -75,7 +75,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--bg-base)]/95 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--glass-border)] glass transition-colors">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-6">
           {/* Logo */}
@@ -93,7 +93,7 @@ export default function Navbar() {
             <button
               onClick={() => setDialectDropdownOpen(!dialectDropdownOpen)}
               aria-label="Select database engine"
-              className="flex items-center gap-2 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
+              className="flex items-center gap-2 rounded-md glass glass-interactive px-2.5 py-1 text-xs font-medium text-[var(--text-main)] transition"
             >
               <Server className="h-3 w-3 text-[var(--text-muted)]" />
               <span>{isPostgres ? "PostgreSQL 16" : "MySQL 8.4"}</span>
@@ -101,7 +101,7 @@ export default function Navbar() {
             </button>
 
             {dialectDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md border border-[var(--border-strong)] bg-[var(--bg-panel)] p-1 shadow-card z-50 text-xs">
+              <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md glass-strong p-1 shadow-card z-50 text-xs">
                 <button
                   onClick={() => handleSwitchDialect("postgresql")}
                   className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition ${
@@ -201,7 +201,7 @@ export default function Navbar() {
               </div>
               <Link
                 href="/profile"
-                className="flex items-center gap-1.5 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs"
+                className="flex items-center gap-1.5 rounded-md glass glass-interactive px-2.5 py-1 text-xs font-medium text-[var(--text-main)] transition shadow-xs"
               >
                 <UserIcon className="h-3 w-3 opacity-60" />
                 <span className="max-w-[100px] truncate">{user.name}</span>

@@ -81,7 +81,7 @@ export default function TopicsPage() {
                   {levelTopics.map((topic) => (
                     <div
                       key={topic.id}
-                      className="flex flex-col justify-between rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] p-4 hover:border-[var(--border-control)] transition shadow-xs"
+                      className="flex flex-col justify-between rounded-xl glass glass-interactive p-4 transition shadow-xs"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">

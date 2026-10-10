@@ -168,21 +168,21 @@ export default function SqlEditor({
           </button>
 
           {/* Draft Auto-save status */}
-          <div className="hidden md:flex items-center gap-1 text-[11px] text-[var(--text-muted)] pl-2">
+          <div className="hidden md:flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)] px-2.5 py-0.5 rounded-full glass ml-2">
             <Cloud className="h-3 w-3" />
             {draftStatus === "saving" && <span>Saving draft...</span>}
-            {draftStatus === "saved" && <span className="text-[var(--accent-success)]">Saved</span>}
-            {draftStatus === "error" && <span className="text-[var(--accent-danger)]">Offline draft</span>}
+            {draftStatus === "saved" && <span className="text-[var(--accent-success)] font-medium">Saved</span>}
+            {draftStatus === "error" && <span className="text-[var(--accent-danger)] font-medium">Offline draft</span>}
             {draftStatus === "idle" && <span>Auto-saved</span>}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 p-1 rounded-md glass">
           {/* RUN BUTTON */}
           <button
             onClick={onRun}
             disabled={isLoading}
-            className="flex items-center gap-1.5 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-3 py-1 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
+            className="flex items-center gap-1.5 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-3 py-1 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] glass-cta"
             title="Execute query in sandbox (Ctrl+Enter)"
             aria-label="Execute query"
           >
@@ -194,7 +194,7 @@ export default function SqlEditor({
           <button
             onClick={onSubmit}
             disabled={isLoading}
-            className="flex items-center gap-1.5 rounded bg-[var(--accent-primary)] px-3.5 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
+            className="flex items-center gap-1.5 rounded bg-[var(--accent-primary)] px-3.5 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] disabled:opacity-50 transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] glass-cta"
             title="Submit query against test cases (Ctrl+Shift+Enter)"
             aria-label="Submit query"
           >
