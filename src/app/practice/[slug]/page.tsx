@@ -7,6 +7,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, RefreshCw, CheckCircle, Database 
 import SqlEditor from "@/components/editor/SqlEditor";
 import SchemaExplorer, { TableMeta } from "@/components/practice/SchemaExplorer";
 import QuestionPanel from "@/components/practice/QuestionPanel";
+import TopicProblemPicker from "@/components/practice/TopicProblemPicker";
 import { QueryExecutionResult } from "@/lib/engine/types";
 import { TopicNavigationInfo } from "@/lib/curriculum/navigation";
 
@@ -69,7 +70,21 @@ export default function PracticePage({ params }: PageProps) {
         if (data?.success && data?.data?.question) {
           const q = data.data.question;
           setQuestion(q);
-          setNavigation(data.data.navigation || null);
+          const nav: TopicNavigationInfo | null = data.data.navigation || null;
+          if (nav && typeof window !== "undefined") {
+            try {
+              const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+              const guestSolved = guestSolvedRaw ? JSON.parse(guestSolvedRaw) : [];
+              if (guestSolved.length > 0 && nav.topicQuestions) {
+                nav.topicQuestions = nav.topicQuestions.map((tq) => ({
+                  ...tq,
+                  isSolved: tq.isSolved || guestSolved.includes(tq.id),
+                }));
+                nav.solvedCount = nav.topicQuestions.filter((x) => x.isSolved).length;
+              }
+            } catch {}
+          }
+          setNavigation(nav);
 
           const starter = q.starterQuery || "-- Write your PostgreSQL query here\n";
           let resolvedCode: string | null = null;
@@ -253,6 +268,17 @@ export default function PracticePage({ params }: PageProps) {
         setSubmitResult(data.data);
         if (data.data.verdict === "correct") {
           setQuestion((prev: any) => (prev ? { ...prev, isSolved: true } : prev));
+          setNavigation((prev: any) => {
+            if (!prev || !prev.topicQuestions) return prev;
+            const updated = prev.topicQuestions.map((tq: any) =>
+              tq.slug === slug || tq.id === question?.id ? { ...tq, isSolved: true } : tq
+            );
+            return {
+              ...prev,
+              topicQuestions: updated,
+              solvedCount: updated.filter((x: any) => x.isSolved).length,
+            };
+          });
           if (typeof window !== "undefined" && question?.id) {
             try {
               const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
@@ -386,6 +412,7 @@ export default function PracticePage({ params }: PageProps) {
           </Link>
           <span className="text-[var(--border-control)]">/</span>
           <span className="text-xs font-semibold text-[var(--text-main)] truncate max-w-[200px] sm:max-w-md">
+            {navigation?.currentIndex ? `${navigation.currentIndex}. ` : ""}
             {question.title}
           </span>
           <span className="rounded px-1.5 py-0.5 text-[10px] font-bold border border-[var(--border-control)] bg-[var(--bg-panel)] text-[var(--text-secondary)]">
@@ -398,7 +425,20 @@ export default function PracticePage({ params }: PageProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* LeetCode-style Problem Navigator & Persistent Previous / Next Arrow Navigation */}
+        <div className="flex items-center gap-2">
+          {navigation && navigation.topicQuestions && navigation.topicQuestions.length > 0 && (
+            <TopicProblemPicker
+              topicTitle={navigation.topicTitle || "Curriculum"}
+              topicSlug={navigation.topicSlug}
+              currentIndex={navigation.currentIndex}
+              totalInTopic={navigation.totalInTopic}
+              topicQuestions={navigation.topicQuestions}
+              currentSlug={slug}
+              dialect={dialect}
+            />
+          )}
+
           {isFirstInTopic || !prevSlug ? (
             <button
               disabled

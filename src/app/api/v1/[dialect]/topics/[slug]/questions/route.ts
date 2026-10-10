@@ -28,7 +28,8 @@ export async function GET(
     ? new Set(appStore.getUserBookmarks(session.userId, dialect))
     : new Set<string>();
 
-  const questions = getQuestionsByTopic(topic.id, dialect).map((q) => ({
+  const questions = getQuestionsByTopic(topic.id, dialect).map((q, idx) => ({
+    order: idx + 1,
     id: q.id,
     slug: q.slug,
     title: q.title,

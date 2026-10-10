@@ -23,7 +23,7 @@ export async function GET(
     : false;
 
   const topic = TOPICS.find((t) => t.id === question.topic_id);
-  const navigation = getTopicNavigation(slug, "postgresql");
+  const navigation = getTopicNavigation(slug, "postgresql", session?.userId);
 
   // Return only unlocked hints based on user state
   const hintsRevealedCount = qState?.hintsUsed || 0;

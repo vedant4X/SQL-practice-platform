@@ -28,7 +28,7 @@ export async function GET(
     : false;
 
   const topic = TOPICS.find((t) => t.id === question.topic_id);
-  const navigation = getTopicNavigation(slug, dialect);
+  const navigation = getTopicNavigation(slug, dialect, session?.userId);
 
   const hintsRevealedCount = qState?.hintsUsed || 0;
   const availableHints = question.hints.slice(0, hintsRevealedCount);

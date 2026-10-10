@@ -201,19 +201,6 @@ export default function SqlEditor({
             <Send className="h-3 w-3" />
             <span>Submit</span>
           </button>
-
-          {/* NEXT QUESTION ARROW BUTTON */}
-          {nextSlug && (
-            <Link
-              href={`/${dialect}/practice/${nextSlug}`}
-              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2.5 py-1 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
-              title="Travel to Next Question (Alt+→)"
-              aria-label="Next Question"
-            >
-              <span>Next</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          )}
         </div>
       </div>
 

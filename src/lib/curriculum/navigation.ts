@@ -1,7 +1,16 @@
 import { Dialect } from "../engine/types";
 import { appStore } from "../db/store";
 import { getQuestionsByTopic, getQuestionBySlug } from "./questions";
-import { TOPICS, Topic } from "./topics";
+import { TOPICS } from "./topics";
+
+export interface TopicQuestionSummary {
+  order: number;
+  id: string;
+  slug: string;
+  title: string;
+  difficulty: "easy" | "medium" | "hard" | "expert";
+  isSolved: boolean;
+}
 
 export interface TopicNavigationInfo {
   prevSlug: string | null;
@@ -16,6 +25,8 @@ export interface TopicNavigationInfo {
   nextTopicTitle: string | null;
   currentIndex: number;
   totalInTopic: number;
+  topicQuestions: TopicQuestionSummary[];
+  solvedCount: number;
 }
 
 /**
@@ -26,7 +37,8 @@ export interface TopicNavigationInfo {
  */
 export function getTopicNavigation(
   slug: string,
-  dialect: Dialect = "postgresql"
+  dialect: Dialect = "postgresql",
+  userId?: string
 ): TopicNavigationInfo {
   const currentQuestion = getQuestionBySlug(slug, dialect);
   if (!currentQuestion) {
@@ -43,6 +55,8 @@ export function getTopicNavigation(
       nextTopicTitle: null,
       currentIndex: -1,
       totalInTopic: 0,
+      topicQuestions: [],
+      solvedCount: 0,
     };
   }
 
@@ -74,6 +88,22 @@ export function getTopicNavigation(
     }
   }
 
+  const mappedQuestions: TopicQuestionSummary[] = topicQuestions.map((q, idx) => {
+    const isSolved = userId
+      ? appStore.getUserQuestionState(userId, q.id, dialect)?.isSolved || false
+      : false;
+    return {
+      order: idx + 1,
+      id: q.id,
+      slug: q.slug,
+      title: q.title,
+      difficulty: q.difficulty,
+      isSolved,
+    };
+  });
+
+  const solvedCount = mappedQuestions.filter((q) => q.isSolved).length;
+
   return {
     prevSlug: prevQuestion ? prevQuestion.slug : null,
     prevTitle: prevQuestion ? prevQuestion.title : null,
@@ -87,5 +117,7 @@ export function getTopicNavigation(
     nextTopicTitle,
     currentIndex: currentIndex >= 0 ? currentIndex + 1 : 1,
     totalInTopic: topicQuestions.length,
+    topicQuestions: mappedQuestions,
+    solvedCount,
   };
 }

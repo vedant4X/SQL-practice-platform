@@ -186,28 +186,6 @@ export default function QuestionPanel({
         </div>
 
         <div className="flex items-center gap-1.5">
-          {effectiveNextSlug ? (
-            <Link
-              href={`/${dialect}/practice/${effectiveNextSlug}`}
-              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
-              title={`Next problem: ${navigation?.nextTitle || "Next"} (Alt+→)`}
-              aria-label={`Next problem: ${navigation?.nextTitle || "Next"}`}
-            >
-              <span className="hidden sm:inline">Next</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          ) : isLastInTopic ? (
-            <Link
-              href={`/${dialect}/topics`}
-              className="flex items-center gap-1 rounded border border-[var(--border-control)] bg-[var(--bg-panel)] px-2 py-1 text-xs font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition"
-              title="Completed topic! Return to curriculum"
-              aria-label="Back to curriculum"
-            >
-              <span className="hidden sm:inline">Topics</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          ) : null}
-
           <button
             onClick={onToggleBookmark}
             title={question.isBookmarked ? "Remove bookmark" : "Bookmark question"}
@@ -227,7 +205,10 @@ export default function QuestionPanel({
         {activeTab === "description" && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h1 className="text-base font-bold text-[var(--text-main)]">{question.title}</h1>
+              <h1 className="text-base font-bold text-[var(--text-main)] sm:text-lg">
+                {navigation?.currentIndex ? `${navigation.currentIndex}. ` : ""}
+                {question.title}
+              </h1>
               <div className="flex items-center gap-2">
                 {getDifficultyBadge(question.difficulty)}
                 <span className="flex items-center gap-1 rounded bg-[var(--accent-info-bg)] border border-[var(--accent-info-border)] px-2 py-0.5 text-xs font-medium text-[var(--accent-info-text)]">
@@ -268,30 +249,6 @@ export default function QuestionPanel({
                 </div>
               )}
             </div>
-
-            {/* Bottom Navigation Link */}
-            {effectiveNextSlug ? (
-              <div className="pt-2">
-                <Link
-                  href={`/${dialect}/practice/${effectiveNextSlug}`}
-                  aria-label={`Next problem: ${navigation?.nextTitle || "Next"}`}
-                  className="flex items-center justify-center gap-1.5 w-full rounded-md border border-[var(--border-control)] bg-[var(--bg-surface)] py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--border-color)] transition"
-                >
-                  <span>Go to Next Problem</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            ) : isLastInTopic ? (
-              <div className="pt-2">
-                <Link
-                  href={`/${dialect}/topics`}
-                  className="flex items-center justify-center gap-1.5 w-full rounded-md border border-[var(--border-control)] bg-[var(--bg-surface)] py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--border-color)] transition"
-                >
-                  <span>Back to Curriculum</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            ) : null}
           </div>
         )}
 
