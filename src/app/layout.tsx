@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/lib/theme/ThemeContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SQL//STRIKE | High-Octane Dual-Dialect SQL Playground",
-  description: "Electric, high-octane SQL practice platform powered by real PostgreSQL 16 & MySQL 8.4 engines.",
+  title: "SQLJudge | Practice & Master SQL (PostgreSQL & MySQL)",
+  description: "Minimalist, production-grade SQL practice platform powered by authentic PostgreSQL 16 & MySQL 8.4 engines.",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-background antialiased flex flex-col selection:bg-cyber-magenta selection:text-white">
+      <body className="min-h-screen bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 antialiased flex flex-col selection:bg-blue-600 selection:text-white transition-colors">
         <ThemeProvider>
           <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>

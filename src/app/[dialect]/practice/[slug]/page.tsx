@@ -267,42 +267,43 @@ export default function DialectPracticePage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-background-darker">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-white dark:bg-[#090d16] transition-colors">
       {/* Subheader Navigation */}
-      <div className="flex h-11 items-center justify-between border-b border-background-border bg-background-card/40 px-4">
+      <div className="flex h-11 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-4">
         <div className="flex items-center gap-3">
           <Link
             href={`/${dialect}/topics`}
-            className="flex items-center gap-1 text-xs text-slate-400 transition hover:text-white"
+            className="flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:text-slate-900 dark:hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Curriculum</span>
           </Link>
-          <span className="text-slate-600">/</span>
-          <span className="text-xs font-semibold text-white truncate max-w-[200px] sm:max-w-md">
+          <span className="text-slate-300 dark:text-slate-700">/</span>
+          <span className="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[200px] sm:max-w-md">
             {question.title}
           </span>
           <span
             className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${
               isPostgres
-                ? "border-sky-500/30 bg-sky-500/10 text-sky-300"
-                : "border-teal-500/30 bg-teal-500/10 text-teal-300"
+                ? "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
+                : "border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300"
             }`}
           >
             {isPostgres ? "PG 16" : "MySQL 8.4"}
           </span>
           {question.isSolved && (
-            <span className="flex items-center gap-1 rounded bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/30">
+            <span className="flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
               <CheckCircle className="h-3 w-3" /> Solved
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {prevSlug && (
             <Link
               href={`/${dialect}/practice/${prevSlug}`}
-              className="flex items-center gap-1 rounded border border-slate-800 bg-background-dark px-2.5 py-1 text-xs text-slate-300 hover:border-slate-700 hover:text-white"
+              className="flex items-center gap-1 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+              title="Previous Question"
             >
               <ChevronLeft className="h-3 w-3" />
               <span className="hidden sm:inline">Prev</span>
@@ -311,10 +312,11 @@ export default function DialectPracticePage({ params }: PageProps) {
           {nextSlug && (
             <Link
               href={`/${dialect}/practice/${nextSlug}`}
-              className="flex items-center gap-1 rounded border border-slate-800 bg-background-dark px-2.5 py-1 text-xs text-slate-300 hover:border-slate-700 hover:text-white"
+              className="flex items-center gap-1 rounded border border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition shadow-sm"
+              title="Next Question"
             >
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRight className="h-3 w-3" />
+              <span>Next</span>
+              <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           )}
         </div>
@@ -323,7 +325,7 @@ export default function DialectPracticePage({ params }: PageProps) {
       {/* Main 3-Column Grid Workspace */}
       <div className="grid flex-1 grid-cols-1 overflow-hidden lg:grid-cols-12">
         {/* Left: Problem Details & Tabs (5 Cols) */}
-        <div className="border-r border-background-border lg:col-span-5 h-full overflow-hidden">
+        <div className="border-r border-slate-200 dark:border-slate-800 lg:col-span-5 h-full overflow-hidden">
           <QuestionPanel
             question={question}
             activeTab={activeTab}
@@ -334,11 +336,13 @@ export default function DialectPracticePage({ params }: PageProps) {
             onUnlockHint={handleUnlockHint}
             onRevealSolution={handleRevealSolution}
             onToggleBookmark={handleToggleBookmark}
+            nextSlug={nextSlug}
+            dialect={dialect}
           />
         </div>
 
         {/* Center: Monaco SQL Editor (5 Cols) */}
-        <div className="border-r border-background-border lg:col-span-5 h-full overflow-hidden flex flex-col">
+        <div className="border-r border-slate-200 dark:border-slate-800 lg:col-span-5 h-full overflow-hidden flex flex-col">
           <SqlEditor
             value={sqlCode}
             onChange={handleSqlChange}
@@ -349,6 +353,7 @@ export default function DialectPracticePage({ params }: PageProps) {
             practiceMode={practiceMode}
             onTogglePracticeMode={handleTogglePracticeMode}
             dialect={dialect}
+            nextSlug={nextSlug}
           />
         </div>
 

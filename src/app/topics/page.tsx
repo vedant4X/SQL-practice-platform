@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, CheckCircle, ArrowRight, Layers, Trophy } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 
 interface TopicItem {
   id: string;
@@ -32,22 +32,23 @@ export default function TopicsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Group topics by level
   const levels = Array.from({ length: 10 }, (_, i) => i + 1);
 
   return (
-    <div className="flex-1 py-10 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-10">
-      <div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">SQL Learning Curriculum</h1>
-        <p className="text-slate-400 text-sm mt-1">
+    <div className="flex-1 py-10 px-4 sm:px-6 max-w-6xl mx-auto w-full space-y-8 bg-white dark:bg-[#090d16] text-slate-900 dark:text-slate-100 transition-colors">
+      <div className="border-b border-slate-200 dark:border-slate-800 pb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          SQL Learning Curriculum
+        </h1>
+        <p className="text-slate-600 dark:text-slate-400 text-sm mt-1.5 leading-relaxed">
           Master relational database querying across 10 progressive levels. Every topic features authentic PostgreSQL 16 exercises.
         </p>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-xl bg-slate-800/50" />
+            <div key={i} className="h-32 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800/50" />
           ))}
         </div>
       ) : (
@@ -58,11 +59,11 @@ export default function TopicsPage() {
 
             return (
               <div key={levelNum} className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                  <span className="rounded bg-primary/20 text-primary-light font-bold text-xs px-2.5 py-0.5">
+                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <span className="rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-xs px-2 py-0.5">
                     Level {levelNum}
                   </span>
-                  <h2 className="text-lg font-bold text-white">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                     {levelNum === 1 && "Basics & Fundamentals"}
                     {levelNum === 2 && "Scalar & Aggregate Functions"}
                     {levelNum === 3 && "Grouping & Summaries"}
@@ -80,32 +81,38 @@ export default function TopicsPage() {
                   {levelTopics.map((topic) => (
                     <div
                       key={topic.id}
-                      className="flex flex-col justify-between rounded-xl border border-slate-800 bg-background-card/40 p-4 hover:border-slate-700 transition"
+                      className="flex flex-col justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] p-4 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-bold text-white text-sm">{topic.title}</h3>
+                          <h3 className="font-bold text-slate-900 dark:text-white text-sm">{topic.title}</h3>
                           {topic.isMastered && (
-                            <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
+                            <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                               <CheckCircle className="h-3.5 w-3.5" />
                               Mastered
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 line-clamp-2">{topic.description}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          {topic.description}
+                        </p>
                       </div>
 
-                      <div className="pt-4 border-t border-slate-800/80 mt-4 flex items-center justify-between">
+                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 mt-4 flex items-center justify-between">
                         <span className="text-xs font-mono text-slate-500">
                           {topic.solvedCount}/{topic.questionCount} Solved
                         </span>
-                        <Link
-                          href={`/practice/${topic.firstQuestionSlug || "view-all-departments"}`}
-                          className="flex items-center gap-1 text-xs font-semibold text-primary-light hover:text-white transition"
-                        >
-                          <span>Start practice</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </Link>
+                        {topic.firstQuestionSlug ? (
+                          <Link
+                            href={`/practice/${topic.firstQuestionSlug}`}
+                            className="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
+                          >
+                            <span>Practice</span>
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 italic">Coming Soon</span>
+                        )}
                       </div>
                     </div>
                   ))}

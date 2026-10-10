@@ -3,64 +3,84 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   DUAL THEME ENGINE CSS VARIABLES (CYBERPUNK VOID vs NEO-BRUTALIST POP)
+   MINIMALISTIC HIGH-CONTRAST DESIGN SYSTEM (LIGHT & DARK)
    ========================================================================== */
 
 :root,
-html.dark {
-  /* DARK MODE: Deep midnight void base + high-octane neon */
-  --bg-base: #0a0a12;
-  --bg-panel: #111122;
-  --bg-surface: #18182e;
-  --border-color: rgba(0, 240, 255, 0.28);
-  --border-strong: #00f0ff;
-
-  --accent-primary: #39ff14;       /* Radioactive lime */
-  --accent-primary-hover: #32e612;
-  --accent-primary-light: #70ff54;
-  --accent-secondary: #00f0ff;     /* Hyper cyan */
-  --accent-tertiary: #ff007f;      /* Hot magenta */
-  --accent-quaternary: #fcee0a;    /* Electric acid yellow */
-
-  --text-main: #f3f4f6;
-  --text-muted: #94a3b8;
-  --text-inverse: #0a0a12;
-
-  --theme-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
-  --theme-shadow-inset: inset 0 0 15px rgba(57, 255, 20, 0.2);
-  --theme-brutal-shadow: 4px 4px 0px #00f0ff;
-
-  --grid-line-color: rgba(0, 240, 255, 0.08);
-  --editor-bg: #0d0d1a;
-  --editor-gutter: #141428;
-}
-
 html.light {
-  /* LIGHT MODE: Creamy holographic parchment base + stark jet-black neo-brutalism */
-  --bg-base: #fbf9f5;
-  --bg-panel: #f4f0ea;
-  --bg-surface: #ece5d8;
-  --border-color: #000000;
-  --border-strong: #000000;
+  /* Clean Minimalist Light Mode */
+  --bg-base: #ffffff;
+  --bg-panel: #f8fafc;
+  --bg-surface: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
 
-  --accent-primary: #0022ff;       /* Hyper-pigmented cobalt */
-  --accent-primary-hover: #001ad4;
-  --accent-primary-light: #3355ff;
-  --accent-secondary: #ff4d00;     /* Safety hazard orange */
-  --accent-tertiary: #7928ca;      /* Vivid ultraviolet */
-  --accent-quaternary: #ffb800;    /* Hazard yellow */
-
-  --text-main: #000000;
-  --text-muted: #374151;
+  --text-main: #0f172a;        /* Deep slate-900: maximum legibility */
+  --text-secondary: #334155;   /* Slate-700 */
+  --text-muted: #64748b;       /* Slate-500 */
+  --text-faint: #94a3b8;       /* Slate-400 */
   --text-inverse: #ffffff;
 
-  --theme-shadow: 4px 4px 0px #000000;
-  --theme-shadow-inset: inset 2px 2px 0px rgba(0, 0, 0, 0.1);
-  --theme-brutal-shadow: 4px 4px 0px #000000;
+  --accent-primary: #2563eb;       /* Royal Blue */
+  --accent-primary-hover: #1d4ed8;
+  --accent-primary-light: #3b82f6;
 
-  --grid-line-color: rgba(0, 34, 255, 0.07);
+  --accent-success: #10b981;
+  --accent-success-bg: #ecfdf5;
+  --accent-success-border: #a7f3d0;
+  --accent-success-text: #065f46;
+
+  --accent-danger: #ef4444;
+  --accent-danger-bg: #fef2f2;
+  --accent-danger-border: #fecaca;
+  --accent-danger-text: #991b1b;
+
+  --accent-warning: #f59e0b;
+  --accent-warning-bg: #fffbeb;
+  --accent-warning-border: #fde68a;
+  --accent-warning-text: #92400e;
+
   --editor-bg: #ffffff;
-  --editor-gutter: #f0ece1;
+  --editor-line: #f8fafc;
+}
+
+html.dark {
+  /* Refined Minimalist Dark Mode */
+  --bg-base: #090d16;
+  --bg-panel: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-elevated: #1e293b;
+  --border-color: #1e293b;
+  --border-strong: #334155;
+
+  --text-main: #f8fafc;        /* Slate-50: crisp white */
+  --text-secondary: #cbd5e1;   /* Slate-300 */
+  --text-muted: #94a3b8;       /* Slate-400 */
+  --text-faint: #64748b;       /* Slate-500 */
+  --text-inverse: #090d16;
+
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #2563eb;
+  --accent-primary-light: #60a5fa;
+
+  --accent-success: #10b981;
+  --accent-success-bg: rgba(16, 185, 129, 0.12);
+  --accent-success-border: rgba(16, 185, 129, 0.3);
+  --accent-success-text: #34d399;
+
+  --accent-danger: #ef4444;
+  --accent-danger-bg: rgba(239, 68, 68, 0.12);
+  --accent-danger-border: rgba(239, 68, 68, 0.3);
+  --accent-danger-text: #f87171;
+
+  --accent-warning: #f59e0b;
+  --accent-warning-bg: rgba(245, 158, 11, 0.12);
+  --accent-warning-border: rgba(245, 158, 11, 0.3);
+  --accent-warning-text: #fbbf24;
+
+  --editor-bg: #090d16;
+  --editor-line: #0f172a;
 }
 
 body {
@@ -68,205 +88,47 @@ body {
   color: var(--text-main);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /* ==========================================================================
-   NEON & NEO-BRUTALIST SHADOWS & BORDERS
+   MINIMALIST BORDERS & SUBTLE SHADOWS
    ========================================================================== */
 
-.brutal-border {
-  border-width: 2px;
-  border-style: solid;
+.minimal-card {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.minimal-border {
   border-color: var(--border-color);
 }
 
-.brutal-border-strong {
-  border-width: 2px;
-  border-style: solid;
-  border-color: var(--border-strong);
-}
-
-.brutal-shadow-black {
-  box-shadow: 4px 4px 0px #000000;
-}
-
-.brutal-shadow-cyan {
-  box-shadow: 4px 4px 0px #00f0ff;
-}
-
-.brutal-shadow-magenta {
-  box-shadow: 4px 4px 0px #ff007f;
-}
-
-.brutal-shadow-lime {
-  box-shadow: 4px 4px 0px #39ff14;
-}
-
-.brutal-shadow-cobalt {
-  box-shadow: 4px 4px 0px #0022ff;
-}
-
-.brutal-shadow-orange {
-  box-shadow: 4px 4px 0px #ff4d00;
-}
-
-/* ==========================================================================
-   ANIMATIONS: SCREEN SHAKE, SCANLINES, CHROMATIC GLITCH & CASCADES
-   ========================================================================== */
-
-@keyframes screenShake {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-3px, 2px) rotate(-0.5deg); }
-  40% { transform: translate(3px, -2px) rotate(0.5deg); }
-  60% { transform: translate(-2px, -1px) rotate(-0.2deg); }
-  80% { transform: translate(2px, 1px) rotate(0.2deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-.animate-screen-shake {
-  animation: screenShake 150ms cubic-bezier(.36, .07, .19, .97) both;
-}
-
-@keyframes scanlineSweep {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.scanline-sweep {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 240, 255, 0.25) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: scanlineSweep 1.2s ease-in-out forwards;
-}
-
-.scanline-sweep-lime {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(57, 255, 20, 0.3) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: scanlineSweep 1.2s ease-in-out forwards;
-}
-
-@keyframes chromaticGlitch {
-  0% {
-    transform: translate(0, 0);
-    text-shadow: -2px 0 #ff007f, 2px 0 #00f0ff;
-  }
-  20% {
-    transform: translate(-2px, 1px);
-    text-shadow: 3px -1px #ff007f, -3px 1px #00f0ff;
-  }
-  40% {
-    transform: translate(1px, -1px);
-    text-shadow: -3px 0 #39ff14, 3px 0 #ff007f;
-  }
-  60% {
-    transform: translate(-1px, 2px);
-    text-shadow: 2px 1px #00f0ff, -2px -1px #fcee0a;
-  }
-  80% {
-    transform: translate(2px, -1px);
-    text-shadow: -1px 0 #ff007f, 1px 0 #00f0ff;
-  }
-  100% {
-    transform: translate(0, 0);
-    text-shadow: -2px 0 #ff007f, 2px 0 #00f0ff;
-  }
-}
-
-.animate-chromatic-glitch {
-  animation: chromaticGlitch 0.4s steps(2, start) infinite alternate;
-}
-
-@keyframes cascadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.97);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(2px) scale(1.005);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-cascade-in {
-  animation: cascadeIn 320ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes arcadeGlowPulse {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.6), inset 0 0 8px rgba(57, 255, 20, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 28px rgba(57, 255, 20, 0.95), inset 0 0 14px rgba(57, 255, 20, 0.7);
-  }
-}
-
-.animate-arcade-pulse {
-  animation: arcadeGlowPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes laserSweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-laser {
-  animation: laserSweep 2s ease-in-out infinite;
-}
-
-/* ==========================================================================
-   CUSTOM HIGH-TECH SCROLLBARS
-   ========================================================================== */
-
+/* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 html.dark ::-webkit-scrollbar-track {
-  background: #0d0d1a;
+  background: #090d16;
 }
-
 html.dark ::-webkit-scrollbar-thumb {
-  background: #252542;
-  border-radius: 2px;
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: #1e293b;
+  border-radius: 3px;
 }
-
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
+  background: #334155;
 }
 
 html.light ::-webkit-scrollbar-track {
-  background: #f4f0ea;
+  background: #f8fafc;
 }
-
 html.light ::-webkit-scrollbar-thumb {
-  background: #000000;
-  border-radius: 0px;
+  background: #cbd5e1;
+  border-radius: 3px;
 }
-
 html.light ::-webkit-scrollbar-thumb:hover {
-  background: #0022ff;
+  background: #94a3b8;
 }

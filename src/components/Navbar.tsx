@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   Database,
-  Zap,
   Terminal,
   BarChart2,
   BookOpen,
@@ -13,7 +12,7 @@ import {
   User as UserIcon,
   ChevronDown,
   Server,
-  Layers,
+  Zap,
 } from "lucide-react";
 import { Dialect } from "@/lib/engine/types";
 import { useTheme } from "@/lib/theme/ThemeContext";
@@ -36,7 +35,6 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
   const [dialectDropdownOpen, setDialectDropdownOpen] = useState(false);
 
-  // Determine current active dialect from path or cookie
   const activeDialect: Dialect = pathname.startsWith("/mysql") ? "mysql" : "postgresql";
   const isPostgres = activeDialect === "postgresql";
 
@@ -62,7 +60,6 @@ export default function Navbar() {
     setDialectDropdownOpen(false);
     document.cookie = `sql_dialect=${newDialect}; path=/; max-age=31536000`;
 
-    // Map current path to target dialect path
     if (pathname.includes("/topics")) {
       router.push(`/${newDialect}/topics`);
     } else if (pathname.includes("/playground")) {
@@ -77,179 +74,132 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full border-b-2 transition-colors duration-200 backdrop-blur-md ${
-        isDark
-          ? "border-cyber-cyan/30 bg-cyber-void/85 text-white"
-          : "border-black bg-neo-parchment/95 text-black shadow-sm"
-      }`}
-    >
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-md transition-colors">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-6">
-          {/* Logo with pulsing query lightning icon */}
+          {/* Minimalist Logo */}
           <Link href="/" className="flex items-center gap-2 group transition">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-lg border-2 transition-all ${
-                isDark
-                  ? "border-cyber-lime bg-cyber-void text-cyber-lime shadow-[0_0_12px_#39ff14] group-hover:scale-105"
-                  : "border-black bg-neo-cobalt text-white shadow-brutal-black-sm group-hover:translate-x-0.5"
-              }`}
-            >
-              <Zap className="h-4 w-4 fill-current animate-pulse" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-white font-bold text-xs shadow-sm">
+              <Database className="h-4 w-4" />
             </div>
-            <span className="text-lg tracking-tight font-mono font-black">
-              SQL<span className={isDark ? "text-cyber-cyan" : "text-neo-cobalt"}>JUDGE</span>
+            <span className="text-sm tracking-tight font-semibold text-slate-900 dark:text-white">
+              SQL<span className="text-blue-600 dark:text-blue-400">Judge</span>
             </span>
           </Link>
 
-          {/* Dialect Switcher & Engine Badge */}
+          {/* Dialect Selector */}
           <div className="relative">
             <button
               onClick={() => setDialectDropdownOpen(!dialectDropdownOpen)}
-              className={`flex items-center gap-2 rounded-md border-2 px-3 py-1 text-xs font-mono font-bold tracking-wider uppercase transition active:scale-95 ${
-                isDark
-                  ? isPostgres
-                    ? "border-cyber-cyan bg-cyber-cyan/15 text-cyber-cyan shadow-neon-cyan"
-                    : "border-cyber-magenta bg-cyber-magenta/15 text-cyber-magenta shadow-neon-magenta"
-                  : isPostgres
-                  ? "border-black bg-neo-cobalt text-white shadow-brutal-black-sm"
-                  : "border-black bg-neo-orange text-white shadow-brutal-black-sm"
-              }`}
+              className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             >
-              <Server className="h-3.5 w-3.5" />
+              <Server className="h-3 w-3 text-slate-500" />
               <span>{isPostgres ? "PostgreSQL 16" : "MySQL 8.4"}</span>
-              <ChevronDown className="h-3 w-3 opacity-70" />
+              <ChevronDown className="h-3 w-3 opacity-60" />
             </button>
 
             {dialectDropdownOpen && (
-              <div
-                className={`absolute left-0 top-full mt-2 w-52 rounded-lg border-2 p-1.5 shadow-2xl z-50 font-mono text-xs ${
-                  isDark
-                    ? "border-cyber-cyan bg-cyber-void text-white shadow-neon-cyan"
-                    : "border-black bg-white text-black shadow-brutal-black"
-                }`}
-              >
+              <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1 shadow-lg z-50 text-xs">
                 <button
                   onClick={() => handleSwitchDialect("postgresql")}
-                  className={`flex w-full items-center justify-between rounded-md px-3 py-2 transition font-bold ${
+                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition ${
                     isPostgres
-                      ? isDark
-                        ? "bg-cyber-cyan/20 text-cyber-cyan"
-                        : "bg-neo-cobalt text-white"
-                      : "opacity-70 hover:opacity-100"
+                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyber-cyan shadow-[0_0_6px_#00f0ff]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
                     <span>PostgreSQL 16</span>
                   </div>
-                  {isPostgres && <span className="text-[10px] text-cyber-lime font-mono">ACTIVE</span>}
+                  {isPostgres && <span className="text-[10px] text-blue-600 dark:text-blue-400">Active</span>}
                 </button>
                 <button
                   onClick={() => handleSwitchDialect("mysql")}
-                  className={`flex w-full items-center justify-between rounded-md px-3 py-2 transition font-bold mt-1 ${
+                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition mt-0.5 ${
                     !isPostgres
-                      ? isDark
-                        ? "bg-cyber-magenta/20 text-cyber-magenta"
-                        : "bg-neo-orange text-white"
-                      : "opacity-70 hover:opacity-100"
+                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyber-magenta shadow-[0_0_6px_#ff007f]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
                     <span>MySQL 8.4</span>
                   </div>
-                  {!isPostgres && <span className="text-[10px] text-cyber-lime font-mono">ACTIVE</span>}
+                  {!isPostgres && <span className="text-[10px] text-blue-600 dark:text-blue-400">Active</span>}
                 </button>
               </div>
             )}
           </div>
 
-          <nav className="hidden md:flex items-center gap-6 font-mono text-xs font-bold tracking-wider uppercase">
+          <nav className="hidden md:flex items-center gap-5 text-xs font-medium text-slate-600 dark:text-slate-400">
             <Link
               href={`/${activeDialect}/topics`}
-              className="flex items-center gap-1.5 transition hover:text-cyber-lime"
+              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
+                pathname.includes("/topics") ? "text-slate-900 dark:text-white font-semibold" : ""
+              }`}
             >
-              <BookOpen className="h-3.5 w-3.5 opacity-70" />
+              <BookOpen className="h-3.5 w-3.5" />
               Curriculum
             </Link>
             <Link
               href={`/${activeDialect}/playground`}
-              className={`flex items-center gap-1.5 transition ${
-                pathname.includes("/playground")
-                  ? isDark
-                    ? "text-cyber-cyan font-black"
-                    : "text-neo-cobalt font-black"
-                  : "hover:text-cyber-cyan"
+              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
+                pathname.includes("/playground") ? "text-slate-900 dark:text-white font-semibold" : ""
               }`}
             >
-              <Terminal className="h-3.5 w-3.5 text-cyber-lime" />
+              <Terminal className="h-3.5 w-3.5" />
               Playground
             </Link>
             <Link
               href={`/${activeDialect}/dashboard`}
-              className="flex items-center gap-1.5 transition hover:text-cyber-yellow"
+              className={`flex items-center gap-1.5 transition hover:text-slate-900 dark:hover:text-white ${
+                pathname.includes("/dashboard") ? "text-slate-900 dark:text-white font-semibold" : ""
+              }`}
             >
-              <BarChart2 className="h-3.5 w-3.5 opacity-70" />
+              <BarChart2 className="h-3.5 w-3.5" />
               Dashboard
             </Link>
           </nav>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Global Theme Toggle */}
-          <ThemeToggle showLabel={false} />
+          <ThemeToggle />
 
           {loading ? (
-            <div className="h-8 w-24 animate-pulse rounded bg-slate-800" />
+            <div className="h-7 w-20 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
           ) : user ? (
-            <div className="flex items-center gap-3">
-              <div
-                className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-mono font-bold ${
-                  isDark
-                    ? "border-cyber-yellow/40 bg-cyber-yellow/15 text-cyber-yellow shadow-neon-yellow"
-                    : "border-black bg-neo-parchmentDark text-black shadow-brutal-black-sm"
-                }`}
-              >
-                <Zap className="h-3.5 w-3.5 text-cyber-yellow fill-current" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+                <Zap className="h-3 w-3 text-amber-500 fill-current" />
                 <span>{user.totalXp || 0} XP</span>
               </div>
               <Link
                 href="/profile"
-                className={`flex items-center gap-1.5 rounded-md border-2 px-3 py-1 text-xs font-mono font-bold transition ${
-                  isDark
-                    ? "border-cyber-cyan/30 bg-cyber-surface hover:border-cyber-cyan"
-                    : "border-black bg-white shadow-brutal-black-sm hover:translate-x-0.5"
-                }`}
+                className="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               >
-                <UserIcon className="h-3.5 w-3.5 opacity-70" />
+                <UserIcon className="h-3 w-3 opacity-60" />
                 <span className="max-w-[100px] truncate">{user.name}</span>
               </Link>
               <button
                 onClick={handleLogout}
                 title="Log out"
-                className="rounded-lg p-1.5 opacity-70 transition hover:opacity-100 hover:text-red-500"
+                className="rounded p-1 text-slate-400 hover:text-rose-600 transition"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3.5 w-3.5" />
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className={`rounded-md px-3 py-1 text-xs font-mono font-bold uppercase transition ${
-                  isDark ? "text-gray-300 hover:text-white" : "text-black hover:opacity-80"
-                }`}
+                className="rounded px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition"
               >
                 Sign In
               </Link>
               <Link
                 href="/register"
-                className={`rounded-md border-2 px-3.5 py-1 text-xs font-mono font-black uppercase tracking-wider transition ${
-                  isDark
-                    ? "border-cyber-lime bg-cyber-lime text-black shadow-neon-lime hover:bg-cyber-primary-light"
-                    : "border-black bg-neo-orange text-white shadow-brutal-black hover:bg-orange-600"
-                }`}
+                className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 transition shadow-sm"
               >
                 Get Started
               </Link>
