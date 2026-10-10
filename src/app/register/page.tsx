@@ -70,7 +70,7 @@ export default function RegisterPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Create Your Account</h1>
           <p className="text-xs text-[var(--text-muted)]">
-            Start mastering PostgreSQL 16 & MySQL 8.4 with authentic engines.
+            Start mastering MySQL 8.4 & PostgreSQL 16 with authentic engines.
           </p>
         </div>
 

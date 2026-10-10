@@ -134,14 +134,14 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3">
           <Link
-            href="/topics"
+            href="/mysql/topics"
             className="flex items-center gap-1.5 rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] px-3.5 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs"
           >
             <BookOpen className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
             Curriculum
           </Link>
           <Link
-            href="/playground"
+            href="/mysql/playground"
             className="flex items-center gap-1.5 rounded-md bg-[var(--accent-primary)] px-3.5 py-2 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] transition shadow-xs"
           >
             <Zap className="h-3.5 w-3.5" />

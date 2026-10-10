@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/lib/theme/ThemeContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Quro | Practice & Master SQL (PostgreSQL & MySQL)",
-  description: "Minimalist, production-grade SQL practice platform powered by authentic PostgreSQL 16 & MySQL 8.4 engines.",
+  title: "Quro | Practice & Master SQL (MySQL & PostgreSQL)",
+  description: "Minimalist, production-grade SQL practice platform powered by authentic MySQL 8.4 & PostgreSQL 16 engines.",
 };
 
 export default function RootLayout({

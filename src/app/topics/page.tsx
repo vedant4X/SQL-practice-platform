@@ -41,7 +41,7 @@ export default function TopicsPage() {
           SQL Learning Curriculum
         </h1>
         <p className="text-[var(--text-muted)] text-sm mt-1.5 leading-relaxed">
-          Master relational database querying across 10 progressive levels. Every topic features authentic PostgreSQL 16 exercises.
+          Master relational database querying across 10 progressive levels. Every topic features authentic MySQL 8.4 & PostgreSQL 16 exercises.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export default function TopicsPage() {
                         </span>
                         {topic.firstQuestionSlug ? (
                           <Link
-                            href={`/practice/${topic.firstQuestionSlug}`}
+                            href={`/mysql/practice/${topic.firstQuestionSlug}`}
                             className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition"
                           >
                             <span>Practice</span>

@@ -23,8 +23,8 @@ export default function Home() {
 
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl text-[var(--text-main)]">
             Choose Your SQL Track: <br />
-            <span className="text-[var(--accent-primary)]">PostgreSQL</span> or{" "}
-            <span className="text-[var(--accent-warning)]">MySQL</span>
+            <span className="text-[var(--accent-warning)]">MySQL</span> or{" "}
+            <span className="text-[var(--accent-primary)]">PostgreSQL</span>
           </h1>
 
           <p className="mx-auto max-w-2xl text-sm sm:text-base text-[var(--text-muted)] leading-relaxed">
@@ -34,52 +34,7 @@ export default function Home() {
 
           {/* Dual Dialect Selection Cards */}
           <div className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 text-left pt-2">
-            {/* PostgreSQL Card */}
-            <div className="group rounded-xl border border-[var(--border-strong)] bg-[var(--bg-panel)] p-6 shadow-xs hover:border-[var(--accent-primary)] transition-all hover:shadow-md flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-1">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] border border-[var(--accent-success-border)]">
-                    <Database className="h-5 w-5" />
-                  </div>
-                  <span className="rounded-full border border-[var(--border-control)] bg-[var(--bg-surface)] px-2.5 py-0.5 text-xs font-semibold text-[var(--text-secondary)]">
-                    PostgreSQL 16
-                  </span>
-                </div>
-
-                <div>
-                  <h2 className="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition">
-                    PostgreSQL Track
-                  </h2>
-                  <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                    Master Postgres idioms: CTEs, Window Frame specs, <code className="rounded bg-[var(--bg-surface)] px-1 py-0.5 font-mono text-xs text-[var(--text-main)] border border-[var(--border-color)]">FILTER (WHERE ...)</code>,
-                    {" "}<code className="rounded bg-[var(--bg-surface)] px-1 py-0.5 font-mono text-xs text-[var(--text-main)] border border-[var(--border-color)]">DISTINCT ON</code>, JSONB operators, and strict ANSI typing.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[var(--border-color)] space-y-4">
-                <div className="flex items-center gap-4 text-xs font-medium text-[var(--text-muted)]">
-                  <span className="flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                    51 Topics
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                    1,632 Questions
-                  </span>
-                </div>
-
-                <Link
-                  href="/postgresql/topics"
-                  className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--accent-primary)] px-4 py-2.5 text-xs font-semibold text-[var(--accent-primary-text)] shadow-xs transition hover:bg-[var(--accent-primary-hover)]"
-                >
-                  <span>Practice PostgreSQL</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </div>
-
-            {/* MySQL Card */}
+            {/* MySQL Card (First Priority) */}
             <div className="group rounded-xl border border-[var(--border-strong)] bg-[var(--bg-panel)] p-6 shadow-xs hover:border-[var(--accent-warning)] transition-all hover:shadow-md flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-1">
@@ -120,6 +75,51 @@ export default function Home() {
                   className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--accent-primary)] px-4 py-2.5 text-xs font-semibold text-[var(--accent-primary-text)] shadow-xs transition hover:bg-[var(--accent-primary-hover)]"
                 >
                   <span>Practice MySQL</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* PostgreSQL Card (Second Priority) */}
+            <div className="group rounded-xl border border-[var(--border-strong)] bg-[var(--bg-panel)] p-6 shadow-xs hover:border-[var(--accent-primary)] transition-all hover:shadow-md flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-1">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] border border-[var(--accent-success-border)]">
+                    <Database className="h-5 w-5" />
+                  </div>
+                  <span className="rounded-full border border-[var(--border-control)] bg-[var(--bg-surface)] px-2.5 py-0.5 text-xs font-semibold text-[var(--text-secondary)]">
+                    PostgreSQL 16
+                  </span>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition">
+                    PostgreSQL Track
+                  </h2>
+                  <p className="mt-2 text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+                    Master Postgres idioms: CTEs, Window Frame specs, <code className="rounded bg-[var(--bg-surface)] px-1 py-0.5 font-mono text-xs text-[var(--text-main)] border border-[var(--border-color)]">FILTER (WHERE ...)</code>,
+                    {" "}<code className="rounded bg-[var(--bg-surface)] px-1 py-0.5 font-mono text-xs text-[var(--text-main)] border border-[var(--border-color)]">DISTINCT ON</code>, JSONB operators, and strict ANSI typing.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[var(--border-color)] space-y-4">
+                <div className="flex items-center gap-4 text-xs font-medium text-[var(--text-muted)]">
+                  <span className="flex items-center gap-1.5">
+                    <Layers className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                    51 Topics
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                    1,632 Questions
+                  </span>
+                </div>
+
+                <Link
+                  href="/postgresql/topics"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--accent-primary)] px-4 py-2.5 text-xs font-semibold text-[var(--accent-primary-text)] shadow-xs transition hover:bg-[var(--accent-primary-hover)]"
+                >
+                  <span>Practice PostgreSQL</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

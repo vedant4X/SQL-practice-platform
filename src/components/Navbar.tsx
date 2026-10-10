@@ -36,7 +36,24 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
   const [dialectDropdownOpen, setDialectDropdownOpen] = useState(false);
 
-  const activeDialect: Dialect = pathname.startsWith("/mysql") ? "mysql" : "postgresql";
+  const [activeDialect, setActiveDialect] = useState<Dialect>(() => {
+    if (pathname.startsWith("/postgresql")) return "postgresql";
+    return "mysql";
+  });
+
+  useEffect(() => {
+    if (pathname.startsWith("/postgresql")) {
+      setActiveDialect("postgresql");
+    } else if (pathname.startsWith("/mysql")) {
+      setActiveDialect("mysql");
+    } else if (typeof document !== "undefined") {
+      const match = document.cookie.match(/sql_dialect=(postgresql|mysql)/);
+      setActiveDialect(match ? (match[1] as Dialect) : "mysql");
+    } else {
+      setActiveDialect("mysql");
+    }
+  }, [pathname]);
+
   const isPostgres = activeDialect === "postgresql";
 
   useEffect(() => {
@@ -102,23 +119,10 @@ export default function Navbar() {
 
             {dialectDropdownOpen && (
               <div className="absolute left-0 top-full mt-1.5 w-48 rounded-md glass-strong p-1 shadow-card z-50 text-xs">
-                <button
-                  onClick={() => handleSwitchDialect("postgresql")}
-                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition ${
-                    isPostgres
-                      ? "bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] font-semibold"
-                      : "text-[var(--text-main)] hover:bg-[var(--bg-surface)]"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
-                    <span>PostgreSQL 16</span>
-                  </div>
-                  {isPostgres && <span className="text-[10px] text-[var(--accent-primary)]">Active</span>}
-                </button>
+                {/* MySQL 8.4 (First Priority) */}
                 <button
                   onClick={() => handleSwitchDialect("mysql")}
-                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition mt-0.5 ${
+                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition ${
                     !isPostgres
                       ? "bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] font-semibold"
                       : "text-[var(--text-main)] hover:bg-[var(--bg-surface)]"
@@ -129,6 +133,22 @@ export default function Navbar() {
                     <span>MySQL 8.4</span>
                   </div>
                   {!isPostgres && <span className="text-[10px] text-[var(--accent-primary)]">Active</span>}
+                </button>
+
+                {/* PostgreSQL 16 (Second Priority) */}
+                <button
+                  onClick={() => handleSwitchDialect("postgresql")}
+                  className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 transition mt-0.5 ${
+                    isPostgres
+                      ? "bg-[var(--accent-success-bg)] text-[var(--accent-success-text)] font-semibold"
+                      : "text-[var(--text-main)] hover:bg-[var(--bg-surface)]"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
+                    <span>PostgreSQL 16</span>
+                  </div>
+                  {isPostgres && <span className="text-[10px] text-[var(--accent-primary)]">Active</span>}
                 </button>
               </div>
             )}

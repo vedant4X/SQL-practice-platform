@@ -239,7 +239,7 @@ interface ArcadePlaygroundProps {
   initialDialect?: Dialect;
 }
 
-export default function ArcadePlayground({ initialDialect = "postgresql" }: ArcadePlaygroundProps) {
+export default function ArcadePlayground({ initialDialect = "mysql" }: ArcadePlaygroundProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const router = useRouter();
@@ -283,10 +283,10 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
 
   // Sync dialect from URL if pathname changes
   useEffect(() => {
-    if (pathname.startsWith("/mysql")) {
-      setDialect("mysql");
-    } else {
+    if (pathname.startsWith("/postgresql")) {
       setDialect("postgresql");
+    } else if (pathname.startsWith("/mysql")) {
+      setDialect("mysql");
     }
   }, [pathname]);
 
@@ -568,18 +568,8 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
 
         {/* Right: Engine Switch & Action Controls */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Dialect Toggle */}
+          {/* Dialect Toggle (MySQL First Priority) */}
           <div className="flex items-center rounded-md border border-[var(--border-control)] bg-[var(--bg-panel)] p-0.5 text-xs">
-            <button
-              onClick={() => handleSwitchDialect("postgresql")}
-              className={`px-2.5 py-1 rounded font-medium transition ${
-                dialect === "postgresql"
-                  ? "bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-semibold shadow-xs"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-main)]"
-              }`}
-            >
-              Postgres
-            </button>
             <button
               onClick={() => handleSwitchDialect("mysql")}
               className={`px-2.5 py-1 rounded font-medium transition ${
@@ -589,6 +579,16 @@ export default function ArcadePlayground({ initialDialect = "postgresql" }: Arca
               }`}
             >
               MySQL
+            </button>
+            <button
+              onClick={() => handleSwitchDialect("postgresql")}
+              className={`px-2.5 py-1 rounded font-medium transition ${
+                dialect === "postgresql"
+                  ? "bg-[var(--accent-primary)] text-[var(--accent-primary-text)] font-semibold shadow-xs"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-main)]"
+              }`}
+            >
+              Postgres
             </button>
           </div>
 
