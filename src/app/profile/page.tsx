@@ -124,33 +124,33 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center bg-background text-slate-400">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      <div className="flex h-[calc(100vh-3.5rem)] items-center justify-center bg-[var(--bg-base)] text-[var(--text-muted)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent" />
       </div>
     );
   }
 
   if (unauthenticated || !profile) {
     return (
-      <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
-        <div className="rounded-2xl border border-slate-800 bg-background-card/50 p-8 shadow-xl">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/20 text-primary-light">
+      <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center bg-[var(--bg-base)]">
+        <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-panel)] p-8 shadow-card">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]">
             <LogIn className="h-7 w-7" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Sign In to View Profile</h2>
-          <p className="mt-2 text-sm text-slate-400">
+          <h2 className="text-2xl font-bold text-[var(--text-main)]">Sign In to View Profile</h2>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             Access your saved questions, practice preferences, and XP ledger.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/login"
-              className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover transition"
+              className="rounded-lg bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-primary-text)] shadow-xs hover:bg-[var(--accent-primary-hover)] transition"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              className="rounded-lg border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-200 hover:bg-slate-700 transition"
+              className="rounded-lg border border-[var(--border-control)] bg-[var(--bg-panel)] px-5 py-2.5 text-sm font-semibold text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition shadow-xs"
             >
               Register Free
             </Link>
@@ -161,33 +161,33 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl w-full flex-1 space-y-8 px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl w-full flex-1 space-y-8 px-4 py-8 sm:px-6 bg-[var(--bg-base)] text-[var(--text-main)] transition-colors">
       {/* Profile Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800 pb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-[var(--border-color)] pb-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/20 border border-primary/40 text-primary-light">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent-primary)]/15 border border-[var(--border-control)] text-[var(--accent-primary)]">
             <UserIcon className="h-8 w-8" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-white">{profile.name}</h1>
-              <span className="rounded bg-primary/20 px-2 py-0.5 text-[11px] font-semibold text-primary-light border border-primary/30">
+              <h1 className="text-2xl font-bold text-[var(--text-main)]">{profile.name}</h1>
+              <span className="rounded bg-[var(--accent-success-bg)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-success-text)] border border-[var(--accent-success-border)]">
                 {profile.role.toUpperCase()}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">{profile.email}</p>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">{profile.email}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 bg-background-card/60 border border-slate-800 rounded-xl px-5 py-3">
+        <div className="flex items-center gap-4 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl px-5 py-3 shadow-xs">
           <div className="text-right">
-            <span className="text-[11px] text-slate-400 block uppercase font-medium">Postgres Rank</span>
-            <span className="text-xl font-black text-amber-400">Level {profile.level || 1}</span>
+            <span className="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Postgres Rank</span>
+            <span className="text-xl font-black text-[var(--accent-warning)]">Level {profile.level || 1}</span>
           </div>
-          <div className="h-8 w-px bg-slate-800" />
+          <div className="h-8 w-px bg-[var(--border-color)]" />
           <div>
-            <span className="text-[11px] text-slate-400 block uppercase font-medium">Accumulated XP</span>
-            <span className="text-xl font-black text-white">{profile.totalXp || 0} XP</span>
+            <span className="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Accumulated XP</span>
+            <span className="text-xl font-black text-[var(--text-main)]">{profile.totalXp || 0} XP</span>
           </div>
         </div>
       </div>
@@ -195,42 +195,42 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Left Column: Settings */}
         <div className="space-y-6 md:col-span-1">
-          <div className="rounded-xl border border-slate-800 bg-background-card/40 p-5 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
-              <Sliders className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold text-white">Editor & Learning Settings</h2>
+          <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] p-5 space-y-4 shadow-xs">
+            <div className="flex items-center gap-2 pb-2 border-b border-[var(--border-color)]">
+              <Sliders className="h-4 w-4 text-[var(--accent-primary)]" />
+              <h2 className="text-sm font-bold text-[var(--text-main)]">Editor & Learning Settings</h2>
             </div>
 
             {/* Practice Mode Toggle */}
             <div className="space-y-2">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <span className="text-xs font-semibold text-white">Practice Mode (Anti-Paste)</span>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <span className="text-xs font-semibold text-[var(--text-main)]">Practice Mode (Anti-Paste)</span>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                     Blocks clipboard paste in the code editor to reinforce muscle memory and syntactic fluency.
                   </p>
                 </div>
                 <button
                   onClick={handleTogglePracticeMode}
                   className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    settings.practiceModeEnabled ? "bg-primary" : "bg-slate-700"
+                    settings.practiceModeEnabled ? "bg-[var(--accent-primary)]" : "bg-[var(--border-control)]"
                   }`}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-[var(--bg-panel)] shadow ring-0 transition duration-200 ease-in-out ${
                       settings.practiceModeEnabled ? "translate-x-4" : "translate-x-0"
                     }`}
                   />
                 </button>
               </div>
               {savedNotice && (
-                <span className="text-[11px] text-emerald-400 font-semibold animate-pulse block">
+                <span className="text-[11px] text-[var(--accent-success-text)] font-semibold animate-pulse block">
                   Settings updated!
                 </span>
               )}
             </div>
 
-            <div className="pt-3 border-t border-slate-800 text-xs text-slate-500 space-y-1">
+            <div className="pt-3 border-t border-[var(--border-color)] text-xs text-[var(--text-muted)] space-y-1">
               <p>• Database: PostgreSQL 16.4 Engine</p>
               <p>• Isolation: Transaction Rollback Sandbox</p>
               <p>• Statements: Single-query AST validation</p>
@@ -240,19 +240,19 @@ export default function ProfilePage() {
 
         {/* Right Column: Saved Questions */}
         <div className="space-y-4 md:col-span-2">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div className="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
             <div className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold text-white">Bookmarked Questions</h2>
+              <Bookmark className="h-4 w-4 text-[var(--accent-primary)]" />
+              <h2 className="text-sm font-bold text-[var(--text-main)]">Bookmarked Questions</h2>
             </div>
-            <span className="text-xs text-slate-400">{savedQuestions.length} saved</span>
+            <span className="text-xs text-[var(--text-muted)]">{savedQuestions.length} saved</span>
           </div>
 
           {savedQuestions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-800 p-8 text-center text-slate-500">
-              <Bookmark className="h-8 w-8 mb-2 opacity-40 text-slate-600" />
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-color)] p-8 text-center text-[var(--text-muted)] bg-[var(--bg-panel)]">
+              <Bookmark className="h-8 w-8 mb-2 opacity-40 text-[var(--text-muted)]" />
               <p className="text-xs font-medium">No bookmarked questions yet.</p>
-              <p className="text-[11px] text-slate-600 mt-1">
+              <p className="text-[11px] text-[var(--text-muted)] mt-1">
                 Click the bookmark icon in any question workspace to save it here for later review.
               </p>
             </div>
@@ -261,29 +261,29 @@ export default function ProfilePage() {
               {savedQuestions.map((q) => (
                 <div
                   key={q.id}
-                  className="flex items-center justify-between rounded-xl border border-slate-800 bg-background-card/40 p-4 transition hover:border-slate-700"
+                  className="flex items-center justify-between rounded-xl border border-[var(--border-color)] bg-[var(--bg-panel)] p-4 transition hover:border-[var(--border-control)] shadow-xs"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white">{q.title}</span>
-                      <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-emerald-400">
+                      <span className="text-xs font-bold text-[var(--text-main)]">{q.title}</span>
+                      <span className="rounded bg-[var(--accent-success-bg)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--accent-success-text)] border border-[var(--accent-success-border)]">
                         {q.difficulty}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-mono">+{q.xp} XP available</span>
+                    <span className="text-[11px] text-[var(--text-muted)] font-mono">+{q.xp} XP available</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleRemoveBookmark(q.id)}
-                      className="rounded border border-slate-800 px-2.5 py-1 text-xs text-slate-400 hover:border-slate-700 hover:text-rose-400 transition"
+                      className="rounded border border-[var(--border-control)] px-2.5 py-1 text-xs text-[var(--text-muted)] hover:text-[var(--accent-danger)] hover:border-[var(--accent-danger)] transition"
                       title="Remove bookmark"
                     >
                       Remove
                     </button>
                     <Link
                       href={`/practice/${q.slug}`}
-                      className="flex items-center gap-1 rounded bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary-hover transition"
+                      className="flex items-center gap-1 rounded bg-[var(--accent-primary)] px-3 py-1 text-xs font-semibold text-[var(--accent-primary-text)] hover:bg-[var(--accent-primary-hover)] transition shadow-xs"
                     >
                       <span>Reopen in Editor</span>
                       <ExternalLink className="h-3 w-3" />
