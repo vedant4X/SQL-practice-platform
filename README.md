@@ -1,6 +1,6 @@
-# SQL Practice & Learning Platform (Dual-Dialect: MySQL + PostgreSQL)
+# Quro — SQL Practice & Learning Platform (Dual-Dialect: MySQL + PostgreSQL)
 
-A production-quality SQL practice platform supporting authentic PostgreSQL 16 and MySQL 8.4 engines with multi-test automated judging, progressive hints, line-by-line solution walkthroughs, and separate progress tracking.
+**Quro** is a production-quality SQL practice platform supporting authentic PostgreSQL 16 and MySQL 8.4 engines with multi-test automated judging, progressive hints, line-by-line solution walkthroughs, and separate progress tracking.
 
 ---
 

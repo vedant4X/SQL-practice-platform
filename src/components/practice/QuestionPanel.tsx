@@ -415,7 +415,7 @@ export default function QuestionPanel({
           <div className="space-y-4">
             {!submitResult ? (
               <div className="p-6 text-center text-xs text-[var(--text-muted)] italic">
-                Press "Submit" to judge your query against all automated test cases.
+                Press "Submit" to evaluate your query against all automated test cases.
               </div>
             ) : (
               <div className="space-y-3">

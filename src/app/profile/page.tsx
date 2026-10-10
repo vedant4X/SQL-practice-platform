@@ -94,7 +94,7 @@ export default function ProfilePage() {
     const updated = !settings.practiceModeEnabled;
     setSettings((prev) => ({ ...prev, practiceModeEnabled: updated }));
     if (typeof window !== "undefined") {
-      localStorage.setItem("sqljudge_practice_mode", String(updated));
+      localStorage.setItem("quro_practice_mode", String(updated));
     }
     try {
       await fetch("/api/v1/user/settings", {

@@ -73,7 +73,7 @@ export default function PracticePage({ params }: PageProps) {
           const nav: TopicNavigationInfo | null = data.data.navigation || null;
           if (nav && typeof window !== "undefined") {
             try {
-              const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+              const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
               const guestSolved = guestSolvedRaw ? JSON.parse(guestSolvedRaw) : [];
               if (guestSolved.length > 0 && nav.topicQuestions) {
                 nav.topicQuestions = nav.topicQuestions.map((tq) => ({
@@ -102,7 +102,7 @@ export default function PracticePage({ params }: PageProps) {
           }
 
           if (!resolvedCode && typeof window !== "undefined") {
-            const localDraft = localStorage.getItem(`sqljudge_draft_${slug}`);
+            const localDraft = localStorage.getItem(`quro_draft_${slug}`) || localStorage.getItem(`sqljudge_draft_${slug}`);
             if (localDraft) {
               resolvedCode = localDraft;
             }
@@ -127,7 +127,7 @@ export default function PracticePage({ params }: PageProps) {
       .catch((err) => console.error("Failed to load schema:", err));
 
     if (typeof window !== "undefined") {
-      const pm = localStorage.getItem("sqljudge_practice_mode");
+      const pm = localStorage.getItem("quro_practice_mode") || localStorage.getItem("sqljudge_practice_mode");
       if (pm === "true") setPracticeMode(true);
     }
 
@@ -139,7 +139,7 @@ export default function PracticePage({ params }: PageProps) {
   const handleSqlChange = (newVal: string) => {
     setSqlCode(newVal);
     if (typeof window !== "undefined") {
-      localStorage.setItem(`sqljudge_draft_${slug}`, newVal);
+      localStorage.setItem(`quro_draft_${slug}`, newVal);
     }
 
     if (saveDraftTimerRef.current) {
@@ -155,7 +155,7 @@ export default function PracticePage({ params }: PageProps) {
       const code = latestSqlRef.current;
       if (code && code.trim()) {
         if (typeof window !== "undefined") {
-          localStorage.setItem(`sqljudge_draft_${slug}`, code);
+          localStorage.setItem(`quro_draft_${slug}`, code);
         }
         try {
           fetch(`/api/v1/questions/${slug}/draft`, {
@@ -204,7 +204,7 @@ export default function PracticePage({ params }: PageProps) {
     const updated = !practiceMode;
     setPracticeMode(updated);
     if (typeof window !== "undefined") {
-      localStorage.setItem("sqljudge_practice_mode", String(updated));
+      localStorage.setItem("quro_practice_mode", String(updated));
     }
   };
 
@@ -281,11 +281,11 @@ export default function PracticePage({ params }: PageProps) {
           });
           if (typeof window !== "undefined" && question?.id) {
             try {
-              const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+              const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
               const guestSolved = guestSolvedRaw ? JSON.parse(guestSolvedRaw) : [];
               if (!guestSolved.includes(question.id)) {
                 guestSolved.push(question.id);
-                localStorage.setItem("sqljudge_guest_solved", JSON.stringify(guestSolved));
+                localStorage.setItem("quro_guest_solved", JSON.stringify(guestSolved));
               }
             } catch {}
           }
@@ -313,6 +313,7 @@ export default function PracticePage({ params }: PageProps) {
     const starter = question.starterQuery || "-- Write your PostgreSQL query here\n";
     setSqlCode(starter);
     if (typeof window !== "undefined") {
+      localStorage.removeItem(`quro_draft_${slug}`);
       localStorage.removeItem(`sqljudge_draft_${slug}`);
     }
     saveDraftToCloud(starter);

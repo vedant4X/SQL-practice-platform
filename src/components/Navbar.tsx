@@ -84,7 +84,7 @@ export default function Navbar() {
               <Database className="h-4 w-4" />
             </div>
             <span className="text-sm tracking-tight font-semibold text-[var(--text-main)]">
-              SQL<span className="text-[var(--accent-primary)]">Judge</span>
+              Qu<span className="text-[var(--accent-primary)]">ro</span>
             </span>
           </Link>
 

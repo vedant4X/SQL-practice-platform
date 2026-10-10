@@ -11,7 +11,7 @@ describe("Admin Console & Credentials Management Suite", () => {
   it("seeds and retrieves administrator account properly", async () => {
     appStore.ensureDefaultAdmin();
 
-    const admin = appStore.getUserByEmail("admin@sqljudge.com");
+    const admin = appStore.getUserByEmail("admin@quro.com");
     expect(admin).toBeDefined();
     expect(admin?.role).toBe("admin");
     expect(admin?.passwordPlain).toBe("admin123");

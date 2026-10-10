@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Read current applied theme from DOM or localStorage
     try {
-      const stored = localStorage.getItem("sqljudge_theme") as ThemeMode | null;
+      const stored = (localStorage.getItem("quro_theme") || localStorage.getItem("sqljudge_theme")) as ThemeMode | null;
       if (stored === "light" || stored === "dark") {
         setThemeState(stored);
         applyTheme(stored);
@@ -45,10 +45,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.remove("dark", "light");
     root.classList.add(mode);
     try {
+      localStorage.setItem("quro_theme", mode);
       localStorage.setItem("sqljudge_theme", mode);
     } catch {
       // Ignore storage errors in sandboxes
     }
+    window.dispatchEvent(new CustomEvent("quro-theme-change", { detail: { theme: mode } }));
     window.dispatchEvent(new CustomEvent("sqljudge-theme-change", { detail: { theme: mode } }));
   };
 

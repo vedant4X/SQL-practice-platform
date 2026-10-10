@@ -1,8 +1,8 @@
 {
-  "name": "sql-practice-platform",
+  "name": "quro",
   "version": "1.0.0",
   "private": true,
-  "description": "Production-quality SQL practice and learning platform (PostgreSQL-first)",
+  "description": "Quro - Production-quality SQL practice and learning platform (Dual-Dialect: PostgreSQL & MySQL)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

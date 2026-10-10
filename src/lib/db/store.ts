@@ -106,7 +106,12 @@ const DB_FILE = path.join(DATA_DIR, "app-db.json");
  */
 export function migrateAppDbToDualDialect(rawState: any): DatabaseState {
   const state: DatabaseState = {
-    users: rawState?.users || [],
+    users: (rawState?.users || []).map((u: any) => {
+      if (u.email === "admin@sqljudge.com") {
+        return { ...u, email: "admin@quro.com" };
+      }
+      return u;
+    }),
     userSettings: rawState?.userSettings || [],
     userQuestionState: (rawState?.userQuestionState || []).map((q: any) => ({
       ...q,
@@ -218,7 +223,7 @@ class AppStore {
 
       const adminUser: User = {
         id: "usr-admin-system",
-        email: "admin@sqljudge.com",
+        email: "admin@quro.com",
         passwordHash,
         passwordPlain: "admin123",
         name: "Administrator",
@@ -275,7 +280,11 @@ class AppStore {
   }
 
   getUserByEmail(email: string): User | undefined {
-    return this.userByEmailIndex.get(email.toLowerCase());
+    const normalized = email.toLowerCase().trim();
+    if (normalized === "admin@sqljudge.com") {
+      return this.userByEmailIndex.get("admin@quro.com") || this.userByEmailIndex.get("admin@sqljudge.com");
+    }
+    return this.userByEmailIndex.get(normalized);
   }
 
   createUser(user: User): User {

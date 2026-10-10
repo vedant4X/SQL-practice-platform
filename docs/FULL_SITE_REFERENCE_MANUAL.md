@@ -14,9 +14,9 @@
                                    │                                │
             REST Calls (JSON)      ▼                                ▼      localStorage
        ┌───────────────────────────────────────┐         ┌────────────────────────┐
-       │     Next.js App Router API Routes     │         │ - sqljudge_draft_<slug>│
-       │           (/api/v1/*)                 │         │ - sqljudge_practice_   │
-       └───────────┬───────────────┬───────────┘         │   mode                 │
+       │     Next.js App Router API Routes     │         │ - quro_draft_<slug>    │
+       │           (/api/v1/*)                 │         │ - quro_practice_mode   │
+       └───────────┬───────────────┬───────────┘         │ - quro_guest_solved    │
                    │               │                     └────────────────────────┘
                    ▼               ▼
       ┌────────────────────┐   ┌──────────────────────────────────────────────┐
@@ -252,7 +252,7 @@ export interface TestCaseResult {
   - Expert: `bg-purple-500/10 text-purple-400 border-purple-500/30`
 
 ### 5.2 Monaco Editor Setup (`src/components/editor/SqlEditor.tsx`)
-- **Custom Dark Theme:** `"sqljudge-dark"`
+- **Custom Dark Theme:** `"quietgrove-dark"`
 - **Registered Shortcuts:**
   - `Ctrl/Cmd + Enter` $\to$ Trigger `onRun()`
   - `Ctrl/Cmd + Shift + Enter` $\to$ Trigger `onSubmit()`

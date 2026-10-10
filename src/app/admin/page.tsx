@@ -113,7 +113,7 @@ export default function AdminPage() {
 
   // Quick fill helper
   const handleQuickFillAdmin = () => {
-    setLoginEmail("admin@sqljudge.com");
+    setLoginEmail("admin@quro.com");
     setLoginPassword("admin123");
   };
 
@@ -311,7 +311,7 @@ export default function AdminPage() {
               </button>
             </div>
             <div className="font-mono text-[11px] text-[var(--text-secondary)] space-y-0.5">
-              <div>Email: <span className="font-semibold text-[var(--text-main)]">admin@sqljudge.com</span></div>
+              <div>Email: <span className="font-semibold text-[var(--text-main)]">admin@quro.com</span></div>
               <div>Password: <span className="font-semibold text-[var(--text-main)]">admin123</span></div>
             </div>
           </div>
@@ -339,7 +339,7 @@ export default function AdminPage() {
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="admin@sqljudge.com"
+                  placeholder="admin@quro.com"
                   className="w-full rounded-lg border border-[var(--border-control)] bg-[var(--bg-panel)] py-2 pl-9 pr-3 text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)]"
                 />
               </div>

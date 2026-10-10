@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (data?.success) {
         // Merge guest progress if stored locally
         try {
-          const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+          const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
           if (guestSolvedRaw) {
             const guestSolved = JSON.parse(guestSolvedRaw);
             if (Array.isArray(guestSolved) && guestSolved.length > 0) {
@@ -36,6 +36,7 @@ export default function LoginPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ solvedQuestionIds: guestSolved }),
               });
+              localStorage.removeItem("quro_guest_solved");
               localStorage.removeItem("sqljudge_guest_solved");
             }
           }

@@ -13,7 +13,7 @@ class SoundFxEngine {
   constructor() {
     if (typeof window !== "undefined") {
       try {
-        const stored = localStorage.getItem("sqljudge_sfx_muted");
+        const stored = localStorage.getItem("quro_sfx_muted") || localStorage.getItem("sqljudge_sfx_muted");
         // Muted by default unless user explicitly turned it ON ('false')
         this.isMuted = stored === "false" ? false : true;
       } catch {
@@ -43,6 +43,7 @@ class SoundFxEngine {
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     try {
+      localStorage.setItem("quro_sfx_muted", this.isMuted ? "true" : "false");
       localStorage.setItem("sqljudge_sfx_muted", this.isMuted ? "true" : "false");
     } catch {}
     if (!this.isMuted) {

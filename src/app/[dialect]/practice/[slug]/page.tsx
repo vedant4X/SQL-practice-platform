@@ -77,7 +77,7 @@ export default function DialectPracticePage({ params }: PageProps) {
           const nav: TopicNavigationInfo | null = data.data.navigation || null;
           if (nav && typeof window !== "undefined") {
             try {
-              const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+              const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
               const guestSolved = guestSolvedRaw ? JSON.parse(guestSolvedRaw) : [];
               if (guestSolved.length > 0 && nav.topicQuestions) {
                 nav.topicQuestions = nav.topicQuestions.map((tq) => ({
@@ -112,7 +112,7 @@ export default function DialectPracticePage({ params }: PageProps) {
 
           // Priority 2: Check localStorage temporary buffer
           if (!resolvedCode && typeof window !== "undefined") {
-            const localDraft = localStorage.getItem(`sqljudge_draft_${dialect}_${slug}`);
+            const localDraft = localStorage.getItem(`quro_draft_${dialect}_${slug}`) || localStorage.getItem(`sqljudge_draft_${dialect}_${slug}`);
             if (localDraft) {
               resolvedCode = localDraft;
             }
@@ -139,7 +139,7 @@ export default function DialectPracticePage({ params }: PageProps) {
 
     // Load practice mode preference
     if (typeof window !== "undefined") {
-      const pm = localStorage.getItem("sqljudge_practice_mode");
+      const pm = localStorage.getItem("quro_practice_mode") || localStorage.getItem("sqljudge_practice_mode");
       if (pm === "true") setPracticeMode(true);
     }
 
@@ -152,7 +152,7 @@ export default function DialectPracticePage({ params }: PageProps) {
   const handleSqlChange = (newVal: string) => {
     setSqlCode(newVal);
     if (typeof window !== "undefined") {
-      localStorage.setItem(`sqljudge_draft_${dialect}_${slug}`, newVal);
+      localStorage.setItem(`quro_draft_${dialect}_${slug}`, newVal);
     }
 
     if (saveDraftTimerRef.current) {
@@ -169,7 +169,7 @@ export default function DialectPracticePage({ params }: PageProps) {
       const code = latestSqlRef.current;
       if (code && code.trim()) {
         if (typeof window !== "undefined") {
-          localStorage.setItem(`sqljudge_draft_${dialect}_${slug}`, code);
+          localStorage.setItem(`quro_draft_${dialect}_${slug}`, code);
         }
         // Beacon / keepalive save
         try {
@@ -222,7 +222,7 @@ export default function DialectPracticePage({ params }: PageProps) {
     const updated = !practiceMode;
     setPracticeMode(updated);
     if (typeof window !== "undefined") {
-      localStorage.setItem("sqljudge_practice_mode", String(updated));
+      localStorage.setItem("quro_practice_mode", String(updated));
     }
   };
 
@@ -302,11 +302,11 @@ export default function DialectPracticePage({ params }: PageProps) {
           // Save solved status in guest storage if guest
           if (typeof window !== "undefined" && question?.id) {
             try {
-              const guestSolvedRaw = localStorage.getItem("sqljudge_guest_solved");
+              const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
               const guestSolved = guestSolvedRaw ? JSON.parse(guestSolvedRaw) : [];
               if (!guestSolved.includes(question.id)) {
                 guestSolved.push(question.id);
-                localStorage.setItem("sqljudge_guest_solved", JSON.stringify(guestSolved));
+                localStorage.setItem("quro_guest_solved", JSON.stringify(guestSolved));
               }
             } catch {
               // Ignore guest storage errors
@@ -339,6 +339,7 @@ export default function DialectPracticePage({ params }: PageProps) {
       (isPostgres ? "-- Write your PostgreSQL query here\n" : "-- Write your MySQL query here\n");
     setSqlCode(starter);
     if (typeof window !== "undefined") {
+      localStorage.removeItem(`quro_draft_${dialect}_${slug}`);
       localStorage.removeItem(`sqljudge_draft_${dialect}_${slug}`);
     }
     saveDraftToCloud(starter);
