@@ -1,6 +1,6 @@
 -- Migration 003: Auth Addendum - Guaranteed User Uniqueness, Email OTP, Sessions & Rate Limiting
 
--- 1. Extend users table
+-- 1. Extend users table. Keep each ADD COLUMN before any query references it.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id_normalized TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS email_normalized TEXT;
@@ -10,9 +10,10 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_count INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ;
 
--- Backfill normalized fields for existing records
+-- Backfill normalized fields for existing records. Explicitly use the columns
+-- added above; the statements must run after the ALTER TABLE statements.
 UPDATE users
-SET 
+SET
   user_id = COALESCE(user_id, LOWER(SPLIT_PART(email, '@', 1))),
   user_id_normalized = COALESCE(user_id_normalized, LOWER(TRIM(COALESCE(user_id, SPLIT_PART(email, '@', 1))))),
   email_normalized = COALESCE(email_normalized, LOWER(TRIM(email))),
