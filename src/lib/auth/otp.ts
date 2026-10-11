@@ -156,6 +156,13 @@ export async function sendOtp(params: {
     otpCode,
   });
 
+  if (!emailResult.success) {
+    return {
+      success: false,
+      message: emailResult.error || "Failed to send verification email.",
+    };
+  }
+
   return {
     success: true,
     message: `Verification code sent to ${normalizedEmail}`,

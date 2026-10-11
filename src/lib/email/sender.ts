@@ -16,15 +16,17 @@ export interface SendEmailResult {
 /**
  * Transports an email using configured provider (Resend, Brevo, SMTP) or console logging.
  *
- * NOTE: Transactional email providers (Resend, Brevo, AWS SES) require domain verification (SPF/DKIM)
- * to deliver emails to arbitrary public recipients. In sandbox/unverified domain mode,
- * delivery may be restricted to your account's verified email address.
+ * NOTE: Transactional email providers (Resend, Brevo) require a verified domain (SPF/DKIM)
+ * to deliver emails to arbitrary public recipients. With an unverified/sandbox domain,
+ * Resend sends from "onboarding@resend.dev" and only delivers to your own registered account email.
  */
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
   const { to, subject, text, html, otpCode } = options;
   const isProduction = process.env.NODE_ENV === "production";
   const provider = (process.env.EMAIL_PROVIDER || "").toLowerCase();
-  const emailFrom = process.env.EMAIL_FROM || "Quro SQL <noreply@quro.com>";
+  
+  // Default to onboarding@resend.dev if not customized, so free Resend sandbox works out-of-the-box
+  const emailFrom = process.env.EMAIL_FROM || "Quro SQL <onboarding@resend.dev>";
   const apiKey = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY || process.env.BREVO_API_KEY;
 
   // 1. Resend Provider
@@ -53,10 +55,20 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
           devCode: !isProduction ? otpCode : undefined,
         };
       }
-      const errText = await res.text();
-      console.error("[Email Error] Resend dispatch failed:", errText);
+
+      const errJson = await res.json().catch(() => null);
+      const errMsg = errJson?.message || `Resend HTTP error ${res.status}`;
+      console.error("[Email Error] Resend dispatch failed:", errMsg);
+      return {
+        success: false,
+        error: `Email delivery failed: ${errMsg}`,
+      };
     } catch (err: any) {
       console.error("[Email Error] Resend network error:", err.message);
+      return {
+        success: false,
+        error: `Email network error: ${err.message}`,
+      };
     }
   }
 
@@ -86,31 +98,46 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
           devCode: !isProduction ? otpCode : undefined,
         };
       }
-      const errText = await res.text();
-      console.error("[Email Error] Brevo dispatch failed:", errText);
+      const errJson = await res.json().catch(() => null);
+      const errMsg = errJson?.message || `Brevo HTTP error ${res.status}`;
+      console.error("[Email Error] Brevo dispatch failed:", errMsg);
+      return {
+        success: false,
+        error: `Brevo delivery failed: ${errMsg}`,
+      };
     } catch (err: any) {
       console.error("[Email Error] Brevo network error:", err.message);
+      return {
+        success: false,
+        error: `Brevo network error: ${err.message}`,
+      };
     }
   }
 
-  // 3. Fallback: Development / Test Console Logger
-  // NEVER log secret codes or OTP in production environment!
-  if (!isProduction) {
-    console.log("=================================================");
-    console.log(`[EMAIL DISPATCH - DEV CONSOLE]`);
-    console.log(`To: ${to}`);
-    console.log(`Subject: ${subject}`);
-    if (otpCode) {
-      console.log(`OTP Code: >>> ${otpCode} <<<`);
-    }
-    console.log("=================================================");
-  } else {
-    console.log(`[Email Notice] Simulated dispatch to ${to} (Subject: ${subject})`);
+  // 3. If in production and NO API key is set
+  if (isProduction && !apiKey) {
+    const errorMsg =
+      "No email provider configured. Please set RESEND_API_KEY in your Vercel Environment Variables.";
+    console.error(`[Email Error] ${errorMsg}`);
+    return {
+      success: false,
+      error: errorMsg,
+    };
   }
+
+  // 4. Fallback: Development / Test Console Logger
+  console.log("=================================================");
+  console.log(`[EMAIL DISPATCH - DEV CONSOLE]`);
+  console.log(`To: ${to}`);
+  console.log(`Subject: ${subject}`);
+  if (otpCode) {
+    console.log(`OTP Code: >>> ${otpCode} <<<`);
+  }
+  console.log("=================================================");
 
   return {
     success: true,
-    messageId: `simulated-${Date.now()}`,
-    devCode: !isProduction ? otpCode : undefined,
+    messageId: `dev-${Date.now()}`,
+    devCode: otpCode,
   };
 }

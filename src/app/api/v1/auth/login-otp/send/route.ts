@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       return errorResponse(
         "OTP_ERROR",
         otpRes.message,
-        429,
+        otpRes.cooldownSeconds ? 429 : 502,
         otpRes.cooldownSeconds ? { cooldownSeconds: otpRes.cooldownSeconds } : undefined
       );
     }

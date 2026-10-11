@@ -70,6 +70,10 @@ export async function POST(req: NextRequest) {
         clientIp,
       });
 
+      if (!otpRes.success) {
+        return errorResponse("EMAIL_DISPATCH_FAILED", otpRes.message, 502);
+      }
+
       return successResponse({
         message: "A verification code has been sent to your email.",
         email: normalizedEmail,
@@ -127,6 +131,10 @@ export async function POST(req: NextRequest) {
       userId: id,
       clientIp,
     });
+
+    if (!otpRes.success) {
+      return errorResponse("EMAIL_DISPATCH_FAILED", otpRes.message, 502);
+    }
 
     return successResponse(
       {
