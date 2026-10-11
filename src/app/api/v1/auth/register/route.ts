@@ -10,6 +10,7 @@ const RegisterSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   name: z.string().min(2, "Name must be at least 2 characters"),
+  otp: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -20,11 +21,28 @@ export async function POST(req: NextRequest) {
       return errorResponse("VALIDATION_ERROR", parsed.error.errors[0].message, 400);
     }
 
-    const { email, password, name } = parsed.data;
+    const { email, password, name, otp } = parsed.data;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const existing = await appStore.getUserByEmail(email);
+    const existing = await appStore.getUserByEmail(normalizedEmail);
     if (existing) {
       return errorResponse("EMAIL_EXISTS", "An account with this email already exists.", 409);
+    }
+
+    let isEmailVerified = false;
+    if (otp) {
+      const { verifyOtp } = await import("@/lib/auth/otp");
+      const verifyRes = await verifyOtp(normalizedEmail, otp, "registration");
+      if (!verifyRes.success) {
+        return errorResponse("INVALID_OTP", verifyRes.message, 400);
+      }
+      isEmailVerified = true;
+    } else if (process.env.REQUIRE_EMAIL_VERIFICATION === "true") {
+      return errorResponse(
+        "OTP_REQUIRED",
+        "A verification code is required to complete registration.",
+        400
+      );
     }
 
     const passwordHash = await hashPassword(password);
@@ -32,11 +50,12 @@ export async function POST(req: NextRequest) {
 
     const user = await appStore.createUser({
       id: userId,
-      email,
+      email: normalizedEmail,
       passwordHash,
       name,
       role: "user",
       timezone: "UTC",
+      emailVerified: isEmailVerified,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });

@@ -89,10 +89,10 @@ async function importJson() {
     report["users"] = { total: users.length, inserted: 0, skipped: 0 };
     for (const u of users) {
       const res = await client.query(
-        `INSERT INTO users (id, email, password_hash, name, role, timezone, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `INSERT INTO users (id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          ON CONFLICT DO NOTHING;`,
-        [u.id, u.email, u.passwordHash, u.name, u.role, u.timezone, u.createdAt, u.updatedAt]
+        [u.id, u.email, u.passwordHash, u.name, u.role, u.timezone, true, u.createdAt, u.updatedAt]
       );
       if (res.rowCount && res.rowCount > 0) {
         report["users"].inserted++;

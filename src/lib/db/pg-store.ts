@@ -10,6 +10,7 @@ export interface User {
   name: string;
   role: "user" | "admin";
   timezone: string;
+  emailVerified?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -105,6 +106,7 @@ function mapUserRow(row: any): User {
     name: row.name,
     role: row.role,
     timezone: row.timezone,
+    emailVerified: Boolean(row.email_verified),
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : String(row.updated_at),
   };
@@ -191,7 +193,7 @@ export class PgAppStore {
   // --- Users ---
   async getAllUsers(): Promise<User[]> {
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, created_at, updated_at
+      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
        FROM users
        ORDER BY created_at ASC;`
     );
@@ -200,7 +202,7 @@ export class PgAppStore {
 
   async getUserById(id: string): Promise<User | undefined> {
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, created_at, updated_at
+      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
        FROM users
        WHERE id = $1
        LIMIT 1;`,
@@ -216,7 +218,7 @@ export class PgAppStore {
     }
 
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, created_at, updated_at
+      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
        FROM users
        WHERE LOWER(email) = LOWER($1)
        LIMIT 1;`,
@@ -225,7 +227,7 @@ export class PgAppStore {
 
     if (res.rows.length === 0 && email.toLowerCase().trim() === "admin@sqljudge.com") {
       const fallback = await query(
-        `SELECT id, email, password_hash, name, role, timezone, created_at, updated_at
+        `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
          FROM users
          WHERE LOWER(email) = 'admin@sqljudge.com'
          LIMIT 1;`
@@ -242,10 +244,17 @@ export class PgAppStore {
     const createdAt = user.createdAt || new Date().toISOString();
     const updatedAt = user.updatedAt || new Date().toISOString();
     const normalizedEmail = user.email.toLowerCase().trim();
+    const emailVerified = user.emailVerified ?? false;
+
+    // Check email uniqueness explicitly to guard case-insensitive uniqueness
+    const existing = await this.getUserByEmail(normalizedEmail);
+    if (existing) {
+      throw new Error(`User with email "${normalizedEmail}" already exists.`);
+    }
 
     await query(
-      `INSERT INTO users (id, email, password_hash, name, role, timezone, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
+      `INSERT INTO users (id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
       [
         user.id,
         normalizedEmail,
@@ -253,6 +262,7 @@ export class PgAppStore {
         user.name,
         user.role,
         user.timezone || "UTC",
+        emailVerified,
         createdAt,
         updatedAt,
       ]
@@ -268,6 +278,7 @@ export class PgAppStore {
     return {
       ...user,
       email: normalizedEmail,
+      emailVerified,
       createdAt,
       updatedAt,
     };
@@ -282,14 +293,15 @@ export class PgAppStore {
     const name = updates.name !== undefined ? updates.name : current.name;
     const role = updates.role !== undefined ? updates.role : current.role;
     const timezone = updates.timezone !== undefined ? updates.timezone : current.timezone;
+    const emailVerified = updates.emailVerified !== undefined ? updates.emailVerified : current.emailVerified;
     const updatedAt = new Date().toISOString();
 
     const res = await query(
       `UPDATE users
-       SET email = $1, password_hash = $2, name = $3, role = $4, timezone = $5, updated_at = $6
-       WHERE id = $7
-       RETURNING id, email, password_hash, name, role, timezone, created_at, updated_at;`,
-      [email, passwordHash, name, role, timezone, updatedAt, userId]
+       SET email = $1, password_hash = $2, name = $3, role = $4, timezone = $5, email_verified = $6, updated_at = $7
+       WHERE id = $8
+       RETURNING id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at;`,
+      [email, passwordHash, name, role, timezone, emailVerified, updatedAt, userId]
     );
 
     return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;
@@ -811,9 +823,94 @@ export class PgAppStore {
     }
   }
 
+  // --- Email OTP Verification ---
+  async createEmailOtp(
+    email: string,
+    otpCode: string,
+    purpose: "registration" | "login" | "verification" | "reset_password" = "registration",
+    expiresInMinutes = 10
+  ): Promise<string> {
+    const id = `otp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    const normalizedEmail = email.toLowerCase().trim();
+    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
+
+    // Invalidate any existing unconsumed OTPs for this email and purpose
+    await query(
+      `UPDATE email_otps
+       SET consumed_at = NOW()
+       WHERE LOWER(email) = LOWER($1) AND purpose = $2 AND consumed_at IS NULL;`,
+      [normalizedEmail, purpose]
+    );
+
+    await query(
+      `INSERT INTO email_otps (id, email, otp_code, purpose, expires_at, created_at)
+       VALUES ($1, $2, $3, $4, $5, NOW());`,
+      [id, normalizedEmail, otpCode, purpose, expiresAt.toISOString()]
+    );
+
+    return id;
+  }
+
+  async getLatestActiveOtp(
+    email: string,
+    purpose: "registration" | "login" | "verification" | "reset_password" = "registration"
+  ): Promise<{ id: string; otpCode: string; expiresAt: Date; attempts: number; createdAt: Date } | null> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const res = await query(
+      `SELECT id, otp_code, expires_at, attempts, created_at
+       FROM email_otps
+       WHERE LOWER(email) = LOWER($1) AND purpose = $2 AND consumed_at IS NULL
+       ORDER BY created_at DESC
+       LIMIT 1;`,
+      [normalizedEmail, purpose]
+    );
+
+    if (res.rows.length === 0) return null;
+    const row = res.rows[0];
+    return {
+      id: row.id,
+      otpCode: row.otp_code,
+      expiresAt: new Date(row.expires_at),
+      attempts: Number(row.attempts),
+      createdAt: new Date(row.created_at),
+    };
+  }
+
+  async recordOtpAttempt(id: string): Promise<number> {
+    const res = await query(
+      `UPDATE email_otps
+       SET attempts = attempts + 1
+       WHERE id = $1
+       RETURNING attempts;`,
+      [id]
+    );
+    return res.rows.length > 0 ? Number(res.rows[0].attempts) : 0;
+  }
+
+  async markOtpConsumed(id: string): Promise<void> {
+    await query(
+      `UPDATE email_otps
+       SET consumed_at = NOW()
+       WHERE id = $1;`,
+      [id]
+    );
+  }
+
+  async setUserEmailVerified(email: string, verified = true): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const res = await query(
+      `UPDATE users
+       SET email_verified = $1, updated_at = NOW()
+       WHERE LOWER(email) = LOWER($2)
+       RETURNING id;`,
+      [verified, normalizedEmail]
+    );
+    return (res.rowCount ?? 0) > 0;
+  }
+
   async resetForTesting(): Promise<void> {
     await query(`
-      TRUNCATE user_drafts, query_history, saved_questions, xp_events, user_attempts, user_question_state, user_settings, users CASCADE;
+      TRUNCATE email_otps, user_drafts, query_history, saved_questions, xp_events, user_attempts, user_question_state, user_settings, users CASCADE;
     `);
   }
 }
