@@ -90,7 +90,7 @@ export default function LoginPage() {
             {unverifiedEmail && (
               <div className="mt-1 pl-6">
                 <Link
-                  href={`/register?email=${encodeURIComponent(unverifiedEmail)}`}
+                  href={`/register?email=${encodeURIComponent(unverifiedEmail)}&step=otp`}
                   className="underline font-semibold hover:opacity-80"
                 >
                   Click here to complete your email verification

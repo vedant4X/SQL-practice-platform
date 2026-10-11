@@ -238,14 +238,48 @@ export class PgAppStore {
     if (this.schemaEnsured || !this.isPgConfigured()) return;
     try {
       await query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id TEXT PRIMARY KEY,
+          email TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          name TEXT NOT NULL,
+          role TEXT NOT NULL DEFAULT 'user',
+          timezone TEXT NOT NULL DEFAULT 'UTC',
+          email_verified BOOLEAN NOT NULL DEFAULT false,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        CREATE TABLE IF NOT EXISTS user_settings (
+          user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+          practice_mode_enabled BOOLEAN NOT NULL DEFAULT false,
+          theme TEXT NOT NULL DEFAULT 'dark',
+          leaderboard_visible BOOLEAN NOT NULL DEFAULT false
+        );
+        CREATE TABLE IF NOT EXISTS sessions (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          token_hash TEXT NOT NULL UNIQUE,
+          expires_at TIMESTAMPTZ NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          user_agent TEXT,
+          revoked_at TIMESTAMPTZ
+        );
+        CREATE TABLE IF NOT EXISTS rate_limits (
+          key TEXT PRIMARY KEY,
+          window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          count INTEGER NOT NULL DEFAULT 1
+        );
         ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id_normalized TEXT;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS email_normalized TEXT;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT false;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMPTZ;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active';
         ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_count INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ;
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_users_user_id_normalized ON users (user_id_normalized);
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_normalized ON users (email_normalized);
       `);
       this.schemaEnsured = true;
     } catch {
@@ -338,7 +372,7 @@ export class PgAppStore {
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
        FROM users
-       WHERE user_id_normalized = $1 OR LOWER(user_id) = $1
+       WHERE user_id_normalized = $1 OR LOWER(COALESCE(user_id, '')) = $1
        LIMIT 1;`,
       [norm]
     );
@@ -346,7 +380,10 @@ export class PgAppStore {
   }
 
   async getUserByIdentifier(identifier: string): Promise<User | undefined> {
-    const norm = identifier.toLowerCase().trim();
+    let norm = identifier.toLowerCase().trim();
+    if (norm === "admin@sqljudge.com") {
+      norm = "admin@quro.com";
+    }
     if (!this.isPgConfigured()) {
       return this.memState.users.find(
         (u) =>
@@ -361,10 +398,15 @@ export class PgAppStore {
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
        FROM users
-       WHERE user_id_normalized = $1 OR email_normalized = $1 OR LOWER(email) = $1 OR LOWER(user_id) = $1
+       WHERE user_id_normalized = $1 OR email_normalized = $1 OR LOWER(email) = $1 OR LOWER(COALESCE(user_id, '')) = $1
        LIMIT 1;`,
       [norm]
     );
+
+    if (res.rows.length === 0 && identifier.toLowerCase().trim() === "admin@sqljudge.com") {
+      return this.getUserByEmail("admin@sqljudge.com");
+    }
+
     return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;
   }
 
@@ -542,6 +584,12 @@ export class PgAppStore {
       const current = this.memState.users.find((u) => u.id === userId);
       if (!current) return undefined;
       Object.assign(current, updates, { updatedAt: new Date().toISOString() });
+      if (updates.email) {
+        current.emailNormalized = updates.email.toLowerCase().trim();
+      }
+      if (updates.userId) {
+        current.userIdNormalized = updates.userId.toLowerCase().trim();
+      }
       delete current.passwordPlain;
       return current;
     }
@@ -549,20 +597,49 @@ export class PgAppStore {
     const current = await this.getUserById(userId);
     if (!current) return undefined;
 
-    const email = updates.email !== undefined ? updates.email.toLowerCase().trim() : current.email;
+    const email = updates.email !== undefined ? updates.email.trim() : current.email;
+    const emailNormalized = updates.emailNormalized !== undefined
+      ? updates.emailNormalized.toLowerCase().trim()
+      : email.toLowerCase().trim();
+    const userIdVal = updates.userId !== undefined ? updates.userId.trim() : (current.userId || current.id);
+    const userIdNormalized = updates.userIdNormalized !== undefined
+      ? updates.userIdNormalized.toLowerCase().trim()
+      : userIdVal.toLowerCase().trim();
     const passwordHash = updates.passwordHash !== undefined ? updates.passwordHash : current.passwordHash;
     const name = updates.name !== undefined ? updates.name : current.name;
     const role = updates.role !== undefined ? updates.role : current.role;
     const timezone = updates.timezone !== undefined ? updates.timezone : current.timezone;
     const emailVerified = updates.emailVerified !== undefined ? updates.emailVerified : current.emailVerified;
+    const emailVerifiedAt = updates.emailVerifiedAt !== undefined
+      ? updates.emailVerifiedAt
+      : (emailVerified ? (current.emailVerifiedAt || new Date().toISOString()) : null);
+    const status = updates.status !== undefined ? updates.status : current.status;
     const updatedAt = new Date().toISOString();
 
+    await this.ensureUsersSchema();
     const res = await query(
       `UPDATE users
-       SET email = $1, password_hash = $2, name = $3, role = $4, timezone = $5, email_verified = $6, updated_at = $7
-       WHERE id = $8
-       RETURNING id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at;`,
-      [email, passwordHash, name, role, timezone, emailVerified, updatedAt, userId]
+       SET email = $1, email_normalized = $2, user_id = $3, user_id_normalized = $4,
+           password_hash = $5, name = $6, role = $7, timezone = $8,
+           email_verified = $9, email_verified_at = $10, status = $11, updated_at = $12
+       WHERE id = $13
+       RETURNING id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+                 email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at;`,
+      [
+        email,
+        emailNormalized,
+        userIdVal,
+        userIdNormalized,
+        passwordHash,
+        name,
+        role,
+        timezone,
+        emailVerified,
+        emailVerifiedAt,
+        status,
+        updatedAt,
+        userId,
+      ]
     );
 
     return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;

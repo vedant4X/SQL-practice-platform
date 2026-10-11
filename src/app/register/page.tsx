@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Database, Lock, Mail, User, ArrowRight, AlertCircle, Eye, EyeOff, KeyRound, CheckCircle2 } from "lucide-react";
 
-export default function RegisterPage() {
+function RegisterContent() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<"details" | "otp">("details");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -19,12 +21,58 @@ export default function RegisterPage() {
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
+    const emailParam = searchParams.get("email");
+    const stepParam = searchParams.get("step");
+    if (emailParam) {
+      setEmail(emailParam);
+      if (stepParam === "otp") {
+        setStep("otp");
+      }
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown((c) => Math.max(0, c - 1));
     }, 1000);
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  const handleResendOtp = async () => {
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError(null);
+    setInfo(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/v1/auth/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          purpose: "register",
+        }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setCooldown(data?.data?.cooldownSeconds || 60);
+        setInfo(data?.data?.message || `Verification code sent to ${email}`);
+        if (data?.data?.devCode) {
+          setDevCode(data.data.devCode);
+          setOtp(data.data.devCode);
+        }
+      } else {
+        setError(data?.error?.message || "Failed to resend code.");
+      }
+    } catch {
+      setError("Network connection error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -347,7 +395,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 disabled={cooldown > 0 || loading}
-                onClick={() => handleSendOtp()}
+                onClick={() => handleResendOtp()}
                 className="font-medium text-[var(--accent-primary)] hover:underline disabled:opacity-50 disabled:no-underline transition"
               >
                 {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
@@ -373,5 +421,19 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent" />
+        </div>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }

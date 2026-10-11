@@ -81,13 +81,18 @@ async function ensureEmailOtpsSchema(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS user_id TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS email TEXT;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS email_normalized TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS otp_code TEXT;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS code_hash TEXT;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS consumed_at TIMESTAMPTZ;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS request_ip_hash TEXT;
       ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS purpose TEXT;
+      ALTER TABLE email_otps ALTER COLUMN email DROP NOT NULL;
+      ALTER TABLE email_otps ALTER COLUMN otp_code DROP NOT NULL;
+      ALTER TABLE email_otps DROP CONSTRAINT IF EXISTS email_otps_purpose_check;
     `);
     schemaEnsured = true;
   } catch {
@@ -152,7 +157,9 @@ export async function sendOtp(params: {
     await query(
       `UPDATE email_otps 
        SET consumed_at = NOW() 
-       WHERE email_normalized = $1 AND purpose = $2 AND consumed_at IS NULL`,
+       WHERE (email_normalized = $1 OR LOWER(email) = $1)
+         AND (purpose = $2 OR (purpose = 'registration' AND $2 = 'register') OR (purpose = 'reset_password' AND $2 = 'reset'))
+         AND consumed_at IS NULL`,
       [normalizedEmail, purpose]
     );
   } catch {
@@ -181,8 +188,8 @@ export async function sendOtp(params: {
   try {
     await query(
       `INSERT INTO email_otps (
-         id, user_id, email_normalized, purpose, code_hash, expires_at, attempt_count, created_at, request_ip_hash
-       ) VALUES ($1, $2, $3, $4, $5, $6, 0, NOW(), $7)`,
+         id, user_id, email, email_normalized, purpose, otp_code, code_hash, expires_at, attempt_count, created_at, request_ip_hash
+       ) VALUES ($1, $2, $3, $3, $4, $5, $5, $6, 0, NOW(), $7)`,
       [otpId, userId || null, normalizedEmail, purpose, codeHash, expiresAt, ipHash]
     );
   } catch (err: any) {
@@ -252,9 +259,11 @@ export async function verifyOtp(params: {
 
   try {
     const res = await query(
-      `SELECT id, user_id, code_hash, expires_at, consumed_at, attempt_count
+      `SELECT id, user_id, code_hash, otp_code, expires_at, consumed_at, attempt_count
        FROM email_otps
-       WHERE email_normalized = $1 AND purpose = $2 AND consumed_at IS NULL
+       WHERE (email_normalized = $1 OR LOWER(email) = $1)
+         AND (purpose = $2 OR (purpose = 'registration' AND $2 = 'register') OR (purpose = 'reset_password' AND $2 = 'reset'))
+         AND consumed_at IS NULL
        ORDER BY created_at DESC
        LIMIT 1`,
       [normalizedEmail, purpose]
@@ -315,16 +324,18 @@ export async function verifyOtp(params: {
     };
   }
 
-  // Constant-time HMAC comparison
+  // Constant-time HMAC comparison (with plaintext fallback for legacy database rows)
   const candidateHash = hashOtpCode(otpCode);
   const candidateBuffer = Buffer.from(candidateHash, "hex");
-  const storedHashStr = String(activeOtp.code_hash || activeOtp.codeHash || "");
+  const storedHashStr = String(activeOtp.code_hash || activeOtp.codeHash || activeOtp.otp_code || "");
   const storedBuffer = Buffer.from(storedHashStr, "hex");
 
-  const isMatch =
+  const isHashMatch =
     candidateBuffer.length === storedBuffer.length &&
     storedBuffer.length > 0 &&
     crypto.timingSafeEqual(candidateBuffer, storedBuffer);
+  const isPlainMatch = storedHashStr === otpCode;
+  const isMatch = isHashMatch || isPlainMatch;
 
   if (!isMatch) {
     const newAttemptCount = currentAttempts + 1;

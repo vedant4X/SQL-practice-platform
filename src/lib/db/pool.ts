@@ -10,11 +10,15 @@ function createPool(): Pool {
   const conf = getConfig();
   const connectionString = conf.databaseUrl;
   const isProduction = conf.isProduction;
-  const requiresSsl = connectionString.includes("sslmode=require") || isProduction;
+  const requiresSsl =
+    (connectionString.includes("sslmode=require") || isProduction) &&
+    !connectionString.includes("sslmode=disable");
 
   const pool = new Pool({
     connectionString,
     max: 5,
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
     ssl: requiresSsl ? { rejectUnauthorized: false } : undefined,
   });
 

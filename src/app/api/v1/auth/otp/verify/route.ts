@@ -38,7 +38,14 @@ export async function POST(req: NextRequest) {
     }
 
     // User lookup
-    const user = await appStore.getUserByEmail(normalizedEmail);
+    let user =
+      (await appStore.getUserByEmail(normalizedEmail)) ||
+      (await appStore.getUserByIdentifier(normalizedEmail));
+
+    if (!user && verifyRes.userId) {
+      user = await appStore.getUserById(verifyRes.userId);
+    }
+
     if (!user) {
       return errorResponse("USER_NOT_FOUND", "Account not found.", 404);
     }
@@ -47,11 +54,14 @@ export async function POST(req: NextRequest) {
     if (purpose === "register") {
       await appStore.setUserEmailVerified(normalizedEmail, true);
       await appStore.setUserStatus(user.id, "active");
-      await appStore.updateUser(user.id, {
+      const updated = await appStore.updateUser(user.id, {
         emailVerified: true,
         emailVerifiedAt: new Date().toISOString(),
         status: "active",
       });
+      if (updated) {
+        user = updated;
+      }
     }
 
     // If registration or login: issue session and set cookie

@@ -22,10 +22,19 @@ export async function POST(req: NextRequest) {
     const normalizedEmail = normalizeEmail(email);
     const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
 
-    // For login or reset: check if account exists
-    const user = await appStore.getUserByEmail(normalizedEmail);
+    // Account lookup
+    const user =
+      (await appStore.getUserByEmail(normalizedEmail)) ||
+      (await appStore.getUserByIdentifier(normalizedEmail));
+
     if ((purpose === "login" || purpose === "reset") && !user) {
       // Return generic success response to avoid account enumeration
+      return successResponse({
+        message: "If this email can be used, a verification code has been sent.",
+      });
+    }
+
+    if (purpose === "register" && user && user.status === "active" && user.emailVerified) {
       return successResponse({
         message: "If this email can be used, a verification code has been sent.",
       });

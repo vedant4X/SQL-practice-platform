@@ -51,7 +51,10 @@ export async function POST(req: NextRequest) {
     const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
 
     // 4. Check if user already exists
-    const existingUser = await appStore.getUserByIdentifier(normalizedEmail);
+    const existingUser =
+      (await appStore.getUserByIdentifier(normalizedEmail)) ||
+      (await appStore.getUserByEmail(normalizedEmail));
+
     if (existingUser) {
       // If already verified/active: return generic response to prevent account enumeration
       if (existingUser.status === "active" && (existingUser.emailVerified || existingUser.emailVerifiedAt)) {
@@ -62,7 +65,16 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // If unverified/pending: resend verification code
+      // If unverified/pending: update pending credentials with latest password/name/username
+      const newPasswordHash = await hashPassword(rawPassword);
+      await appStore.updateUser(existingUser.id, {
+        name,
+        userId: rawUserId,
+        userIdNormalized: normalizedUserId,
+        passwordHash: newPasswordHash,
+      });
+
+      // Resend verification code
       const otpRes = await sendOtp({
         email: normalizedEmail,
         purpose: "register",
@@ -82,9 +94,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Also check if username is taken by a verified user
+    // Check if username is taken by another account
     const existingByUsername = await appStore.getUserByUserId(normalizedUserId);
-    if (existingByUsername && existingByUsername.status === "active") {
+    if (existingByUsername && existingByUsername.emailNormalized !== normalizedEmail) {
       return errorResponse(
         "USER_ID_EXISTS",
         "This username is already taken. Please choose another username.",
