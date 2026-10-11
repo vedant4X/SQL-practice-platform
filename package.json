@@ -17,7 +17,8 @@
     "perf:check": "tsx scripts/measure-baseline.ts",
     "seed": "tsx scripts/seed.ts",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:import-json": "tsx scripts/import-json.ts"
+    "db:import-json": "tsx scripts/import-json.ts",
+    "db:init-mysql": "tsx scripts/init-mysql-sandbox.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.14",

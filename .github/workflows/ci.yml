@@ -9,6 +9,51 @@ on:
 jobs:
   test-and-validate:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+        ports:
+          - 3307:3306
+
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd="pg_isready -U postgres -d test_db"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+        ports:
+          - 5432:5432
+
+    env:
+      # PostgreSQL App Store Database (node-postgres / pg.Pool)
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/test_db
+      SESSION_SECRET: ci-test-session-secret-at-least-32-chars-long-12345
+      OTP_HMAC_SECRET: ci-test-otp-secret-key-for-hashing-otps-12345
+      CRON_SECRET: ci-test-cron-secret
+      # MySQL 8.4 Sandbox Configuration (mysql2)
+      MYSQL_SANDBOX_HOST: 127.0.0.1
+      MYSQL_SANDBOX_PORT: "3307"
+      MYSQL_SANDBOX_ADMIN_USER: root
+      MYSQL_SANDBOX_ADMIN_PASSWORD: root
+      MYSQL_SANDBOX_RO_USER: sandbox_ro
+      MYSQL_SANDBOX_RO_PASSWORD: sandbox_ro_pass
+      MYSQL_SANDBOX_RW_USER: sandbox_rw
+      MYSQL_SANDBOX_RW_PASSWORD: sandbox_rw_pass
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,6 +68,12 @@ jobs:
 
       - name: Lint & Typecheck
         run: npx tsc --noEmit
+
+      - name: Setup MySQL Sandbox Users & Privileges
+        run: npm run db:init-mysql
+
+      - name: Run PostgreSQL Database Migrations
+        run: npm run db:migrate
 
       - name: Run Unit & API Tests
         run: npm run test
