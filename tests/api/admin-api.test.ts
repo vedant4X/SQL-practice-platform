@@ -8,19 +8,21 @@ describe("Admin Console & Credentials Management Suite", () => {
     await appStore.resetForTesting();
   });
 
-  it("seeds and retrieves administrator account properly", async () => {
+  it("seeds and retrieves administrator account properly with secure hashing", async () => {
     await appStore.ensureDefaultAdmin();
 
     const admin = await appStore.getUserByEmail("admin@quro.com");
     expect(admin).toBeDefined();
     expect(admin?.role).toBe("admin");
-    expect(admin?.passwordPlain).toBe("admin123");
+    // Plaintext password is NEVER persisted in the database
+    expect(admin?.passwordPlain).toBeUndefined();
 
+    // Verify secure password hash matches default admin password
     const isValid = await verifyPassword("admin123", admin!.passwordHash);
     expect(isValid).toBe(true);
   });
 
-  it("stores passwordPlain on user registration for admin console inspection", async () => {
+  it("never persists plaintext passwords to database on user registration", async () => {
     const rawPass = "StudentSecretPass789!";
     const hashed = await hashPassword(rawPass);
 
@@ -37,19 +39,20 @@ describe("Admin Console & Credentials Management Suite", () => {
     });
 
     const stored = await appStore.getUserById(user.id);
-    expect(stored?.passwordPlain).toBe(rawPass);
+    // Plaintext password must NOT be stored in PostgreSQL store
+    expect(stored?.passwordPlain).toBeUndefined();
     expect(stored?.passwordHash).toBe(hashed);
+    expect(await verifyPassword(rawPass, stored!.passwordHash)).toBe(true);
     expect(stored?.role).toBe("user");
   });
 
-  it("allows administrators to reset and update user passwords and roles", async () => {
+  it("allows administrators to reset and update user passwords and roles securely", async () => {
     await appStore.ensureDefaultAdmin();
 
     const user = await appStore.createUser({
       id: "usr-learner-42",
       email: "learner@sql.org",
       passwordHash: "old-hash",
-      passwordPlain: "oldpass",
       name: "Learner Bob",
       role: "user",
       timezone: "UTC",
@@ -63,20 +66,21 @@ describe("Admin Console & Credentials Management Suite", () => {
 
     const updated = await appStore.updateUser(user.id, {
       passwordHash: newHash,
-      passwordPlain: newPass,
       role: "admin",
     });
 
-    expect(updated?.passwordPlain).toBe(newPass);
     expect(updated?.role).toBe("admin");
+    // Plaintext password is never persisted
+    expect(updated?.passwordPlain).toBeUndefined();
 
     const validNew = await verifyPassword(newPass, updated!.passwordHash);
     expect(validNew).toBe(true);
 
     // Verify retrieval
     const fetched = await appStore.getUserById(user.id);
-    expect(fetched?.passwordPlain).toBe(newPass);
+    expect(fetched?.passwordPlain).toBeUndefined();
     expect(fetched?.role).toBe("admin");
+    expect(await verifyPassword(newPass, fetched!.passwordHash)).toBe(true);
   });
 
   it("deletes user and cleans up cascading records", async () => {

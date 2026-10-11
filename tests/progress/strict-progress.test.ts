@@ -5,9 +5,27 @@ import { getQuestionsByTopic } from "../../src/lib/curriculum/questions";
 import { TOPICS } from "../../src/lib/curriculum/topics";
 
 describe("Strict Zero-Loss Progress & Navigation Test Suite", () => {
-  beforeEach(() => {
-    appStore.resetForTesting();
+  beforeEach(async () => {
+    await appStore.resetForTesting();
   });
+
+  async function ensureTestUser(userId: string) {
+    return appStore.createUser({
+      id: userId,
+      userId: userId,
+      userIdNormalized: userId.toLowerCase(),
+      email: `${userId}@quro-test.io`,
+      emailNormalized: `${userId}@quro-test.io`.toLowerCase(),
+      name: `Test User ${userId}`,
+      role: "user",
+      timezone: "UTC",
+      passwordHash: "test_hash_123",
+      status: "active",
+      emailVerified: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+  }
 
   describe("B1. Topic Navigation within curriculum boundaries", () => {
     it("determines topic navigation accurately for the first question of a topic", () => {
@@ -74,6 +92,7 @@ describe("Strict Zero-Loss Progress & Navigation Test Suite", () => {
     it("guarantees monotonic state: once solved, subsequent failed resubmission stays solved", async () => {
       const userId = "usr-monotonic-1";
       const questionId = "q-select-01";
+      await ensureTestUser(userId);
 
       // 1. Initial state is not_started
       const initial = await appStore.getUserQuestionState(userId, questionId, "postgresql");
@@ -129,6 +148,7 @@ describe("Strict Zero-Loss Progress & Navigation Test Suite", () => {
       const userId = "usr-draft-1";
       const questionId = "q-filter-02";
       const draftContent = "SELECT employee_id, department FROM employees WHERE salary > 75000;";
+      await ensureTestUser(userId);
 
       // Save draft
       const saved = await appStore.saveDraft(userId, questionId, "postgresql", draftContent);
@@ -152,6 +172,7 @@ describe("Strict Zero-Loss Progress & Navigation Test Suite", () => {
     it("merges guest progress on sign-in without overwriting existing solved status", async () => {
       const userId = "usr-merge-1";
       const guestSolved = ["q-select-01", "q-select-02", "q-where-01"];
+      await ensureTestUser(userId);
 
       // User already solved q-select-01 previously
       await appStore.recordSubmission({

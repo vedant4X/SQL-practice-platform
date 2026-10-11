@@ -368,6 +368,7 @@ export class PgAppStore {
         createdAt,
         updatedAt,
       };
+      delete newUser.passwordPlain;
       this.memState.users.push(newUser);
       this.memState.userSettings.push({
         userId: user.id,
@@ -515,6 +516,7 @@ export class PgAppStore {
       const current = this.memState.users.find((u) => u.id === userId);
       if (!current) return undefined;
       Object.assign(current, updates, { updatedAt: new Date().toISOString() });
+      delete current.passwordPlain;
       return current;
     }
 
@@ -1314,7 +1316,6 @@ export class PgAppStore {
       email: "admin@quro.com",
       emailNormalized: "admin@quro.com",
       passwordHash,
-      passwordPlain: "admin123",
       name: "Administrator",
       role: "admin",
       timezone: "UTC",
