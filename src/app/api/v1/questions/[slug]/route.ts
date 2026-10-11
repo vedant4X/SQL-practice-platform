@@ -17,9 +17,9 @@ export async function GET(
   }
 
   const session = await getSessionFromRequest(req);
-  const qState = session ? appStore.getUserQuestionState(session.userId, question.id) : null;
+  const qState = session ? await appStore.getUserQuestionState(session.userId, question.id) : null;
   const isBookmarked = session
-    ? appStore.getUserBookmarks(session.userId).includes(question.id)
+    ? (await appStore.getUserBookmarks(session.userId)).includes(question.id)
     : false;
 
   const topic = TOPICS.find((t) => t.id === question.topic_id);

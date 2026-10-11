@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { email, password } = parsed.data;
-    const user = appStore.getUserByEmail(email);
+    const user = await appStore.getUserByEmail(email);
     if (!user) {
       return errorResponse("INVALID_CREDENTIALS", "Invalid email or password.", 401);
     }

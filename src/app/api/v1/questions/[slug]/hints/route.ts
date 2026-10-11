@@ -15,11 +15,11 @@ export async function POST(
   }
 
   const session = await getSessionFromRequest(req);
-  const currentUsed = session ? appStore.getUserQuestionState(session.userId, question.id).hintsUsed : 0;
+  const currentUsed = session ? (await appStore.getUserQuestionState(session.userId, question.id)).hintsUsed : 0;
   const nextLevel = Math.min(3, currentUsed + 1);
 
   if (session) {
-    appStore.recordHintUsed(session.userId, question.id, nextLevel);
+    await appStore.recordHintUsed(session.userId, question.id, nextLevel);
   }
 
   return successResponse({

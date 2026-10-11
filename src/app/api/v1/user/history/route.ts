@@ -9,6 +9,6 @@ export async function GET(req: NextRequest) {
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const history = appStore.getUserHistory(session.userId);
+  const history = await appStore.getUserHistory(session.userId);
   return successResponse({ history });
 }

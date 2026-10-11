@@ -18,6 +18,6 @@ export async function GET(
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const stats = getUserProgressStats(session.userId, dialect);
+  const stats = await getUserProgressStats(session.userId, dialect);
   return successResponse({ stats });
 }

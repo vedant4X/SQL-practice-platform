@@ -9,6 +9,10 @@ const RO_PASSWORD = process.env.MYSQL_SANDBOX_RO_PASSWORD || "sandbox_ro_pass";
 const RW_USER = process.env.MYSQL_SANDBOX_RW_USER || "sandbox_rw";
 const RW_PASSWORD = process.env.MYSQL_SANDBOX_RW_PASSWORD || "sandbox_rw_pass";
 
+// SSL: enable when MYSQL_SANDBOX_SSL=true or auto-detect hosted providers
+const MYSQL_SSL = process.env.MYSQL_SANDBOX_SSL === "true" ||
+  process.env.MYSQL_SANDBOX_SSL === "1";
+
 let adminPool: Pool | null = null;
 let roPool: Pool | null = null;
 let rwPool: Pool | null = null;
@@ -21,7 +25,21 @@ const baseOptions: Partial<PoolOptions> = {
   queueLimit: 0,
   dateStrings: true,
   decimalNumbers: false,
+  ...(MYSQL_SSL ? { ssl: { rejectUnauthorized: false } } : {}),
 };
+
+/**
+ * Returns true if a MySQL sandbox is configured (host is set to something other than localhost defaults
+ * when running in production, OR any host when running locally).
+ */
+export function isMySqlConfigured(): boolean {
+  // In production, MySQL must be explicitly configured via MYSQL_SANDBOX_HOST
+  if (process.env.NODE_ENV === "production") {
+    return !!process.env.MYSQL_SANDBOX_HOST;
+  }
+  // In development, try to connect to whatever is configured
+  return true;
+}
 
 export function getAdminPool(): Pool {
   if (!adminPool) {

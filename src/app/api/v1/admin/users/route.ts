@@ -10,25 +10,27 @@ export async function GET(req: NextRequest) {
       return errorResponse("FORBIDDEN", "Administrator privileges required", 403);
     }
 
-    const rawUsers = appStore.getAllUsers();
-    const users = rawUsers.map((u) => {
-      const totalXp = appStore.getUserXp(u.id);
-      const solvedPg = appStore.getUserSolvedQuestions(u.id, "postgresql").length;
-      const solvedMy = appStore.getUserSolvedQuestions(u.id, "mysql").length;
+    const rawUsers = await appStore.getAllUsers();
+    const users = await Promise.all(
+      rawUsers.map(async (u) => {
+        const totalXp = await appStore.getUserXp(u.id);
+        const solvedPg = (await appStore.getUserSolvedQuestions(u.id, "postgresql")).length;
+        const solvedMy = (await appStore.getUserSolvedQuestions(u.id, "mysql")).length;
 
-      return {
-        id: u.id,
-        email: u.email,
-        name: u.name,
-        role: u.role,
-        passwordPlain: u.passwordPlain || null,
-        passwordHash: u.passwordHash,
-        totalXp,
-        solvedCount: solvedPg + solvedMy,
-        createdAt: u.createdAt,
-        updatedAt: u.updatedAt,
-      };
-    });
+        return {
+          id: u.id,
+          email: u.email,
+          name: u.name,
+          role: u.role,
+          passwordPlain: u.passwordPlain || null,
+          passwordHash: u.passwordHash,
+          totalXp,
+          solvedCount: solvedPg + solvedMy,
+          createdAt: u.createdAt,
+          updatedAt: u.updatedAt,
+        };
+      })
+    );
 
     return successResponse({
       users,
@@ -57,7 +59,7 @@ export async function DELETE(req: NextRequest) {
       return errorResponse("BAD_REQUEST", "Cannot delete your own active administrator account", 400);
     }
 
-    const deleted = appStore.deleteUser(userId);
+    const deleted = await appStore.deleteUser(userId);
     if (!deleted) {
       return errorResponse("NOT_FOUND", "User not found", 404);
     }

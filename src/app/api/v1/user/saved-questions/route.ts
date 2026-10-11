@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const bookmarkedIds = new Set(appStore.getUserBookmarks(session.userId));
+  const bookmarkedIds = new Set(await appStore.getUserBookmarks(session.userId));
   const savedQuestions = ALL_QUESTIONS.filter((q) => bookmarkedIds.has(q.id)).map((q) => ({
     id: q.id,
     slug: q.slug,
@@ -40,6 +40,6 @@ export async function POST(req: NextRequest) {
     return errorResponse("VALIDATION_ERROR", "questionId is required", 400);
   }
 
-  const isBookmarked = appStore.toggleBookmark(session.userId, parsed.data.questionId);
+  const isBookmarked = await appStore.toggleBookmark(session.userId, parsed.data.questionId);
   return successResponse({ isBookmarked });
 }

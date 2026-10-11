@@ -9,6 +9,6 @@ export async function GET(req: NextRequest) {
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const stats = getUserProgressStats(session.userId);
+  const stats = await getUserProgressStats(session.userId);
   return successResponse({ stats });
 }

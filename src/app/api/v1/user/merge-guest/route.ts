@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
     const parsedDialect = parseDialect(rawDialect || "postgresql");
     const dialect = "error" in parsedDialect ? "postgresql" : parsedDialect.dialect;
 
-    appStore.mergeGuestProgress(session.userId, solvedQuestionIds, undefined, dialect);
+    await appStore.mergeGuestProgress(session.userId, solvedQuestionIds, undefined, dialect);
 
     return successResponse({
       merged: true,
-      solvedCount: appStore.getUserSolvedQuestions(session.userId, dialect).length,
+      solvedCount: (await appStore.getUserSolvedQuestions(session.userId, dialect)).length,
     });
   } catch (err: any) {
     return errorResponse("MERGE_ERROR", err.message || "Failed to merge progress", 500);

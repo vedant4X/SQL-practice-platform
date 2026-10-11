@@ -47,14 +47,14 @@ export function calculateLevel(totalXp: number): { level: number; xpToNextLevel:
 /**
  * Computes full user dashboard progression statistics and explainable recommendations for a dialect
  */
-export function getUserProgressStats(
+export async function getUserProgressStats(
   userId: string,
   dialect: Dialect = "postgresql"
-): UserStats {
-  const totalXp = appStore.getUserXp(userId, dialect);
+): Promise<UserStats> {
+  const totalXp = await appStore.getUserXp(userId, dialect);
   const { level, xpToNextLevel } = calculateLevel(totalXp);
-  const solvedQuestionIds = new Set(appStore.getUserSolvedQuestions(userId, dialect));
-  const accuracyPercentage = appStore.getUserAccuracy(userId, dialect);
+  const solvedQuestionIds = new Set(await appStore.getUserSolvedQuestions(userId, dialect));
+  const accuracyPercentage = await appStore.getUserAccuracy(userId, dialect);
   const allDialectQuestions = getAllQuestions(dialect);
 
   // Topic mastery calculations

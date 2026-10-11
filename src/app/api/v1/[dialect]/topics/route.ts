@@ -17,7 +17,7 @@ export async function GET(
 
   const session = await getSessionFromRequest(req);
   const solvedSet = session
-    ? new Set(appStore.getUserSolvedQuestions(session.userId, dialect))
+    ? new Set(await appStore.getUserSolvedQuestions(session.userId, dialect))
     : new Set<string>();
 
   const topicsWithMeta = TOPICS.map((topic) => {

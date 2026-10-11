@@ -22,13 +22,13 @@ export async function POST(req: NextRequest) {
       return errorResponse("BAD_REQUEST", "Password must be at least 6 characters", 400);
     }
 
-    const targetUser = appStore.getUserById(userId);
+    const targetUser = await appStore.getUserById(userId);
     if (!targetUser) {
       return errorResponse("NOT_FOUND", "User not found", 404);
     }
 
     const passwordHash = await hashPassword(newPassword);
-    const updated = appStore.updateUser(userId, {
+    const updated = await appStore.updateUser(userId, {
       passwordHash,
       passwordPlain: newPassword,
     });

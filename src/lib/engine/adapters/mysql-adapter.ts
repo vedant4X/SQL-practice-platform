@@ -4,9 +4,24 @@ import { validateMySqlQuery } from "../mysql/mysql-statement-validator";
 import { translateMySqlError } from "../mysql/mysql-error-translator";
 import { normalizeMySqlValue } from "../mysql/mysql-normalizer";
 import { ensurePlaygroundDb, resetPlaygroundDb } from "../mysql/mysql-playground-db";
-import { getRoPool } from "../mysql/mysql-connection";
+import { getRoPool, isMySqlConfigured } from "../mysql/mysql-connection";
 
 const mysqlSchemaCache = new Map<string, TableSchema[]>();
+
+const MYSQL_UNAVAILABLE_ERROR: QueryExecutionResult = {
+  success: false,
+  columns: [],
+  rows: [],
+  rowCount: 0,
+  totalRows: 0,
+  executionTimeMs: 0,
+  hasMore: false,
+  error: {
+    code: "MYSQL_UNAVAILABLE",
+    message: "MySQL practice engine is not available in this environment. Please use the PostgreSQL track, or contact the administrator to configure a hosted MySQL instance.",
+    userFacingMessage: "MySQL practice is currently unavailable in this deployment. Please switch to the PostgreSQL track to continue practicing.",
+  },
+};
 
 export class MySqlAdapter implements DialectAdapter {
   readonly id = "mysql" as const;
@@ -19,6 +34,9 @@ export class MySqlAdapter implements DialectAdapter {
   }
 
   async execute(request: ExecutionRequest): Promise<QueryExecutionResult> {
+    if (!isMySqlConfigured()) {
+      return MYSQL_UNAVAILABLE_ERROR;
+    }
     return executeInMySqlSandbox(
       request.databaseId,
       request.query,
@@ -37,6 +55,10 @@ export class MySqlAdapter implements DialectAdapter {
   }
 
   async introspectSchema(databaseId: string): Promise<TableSchema[]> {
+    if (!isMySqlConfigured()) {
+      return [];
+    }
+
     if (mysqlSchemaCache.has(databaseId)) {
       return mysqlSchemaCache.get(databaseId)!;
     }
@@ -89,14 +111,23 @@ export class MySqlAdapter implements DialectAdapter {
   }
 
   async provisionPlaygroundSchema(sessionId: string): Promise<void> {
+    if (!isMySqlConfigured()) {
+      throw new Error("MySQL practice engine is not available in this environment.");
+    }
     await ensurePlaygroundDb(sessionId);
   }
 
   async resetPlayground(sessionId: string): Promise<void> {
+    if (!isMySqlConfigured()) {
+      throw new Error("MySQL practice engine is not available in this environment.");
+    }
     await resetPlaygroundDb(sessionId);
   }
 
   async explain(sql: string): Promise<unknown> {
+    if (!isMySqlConfigured()) {
+      return null;
+    }
     const res = await executeInMySqlSandbox("employeedb", sql, "sample", {
       includeExplain: true,
       questionType: "select",

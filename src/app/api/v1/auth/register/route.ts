@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     const { email, password, name } = parsed.data;
 
-    const existing = appStore.getUserByEmail(email);
+    const existing = await appStore.getUserByEmail(email);
     if (existing) {
       return errorResponse("EMAIL_EXISTS", "An account with this email already exists.", 409);
     }
@@ -30,11 +30,10 @@ export async function POST(req: NextRequest) {
     const passwordHash = await hashPassword(password);
     const userId = `usr-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
-    const user = appStore.createUser({
+    const user = await appStore.createUser({
       id: userId,
       email,
       passwordHash,
-      passwordPlain: password,
       name,
       role: "user",
       timezone: "UTC",

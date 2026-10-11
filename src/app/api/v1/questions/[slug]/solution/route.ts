@@ -16,7 +16,7 @@ export async function POST(
 
   const session = await getSessionFromRequest(req);
   if (session) {
-    appStore.recordSolutionViewed(session.userId, question.id);
+    await appStore.recordSolutionViewed(session.userId, question.id);
   }
 
   return successResponse({

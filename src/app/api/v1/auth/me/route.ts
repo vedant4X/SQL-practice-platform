@@ -9,13 +9,13 @@ export async function GET(req: NextRequest) {
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const user = appStore.getUserById(session.userId);
+  const user = await appStore.getUserById(session.userId);
   if (!user) {
     return errorResponse("USER_NOT_FOUND", "User not found", 404);
   }
 
-  const settings = appStore.getUserSettings(user.id);
-  const totalXp = appStore.getUserXp(user.id);
+  const settings = await appStore.getUserSettings(user.id);
+  const totalXp = await appStore.getUserXp(user.id);
 
   return successResponse({
     user: {

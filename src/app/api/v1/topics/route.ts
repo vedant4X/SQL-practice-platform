@@ -8,7 +8,7 @@ import { successResponse } from "@/lib/api/response";
 export async function GET(req: NextRequest) {
   const session = await getSessionFromRequest(req);
   const solvedSet = session
-    ? new Set(appStore.getUserSolvedQuestions(session.userId))
+    ? new Set(await appStore.getUserSolvedQuestions(session.userId))
     : new Set<string>();
 
   const topicsWithMeta = TOPICS.map((topic) => {

@@ -29,7 +29,7 @@ export async function GET(
     return errorResponse("QUESTION_NOT_FOUND", `Question '${slug}' not found`, 404);
   }
 
-  const draftText = appStore.getDraft(session.userId, question.id, dialect);
+  const draftText = await appStore.getDraft(session.userId, question.id, dialect);
 
   return successResponse({
     draft: draftText || null,
@@ -62,7 +62,7 @@ export async function POST(
       return errorResponse("VALIDATION_ERROR", "Draft content required", 400);
     }
 
-    const saved = appStore.saveDraft(
+    const saved = await appStore.saveDraft(
       session.userId,
       question.id,
       dialect,

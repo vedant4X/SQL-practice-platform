@@ -21,12 +21,12 @@ export async function POST(req: NextRequest) {
       return errorResponse("BAD_REQUEST", "You cannot revoke your own admin role", 400);
     }
 
-    const targetUser = appStore.getUserById(userId);
+    const targetUser = await appStore.getUserById(userId);
     if (!targetUser) {
       return errorResponse("NOT_FOUND", "User not found", 404);
     }
 
-    const updated = appStore.updateUser(userId, { role });
+    const updated = await appStore.updateUser(userId, { role });
 
     return successResponse({
       message: `User role updated to ${role}`,

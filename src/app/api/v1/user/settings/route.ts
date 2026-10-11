@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     return errorResponse("UNAUTHORIZED", "Not authenticated", 401);
   }
 
-  const settings = appStore.getUserSettings(session.userId);
+  const settings = await appStore.getUserSettings(session.userId);
   return successResponse({ settings });
 }
 
@@ -32,6 +32,6 @@ export async function POST(req: NextRequest) {
     return errorResponse("VALIDATION_ERROR", "Invalid settings format", 400);
   }
 
-  const updated = appStore.updateUserSettings(session.userId, parsed.data);
+  const updated = await appStore.updateUserSettings(session.userId, parsed.data);
   return successResponse({ settings: updated });
 }

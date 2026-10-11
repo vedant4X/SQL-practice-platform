@@ -17,10 +17,10 @@ export async function GET(
 
   const session = await getSessionFromRequest(req);
   const solvedSet = session
-    ? new Set(appStore.getUserSolvedQuestions(session.userId))
+    ? new Set(await appStore.getUserSolvedQuestions(session.userId))
     : new Set<string>();
   const bookmarksSet = session
-    ? new Set(appStore.getUserBookmarks(session.userId))
+    ? new Set(await appStore.getUserBookmarks(session.userId))
     : new Set<string>();
 
   const questions = getQuestionsByTopic(topic.id).map((q, idx) => ({

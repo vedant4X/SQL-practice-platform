@@ -40,7 +40,7 @@ export async function POST(
 
     const session = await getSessionFromRequest(req);
     if (session) {
-      const submissionResult = appStore.recordSubmission({
+      const submissionResult = await appStore.recordSubmission({
         userId: session.userId,
         questionId: question.id,
         queryText: query,
@@ -53,7 +53,7 @@ export async function POST(
       });
 
       xpEarned = submissionResult.xpEarned;
-      totalXp = appStore.getUserXp(session.userId);
+      totalXp = await appStore.getUserXp(session.userId);
     }
 
     return successResponse({
