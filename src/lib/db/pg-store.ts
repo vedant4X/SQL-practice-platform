@@ -233,11 +233,32 @@ export class PgAppStore {
     return Boolean(process.env.DATABASE_URL && process.env.DATABASE_URL.trim() !== "");
   }
 
+  private schemaEnsured = false;
+  private async ensureUsersSchema(): Promise<void> {
+    if (this.schemaEnsured || !this.isPgConfigured()) return;
+    try {
+      await query(`
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id_normalized TEXT;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS email_normalized TEXT;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMPTZ;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_count INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ;
+      `);
+      this.schemaEnsured = true;
+    } catch {
+      // ignore
+    }
+  }
+
   // --- Users ---
   async getAllUsers(): Promise<User[]> {
     if (!this.isPgConfigured()) {
       return [...this.memState.users];
     }
+    await this.ensureUsersSchema();
     const res = await query(
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
@@ -251,6 +272,7 @@ export class PgAppStore {
     if (!this.isPgConfigured()) {
       return this.memState.users.find((u) => u.id === id);
     }
+    await this.ensureUsersSchema();
     const res = await query(
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
@@ -276,6 +298,7 @@ export class PgAppStore {
       );
     }
 
+    await this.ensureUsersSchema();
     const res = await query(
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
@@ -310,6 +333,7 @@ export class PgAppStore {
           (u.userIdNormalized && u.userIdNormalized === norm)
       );
     }
+    await this.ensureUsersSchema();
     const res = await query(
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
@@ -332,6 +356,7 @@ export class PgAppStore {
           (u.emailNormalized && u.emailNormalized === norm)
       );
     }
+    await this.ensureUsersSchema();
     const res = await query(
       `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
               email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
@@ -379,6 +404,7 @@ export class PgAppStore {
       return newUser;
     }
 
+    await this.ensureUsersSchema();
     await query(
       `INSERT INTO users (
          id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,

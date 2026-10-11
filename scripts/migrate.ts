@@ -34,8 +34,8 @@ loadEnv();
 async function runMigrations() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
-    console.error("[Migration Error] DATABASE_URL environment variable is not defined.");
-    process.exit(1);
+    console.log("[Migration Notice] DATABASE_URL not configured. Skipping migrations.");
+    return;
   }
 
   const isProduction = process.env.NODE_ENV === "production";

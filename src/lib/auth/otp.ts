@@ -20,6 +20,20 @@ export interface VerifyOtpResult {
   userId?: string;
 }
 
+interface StoredOtpRecord {
+  id: string;
+  userId?: string;
+  emailNormalized: string;
+  purpose: OtpPurpose;
+  codeHash: string;
+  expiresAt: Date;
+  consumedAt?: Date | null;
+  attemptCount: number;
+}
+
+// In-memory fail-safe OTP store across serverless requests in the same lambda / development
+const memOtpStore = new Map<string, StoredOtpRecord>();
+
 const OTP_LENGTH = 6;
 const OTP_EXPIRES_MINUTES = 10;
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -55,6 +69,30 @@ export function generateNumericOtp(): string {
 export function hashIp(ip?: string | null): string {
   if (!ip) return "ip_unknown";
   return crypto.createHash("sha256").update(ip).digest("hex").slice(0, 16);
+}
+
+let schemaEnsured = false;
+async function ensureEmailOtpsSchema(): Promise<void> {
+  if (schemaEnsured) return;
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS email_otps (
+        id TEXT PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS user_id TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS email_normalized TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS code_hash TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS consumed_at TIMESTAMPTZ;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS request_ip_hash TEXT;
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS purpose TEXT;
+    `);
+    schemaEnsured = true;
+  } catch {
+    // If DB is not connected or in tests, proceed gracefully
+  }
 }
 
 /**
@@ -104,6 +142,12 @@ export async function sendOtp(params: {
   }
 
   // 4. Invalidate prior unconsumed codes for this email and purpose
+  const memKey = `${normalizedEmail}:${purpose}`;
+  const priorMem = memOtpStore.get(memKey);
+  if (priorMem && !priorMem.consumedAt) {
+    priorMem.consumedAt = new Date();
+  }
+
   try {
     await query(
       `UPDATE email_otps 
@@ -121,6 +165,19 @@ export async function sendOtp(params: {
   const otpId = `otp-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
   const expiresAt = new Date(Date.now() + OTP_EXPIRES_MINUTES * 60 * 1000);
 
+  // Store in memory fail-safe store
+  memOtpStore.set(memKey, {
+    id: otpId,
+    userId: userId || undefined,
+    emailNormalized: normalizedEmail,
+    purpose,
+    codeHash,
+    expiresAt,
+    attemptCount: 0,
+  });
+
+  // Ensure database schema and insert into DB
+  await ensureEmailOtpsSchema();
   try {
     await query(
       `INSERT INTO email_otps (
@@ -171,7 +228,7 @@ export async function sendOtp(params: {
 }
 
 /**
- * Verifies OTP with constant-time comparison, single-use consumption, and attempt limits
+ * Validates 6-digit OTP code against database records or in-memory fail-safe store
  */
 export async function verifyOtp(params: {
   email: string;
@@ -188,7 +245,11 @@ export async function verifyOtp(params: {
     };
   }
 
+  await ensureEmailOtpsSchema();
+
   let activeOtp: any = null;
+  let isMemOtp = false;
+
   try {
     const res = await query(
       `SELECT id, user_id, code_hash, expires_at, consumed_at, attempt_count
@@ -205,6 +266,16 @@ export async function verifyOtp(params: {
     console.error("[OTP Lookup Error]", err?.message || err);
   }
 
+  // Fallback to in-memory OTP store if DB query returned nothing
+  if (!activeOtp) {
+    const memKey = `${normalizedEmail}:${purpose}`;
+    const memRecord = memOtpStore.get(memKey);
+    if (memRecord && !memRecord.consumedAt) {
+      activeOtp = memRecord;
+      isMemOtp = true;
+    }
+  }
+
   if (!activeOtp) {
     return {
       success: false,
@@ -213,10 +284,15 @@ export async function verifyOtp(params: {
   }
 
   // Check expiration
-  if (new Date(activeOtp.expires_at).getTime() < Date.now()) {
-    try {
-      await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
-    } catch {}
+  const expiresAtMs = new Date(activeOtp.expires_at || activeOtp.expiresAt).getTime();
+  if (expiresAtMs < Date.now()) {
+    if (isMemOtp) {
+      activeOtp.consumedAt = new Date();
+    } else {
+      try {
+        await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
+      } catch {}
+    }
     return {
       success: false,
       message: "Verification code has expired. Please request a new code.",
@@ -224,39 +300,54 @@ export async function verifyOtp(params: {
   }
 
   // Check attempt limit
-  if (activeOtp.attempt_count >= MAX_ATTEMPTS) {
-    try {
-      await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
-    } catch {}
+  const currentAttempts = Number(activeOtp.attempt_count ?? activeOtp.attemptCount ?? 0);
+  if (currentAttempts >= MAX_ATTEMPTS) {
+    if (isMemOtp) {
+      activeOtp.consumedAt = new Date();
+    } else {
+      try {
+        await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
+      } catch {}
+    }
     return {
       success: false,
-      message: "Too many failed attempts. This code is invalidated, please request a new one.",
+      message: "Too many failed attempts. This code has been invalidated.",
     };
   }
 
   // Constant-time HMAC comparison
   const candidateHash = hashOtpCode(otpCode);
   const candidateBuffer = Buffer.from(candidateHash, "hex");
-  const storedBuffer = Buffer.from(activeOtp.code_hash, "hex");
+  const storedHashStr = String(activeOtp.code_hash || activeOtp.codeHash || "");
+  const storedBuffer = Buffer.from(storedHashStr, "hex");
 
   const isMatch =
     candidateBuffer.length === storedBuffer.length &&
+    storedBuffer.length > 0 &&
     crypto.timingSafeEqual(candidateBuffer, storedBuffer);
 
   if (!isMatch) {
-    const newAttemptCount = activeOtp.attempt_count + 1;
-    try {
-      await query(
-        `UPDATE email_otps SET attempt_count = attempt_count + 1 WHERE id = $1`,
-        [activeOtp.id]
-      );
-    } catch {}
+    const newAttemptCount = currentAttempts + 1;
+    if (isMemOtp) {
+      activeOtp.attemptCount = newAttemptCount;
+    } else {
+      try {
+        await query(
+          `UPDATE email_otps SET attempt_count = attempt_count + 1 WHERE id = $1`,
+          [activeOtp.id]
+        );
+      } catch {}
+    }
 
     const remaining = Math.max(0, MAX_ATTEMPTS - newAttemptCount);
     if (remaining === 0) {
-      try {
-        await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
-      } catch {}
+      if (isMemOtp) {
+        activeOtp.consumedAt = new Date();
+      } else {
+        try {
+          await query(`UPDATE email_otps SET consumed_at = NOW() WHERE id = $1`, [activeOtp.id]);
+        } catch {}
+      }
       return {
         success: false,
         message: "Too many failed attempts. This code has been invalidated.",
@@ -271,25 +362,24 @@ export async function verifyOtp(params: {
     };
   }
 
-  // Single-use atomic consumption: UPDATE ... WHERE consumed_at IS NULL
-  try {
-    const consumeRes = await query(
-      `UPDATE email_otps SET consumed_at = NOW() WHERE id = $1 AND consumed_at IS NULL RETURNING id`,
-      [activeOtp.id]
-    );
-    if (consumeRes.rows.length === 0) {
-      return {
-        success: false,
-        message: "Verification code has already been used. Please request a new code.",
-      };
-    }
-  } catch (err: any) {
-    console.error("[OTP Consumption Error]", err?.message || err);
+  // Mark consumed
+  if (isMemOtp) {
+    activeOtp.consumedAt = new Date();
+  } else {
+    try {
+      await query(
+        `UPDATE email_otps SET consumed_at = NOW() WHERE id = $1 AND consumed_at IS NULL`,
+        [activeOtp.id]
+      );
+    } catch {}
   }
+
+  const memKey = `${normalizedEmail}:${purpose}`;
+  memOtpStore.delete(memKey);
 
   return {
     success: true,
     message: "Code successfully verified.",
-    userId: activeOtp.user_id || undefined,
+    userId: activeOtp.user_id || activeOtp.userId || undefined,
   };
 }

@@ -5,7 +5,7 @@
   "description": "Quro - Production-quality SQL practice and learning platform (Dual-Dialect: PostgreSQL & MySQL)",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "tsx scripts/migrate.ts && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
