@@ -7,8 +7,8 @@ import { getQuestionBySlug } from "../../src/lib/curriculum/questions";
 import { getUserProgressStats } from "../../src/lib/progress/service";
 
 describe("API & Domain Services Integration Test Suite", () => {
-  beforeEach(() => {
-    appStore.resetForTesting();
+  beforeEach(async () => {
+    await appStore.resetForTesting();
   });
 
   it("handles user registration and password hashing verification", async () => {
@@ -22,7 +22,7 @@ describe("API & Domain Services Integration Test Suite", () => {
     const isWrong = await verifyPassword("WrongPassword!", hashed);
     expect(isWrong).toBe(false);
 
-    const user = appStore.createUser({
+    const user = await appStore.createUser({
       id: "usr-test-1",
       email: "engineer@company.com",
       passwordHash: hashed,
@@ -33,7 +33,8 @@ describe("API & Domain Services Integration Test Suite", () => {
       updatedAt: new Date().toISOString(),
     });
 
-    expect(appStore.getUserById("usr-test-1")?.email).toBe("engineer@company.com");
+    const fetched = await appStore.getUserById("usr-test-1");
+    expect(fetched?.email).toBe("engineer@company.com");
   });
 
   it("signs and verifies session tokens via jose", async () => {
@@ -55,7 +56,7 @@ describe("API & Domain Services Integration Test Suite", () => {
   });
 
   it("submits correct SQL, passes all 3 test cases, records attempt, and awards XP", async () => {
-    const user = appStore.createUser({
+    const user = await appStore.createUser({
       id: "usr-judge-1",
       email: "judge@sql.io",
       passwordHash: "hash",
@@ -75,7 +76,7 @@ describe("API & Domain Services Integration Test Suite", () => {
     expect(evalResult.passedCount).toBe(3);
 
     // Record submission in store
-    const { attempt, xpEarned } = appStore.recordSubmission({
+    const { attempt, xpEarned } = await appStore.recordSubmission({
       userId: user.id,
       questionId: question!.id,
       queryText: "SELECT dept_id, dept_name, location, budget FROM departments;",
@@ -88,10 +89,10 @@ describe("API & Domain Services Integration Test Suite", () => {
 
     expect(attempt.verdict).toBe("correct");
     expect(xpEarned).toBe(question!.xp);
-    expect(appStore.getUserXp(user.id)).toBe(question!.xp);
+    expect(await appStore.getUserXp(user.id)).toBe(question!.xp);
 
     // Submitting again on same solved question awards 0 additional XP
-    const repeatResult = appStore.recordSubmission({
+    const repeatResult = await appStore.recordSubmission({
       userId: user.id,
       questionId: question!.id,
       queryText: "SELECT * FROM departments;",
@@ -103,11 +104,11 @@ describe("API & Domain Services Integration Test Suite", () => {
     });
 
     expect(repeatResult.xpEarned).toBe(0);
-    expect(appStore.getUserXp(user.id)).toBe(question!.xp);
+    expect(await appStore.getUserXp(user.id)).toBe(question!.xp);
   });
 
   it("applies progressive hint XP penalty accurately", async () => {
-    const user = appStore.createUser({
+    const user = await appStore.createUser({
       id: "usr-hint-1",
       email: "hints@sql.io",
       passwordHash: "hash",
@@ -118,31 +119,37 @@ describe("API & Domain Services Integration Test Suite", () => {
       updatedAt: new Date().toISOString(),
     });
 
-    const question = getQuestionBySlug("select-employee-roster");
-    expect(question).toBeDefined();
+    const question = getQuestionBySlug("view-all-departments")!;
 
-    // User uses 2 hints
-    appStore.recordHintUsed(user.id, question!.id, 2);
+    // Request hint 1 (-20%)
+    await appStore.recordHintUsed(user.id, question.id, 1);
+    let state = await appStore.getUserQuestionState(user.id, question.id);
+    expect(state.hintsUsed).toBe(1);
 
-    // Solves question: base XP is 10. With 2 hints (40% penalty) -> 6 XP
-    const { xpEarned } = appStore.recordSubmission({
+    // Request hint 2 (-40%)
+    await appStore.recordHintUsed(user.id, question.id, 2);
+    state = await appStore.getUserQuestionState(user.id, question.id);
+    expect(state.hintsUsed).toBe(2);
+
+    // Solve with 2 hints used: 100 * (1 - 2 * 0.2) = 60 XP
+    const submission = await appStore.recordSubmission({
       userId: user.id,
-      questionId: question!.id,
-      queryText: question!.solution_query,
+      questionId: question.id,
+      queryText: "SELECT dept_id, dept_name, location, budget FROM departments;",
       verdict: "correct",
       executionTimeMs: 15,
       passedCount: 3,
       totalCount: 3,
-      baseXp: question!.xp,
+      baseXp: 100,
     });
 
-    expect(xpEarned).toBe(6);
-    expect(appStore.getUserXp(user.id)).toBe(6);
+    expect(submission.xpEarned).toBe(60);
+    expect(await appStore.getUserXp(user.id)).toBe(60);
   });
 
-  it("forfeits XP when solution is viewed", async () => {
-    const user = appStore.createUser({
-      id: "usr-sol-1",
+  it("forfeits 100% XP if solution was viewed before solving", async () => {
+    const user = await appStore.createUser({
+      id: "usr-solution-1",
       email: "solution@sql.io",
       passwordHash: "hash",
       name: "Solution Tester",
@@ -152,61 +159,109 @@ describe("API & Domain Services Integration Test Suite", () => {
       updatedAt: new Date().toISOString(),
     });
 
-    const question = getQuestionBySlug("unique-job-titles");
-    expect(question).toBeDefined();
+    const question = getQuestionBySlug("view-all-departments")!;
 
-    // Forfeits XP
-    appStore.recordSolutionViewed(user.id, question!.id);
+    // View solution
+    await appStore.recordSolutionViewed(user.id, question.id);
+    const state = await appStore.getUserQuestionState(user.id, question.id);
+    expect(state.solutionViewed).toBe(true);
 
-    const { xpEarned } = appStore.recordSubmission({
+    // Solve question after viewing solution
+    const submission = await appStore.recordSubmission({
       userId: user.id,
-      questionId: question!.id,
-      queryText: question!.solution_query,
+      questionId: question.id,
+      queryText: "SELECT dept_id, dept_name, location, budget FROM departments;",
       verdict: "correct",
       executionTimeMs: 15,
       passedCount: 3,
       totalCount: 3,
-      baseXp: question!.xp,
+      baseXp: 100,
     });
 
-    expect(xpEarned).toBe(0);
-    expect(appStore.getUserXp(user.id)).toBe(0);
+    expect(submission.xpEarned).toBe(0);
+    expect(await appStore.getUserXp(user.id)).toBe(0);
+    expect((await appStore.getUserQuestionState(user.id, question.id)).isSolved).toBe(true);
   });
 
-  it("calculates user progression, levels, accuracy, and recommendations", () => {
-    const user = appStore.createUser({
-      id: "usr-progress-1",
-      email: "prog@sql.io",
+  it("maintains monotonic question status: solved status cannot be downgraded", async () => {
+    const user = await appStore.createUser({
+      id: "usr-monotonic-1",
+      email: "monotonic@sql.io",
       passwordHash: "hash",
-      name: "Progression Tester",
+      name: "Monotonic Tester",
       role: "user",
       timezone: "UTC",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
 
-    const statsInitial = getUserProgressStats(user.id);
+    const question = getQuestionBySlug("view-all-departments")!;
+
+    // First solve correctly
+    await appStore.recordSubmission({
+      userId: user.id,
+      questionId: question.id,
+      queryText: "SELECT dept_id, dept_name, location, budget FROM departments;",
+      verdict: "correct",
+      executionTimeMs: 15,
+      passedCount: 3,
+      totalCount: 3,
+      baseXp: 100,
+    });
+
+    expect((await appStore.getUserQuestionState(user.id, question.id)).status).toBe("solved");
+
+    // Later submit an incorrect query
+    await appStore.recordSubmission({
+      userId: user.id,
+      questionId: question.id,
+      queryText: "SELECT * FROM non_existent_table;",
+      verdict: "error",
+      executionTimeMs: 5,
+      passedCount: 0,
+      totalCount: 3,
+      baseXp: 100,
+    });
+
+    // Invariant: status must still be solved
+    expect((await appStore.getUserQuestionState(user.id, question.id)).status).toBe("solved");
+    expect((await appStore.getUserQuestionState(user.id, question.id)).isSolved).toBe(true);
+  });
+
+  it("calculates dashboard progress statistics accurately", async () => {
+    const user = await appStore.createUser({
+      id: "usr-dashboard-1",
+      email: "dash@sql.io",
+      passwordHash: "hash",
+      name: "Dashboard Tester",
+      role: "user",
+      timezone: "UTC",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    const statsInitial = await getUserProgressStats(user.id);
     expect(statsInitial.level).toBe(1);
     expect(statsInitial.totalXp).toBe(0);
     expect(statsInitial.solvedCount).toBe(0);
     expect(statsInitial.recommendedQuestion).toBeDefined();
 
-    // Solve one question
-    const q = getQuestionBySlug("view-all-departments")!;
-    appStore.recordSubmission({
+    // Solve 1 question
+    const question = getQuestionBySlug("view-all-departments")!;
+    await appStore.recordSubmission({
       userId: user.id,
-      questionId: q.id,
-      queryText: q.solution_query,
+      questionId: question.id,
+      queryText: "SELECT dept_id, dept_name, location, budget FROM departments;",
       verdict: "correct",
-      executionTimeMs: 20,
+      executionTimeMs: 15,
       passedCount: 3,
       totalCount: 3,
-      baseXp: 50,
+      baseXp: 100,
     });
 
-    const statsUpdated = getUserProgressStats(user.id);
-    expect(statsUpdated.totalXp).toBe(50);
-    expect(statsUpdated.level).toBe(2);
-    expect(statsUpdated.solvedCount).toBe(1);
+    const statsAfter = await getUserProgressStats(user.id);
+    expect(statsAfter.totalXp).toBe(100);
+    expect(statsAfter.level).toBe(2); // floor(sqrt(100 / 50)) + 1 = floor(1.414) + 1 = 2
+    expect(statsAfter.solvedCount).toBe(1);
   });
 });

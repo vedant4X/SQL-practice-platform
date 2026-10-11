@@ -7,6 +7,7 @@ import { Database, Lock, Mail, User, ArrowRight, AlertCircle, Eye, EyeOff, KeyRo
 export default function RegisterPage() {
   const [step, setStep] = useState<"details" | "otp">("details");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +35,11 @@ export default function RegisterPage() {
       setError("Name must be at least 2 characters long.");
       return;
     }
+    const cleanUsername = username.trim() || email.split("@")[0];
+    if (cleanUsername.length < 3) {
+      setError("Username must be at least 3 characters long.");
+      return;
+    }
     if (!email || !email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
@@ -45,10 +51,15 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/v1/auth/otp/send", {
+      const res = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), purpose: "registration" }),
+        body: JSON.stringify({
+          name: name.trim(),
+          user_id: cleanUsername,
+          email: email.trim(),
+          password,
+        }),
       });
       const data = await res.json();
 
@@ -61,7 +72,7 @@ export default function RegisterPage() {
           setOtp(data.data.devCode);
         }
       } else {
-        setError(data?.error?.message || "Failed to send verification code.");
+        setError(data?.error?.message || "Failed to start registration.");
       }
     } catch {
       setError("Network connection error. Please try again.");
@@ -81,14 +92,13 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/v1/auth/register", {
+      const res = await fetch("/api/v1/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name.trim(),
           email: email.trim(),
-          password,
           otp: otp.trim(),
+          purpose: "register",
         }),
       });
       const data = await res.json();
@@ -177,6 +187,32 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Doe"
+                  style={{
+                    color: "var(--text-main)",
+                    backgroundColor: "var(--bg-panel)",
+                    caretColor: "var(--text-main)",
+                    WebkitTextFillColor: "var(--text-main)",
+                  }}
+                  className="w-full rounded-lg border border-[var(--border-control)] bg-[var(--bg-panel)] py-2.5 pl-10 pr-3 text-xs text-[var(--text-main)] placeholder-[var(--text-faint)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-1 transition"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="reg-username" className="block text-xs font-semibold text-[var(--text-main)]">
+                Username
+              </label>
+              <div className="relative">
+                <User className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                <input
+                  id="reg-username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="janedoe"
                   style={{
                     color: "var(--text-main)",
                     backgroundColor: "var(--bg-panel)",

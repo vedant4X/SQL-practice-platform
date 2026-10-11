@@ -4,13 +4,21 @@ import { query } from "./pool";
 
 export interface User {
   id: string;
+  userId?: string;
+  userIdNormalized?: string;
   email: string;
+  emailNormalized?: string;
   passwordHash: string;
   passwordPlain?: string;
   name: string;
   role: "user" | "admin";
   timezone: string;
   emailVerified?: boolean;
+  emailVerifiedAt?: string | null;
+  status?: "pending" | "active" | "disabled";
+  lastLoginAt?: string | null;
+  failedLoginCount?: number;
+  lockedUntil?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,12 +109,32 @@ export interface DatabaseState {
 function mapUserRow(row: any): User {
   return {
     id: row.id,
+    userId: row.user_id ?? undefined,
+    userIdNormalized: row.user_id_normalized ?? undefined,
     email: row.email,
+    emailNormalized: row.email_normalized ?? undefined,
     passwordHash: row.password_hash,
     name: row.name,
     role: row.role,
     timezone: row.timezone,
-    emailVerified: Boolean(row.email_verified),
+    emailVerified: Boolean(row.email_verified || row.email_verified_at),
+    emailVerifiedAt: row.email_verified_at
+      ? row.email_verified_at instanceof Date
+        ? row.email_verified_at.toISOString()
+        : String(row.email_verified_at)
+      : undefined,
+    status: (row.status as any) || "active",
+    lastLoginAt: row.last_login_at
+      ? row.last_login_at instanceof Date
+        ? row.last_login_at.toISOString()
+        : String(row.last_login_at)
+      : undefined,
+    failedLoginCount: Number(row.failed_login_count ?? 0),
+    lockedUntil: row.locked_until
+      ? row.locked_until instanceof Date
+        ? row.locked_until.toISOString()
+        : String(row.locked_until)
+      : undefined,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : String(row.updated_at),
   };
@@ -190,10 +218,29 @@ function mapHistoryRow(row: any): QueryHistoryItem {
 }
 
 export class PgAppStore {
+  private memState: DatabaseState = {
+    users: [],
+    userSettings: [],
+    userQuestionState: [],
+    userAttempts: [],
+    xpEvents: [],
+    savedQuestions: [],
+    queryHistory: [],
+    userDrafts: [],
+  };
+
+  private isPgConfigured(): boolean {
+    return Boolean(process.env.DATABASE_URL && process.env.DATABASE_URL.trim() !== "");
+  }
+
   // --- Users ---
   async getAllUsers(): Promise<User[]> {
+    if (!this.isPgConfigured()) {
+      return [...this.memState.users];
+    }
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
+      `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+              email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
        FROM users
        ORDER BY created_at ASC;`
     );
@@ -201,8 +248,12 @@ export class PgAppStore {
   }
 
   async getUserById(id: string): Promise<User | undefined> {
+    if (!this.isPgConfigured()) {
+      return this.memState.users.find((u) => u.id === id);
+    }
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
+      `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+              email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
        FROM users
        WHERE id = $1
        LIMIT 1;`,
@@ -217,17 +268,27 @@ export class PgAppStore {
       normalized = "admin@quro.com";
     }
 
+    if (!this.isPgConfigured()) {
+      return this.memState.users.find(
+        (u) =>
+          u.email.toLowerCase().trim() === normalized ||
+          (u.emailNormalized && u.emailNormalized === normalized)
+      );
+    }
+
     const res = await query(
-      `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
+      `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+              email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
        FROM users
-       WHERE LOWER(email) = LOWER($1)
+       WHERE LOWER(email) = LOWER($1) OR email_normalized = LOWER($1)
        LIMIT 1;`,
       [normalized]
     );
 
     if (res.rows.length === 0 && email.toLowerCase().trim() === "admin@sqljudge.com") {
       const fallback = await query(
-        `SELECT id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at
+        `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+                email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
          FROM users
          WHERE LOWER(email) = 'admin@sqljudge.com'
          LIMIT 1;`
@@ -240,29 +301,100 @@ export class PgAppStore {
     return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;
   }
 
+  async getUserByUserId(userId: string): Promise<User | undefined> {
+    const norm = userId.toLowerCase().trim();
+    if (!this.isPgConfigured()) {
+      return this.memState.users.find(
+        (u) =>
+          (u.userId && u.userId.toLowerCase().trim() === norm) ||
+          (u.userIdNormalized && u.userIdNormalized === norm)
+      );
+    }
+    const res = await query(
+      `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+              email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
+       FROM users
+       WHERE user_id_normalized = $1 OR LOWER(user_id) = $1
+       LIMIT 1;`,
+      [norm]
+    );
+    return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;
+  }
+
+  async getUserByIdentifier(identifier: string): Promise<User | undefined> {
+    const norm = identifier.toLowerCase().trim();
+    if (!this.isPgConfigured()) {
+      return this.memState.users.find(
+        (u) =>
+          u.email.toLowerCase().trim() === norm ||
+          (u.userId && u.userId.toLowerCase().trim() === norm) ||
+          (u.userIdNormalized && u.userIdNormalized === norm) ||
+          (u.emailNormalized && u.emailNormalized === norm)
+      );
+    }
+    const res = await query(
+      `SELECT id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+              email_verified, email_verified_at, status, last_login_at, failed_login_count, locked_until, created_at, updated_at
+       FROM users
+       WHERE user_id_normalized = $1 OR email_normalized = $1 OR LOWER(email) = $1 OR LOWER(user_id) = $1
+       LIMIT 1;`,
+      [norm]
+    );
+    return res.rows.length > 0 ? mapUserRow(res.rows[0]) : undefined;
+  }
+
   async createUser(user: User): Promise<User> {
     const createdAt = user.createdAt || new Date().toISOString();
     const updatedAt = user.updatedAt || new Date().toISOString();
     const normalizedEmail = user.email.toLowerCase().trim();
+    const rawUserId = user.userId || normalizedEmail.split("@")[0] || user.id;
+    const normalizedUserId = rawUserId.toLowerCase().trim();
     const emailVerified = user.emailVerified ?? false;
+    const status = user.status || (emailVerified ? "active" : "pending");
 
-    // Check email uniqueness explicitly to guard case-insensitive uniqueness
-    const existing = await this.getUserByEmail(normalizedEmail);
-    if (existing) {
-      throw new Error(`User with email "${normalizedEmail}" already exists.`);
+    if (!this.isPgConfigured()) {
+      const existing = await this.getUserByEmail(normalizedEmail);
+      if (existing) {
+        throw new Error(`User with email "${normalizedEmail}" already exists.`);
+      }
+      const newUser: User = {
+        ...user,
+        userId: rawUserId,
+        userIdNormalized: normalizedUserId,
+        email: user.email,
+        emailNormalized: normalizedEmail,
+        emailVerified,
+        status,
+        createdAt,
+        updatedAt,
+      };
+      this.memState.users.push(newUser);
+      this.memState.userSettings.push({
+        userId: user.id,
+        practiceModeEnabled: false,
+        theme: "dark",
+        leaderboardVisible: false,
+      });
+      return newUser;
     }
 
     await query(
-      `INSERT INTO users (id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
+      `INSERT INTO users (
+         id, user_id, user_id_normalized, email, email_normalized, password_hash, name, role, timezone,
+         email_verified, status, created_at, updated_at
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`,
       [
         user.id,
+        rawUserId,
+        normalizedUserId,
+        user.email,
         normalizedEmail,
         user.passwordHash,
         user.name,
         user.role,
         user.timezone || "UTC",
         emailVerified,
+        status,
         createdAt,
         updatedAt,
       ]
@@ -277,14 +409,115 @@ export class PgAppStore {
 
     return {
       ...user,
-      email: normalizedEmail,
+      userId: rawUserId,
+      userIdNormalized: normalizedUserId,
+      email: user.email,
+      emailNormalized: normalizedEmail,
       emailVerified,
+      status,
       createdAt,
       updatedAt,
     };
   }
 
+  async recordFailedLogin(userId: string): Promise<{ locked: boolean; lockedUntil?: string }> {
+    if (!this.isPgConfigured()) {
+      const u = this.memState.users.find((x) => x.id === userId);
+      if (!u) return { locked: false };
+      u.failedLoginCount = (u.failedLoginCount || 0) + 1;
+      if (u.failedLoginCount >= 5) {
+        u.lockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+        return { locked: true, lockedUntil: u.lockedUntil };
+      }
+      return { locked: false };
+    }
+
+    const res = await query(
+      `UPDATE users
+       SET failed_login_count = failed_login_count + 1,
+           locked_until = CASE 
+             WHEN failed_login_count + 1 >= 5 THEN NOW() + INTERVAL '15 minutes'
+             ELSE locked_until 
+           END,
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING failed_login_count, locked_until;`,
+      [userId]
+    );
+    if (res.rows.length === 0) return { locked: false };
+    const row = res.rows[0];
+    const isLocked = row.locked_until !== null && new Date(row.locked_until).getTime() > Date.now();
+    return {
+      locked: isLocked,
+      lockedUntil: row.locked_until ? new Date(row.locked_until).toISOString() : undefined,
+    };
+  }
+
+  async recordSuccessfulLogin(userId: string): Promise<void> {
+    if (!this.isPgConfigured()) {
+      const u = this.memState.users.find((x) => x.id === userId);
+      if (u) {
+        u.failedLoginCount = 0;
+        u.lockedUntil = null;
+        u.lastLoginAt = new Date().toISOString();
+      }
+      return;
+    }
+    await query(
+      `UPDATE users
+       SET failed_login_count = 0,
+           locked_until = NULL,
+           last_login_at = NOW(),
+           updated_at = NOW()
+       WHERE id = $1;`,
+      [userId]
+    );
+  }
+
+  async updateUserPassword(userId: string, newPasswordHash: string): Promise<void> {
+    if (!this.isPgConfigured()) {
+      const u = this.memState.users.find((x) => x.id === userId);
+      if (u) {
+        u.passwordHash = newPasswordHash;
+        u.failedLoginCount = 0;
+        u.lockedUntil = null;
+      }
+      return;
+    }
+    await query(
+      `UPDATE users
+       SET password_hash = $1,
+           failed_login_count = 0,
+           locked_until = NULL,
+           updated_at = NOW()
+       WHERE id = $2;`,
+      [newPasswordHash, userId]
+    );
+  }
+
+  async setUserStatus(userId: string, status: "pending" | "active" | "disabled"): Promise<void> {
+    if (!this.isPgConfigured()) {
+      const u = this.memState.users.find((x) => x.id === userId);
+      if (u) u.status = status;
+      return;
+    }
+    await query(
+      `UPDATE users
+       SET status = $1,
+           updated_at = NOW()
+       WHERE id = $2;`,
+      [status, userId]
+    );
+  }
+
   async updateUser(userId: string, updates: Partial<User>): Promise<User | undefined> {
+    if (!this.isPgConfigured()) {
+      const current = this.memState.users.find((u) => u.id === userId);
+      if (!current) return undefined;
+      Object.assign(current, updates, { updatedAt: new Date().toISOString() });
+      return current;
+    }
+
     const current = await this.getUserById(userId);
     if (!current) return undefined;
 
@@ -308,12 +541,38 @@ export class PgAppStore {
   }
 
   async deleteUser(userId: string): Promise<boolean> {
+    if (!this.isPgConfigured()) {
+      const idx = this.memState.users.findIndex((u) => u.id === userId);
+      if (idx === -1) return false;
+      this.memState.users.splice(idx, 1);
+      this.memState.userSettings = this.memState.userSettings.filter((s) => s.userId !== userId);
+      this.memState.userQuestionState = this.memState.userQuestionState.filter((q) => q.userId !== userId);
+      this.memState.userAttempts = this.memState.userAttempts.filter((a) => a.userId !== userId);
+      this.memState.xpEvents = this.memState.xpEvents.filter((x) => x.userId !== userId);
+      this.memState.savedQuestions = this.memState.savedQuestions.filter((s) => s.userId !== userId);
+      this.memState.queryHistory = this.memState.queryHistory.filter((h) => h.userId !== userId);
+      this.memState.userDrafts = this.memState.userDrafts.filter((d) => d.userId !== userId);
+      return true;
+    }
     const res = await query(`DELETE FROM users WHERE id = $1;`, [userId]);
     return (res.rowCount ?? 0) > 0;
   }
 
   // --- Settings ---
   async getUserSettings(userId: string): Promise<UserSettings> {
+    if (!this.isPgConfigured()) {
+      const existing = this.memState.userSettings.find((s) => s.userId === userId);
+      if (existing) return existing;
+      const def: UserSettings = {
+        userId,
+        practiceModeEnabled: false,
+        theme: "dark",
+        leaderboardVisible: false,
+      };
+      this.memState.userSettings.push(def);
+      return def;
+    }
+
     const res = await query(
       `SELECT user_id, practice_mode_enabled, theme, leaderboard_visible
        FROM user_settings
@@ -336,13 +595,30 @@ export class PgAppStore {
       `INSERT INTO user_settings (user_id, practice_mode_enabled, theme, leaderboard_visible)
        VALUES ($1, $2, $3, $4)
        ON CONFLICT (user_id) DO NOTHING;`,
-      [def.userId, def.practiceModeEnabled, def.theme, def.leaderboardVisible]
+      [userId, def.practiceModeEnabled, def.theme, def.leaderboardVisible]
     );
 
     return def;
   }
 
   async updateUserSettings(userId: string, updates: Partial<UserSettings>): Promise<UserSettings> {
+    if (!this.isPgConfigured()) {
+      let s = this.memState.userSettings.find((x) => x.userId === userId);
+      if (!s) {
+        s = {
+          userId,
+          practiceModeEnabled: false,
+          theme: "dark",
+          leaderboardVisible: false,
+          ...updates,
+        };
+        this.memState.userSettings.push(s);
+      } else {
+        Object.assign(s, updates);
+      }
+      return s;
+    }
+
     const current = await this.getUserSettings(userId);
     const practiceModeEnabled =
       updates.practiceModeEnabled !== undefined
@@ -354,18 +630,22 @@ export class PgAppStore {
         ? updates.leaderboardVisible
         : current.leaderboardVisible;
 
-    const res = await query(
+    await query(
       `INSERT INTO user_settings (user_id, practice_mode_enabled, theme, leaderboard_visible)
        VALUES ($1, $2, $3, $4)
-       ON CONFLICT (user_id) DO UPDATE
-       SET practice_mode_enabled = EXCLUDED.practice_mode_enabled,
-           theme = EXCLUDED.theme,
-           leaderboard_visible = EXCLUDED.leaderboard_visible
-       RETURNING user_id, practice_mode_enabled, theme, leaderboard_visible;`,
+       ON CONFLICT (user_id) DO UPDATE SET
+         practice_mode_enabled = EXCLUDED.practice_mode_enabled,
+         theme = EXCLUDED.theme,
+         leaderboard_visible = EXCLUDED.leaderboard_visible;`,
       [userId, practiceModeEnabled, theme, leaderboardVisible]
     );
 
-    return mapUserSettingsRow(res.rows[0]);
+    return {
+      userId,
+      practiceModeEnabled,
+      theme,
+      leaderboardVisible,
+    };
   }
 
   // --- Question State ---
@@ -374,10 +654,29 @@ export class PgAppStore {
     questionId: string,
     dialect: Dialect = "postgresql"
   ): Promise<UserQuestionState> {
+    if (!this.isPgConfigured()) {
+      const existing = this.memState.userQuestionState.find(
+        (q) => q.userId === userId && q.questionId === questionId && q.dialect === dialect
+      );
+      if (existing) return existing;
+      return {
+        userId,
+        dialect,
+        questionId,
+        isSolved: false,
+        status: "not_started",
+        attemptCount: 0,
+        hintsUsed: 0,
+        solutionViewed: false,
+        xpAwarded: 0,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+
     const res = await query(
-      `SELECT user_id, dialect, question_id, is_solved, status, attempt_count,
-              hints_used, solution_viewed, first_solved_at, last_submitted_query,
-              last_submitted_at, updated_at, xp_awarded
+      `SELECT user_id, dialect, question_id, is_solved, status, attempt_count, hints_used,
+              solution_viewed, first_solved_at, last_submitted_query, last_submitted_at,
+              updated_at, xp_awarded
        FROM user_question_state
        WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
       [userId, dialect, questionId]
@@ -407,22 +706,56 @@ export class PgAppStore {
     level: number,
     dialect: Dialect = "postgresql"
   ): Promise<UserQuestionState> {
+    if (!this.isPgConfigured()) {
+      let q = this.memState.userQuestionState.find(
+        (x) => x.userId === userId && x.questionId === questionId && x.dialect === dialect
+      );
+      if (!q) {
+        q = {
+          userId,
+          dialect,
+          questionId,
+          isSolved: false,
+          status: "not_started",
+          attemptCount: 0,
+          hintsUsed: level,
+          solutionViewed: false,
+          xpAwarded: 0,
+          updatedAt: new Date().toISOString(),
+        };
+        this.memState.userQuestionState.push(q);
+      } else if (level > q.hintsUsed) {
+        q.hintsUsed = level;
+        q.updatedAt = new Date().toISOString();
+      }
+      return q;
+    }
+
+    const current = await this.getUserQuestionState(userId, questionId, dialect);
+    const newHints = Math.max(current.hintsUsed, level);
+    const now = new Date().toISOString();
+
     const res = await query(
       `INSERT INTO user_question_state (
          user_id, dialect, question_id, is_solved, status, attempt_count,
-         hints_used, solution_viewed, first_solved_at, last_submitted_query,
-         last_submitted_at, updated_at, xp_awarded
-       ) VALUES ($1, $2, $3, false, 'not_started', 0, $4, false, NULL, NULL, NULL, NOW(), 0)
-       ON CONFLICT (user_id, dialect, question_id) DO UPDATE
-       SET hints_used = GREATEST(user_question_state.hints_used, EXCLUDED.hints_used),
-           updated_at = CASE
-             WHEN EXCLUDED.hints_used > user_question_state.hints_used THEN NOW()
-             ELSE user_question_state.updated_at
-           END
-       RETURNING user_id, dialect, question_id, is_solved, status, attempt_count,
-                 hints_used, solution_viewed, first_solved_at, last_submitted_query,
-                 last_submitted_at, updated_at, xp_awarded;`,
-      [userId, dialect, questionId, level]
+         hints_used, solution_viewed, updated_at, xp_awarded
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       ON CONFLICT (user_id, dialect, question_id) DO UPDATE SET
+         hints_used = GREATEST(user_question_state.hints_used, EXCLUDED.hints_used),
+         updated_at = EXCLUDED.updated_at
+       RETURNING *;`,
+      [
+        userId,
+        dialect,
+        questionId,
+        current.isSolved,
+        current.status,
+        current.attemptCount,
+        newHints,
+        current.solutionViewed,
+        now,
+        current.xpAwarded,
+      ]
     );
 
     return mapQuestionStateRow(res.rows[0]);
@@ -433,19 +766,54 @@ export class PgAppStore {
     questionId: string,
     dialect: Dialect = "postgresql"
   ): Promise<UserQuestionState> {
+    if (!this.isPgConfigured()) {
+      let q = this.memState.userQuestionState.find(
+        (x) => x.userId === userId && x.questionId === questionId && x.dialect === dialect
+      );
+      if (!q) {
+        q = {
+          userId,
+          dialect,
+          questionId,
+          isSolved: false,
+          status: "not_started",
+          attemptCount: 0,
+          hintsUsed: 0,
+          solutionViewed: true,
+          xpAwarded: 0,
+          updatedAt: new Date().toISOString(),
+        };
+        this.memState.userQuestionState.push(q);
+      } else {
+        q.solutionViewed = true;
+        q.updatedAt = new Date().toISOString();
+      }
+      return q;
+    }
+
+    const current = await this.getUserQuestionState(userId, questionId, dialect);
+    const now = new Date().toISOString();
+
     const res = await query(
       `INSERT INTO user_question_state (
          user_id, dialect, question_id, is_solved, status, attempt_count,
-         hints_used, solution_viewed, first_solved_at, last_submitted_query,
-         last_submitted_at, updated_at, xp_awarded
-       ) VALUES ($1, $2, $3, false, 'not_started', 0, 0, true, NULL, NULL, NULL, NOW(), 0)
-       ON CONFLICT (user_id, dialect, question_id) DO UPDATE
-       SET solution_viewed = true,
-           updated_at = NOW()
-       RETURNING user_id, dialect, question_id, is_solved, status, attempt_count,
-                 hints_used, solution_viewed, first_solved_at, last_submitted_query,
-                 last_submitted_at, updated_at, xp_awarded;`,
-      [userId, dialect, questionId]
+         hints_used, solution_viewed, updated_at, xp_awarded
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, $8, $9)
+       ON CONFLICT (user_id, dialect, question_id) DO UPDATE SET
+         solution_viewed = true,
+         updated_at = EXCLUDED.updated_at
+       RETURNING *;`,
+      [
+        userId,
+        dialect,
+        questionId,
+        current.isSolved,
+        current.status,
+        current.attemptCount,
+        current.hintsUsed,
+        now,
+        current.xpAwarded,
+      ]
     );
 
     return mapQuestionStateRow(res.rows[0]);
@@ -463,7 +831,7 @@ export class PgAppStore {
     totalCount: number;
     baseXp: number;
     errorMessage?: string;
-  }): { attempt: UserAttempt; xpEarned: number } | Promise<{ attempt: UserAttempt; xpEarned: number }> {
+  }): Promise<{ attempt: UserAttempt; xpEarned: number }> {
     const {
       userId,
       questionId,
@@ -477,55 +845,130 @@ export class PgAppStore {
       errorMessage,
     } = params;
 
-    const nowIso = new Date().toISOString();
     const attemptId = `att-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-    const attempt: UserAttempt = {
-      id: attemptId,
-      userId,
-      dialect,
-      questionId,
-      queryText,
-      verdict,
-      executionTimeMs,
-      passedCount,
-      totalCount,
-      errorMessage,
-      createdAt: nowIso,
-    };
+    const now = new Date().toISOString();
 
-    await query(
+    if (!this.isPgConfigured()) {
+      const attempt: UserAttempt = {
+        id: attemptId,
+        userId,
+        dialect,
+        questionId,
+        queryText,
+        verdict,
+        executionTimeMs,
+        passedCount,
+        totalCount,
+        errorMessage,
+        createdAt: now,
+      };
+      this.memState.userAttempts.push(attempt);
+      this.memState.queryHistory.push({
+        id: `qh-${Date.now()}`,
+        userId,
+        dialect,
+        questionId,
+        queryText,
+        status: verdict === "correct" ? "success" : "error",
+        createdAt: now,
+      });
+
+      let q = this.memState.userQuestionState.find(
+        (x) => x.userId === userId && x.questionId === questionId && x.dialect === dialect
+      );
+      if (!q) {
+        q = {
+          userId,
+          dialect,
+          questionId,
+          isSolved: false,
+          status: "not_started",
+          attemptCount: 0,
+          hintsUsed: 0,
+          solutionViewed: false,
+          xpAwarded: 0,
+          updatedAt: now,
+        };
+        this.memState.userQuestionState.push(q);
+      }
+
+      q.attemptCount = (q.attemptCount || 0) + 1;
+      q.lastSubmittedQuery = queryText;
+      q.lastSubmittedAt = now;
+      q.updatedAt = now;
+
+      let xpEarned = 0;
+      if (verdict === "correct") {
+        const wasAlreadySolved = q.isSolved;
+        q.isSolved = true;
+        q.status = "solved";
+        if (!q.firstSolvedAt) q.firstSolvedAt = now;
+        if (!wasAlreadySolved) {
+          if (q.solutionViewed) {
+            xpEarned = 0;
+          } else {
+            const penalty = Math.max(0.4, 1.0 - q.hintsUsed * 0.2);
+            xpEarned = Math.round(baseXp * penalty);
+          }
+          q.xpAwarded = xpEarned;
+          if (xpEarned > 0) {
+            this.memState.xpEvents.push({
+              id: `xp-${Date.now()}`,
+              userId,
+              dialect,
+              sourceType: "question_solve",
+              sourceId: questionId,
+              amount: xpEarned,
+              createdAt: now,
+            });
+          }
+        }
+      } else if (!q.isSolved) {
+        q.status = "attempted";
+      }
+
+      return { attempt, xpEarned };
+    }
+
+    const attemptRes = await query(
       `INSERT INTO user_attempts (
          id, user_id, dialect, question_id, query_text, verdict,
          execution_time_ms, passed_count, total_count, error_message, created_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       RETURNING *;`,
       [
-        attempt.id,
-        attempt.userId,
-        attempt.dialect,
-        attempt.questionId,
-        attempt.queryText,
-        attempt.verdict,
-        attempt.executionTimeMs,
-        attempt.passedCount,
-        attempt.totalCount,
-        attempt.errorMessage || null,
-        attempt.createdAt,
+        attemptId,
+        userId,
+        dialect,
+        questionId,
+        queryText,
+        verdict,
+        executionTimeMs,
+        passedCount,
+        totalCount,
+        errorMessage || null,
+        now,
       ]
     );
 
     const historyId = `qh-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-    const historyStatus = verdict === "correct" ? "success" : "error";
     await query(
-      `INSERT INTO query_history (
-         id, user_id, dialect, question_id, query_text, status, created_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
-      [historyId, userId, dialect, questionId, queryText, historyStatus, nowIso]
+      `INSERT INTO query_history (id, user_id, dialect, question_id, query_text, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+      [
+        historyId,
+        userId,
+        dialect,
+        questionId,
+        queryText,
+        verdict === "correct" ? "success" : "error",
+        now,
+      ]
     );
 
-    let xpEarned = 0;
     const qState = await this.getUserQuestionState(userId, questionId, dialect);
-
     const newAttemptCount = (qState.attemptCount || 0) + 1;
+    let xpEarned = 0;
     let newIsSolved = qState.isSolved;
     let newStatus = qState.status;
     let firstSolvedAt = qState.firstSolvedAt;
@@ -536,7 +979,7 @@ export class PgAppStore {
       newIsSolved = true;
       newStatus = "solved";
       if (!firstSolvedAt) {
-        firstSolvedAt = nowIso;
+        firstSolvedAt = now;
       }
 
       if (!wasAlreadySolved) {
@@ -546,16 +989,14 @@ export class PgAppStore {
           const penaltyMultiplier = Math.max(0.4, 1.0 - qState.hintsUsed * 0.2);
           xpEarned = Math.round(baseXp * penaltyMultiplier);
         }
-
         xpAwarded = xpEarned;
 
         if (xpEarned > 0) {
-          const xpEventId = `xp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+          const xpId = `xp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
           await query(
-            `INSERT INTO xp_events (
-               id, user_id, dialect, source_type, source_id, amount, created_at
-             ) VALUES ($1, $2, $3, 'question_solve', $4, $5, $6);`,
-            [xpEventId, userId, dialect, questionId, xpEarned, nowIso]
+            `INSERT INTO xp_events (id, user_id, dialect, source_type, source_id, amount, created_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+            [xpId, userId, dialect, "question_solve", questionId, xpEarned, now]
           );
         }
       }
@@ -571,15 +1012,15 @@ export class PgAppStore {
          hints_used, solution_viewed, first_solved_at, last_submitted_query,
          last_submitted_at, updated_at, xp_awarded
        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-       ON CONFLICT (user_id, dialect, question_id) DO UPDATE
-       SET is_solved = EXCLUDED.is_solved,
-           status = EXCLUDED.status,
-           attempt_count = EXCLUDED.attempt_count,
-           first_solved_at = COALESCE(user_question_state.first_solved_at, EXCLUDED.first_solved_at),
-           last_submitted_query = EXCLUDED.last_submitted_query,
-           last_submitted_at = EXCLUDED.last_submitted_at,
-           updated_at = EXCLUDED.updated_at,
-           xp_awarded = EXCLUDED.xp_awarded;`,
+       ON CONFLICT (user_id, dialect, question_id) DO UPDATE SET
+         is_solved = EXCLUDED.is_solved,
+         status = EXCLUDED.status,
+         attempt_count = EXCLUDED.attempt_count,
+         first_solved_at = COALESCE(user_question_state.first_solved_at, EXCLUDED.first_solved_at),
+         last_submitted_query = EXCLUDED.last_submitted_query,
+         last_submitted_at = EXCLUDED.last_submitted_at,
+         updated_at = EXCLUDED.updated_at,
+         xp_awarded = EXCLUDED.xp_awarded;`,
       [
         userId,
         dialect,
@@ -591,13 +1032,16 @@ export class PgAppStore {
         qState.solutionViewed,
         firstSolvedAt || null,
         queryText,
-        nowIso,
-        nowIso,
+        now,
+        now,
         xpAwarded,
       ]
     );
 
-    return { attempt, xpEarned };
+    return {
+      attempt: mapAttemptRow(attemptRes.rows[0]),
+      xpEarned,
+    };
   }
 
   // --- Draft Management ---
@@ -608,70 +1052,115 @@ export class PgAppStore {
     draftText: string
   ): Promise<UserDraft> {
     const now = new Date().toISOString();
+    if (!this.isPgConfigured()) {
+      let d = this.memState.userDrafts.find(
+        (x) => x.userId === userId && x.questionId === questionId && x.dialect === dialect
+      );
+      if (d) {
+        d.draftText = draftText;
+        d.updatedAt = now;
+      } else {
+        d = { userId, dialect, questionId, draftText, updatedAt: now };
+        this.memState.userDrafts.push(d);
+      }
+      return d;
+    }
+
     const res = await query(
       `INSERT INTO user_drafts (user_id, dialect, question_id, draft_text, updated_at)
        VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (user_id, dialect, question_id) DO UPDATE
-       SET draft_text = EXCLUDED.draft_text,
-           updated_at = EXCLUDED.updated_at
-       RETURNING user_id, dialect, question_id, draft_text, updated_at;`,
+       ON CONFLICT (user_id, dialect, question_id) DO UPDATE SET
+         draft_text = EXCLUDED.draft_text,
+         updated_at = EXCLUDED.updated_at
+       RETURNING *;`,
       [userId, dialect, questionId, draftText, now]
     );
-
     return mapDraftRow(res.rows[0]);
   }
 
   async getDraft(userId: string, questionId: string, dialect: Dialect): Promise<string | undefined> {
+    if (!this.isPgConfigured()) {
+      return this.memState.userDrafts.find(
+        (d) => d.userId === userId && d.questionId === questionId && d.dialect === dialect
+      )?.draftText;
+    }
     const res = await query(
-      `SELECT draft_text
-       FROM user_drafts
-       WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
+      `SELECT draft_text FROM user_drafts WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
       [userId, dialect, questionId]
     );
-
     return res.rows.length > 0 ? res.rows[0].draft_text : undefined;
   }
 
   async clearDraft(userId: string, questionId: string, dialect: Dialect): Promise<void> {
+    if (!this.isPgConfigured()) {
+      const idx = this.memState.userDrafts.findIndex(
+        (d) => d.userId === userId && d.questionId === questionId && d.dialect === dialect
+      );
+      if (idx >= 0) this.memState.userDrafts.splice(idx, 1);
+      return;
+    }
     await query(
-      `DELETE FROM user_drafts
-       WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
+      `DELETE FROM user_drafts WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
       [userId, dialect, questionId]
     );
   }
 
-  // --- Guest Progress Merge ---
   async mergeGuestProgress(
     userId: string,
     guestSolvedQuestionIds: string[],
     guestDrafts?: { questionId: string; dialect: Dialect; draftText: string }[],
     dialect: Dialect = "postgresql"
   ): Promise<void> {
-    const now = new Date().toISOString();
     for (const qId of guestSolvedQuestionIds) {
       const qState = await this.getUserQuestionState(userId, qId, dialect);
       if (!qState.isSolved) {
-        await query(
-          `INSERT INTO user_question_state (
-             user_id, dialect, question_id, is_solved, status, attempt_count,
-             hints_used, solution_viewed, first_solved_at, updated_at, xp_awarded
-           ) VALUES ($1, $2, $3, true, 'solved', 0, 0, false, $4, $4, 0)
-           ON CONFLICT (user_id, dialect, question_id) DO UPDATE
-           SET is_solved = true,
+        if (!this.isPgConfigured()) {
+          let mem = this.memState.userQuestionState.find(
+            (x) => x.userId === userId && x.questionId === qId && x.dialect === dialect
+          );
+          if (!mem) {
+            mem = {
+              userId,
+              dialect,
+              questionId: qId,
+              isSolved: true,
+              status: "solved",
+              attemptCount: 1,
+              hintsUsed: 0,
+              solutionViewed: false,
+              xpAwarded: 0,
+              firstSolvedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+            this.memState.userQuestionState.push(mem);
+          } else {
+            mem.isSolved = true;
+            mem.status = "solved";
+            mem.firstSolvedAt = mem.firstSolvedAt || new Date().toISOString();
+          }
+        } else {
+          await query(
+            `INSERT INTO user_question_state (
+               user_id, dialect, question_id, is_solved, status, attempt_count,
+               hints_used, solution_viewed, first_solved_at, updated_at, xp_awarded
+             ) VALUES ($1, $2, $3, true, 'solved', 1, 0, false, NOW(), NOW(), 0)
+             ON CONFLICT (user_id, dialect, question_id) DO UPDATE SET
+               is_solved = true,
                status = 'solved',
-               first_solved_at = COALESCE(user_question_state.first_solved_at, EXCLUDED.first_solved_at),
-               updated_at = EXCLUDED.updated_at;`,
-          [userId, dialect, qId, now]
-        );
+               first_solved_at = COALESCE(user_question_state.first_solved_at, NOW()),
+               updated_at = NOW();`,
+            [userId, dialect, qId]
+          );
+        }
       }
     }
 
     if (guestDrafts) {
       for (const gd of guestDrafts) {
-        const dDialect = gd.dialect || dialect;
-        const existing = await this.getDraft(userId, gd.questionId, dDialect);
-        if (!existing) {
-          await this.saveDraft(userId, gd.questionId, dDialect, gd.draftText);
+        const d = gd.dialect || dialect;
+        const existingDraft = await this.getDraft(userId, gd.questionId, d);
+        if (!existingDraft) {
+          await this.saveDraft(userId, gd.questionId, d, gd.draftText);
         }
       }
     }
@@ -679,6 +1168,11 @@ export class PgAppStore {
 
   // --- XP & Progression Metrics ---
   async getUserXp(userId: string, dialect?: Dialect): Promise<number> {
+    if (!this.isPgConfigured()) {
+      return this.memState.xpEvents
+        .filter((e) => e.userId === userId && (!dialect || e.dialect === dialect))
+        .reduce((sum, e) => sum + e.amount, 0);
+    }
     let sql = `SELECT COALESCE(SUM(amount), 0) AS total FROM xp_events WHERE user_id = $1`;
     const params: any[] = [userId];
     if (dialect) {
@@ -686,35 +1180,41 @@ export class PgAppStore {
       params.push(dialect);
     }
     const res = await query(sql, params);
-    return Number(res.rows[0]?.total ?? 0);
+    return Number(res.rows[0]?.total || 0);
   }
 
   async getUserSolvedQuestions(userId: string, dialect: Dialect = "postgresql"): Promise<string[]> {
+    if (!this.isPgConfigured()) {
+      return this.memState.userQuestionState
+        .filter((s) => s.userId === userId && s.dialect === dialect && s.isSolved)
+        .map((s) => s.questionId);
+    }
     const res = await query(
-      `SELECT question_id
-       FROM user_question_state
-       WHERE user_id = $1 AND dialect = $2 AND is_solved = true
-       ORDER BY first_solved_at ASC NULLS LAST;`,
+      `SELECT question_id FROM user_question_state WHERE user_id = $1 AND dialect = $2 AND is_solved = true;`,
       [userId, dialect]
     );
     return res.rows.map((r) => r.question_id);
   }
 
   async getUserAccuracy(userId: string, dialect?: Dialect): Promise<number> {
-    let sql = `SELECT
-                 COUNT(*) AS total,
-                 COUNT(*) FILTER (WHERE verdict = 'correct') AS correct
-               FROM user_attempts
-               WHERE user_id = $1`;
+    if (!this.isPgConfigured()) {
+      const atts = this.memState.userAttempts.filter(
+        (a) => a.userId === userId && (!dialect || a.dialect === dialect)
+      );
+      if (atts.length === 0) return 0;
+      const correct = atts.filter((a) => a.verdict === "correct").length;
+      return Math.round((correct / atts.length) * 100);
+    }
+    let sql = `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE verdict = 'correct') AS correct FROM user_attempts WHERE user_id = $1`;
     const params: any[] = [userId];
     if (dialect) {
       sql += ` AND dialect = $2`;
       params.push(dialect);
     }
     const res = await query(sql, params);
-    const total = Number(res.rows[0]?.total ?? 0);
-    const correct = Number(res.rows[0]?.correct ?? 0);
+    const total = Number(res.rows[0]?.total || 0);
     if (total === 0) return 0;
+    const correct = Number(res.rows[0]?.correct || 0);
     return Math.round((correct / total) * 100);
   }
 
@@ -724,6 +1224,23 @@ export class PgAppStore {
     questionId: string,
     dialect: Dialect = "postgresql"
   ): Promise<boolean> {
+    if (!this.isPgConfigured()) {
+      const idx = this.memState.savedQuestions.findIndex(
+        (b) => b.userId === userId && b.questionId === questionId && b.dialect === dialect
+      );
+      if (idx >= 0) {
+        this.memState.savedQuestions.splice(idx, 1);
+        return false;
+      }
+      this.memState.savedQuestions.push({
+        userId,
+        dialect,
+        questionId,
+        createdAt: new Date().toISOString(),
+      });
+      return true;
+    }
+
     const check = await query(
       `SELECT 1 FROM saved_questions WHERE user_id = $1 AND dialect = $2 AND question_id = $3;`,
       [userId, dialect, questionId]
@@ -737,9 +1254,7 @@ export class PgAppStore {
       return false;
     } else {
       await query(
-        `INSERT INTO saved_questions (user_id, dialect, question_id, created_at)
-         VALUES ($1, $2, $3, NOW())
-         ON CONFLICT (user_id, dialect, question_id) DO NOTHING;`,
+        `INSERT INTO saved_questions (user_id, dialect, question_id, created_at) VALUES ($1, $2, $3, NOW());`,
         [userId, dialect, questionId]
       );
       return true;
@@ -747,13 +1262,17 @@ export class PgAppStore {
   }
 
   async getUserBookmarks(userId: string, dialect?: Dialect): Promise<string[]> {
+    if (!this.isPgConfigured()) {
+      return this.memState.savedQuestions
+        .filter((b) => b.userId === userId && (!dialect || b.dialect === dialect))
+        .map((b) => b.questionId);
+    }
     let sql = `SELECT question_id FROM saved_questions WHERE user_id = $1`;
     const params: any[] = [userId];
     if (dialect) {
       sql += ` AND dialect = $2`;
       params.push(dialect);
     }
-    sql += ` ORDER BY created_at DESC;`;
     const res = await query(sql, params);
     return res.rows.map((r) => r.question_id);
   }
@@ -764,9 +1283,13 @@ export class PgAppStore {
     limit = 50,
     dialect?: Dialect
   ): Promise<QueryHistoryItem[]> {
-    let sql = `SELECT id, user_id, dialect, question_id, query_text, status, created_at
-               FROM query_history
-               WHERE user_id = $1`;
+    if (!this.isPgConfigured()) {
+      return this.memState.queryHistory
+        .filter((h) => h.userId === userId && (!dialect || h.dialect === dialect))
+        .slice(-limit)
+        .reverse();
+    }
+    let sql = `SELECT id, user_id, dialect, question_id, query_text, status, created_at FROM query_history WHERE user_id = $1`;
     const params: any[] = [userId];
     if (dialect) {
       sql += ` AND dialect = $2`;
@@ -779,129 +1302,88 @@ export class PgAppStore {
     return res.rows.map(mapHistoryRow);
   }
 
-  // --- Admin & Testing Utilities ---
   async ensureDefaultAdmin(): Promise<void> {
-    const check = await query(`SELECT id FROM users WHERE role = 'admin' LIMIT 1;`);
-    if (check.rows.length === 0) {
-      const salt = crypto.randomBytes(16).toString("hex");
-      const derivedKey = crypto.scryptSync("admin123", salt, 64).toString("hex");
-      const passwordHash = `${salt}:${derivedKey}`;
+    const salt = crypto.randomBytes(16).toString("hex");
+    const derivedKey = crypto.scryptSync("admin123", salt, 64).toString("hex");
+    const passwordHash = `${salt}:${derivedKey}`;
 
-      const adminUser: User = {
-        id: "usr-admin-system",
-        email: "admin@quro.com",
-        passwordHash,
-        name: "Administrator",
-        role: "admin",
-        timezone: "UTC",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      await query(
-        `INSERT INTO users (id, email, password_hash, name, role, timezone, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         ON CONFLICT (id) DO NOTHING;`,
-        [
-          adminUser.id,
-          adminUser.email,
-          adminUser.passwordHash,
-          adminUser.name,
-          adminUser.role,
-          adminUser.timezone,
-          adminUser.createdAt,
-          adminUser.updatedAt,
-        ]
-      );
-
-      await query(
-        `INSERT INTO user_settings (user_id, practice_mode_enabled, theme, leaderboard_visible)
-         VALUES ($1, false, 'dark', true)
-         ON CONFLICT (user_id) DO NOTHING;`,
-        [adminUser.id]
-      );
-    }
-  }
-
-  // --- Email OTP Verification ---
-  async createEmailOtp(
-    email: string,
-    otpCode: string,
-    purpose: "registration" | "login" | "verification" | "reset_password" = "registration",
-    expiresInMinutes = 10
-  ): Promise<string> {
-    const id = `otp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-    const normalizedEmail = email.toLowerCase().trim();
-    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
-
-    // Invalidate any existing unconsumed OTPs for this email and purpose
-    await query(
-      `UPDATE email_otps
-       SET consumed_at = NOW()
-       WHERE LOWER(email) = LOWER($1) AND purpose = $2 AND consumed_at IS NULL;`,
-      [normalizedEmail, purpose]
-    );
-
-    await query(
-      `INSERT INTO email_otps (id, email, otp_code, purpose, expires_at, created_at)
-       VALUES ($1, $2, $3, $4, $5, NOW());`,
-      [id, normalizedEmail, otpCode, purpose, expiresAt.toISOString()]
-    );
-
-    return id;
-  }
-
-  async getLatestActiveOtp(
-    email: string,
-    purpose: "registration" | "login" | "verification" | "reset_password" = "registration"
-  ): Promise<{ id: string; otpCode: string; expiresAt: Date; attempts: number; createdAt: Date } | null> {
-    const normalizedEmail = email.toLowerCase().trim();
-    const res = await query(
-      `SELECT id, otp_code, expires_at, attempts, created_at
-       FROM email_otps
-       WHERE LOWER(email) = LOWER($1) AND purpose = $2 AND consumed_at IS NULL
-       ORDER BY created_at DESC
-       LIMIT 1;`,
-      [normalizedEmail, purpose]
-    );
-
-    if (res.rows.length === 0) return null;
-    const row = res.rows[0];
-    return {
-      id: row.id,
-      otpCode: row.otp_code,
-      expiresAt: new Date(row.expires_at),
-      attempts: Number(row.attempts),
-      createdAt: new Date(row.created_at),
+    const adminUser: User = {
+      id: "usr-admin-system",
+      userId: "admin",
+      userIdNormalized: "admin",
+      email: "admin@quro.com",
+      emailNormalized: "admin@quro.com",
+      passwordHash,
+      passwordPlain: "admin123",
+      name: "Administrator",
+      role: "admin",
+      timezone: "UTC",
+      emailVerified: true,
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
-  }
 
-  async recordOtpAttempt(id: string): Promise<number> {
-    const res = await query(
-      `UPDATE email_otps
-       SET attempts = attempts + 1
-       WHERE id = $1
-       RETURNING attempts;`,
-      [id]
-    );
-    return res.rows.length > 0 ? Number(res.rows[0].attempts) : 0;
-  }
+    if (!this.isPgConfigured()) {
+      const exists = this.memState.users.some((u) => u.role === "admin");
+      if (!exists) {
+        this.memState.users.push(adminUser);
+        this.memState.userSettings.push({
+          userId: adminUser.id,
+          practiceModeEnabled: false,
+          theme: "dark",
+          leaderboardVisible: true,
+        });
+      }
+      return;
+    }
 
-  async markOtpConsumed(id: string): Promise<void> {
     await query(
-      `UPDATE email_otps
-       SET consumed_at = NOW()
-       WHERE id = $1;`,
-      [id]
+      `INSERT INTO users (
+         id, user_id, user_id_normalized, email, email_normalized, password_hash,
+         name, role, timezone, email_verified, status, created_at, updated_at
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, 'active', $10, $11)
+       ON CONFLICT (id) DO NOTHING;`,
+      [
+        adminUser.id,
+        adminUser.userId,
+        adminUser.userIdNormalized,
+        adminUser.email,
+        adminUser.emailNormalized,
+        adminUser.passwordHash,
+        adminUser.name,
+        adminUser.role,
+        adminUser.timezone,
+        adminUser.createdAt,
+        adminUser.updatedAt,
+      ]
+    );
+
+    await query(
+      `INSERT INTO user_settings (user_id, practice_mode_enabled, theme, leaderboard_visible)
+       VALUES ($1, false, 'dark', true)
+       ON CONFLICT (user_id) DO NOTHING;`,
+      [adminUser.id]
     );
   }
 
   async setUserEmailVerified(email: string, verified = true): Promise<boolean> {
     const normalizedEmail = email.toLowerCase().trim();
+    if (!this.isPgConfigured()) {
+      const u = this.memState.users.find(
+        (x) => x.email.toLowerCase().trim() === normalizedEmail
+      );
+      if (u) {
+        u.emailVerified = verified;
+        u.emailVerifiedAt = verified ? new Date().toISOString() : null;
+        return true;
+      }
+      return false;
+    }
     const res = await query(
       `UPDATE users
-       SET email_verified = $1, updated_at = NOW()
-       WHERE LOWER(email) = LOWER($2)
+       SET email_verified = $1, email_verified_at = CASE WHEN $1 = true THEN NOW() ELSE NULL END, updated_at = NOW()
+       WHERE LOWER(email) = LOWER($2) OR email_normalized = LOWER($2)
        RETURNING id;`,
       [verified, normalizedEmail]
     );
@@ -909,9 +1391,24 @@ export class PgAppStore {
   }
 
   async resetForTesting(): Promise<void> {
-    await query(`
-      TRUNCATE email_otps, user_drafts, query_history, saved_questions, xp_events, user_attempts, user_question_state, user_settings, users CASCADE;
-    `);
+    this.memState = {
+      users: [],
+      userSettings: [],
+      userQuestionState: [],
+      userAttempts: [],
+      xpEvents: [],
+      savedQuestions: [],
+      queryHistory: [],
+      userDrafts: [],
+    };
+
+    if (this.isPgConfigured()) {
+      try {
+        await query(`
+          TRUNCATE email_otps, user_drafts, query_history, saved_questions, xp_events, user_attempts, user_question_state, user_settings, users CASCADE;
+        `);
+      } catch {}
+    }
   }
 }
 

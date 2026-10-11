@@ -22,10 +22,10 @@ export async function GET(
 
   const session = await getSessionFromRequest(req);
   const solvedSet = session
-    ? new Set(appStore.getUserSolvedQuestions(session.userId, dialect))
+    ? new Set(await appStore.getUserSolvedQuestions(session.userId, dialect))
     : new Set<string>();
   const bookmarksSet = session
-    ? new Set(appStore.getUserBookmarks(session.userId, dialect))
+    ? new Set(await appStore.getUserBookmarks(session.userId, dialect))
     : new Set<string>();
 
   const questions = getQuestionsByTopic(topic.id, dialect).map((q, idx) => ({

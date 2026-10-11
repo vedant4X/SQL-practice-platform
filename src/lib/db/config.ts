@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 
 function loadEnvFiles() {
-  if (process.env.DATABASE_URL) return;
   const envFiles = [".env.local", ".env"];
   for (const file of envFiles) {
     const fullPath = path.resolve(process.cwd(), file);
@@ -33,39 +32,84 @@ loadEnvFiles();
 export interface AppDbConfig {
   databaseUrl: string;
   sessionSecret?: string;
+  otpHmacSecret?: string;
+  cronSecret?: string;
+  emailProvider?: string;
+  emailApiKey?: string;
+  emailFrom?: string;
+  appBaseUrl?: string;
   isProduction: boolean;
 }
 
+let cachedConfig: AppDbConfig | null = null;
+
 export function validateConfig(): AppDbConfig {
+  if (cachedConfig) return cachedConfig;
+
+  loadEnvFiles();
+  const isProduction = process.env.NODE_ENV === "production";
+  const missingRequired: string[] = [];
+  const missingRecommended: string[] = [];
+
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl || databaseUrl.trim() === "") {
-    const errorMsg =
-      "[Config Error] Missing required environment variable: DATABASE_URL. Please ensure DATABASE_URL is set.";
+    missingRequired.push("DATABASE_URL");
+  }
+
+  const sessionSecret = process.env.SESSION_SECRET;
+  if (!sessionSecret || sessionSecret.trim() === "") {
+    if (isProduction) {
+      missingRequired.push("SESSION_SECRET");
+    } else {
+      missingRecommended.push("SESSION_SECRET");
+    }
+  }
+
+  const otpHmacSecret = process.env.OTP_HMAC_SECRET;
+  if (!otpHmacSecret || otpHmacSecret.trim() === "") {
+    if (isProduction) {
+      missingRequired.push("OTP_HMAC_SECRET");
+    } else {
+      missingRecommended.push("OTP_HMAC_SECRET");
+    }
+  }
+
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || cronSecret.trim() === "") {
+    missingRecommended.push("CRON_SECRET");
+  }
+
+  if (missingRecommended.length > 0 && !isProduction) {
+    console.warn(
+      `[Config Warning] The following optional environment variables are not configured: ${missingRecommended.join(
+        ", "
+      )}`
+    );
+  }
+
+  if (missingRequired.length > 0) {
+    const errorMsg = `[Config Error] Missing required environment variable(s): ${missingRequired.join(
+      ", "
+    )}. Please configure them in your environment or .env.local file.`;
     console.error(errorMsg);
     throw new Error(errorMsg);
   }
 
-  const isProduction = process.env.NODE_ENV === "production";
-  const sessionSecret = process.env.SESSION_SECRET;
-
-  if (!sessionSecret || sessionSecret.trim() === "") {
-    if (isProduction) {
-      const errorMsg =
-        "[Config Error] Missing required environment variable: SESSION_SECRET (required in production mode).";
-      console.error(errorMsg);
-      throw new Error(errorMsg);
-    } else {
-      console.warn(
-        "[Config Warning] Missing environment variable: SESSION_SECRET. Not configured in development mode."
-      );
-    }
-  }
-
-  return {
-    databaseUrl,
+  cachedConfig = {
+    databaseUrl: databaseUrl!,
     sessionSecret,
+    otpHmacSecret,
+    cronSecret,
+    emailProvider: process.env.EMAIL_PROVIDER,
+    emailApiKey: process.env.EMAIL_API_KEY,
+    emailFrom: process.env.EMAIL_FROM,
+    appBaseUrl: process.env.APP_BASE_URL,
     isProduction,
   };
+
+  return cachedConfig;
 }
 
-export const config = validateConfig();
+export function getConfig(): AppDbConfig {
+  return validateConfig();
+}

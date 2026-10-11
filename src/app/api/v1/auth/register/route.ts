@@ -1,16 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { z } from "zod";
 import { appStore } from "@/lib/db/store";
 import { hashPassword } from "@/lib/auth/password";
-import { createSessionToken } from "@/lib/auth/session";
-import { setSessionCookie } from "@/lib/auth/cookies";
+import {
+  normalizeEmail,
+  normalizeUserId,
+  validateUserId,
+  validatePassword,
+} from "@/lib/auth/normalization";
+import { sendOtp } from "@/lib/auth/otp";
 import { errorResponse, successResponse } from "@/lib/api/response";
 
 const RegisterSchema = z.object({
+  user_id: z.string().optional(),
+  username: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  otp: z.string().optional(),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  name: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -21,67 +27,118 @@ export async function POST(req: NextRequest) {
       return errorResponse("VALIDATION_ERROR", parsed.error.errors[0].message, 400);
     }
 
-    const { email, password, name, otp } = parsed.data;
-    const normalizedEmail = email.toLowerCase().trim();
+    const rawUserId = parsed.data.user_id || parsed.data.username || parsed.data.email.split("@")[0];
+    const rawEmail = parsed.data.email;
+    const rawPassword = parsed.data.password;
+    const name = parsed.data.name?.trim() || rawUserId;
 
-    const existing = await appStore.getUserByEmail(normalizedEmail);
-    if (existing) {
-      return errorResponse("EMAIL_EXISTS", "An account with this email already exists.", 409);
+    // 1. Validate username rules
+    const userVal = validateUserId(rawUserId);
+    if (!userVal.valid) {
+      return errorResponse("INVALID_USER_ID", userVal.error || "Invalid username.", 400);
     }
 
-    let isEmailVerified = false;
-    if (otp) {
-      const { verifyOtp } = await import("@/lib/auth/otp");
-      const verifyRes = await verifyOtp(normalizedEmail, otp, "registration");
-      if (!verifyRes.success) {
-        return errorResponse("INVALID_OTP", verifyRes.message, 400);
+    // 2. Validate password strength and block common passwords
+    const passVal = validatePassword(rawPassword);
+    if (!passVal.valid) {
+      return errorResponse("WEAK_PASSWORD", passVal.error || "Password is too weak.", 400);
+    }
+
+    // 3. Normalization
+    const normalizedUserId = normalizeUserId(rawUserId);
+    const normalizedEmail = normalizeEmail(rawEmail);
+
+    const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
+
+    // 4. Check if user already exists
+    const existingUser = await appStore.getUserByIdentifier(normalizedEmail);
+    if (existingUser) {
+      // If already verified/active: return generic response to prevent account enumeration
+      if (existingUser.status === "active" && (existingUser.emailVerified || existingUser.emailVerifiedAt)) {
+        return successResponse({
+          message: "If this email can be used, a verification code has been sent.",
+          email: normalizedEmail,
+          status: "pending_verification",
+        });
       }
-      isEmailVerified = true;
-    } else if (process.env.REQUIRE_EMAIL_VERIFICATION === "true") {
+
+      // If unverified/pending: resend verification code
+      const otpRes = await sendOtp({
+        email: normalizedEmail,
+        purpose: "register",
+        userId: existingUser.id,
+        clientIp,
+      });
+
+      return successResponse({
+        message: "A verification code has been sent to your email.",
+        email: normalizedEmail,
+        status: "pending_verification",
+        devCode: otpRes.devCode,
+      });
+    }
+
+    // Also check if username is taken by a verified user
+    const existingByUsername = await appStore.getUserByUserId(normalizedUserId);
+    if (existingByUsername && existingByUsername.status === "active") {
       return errorResponse(
-        "OTP_REQUIRED",
-        "A verification code is required to complete registration.",
-        400
+        "USER_ID_EXISTS",
+        "This username is already taken. Please choose another username.",
+        409
       );
     }
 
-    const passwordHash = await hashPassword(password);
-    const userId = `usr-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    // 5. Create new user in "pending" status
+    const passwordHash = await hashPassword(rawPassword);
+    const id = `usr-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
 
-    const user = await appStore.createUser({
-      id: userId,
+    try {
+      await appStore.createUser({
+        id,
+        userId: rawUserId,
+        userIdNormalized: normalizedUserId,
+        email: rawEmail,
+        emailNormalized: normalizedEmail,
+        passwordHash,
+        name,
+        role: "user",
+        timezone: "UTC",
+        emailVerified: false,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (dbErr: any) {
+      // Catch PostgreSQL unique constraint violation (code 23505)
+      if (dbErr?.code === "23505" || dbErr?.message?.includes("unique")) {
+        return successResponse({
+          message: "If this email can be used, a verification code has been sent.",
+          email: normalizedEmail,
+          status: "pending_verification",
+        });
+      }
+      throw dbErr;
+    }
+
+    // 6. Send OTP verification code
+    const otpRes = await sendOtp({
       email: normalizedEmail,
-      passwordHash,
-      name,
-      role: "user",
-      timezone: "UTC",
-      emailVerified: isEmailVerified,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      purpose: "register",
+      userId: id,
+      clientIp,
     });
 
-    const token = await createSessionToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      name: user.name,
-    });
-
-    const res = successResponse(
+    return successResponse(
       {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        },
+        message: "Account created. A 6-digit verification code has been sent to your email.",
+        email: normalizedEmail,
+        status: "pending_verification",
+        devCode: otpRes.devCode,
       },
       201
     );
-
-    setSessionCookie(res, token);
-    return res;
   } catch (err: any) {
-    return errorResponse("INTERNAL_SERVER_ERROR", err.message || "Registration failed", 500);
+    console.error("[Register Error]", err);
+    return errorResponse("INTERNAL_SERVER_ERROR", "Registration could not be completed. Please try again.", 500);
   }
 }

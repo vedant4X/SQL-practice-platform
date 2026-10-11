@@ -69,30 +69,94 @@ async function importJson() {
     const report: Record<string, { total: number; inserted: number; skipped: number }> = {};
 
     // 1. Users (NEVER insert passwordPlain)
-    const users = (data.users || []).map((u: any) => {
+    const rawUsers = data.users || [];
+    const missingEmailUsers: string[] = [];
+    const duplicateEmailMap = new Map<string, string[]>();
+    const duplicateUserIdMap = new Map<string, string[]>();
+
+    const users = rawUsers.map((u: any) => {
       let email = u.email;
-      if (email === "admin@sqljudge.com") {
+      if (!email || !email.trim()) {
+        missingEmailUsers.push(u.id);
+        email = `${u.id}@placeholder.quro.internal`;
+      } else if (email === "admin@sqljudge.com") {
         email = "admin@quro.com";
       }
+
+      const emailNormalized = email.toLowerCase().trim();
+      const rawUserId = u.userId || email.split("@")[0] || u.id;
+      const userIdNormalized = rawUserId.toLowerCase().trim();
+
+      // Track duplicate emails
+      const existingEmailUsers = duplicateEmailMap.get(emailNormalized) || [];
+      existingEmailUsers.push(u.id);
+      duplicateEmailMap.set(emailNormalized, existingEmailUsers);
+
+      // Track duplicate user IDs
+      const existingIdUsers = duplicateUserIdMap.get(userIdNormalized) || [];
+      existingIdUsers.push(u.id);
+      duplicateUserIdMap.set(userIdNormalized, existingIdUsers);
+
       return {
         id: u.id,
-        email: email.toLowerCase().trim(),
+        userId: rawUserId,
+        userIdNormalized,
+        email,
+        emailNormalized,
         passwordHash: u.passwordHash,
-        name: u.name,
+        name: u.name || rawUserId,
         role: u.role || "user",
         timezone: u.timezone || "UTC",
+        status: "active",
         createdAt: u.createdAt || new Date().toISOString(),
         updatedAt: u.updatedAt || new Date().toISOString(),
       };
     });
 
+    // Report conflicts
+    if (missingEmailUsers.length > 0) {
+      console.warn(`[Conflict Warning] Legacy users with missing email: ${missingEmailUsers.join(", ")}`);
+    }
+
+    const emailConflicts = Array.from(duplicateEmailMap.entries()).filter(([_, ids]) => ids.length > 1);
+    if (emailConflicts.length > 0) {
+      console.warn("[Conflict Warning] Duplicate email collisions found (not merged):");
+      for (const [email, ids] of emailConflicts) {
+        console.warn(`  Email: ${email} -> User IDs: ${ids.join(", ")}`);
+      }
+    }
+
+    const idConflicts = Array.from(duplicateUserIdMap.entries()).filter(([_, ids]) => ids.length > 1);
+    if (idConflicts.length > 0) {
+      console.warn("[Conflict Warning] Case-variant or duplicate username collisions found:");
+      for (const [userIdNorm, ids] of idConflicts) {
+        console.warn(`  Username: ${userIdNorm} -> User IDs: ${ids.join(", ")}`);
+      }
+    }
+
     report["users"] = { total: users.length, inserted: 0, skipped: 0 };
     for (const u of users) {
       const res = await client.query(
-        `INSERT INTO users (id, email, password_hash, name, role, timezone, email_verified, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `INSERT INTO users (
+           id, user_id, user_id_normalized, email, email_normalized, password_hash,
+           name, role, timezone, email_verified, email_verified_at, status, created_at, updated_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), $11, $12, $13)
          ON CONFLICT DO NOTHING;`,
-        [u.id, u.email, u.passwordHash, u.name, u.role, u.timezone, true, u.createdAt, u.updatedAt]
+        [
+          u.id,
+          u.userId,
+          u.userIdNormalized,
+          u.email,
+          u.emailNormalized,
+          u.passwordHash,
+          u.name,
+          u.role,
+          u.timezone,
+          true,
+          u.status,
+          u.createdAt,
+          u.updatedAt,
+        ]
       );
       if (res.rowCount && res.rowCount > 0) {
         report["users"].inserted++;

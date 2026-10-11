@@ -1,5 +1,4 @@
 import { Dialect } from "../engine/types";
-import { appStore } from "../db/store";
 import { getQuestionsByTopic, getQuestionBySlug } from "./questions";
 import { TOPICS } from "./topics";
 
@@ -38,7 +37,8 @@ export interface TopicNavigationInfo {
 export function getTopicNavigation(
   slug: string,
   dialect: Dialect = "postgresql",
-  userId?: string
+  userId?: string,
+  solvedQuestionIds?: Set<string> | string[]
 ): TopicNavigationInfo {
   const currentQuestion = getQuestionBySlug(slug, dialect);
   if (!currentQuestion) {
@@ -88,10 +88,12 @@ export function getTopicNavigation(
     }
   }
 
+  const solvedSet = solvedQuestionIds instanceof Set
+    ? solvedQuestionIds
+    : new Set(solvedQuestionIds || []);
+
   const mappedQuestions: TopicQuestionSummary[] = topicQuestions.map((q, idx) => {
-    const isSolved = userId
-      ? appStore.getUserQuestionState(userId, q.id, dialect)?.isSolved || false
-      : false;
+    const isSolved = solvedSet.has(q.id);
     return {
       order: idx + 1,
       id: q.id,

@@ -1,39 +1,95 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { verifyOtp } from "@/lib/auth/otp";
+import { appStore } from "@/lib/db/store";
+import { verifyOtp, OtpPurpose } from "@/lib/auth/otp";
+import { normalizeEmail } from "@/lib/auth/normalization";
+import { createSessionToken } from "@/lib/auth/session";
+import { setSessionCookie } from "@/lib/auth/cookies";
 import { errorResponse, successResponse } from "@/lib/api/response";
 
-const VerifyOtpSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  otp: z.string().length(6, "Verification code must be 6 digits"),
-  purpose: z
-    .enum(["registration", "login", "verification", "reset_password"])
-    .optional()
-    .default("registration"),
+const VerifySchema = z.object({
+  email: z.string().email(),
+  otp: z.string().min(6).max(6),
+  purpose: z.enum(["register", "login", "reset"]).default("register"),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const parsed = VerifyOtpSchema.safeParse(body);
+    const parsed = VerifySchema.safeParse(body);
     if (!parsed.success) {
       return errorResponse("VALIDATION_ERROR", parsed.error.errors[0].message, 400);
     }
 
     const { email, otp, purpose } = parsed.data;
-    const result = await verifyOtp(email, otp, purpose);
+    const normalizedEmail = normalizeEmail(email);
 
-    if (!result.success) {
-      return errorResponse("VERIFICATION_FAILED", result.message, 400, {
-        remainingAttempts: result.remainingAttempts,
+    // Verify OTP with attempt-tracking and HMAC constant-time check
+    const verifyRes = await verifyOtp({
+      email: normalizedEmail,
+      otpCode: otp,
+      purpose: purpose as OtpPurpose,
+    });
+
+    if (!verifyRes.success) {
+      return errorResponse("INVALID_OTP", verifyRes.message, 400, {
+        remainingAttempts: verifyRes.remainingAttempts,
       });
     }
 
+    // User lookup
+    const user = await appStore.getUserByEmail(normalizedEmail);
+    if (!user) {
+      return errorResponse("USER_NOT_FOUND", "Account not found.", 404);
+    }
+
+    // If registration: activate user account
+    if (purpose === "register") {
+      await appStore.setUserEmailVerified(normalizedEmail, true);
+      await appStore.setUserStatus(user.id, "active");
+      await appStore.updateUser(user.id, {
+        emailVerified: true,
+        emailVerifiedAt: new Date().toISOString(),
+        status: "active",
+      });
+    }
+
+    // If registration or login: issue session and set cookie
+    if (purpose === "register" || purpose === "login") {
+      const userAgent = req.headers.get("user-agent") || undefined;
+      const token = await createSessionToken(
+        {
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
+        },
+        userAgent
+      );
+
+      const res = successResponse({
+        message: "Account verified successfully",
+        user: {
+          id: user.id,
+          userId: user.userId,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
+      });
+
+      setSessionCookie(res, token);
+      return res;
+    }
+
+    // Reset password purpose: return verified confirmation
     return successResponse({
+      message: "Code verified successfully. Please enter your new password.",
       verified: true,
-      message: result.message,
+      email: normalizedEmail,
     });
   } catch (err: any) {
-    return errorResponse("INTERNAL_SERVER_ERROR", err.message || "Failed to verify OTP", 500);
+    console.error("[Verify OTP Error]", err);
+    return errorResponse("INTERNAL_SERVER_ERROR", "Verification failed. Please try again.", 500);
   }
 }

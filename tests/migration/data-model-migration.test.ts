@@ -86,10 +86,10 @@ describe("Data Model Dual-Dialect Migration Test Suite", () => {
     expect(migrated.queryHistory[0].dialect).toBe("postgresql");
   });
 
-  it("isolates progress, attempts, and XP between postgresql and mysql", () => {
-    appStore.resetForTesting();
+  it("isolates progress, attempts, and XP between postgresql and mysql", async () => {
+    await appStore.resetForTesting();
 
-    const user = appStore.createUser({
+    const user = await appStore.createUser({
       id: "usr-dual-1",
       email: "dual@sql.io",
       passwordHash: "hash",
@@ -101,7 +101,7 @@ describe("Data Model Dual-Dialect Migration Test Suite", () => {
     });
 
     // Record submission for PostgreSQL
-    appStore.recordSubmission({
+    await appStore.recordSubmission({
       userId: user.id,
       questionId: "q-sel-01",
       dialect: "postgresql",
@@ -114,24 +114,24 @@ describe("Data Model Dual-Dialect Migration Test Suite", () => {
     });
 
     // PostgreSQL question state is solved
-    const pgState = appStore.getUserQuestionState(user.id, "q-sel-01", "postgresql");
+    const pgState = await appStore.getUserQuestionState(user.id, "q-sel-01", "postgresql");
     expect(pgState.isSolved).toBe(true);
     expect(pgState.dialect).toBe("postgresql");
 
     // MySQL question state is NOT solved
-    const mysqlState = appStore.getUserQuestionState(user.id, "q-sel-01", "mysql");
+    const mysqlState = await appStore.getUserQuestionState(user.id, "q-sel-01", "mysql");
     expect(mysqlState.isSolved).toBe(false);
     expect(mysqlState.dialect).toBe("mysql");
 
     // XP is dialect-scoped
-    expect(appStore.getUserXp(user.id, "postgresql")).toBe(50);
-    expect(appStore.getUserXp(user.id, "mysql")).toBe(0);
+    expect(await appStore.getUserXp(user.id, "postgresql")).toBe(50);
+    expect(await appStore.getUserXp(user.id, "mysql")).toBe(0);
 
     // Global combined XP is 50
-    expect(appStore.getUserXp(user.id)).toBe(50);
+    expect(await appStore.getUserXp(user.id)).toBe(50);
 
     // Solved lists are isolated
-    expect(appStore.getUserSolvedQuestions(user.id, "postgresql")).toContain("q-sel-01");
-    expect(appStore.getUserSolvedQuestions(user.id, "mysql")).not.toContain("q-sel-01");
+    expect(await appStore.getUserSolvedQuestions(user.id, "postgresql")).toContain("q-sel-01");
+    expect(await appStore.getUserSolvedQuestions(user.id, "mysql")).not.toContain("q-sel-01");
   });
 });

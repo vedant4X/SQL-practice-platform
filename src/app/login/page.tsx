@@ -2,32 +2,39 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Database, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Database, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setUnverifiedEmail(null);
     setLoading(true);
 
     try {
       const res = await fetch("/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          identifier: identifier.trim(),
+          password,
+        }),
       });
       const data = await res.json();
 
       if (data?.success) {
         // Merge guest progress if stored locally
         try {
-          const guestSolvedRaw = localStorage.getItem("quro_guest_solved") || localStorage.getItem("sqljudge_guest_solved");
+          const guestSolvedRaw =
+            localStorage.getItem("quro_guest_solved") ||
+            localStorage.getItem("sqljudge_guest_solved");
           if (guestSolvedRaw) {
             const guestSolved = JSON.parse(guestSolvedRaw);
             if (Array.isArray(guestSolved) && guestSolved.length > 0) {
@@ -46,7 +53,10 @@ export default function LoginPage() {
 
         window.location.href = "/dashboard";
       } else {
-        setError(data?.error?.message || "Invalid email or password.");
+        if (data?.error?.code === "ACCOUNT_UNVERIFIED" && data?.error?.details?.email) {
+          setUnverifiedEmail(data.error.details.email);
+        }
+        setError(data?.error?.message || "Invalid credentials.");
       }
     } catch {
       setError("Network connection error. Please try again.");
@@ -71,29 +81,41 @@ export default function LoginPage() {
         {error && (
           <div
             role="alert"
-            className="flex items-center gap-2 rounded-lg border border-[var(--accent-danger)] bg-[var(--accent-danger-bg)] p-3 text-xs text-[var(--accent-danger-text)] font-medium"
+            className="flex flex-col gap-2 rounded-lg border border-[var(--accent-danger)] bg-[var(--accent-danger-bg)] p-3 text-xs text-[var(--accent-danger-text)] font-medium"
           >
-            <AlertCircle className="h-4 w-4 shrink-0 text-[var(--accent-danger)]" />
-            <span>{error}</span>
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-[var(--accent-danger)]" />
+              <span>{error}</span>
+            </div>
+            {unverifiedEmail && (
+              <div className="mt-1 pl-6">
+                <Link
+                  href={`/register?email=${encodeURIComponent(unverifiedEmail)}`}
+                  className="underline font-semibold hover:opacity-80"
+                >
+                  Click here to complete your email verification
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="login-email" className="block text-xs font-semibold text-[var(--text-main)]">
-              Email Address
+            <label htmlFor="login-identifier" className="block text-xs font-semibold text-[var(--text-main)]">
+              Username or Email
             </label>
             <div className="relative">
-              <Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
+              <User className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
               <input
-                id="login-email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="login-identifier"
+                name="identifier"
+                type="text"
+                autoComplete="username email"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="username or name@example.com"
                 style={{
                   color: "var(--text-main)",
                   backgroundColor: "var(--bg-panel)",
@@ -106,9 +128,11 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="login-password" className="block text-xs font-semibold text-[var(--text-main)]">
-              Password
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="login-password" className="block text-xs font-semibold text-[var(--text-main)]">
+                Password
+              </label>
+            </div>
             <div className="relative">
               <Lock className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--text-muted)]" />
               <input
@@ -143,25 +167,32 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent-primary)] py-2.5 text-xs font-bold text-[var(--accent-primary-text)] shadow-sm hover:bg-[var(--accent-primary-hover)] active:opacity-95 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-2 transition"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent-primary)] py-2.5 text-xs font-semibold text-[var(--accent-primary-text)] shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--border-control)] focus:ring-offset-2 disabled:opacity-50 transition"
           >
-            <span>{loading ? "Authenticating..." : "Sign In"}</span>
-            <ArrowRight className="h-4 w-4" />
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Signing in...
+              </span>
+            ) : (
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
 
-        <div className="space-y-2 text-center text-xs text-[var(--text-muted)]">
-          <div>
+        <div className="border-t border-[var(--border-subtle)] pt-4 text-center">
+          <p className="text-xs text-[var(--text-muted)]">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-[var(--accent-primary)] hover:underline">
-              Register for free
+            <Link
+              href="/register"
+              className="font-semibold text-[var(--accent-primary)] hover:underline focus:outline-none focus:ring-1 focus:ring-[var(--border-control)] rounded"
+            >
+              Sign up
             </Link>
-          </div>
-          <div className="pt-2 border-t border-[var(--border-color)]">
-            <Link href="/admin" className="font-semibold text-[var(--accent-warning-text)] hover:underline flex items-center justify-center gap-1">
-              <span>Admin Portal Access →</span>
-            </Link>
-          </div>
+          </p>
         </div>
       </div>
     </div>

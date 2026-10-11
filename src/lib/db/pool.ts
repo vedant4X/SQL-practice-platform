@@ -1,5 +1,5 @@
 import { Pool, QueryResult, QueryResultRow } from "pg";
-import { config } from "./config";
+import { getConfig } from "./config";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -7,8 +7,9 @@ declare global {
 }
 
 function createPool(): Pool {
-  const connectionString = config.databaseUrl;
-  const isProduction = config.isProduction;
+  const conf = getConfig();
+  const connectionString = conf.databaseUrl;
+  const isProduction = conf.isProduction;
   const requiresSsl = connectionString.includes("sslmode=require") || isProduction;
 
   const pool = new Pool({
